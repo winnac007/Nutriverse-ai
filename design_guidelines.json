@@ -1,0 +1,105 @@
+{
+  "theme": "dark_default_with_light_mode",
+  "archetype": "Archetype 5 (Jewel & Luxury) mixed with Archetype 4 (Swiss & High-Contrast) for clean, minimalist food-photography-forward UI.",
+  "design_philosophy": "Dark cinematic mode to make food photography pop. Minimalist layout with clear visual hierarchy, utilizing the category color coding for navigation and tagging.",
+  "colors": {
+    "background": {
+      "dark": "#0A0A0C",
+      "light": "#FAFAFA"
+    },
+    "surface": {
+      "dark": "#121217",
+      "light": "#FFFFFF"
+    },
+    "primary": "#00D4AA",
+    "category_colors": {
+      "healthcare": "#00D4AA",
+      "fitness": "#FF6B35",
+      "cultural": "#7C5CFC",
+      "premium": "#FFD166"
+    },
+    "text": {
+      "dark": {
+        "primary": "#EDEDED",
+        "secondary": "#A3A3A3"
+      },
+      "light": {
+        "primary": "#1A1A1A",
+        "secondary": "#737373"
+      }
+    },
+    "border": {
+      "dark": "#262626",
+      "light": "#E5E5E5"
+    }
+  },
+  "typography": {
+    "fonts": {
+      "headings": "Cabinet Grotesk, sans-serif",
+      "body": "Satoshi, sans-serif"
+    },
+    "scale": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl tracking-tighter",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl tracking-tight",
+      "h3": "text-xl sm:text-2xl tracking-tight",
+      "h4": "text-lg sm:text-xl",
+      "body": "text-base leading-relaxed",
+      "small": "text-sm",
+      "overline": "text-xs uppercase tracking-[0.2em]"
+    }
+  },
+  "layout": {
+    "spacing": "Generous spacing. Use p-6 to p-8 inside cards. Content should have pb-24 to avoid bottom nav overlap.",
+    "grids": "Control Room Grid for the Home dashboard and Nutrition Tracker. Bento Grid for Explore feed.",
+    "radius": "rounded-2xl for surfaces, rounded-full for interactive chips/pills.",
+    "navigation": "Mobile-first Bottom Navigation Bar (fixed bottom-0, glassmorphism: backdrop-blur-xl bg-black/60). Desktop can use a side nav or top sticky header."
+  },
+  "components": {
+    "cards": "Subtle 1px border. Dark mode: border-[#262626] bg-[#121217]. No muddy shadows, use crisp borders.",
+    "buttons": "Category-specific color buttons. Flat solid background with rounded-full. Hover state: lighter hue and slight lift (-translate-y-1).",
+    "hero_overlays": "Max bg-black/40 to let food photography shine. Use gradient overlays (from-black/70 via-black/40 to-transparent) instead of flat blankets.",
+    "charts": "Shadcn charts or Recharts for Nutrition Tracker macros.",
+    "tabs": "Shadcn tabs, customized with h-auto and category-colored active states."
+  },
+  "motion": {
+    "hover_states": "transition-all duration-300 ease-out",
+    "page_transitions": "framer-motion fade-in and slide-up for seamless mobile-app feel."
+  },
+  "media": {
+    "image_urls": [
+      {
+        "category": "hero_background",
+        "description": "Healthy food photography dark background",
+        "url": "https://images.unsplash.com/photo-1714842981153-ffeaf74e7a1a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODR8MHwxfHNlYXJjaHwxfHxoZWFsdGh5JTIwZm9vZCUyMHBob3RvZ3JhcGh5JTIwZGFyayUyMGJhY2tncm91bmR8ZW58MHx8fHwxNzc3NjA0NzQyfDA&ixlib=rb-4.1.0&q=85"
+      },
+      {
+        "category": "fitness_meal",
+        "description": "Fitness meal prep on black tray",
+        "url": "https://images.unsplash.com/photo-1587996616596-b714c1c54146?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODB8MHwxfHNlYXJjaHwyfHxmaXRuZXNzJTIwbWVhbCUyMHByZXB8ZW58MHx8fHwxNzc3NjA0NzQyfDA&ixlib=rb-4.1.0&q=85"
+      },
+      {
+        "category": "cultural_spread",
+        "description": "International cuisine spread",
+        "url": "https://images.unsplash.com/photo-1661607775751-dc9efc8f3a9c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHwzfHxpbnRlcm5hdGlvbmFsJTIwY3Vpc2luZSUyMHNwcmVhZHxlbnwwfHx8fDE3Nzc2MDQ3NDJ8MA&ixlib=rb-4.1.0&q=85"
+      },
+      {
+        "category": "healthcare_salad",
+        "description": "Fresh salad close up",
+        "url": "https://images.unsplash.com/photo-1751890893842-7807b463b344?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njl8MHwxfHNlYXJjaHwyfHxmcmVzaCUyMHNhbGFkJTIwY2xvc2UlMjB1cHxlbnwwfHx8fDE3Nzc2MDQ3NDJ8MA&ixlib=rb-4.1.0&q=85"
+      }
+    ]
+  },
+  "accessibility": "WCAG AA compliant. All interactive elements must have data-testid attributes (e.g., data-testid='home-tab-button'). Use focus:ring-2 and focus:outline-none.",
+  "instructions_to_main_agent": [
+    "Initialize the React application with Tailwind CSS, Shadcn UI primitives, and React Router.",
+    "Implement a theme provider to support Dark (default) and Light modes.",
+    "Use 'Cabinet Grotesk' for headings and 'Satoshi' for body text. Install via @fontsource or Google Fonts.",
+    "Build a mobile-first layout featuring a fixed Bottom Navigation Bar for the 5 tabs: Home, Explore, Meal Plan, Track, Profile.",
+    "Develop the Home Dashboard using a bento grid structure containing 3 category tiles (Healthcare, Fitness, Cultural). Color code them using the defined category colors.",
+    "Create the Recipe Detail Page highlighting food photography with gradient hero overlays (max bg-black/40 opacity) to ensure readability of the overlaying text.",
+    "Implement the Weekly Meal Planner (calendar view) and Nutrition Tracker (using macro progress charts).",
+    "Ensure the Premium upgrade gate locks or blurs premium features and prominently displays the Gold (#FFD166) theme.",
+    "Apply data-testid to every interactive component for testing.",
+    "Avoid generic sans-serif fonts for headings and ensure all forms/dialogs use customized Shadcn components."
+  ]
+}
