@@ -10,6 +10,17 @@ NutriVerse is a globally intelligent food/nutrition/wellness app supporting Heal
 - Payments: MOCK ₹300/mo upgrade endpoint (no real payment integration yet)
 - Fonts: Cabinet Grotesk + Satoshi
 
+## Implemented (Iteration 3 - Feb 2026 - Healthcare Hub redesign)
+- New dedicated Healthcare experience at `/app/healthcare` (Home tile re-routes here)
+- 8-condition picker (Heart Health, Diabetes, Thyroid, PCOS, Weight Management, Blood Pressure, Gut Health, Immunity) with recipe counts
+- Condition hub with: header, in-condition smart search, meal-type tabs (All/Breakfast/Lunch/Dinner/Snack), Browse-recipes vs Day-meal-plan toggle, 15-min quick-meals filter
+- Health-score badges (Heart Friendly · Diabetes Safe · PCOS Friendly · Gut Friendly · Immunity Boost · Anti-inflammatory · Post-surgery Safe …)
+- Recipe cards include nutritional tags, calories, prep-minutes, "Why it works for you" condition-specific explanation
+- 7 new healthcare recipes: hc-006 Beetroot Smoothie, hc-007 Greek Yogurt + Walnuts, hc-008 Spinach + Egg, hc-009 Roasted Chickpea Crunch, hc-010 Lemon Ginger Tea, hc-011 Quinoa Tabbouleh, hc-012 Sweet Potato + Black Bean Bowl
+- Smart Ingredient Swaps card (Sugar→Dates, Cream→Yogurt, Frying→Bake, Salt→Lemon+Herbs …)
+- Motivation streak card (current streak, meals this week, distinct recipes)
+- New endpoints: /api/healthcare/{conditions, recipes, swaps, streak}
+
 ## Implemented (Iteration 2 - Feb 2026)
 - Landing, Auth (register/login), Onboarding (3-step) flow
 - 4 categories: Healthcare, Fitness, Cultural, Chef Specials (desserts/bakery)
