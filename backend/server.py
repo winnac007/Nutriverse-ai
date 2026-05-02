@@ -386,14 +386,6 @@ Rules:
 - Indian users: prefer Indian recipes; otherwise prefer their region's cuisine."""
 
 
-def _llm_chat(session_id: str, system_msg: str, user_text: str) -> str:
-    from emergentintegrations.llm.chat import LlmChat, UserMessage
-    chat = LlmChat(api_key=EMERGENT_LLM_KEY, session_id=session_id, system_message=system_msg)
-    chat = chat.with_model("anthropic", "claude-sonnet-4-5-20250929")
-    import asyncio
-    return chat.send_message(UserMessage(text=user_text))
-
-
 def _extract_json(text: str):
     # Strip markdown fences
     text = re.sub(r"```(?:json)?", "", text).strip("` \n")
