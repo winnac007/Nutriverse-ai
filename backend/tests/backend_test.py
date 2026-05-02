@@ -131,11 +131,12 @@ class TestUserActions:
 
 # ============== Recipes ==============
 class TestRecipes:
-    def test_list_31_recipes(self, s):
+    def test_list_recipes_count(self, s):
         r = s.get(f"{API}/recipes")
         assert r.status_code == 200
         items = r.json()
-        assert len(items) == 31
+        # 31 base + 7 healthcare extras (hc-006..hc-012) = 38
+        assert len(items) >= 31, f"Expected >=31, got {len(items)}"
         cats = {x["category"] for x in items}
         for c in ["healthcare", "fitness", "cultural", "chef-special"]:
             assert c in cats, f"Missing category {c}"
@@ -310,3 +311,122 @@ class TestLifestyle:
         assert t.status_code == 200
         assert t.json().get("sleep_hours") == 8
         assert t.json().get("mood") == "great"
+
+
+# ============== Healthcare Hub ==============
+class TestHealthcare:
+    def test_conditions_returns_8_items(self, s):
+        r = s.get(f"{API}/healthcare/conditions")
+        assert r.status_code == 200, r.text
+        items = r.json()
+        assert len(items) == 8, f"Expected 8, got {len(items)}"
+        ids = {x["id"] for x in items}
+        for needed in ["heart-disease", "diabetes", "thyroid", "pcos",
+                       "weight-management", "hypertension", "gut-health", "immunity"]:
+            assert needed in ids, f"Missing condition {needed}"
+        # required keys
+        first = items[0]
+        for k in ["id", "label", "icon", "blurb", "image", "recipe_count"]:
+            assert k in first, f"Missing key {k}"
+        assert isinstance(first["recipe_count"], int)
+
+    def test_recipes_heart_disease_min_6(self, s):
+        r = s.get(f"{API}/healthcare/recipes", params={"condition": "heart-disease"})
+        assert r.status_code == 200, r.text
+        items = r.json()
+        assert len(items) >= 6, f"Heart-disease only returned {len(items)}"
+        for it in items:
+            assert "health_scores" in it
+            assert "nutritional_tags" in it
+            assert "meal_type" in it
+            assert "prep_minutes" in it
+            assert "why_this_works_for_condition" in it
+            # must be string or None
+            wtw = it["why_this_works_for_condition"]
+            assert wtw is None or isinstance(wtw, str)
+
+    def test_recipes_diabetes_breakfast_only(self, s):
+        r = s.get(f"{API}/healthcare/recipes",
+                  params={"condition": "diabetes", "meal_type": "breakfast"})
+        assert r.status_code == 200
+        items = r.json()
+        assert len(items) > 0, "Expected at least 1 breakfast for diabetes"
+        for it in items:
+            assert it.get("meal_type") == "breakfast", f"Non-breakfast item: {it.get('id')}"
+
+    def test_recipes_pcos_quick_15min(self, s):
+        r = s.get(f"{API}/healthcare/recipes",
+                  params={"condition": "pcos", "quick": "true"})
+        assert r.status_code == 200
+        items = r.json()
+        assert len(items) > 0
+        for it in items:
+            pm = it.get("prep_minutes") or it.get("cook_time", 999)
+            assert pm <= 15, f"Recipe {it.get('id')} has prep_minutes={pm}"
+
+    def test_recipes_immunity_search_tea(self, s):
+        r = s.get(f"{API}/healthcare/recipes",
+                  params={"condition": "immunity", "search": "tea"})
+        assert r.status_code == 200
+        items = r.json()
+        titles = [it["title"] for it in items]
+        assert any("Lemon Ginger" in t for t in titles), f"Got titles: {titles}"
+
+    def test_swaps_diabetes(self, s):
+        r = s.get(f"{API}/healthcare/swaps", params={"condition": "diabetes"})
+        assert r.status_code == 200
+        swaps = r.json()
+        assert len(swaps) > 0
+        for sw in swaps:
+            assert "from" in sw and "to" in sw and "reason" in sw
+            assert "diabetes" in sw.get("best_for", [])
+        # Sugar -> Dates is for diabetes
+        assert any(sw["from"].lower().startswith("sugar") for sw in swaps)
+
+    def test_swaps_no_condition_returns_all(self, s):
+        r = s.get(f"{API}/healthcare/swaps")
+        assert r.status_code == 200
+        assert len(r.json()) >= 8
+
+    def test_streak_requires_auth(self, s):
+        r = s.get(f"{API}/healthcare/streak")
+        assert r.status_code == 401
+
+    def test_streak_authenticated(self, s, free_user):
+        h = auth(free_user["token"])
+        r = s.get(f"{API}/healthcare/streak", headers=h)
+        assert r.status_code == 200
+        d = r.json()
+        for k in ["current_streak_days", "meals_this_week", "distinct_recipes_this_week"]:
+            assert k in d, f"Missing {k}"
+            assert isinstance(d[k], int)
+
+    def test_streak_after_log_meal(self, s):
+        """Register fresh user, log a meal, verify streak increments."""
+        email = f"hc_{uuid.uuid4().hex[:8]}@nutri.example.com"
+        reg = s.post(f"{API}/auth/register", json={"email": email, "password": "Pass1234!", "name": "HC"}).json()
+        h = auth(reg["token"])
+        # log a healthcare meal
+        log = s.post(f"{API}/nutrition/log", headers=h, json={
+            "recipe_id": "hc-001", "meal_type": "lunch", "servings": 1.0
+        })
+        assert log.status_code == 200, log.text
+        r = s.get(f"{API}/healthcare/streak", headers=h)
+        assert r.status_code == 200
+        d = r.json()
+        assert d["current_streak_days"] >= 1
+        assert d["meals_this_week"] >= 1
+        assert d["distinct_recipes_this_week"] >= 1
+
+    def test_extra_recipes_present(self, s):
+        """Verify hc-006..hc-012 were merged into healthcare pool."""
+        r = s.get(f"{API}/healthcare/recipes", params={"condition": "heart-disease"})
+        ids = {x["id"] for x in r.json()}
+        # hc-006 (beetroot) + hc-008 (spinach egg) + hc-011 + hc-012 are heart
+        for needed in ["hc-006", "hc-011", "hc-012"]:
+            assert needed in ids, f"Missing extra recipe {needed} for heart-disease. Got: {ids}"
+
+    def test_immunity_has_lemon_ginger_tea(self, s):
+        r = s.get(f"{API}/healthcare/recipes", params={"condition": "immunity"})
+        ids = {x["id"] for x in r.json()}
+        assert "hc-010" in ids, f"hc-010 missing from immunity. Got {ids}"

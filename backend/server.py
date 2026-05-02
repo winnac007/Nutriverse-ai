@@ -15,6 +15,7 @@ import json
 import re
 
 from seed_data import get_all_recipes, get_recipe
+from healthcare_data import CONDITIONS, SWAPS
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -287,6 +288,82 @@ async def recipe_detail(recipe_id: str):
 @api_router.post("/tdee/calculate")
 async def calculate_tdee(body: TDEERequest):
     return calc_tdee(body.age, body.gender, body.weight_kg, body.height_cm, body.activity_level, body.goal)
+
+
+# ========= HEALTHCARE HUB =========
+@api_router.get("/healthcare/conditions")
+async def healthcare_conditions():
+    """Conditions list with recipe counts."""
+    recipes = [r for r in get_all_recipes() if r.get("category") == "healthcare"]
+    out = []
+    for c in CONDITIONS:
+        count = sum(1 for r in recipes if c["id"] in r.get("conditions", []))
+        out.append({**c, "recipe_count": count})
+    return out
+
+
+@api_router.get("/healthcare/recipes")
+async def healthcare_recipes(
+    condition: Optional[str] = None,
+    meal_type: Optional[str] = None,
+    search: Optional[str] = None,
+    quick: Optional[bool] = None,
+):
+    pool = [r for r in get_all_recipes() if r.get("category") == "healthcare"]
+    if condition:
+        pool = [r for r in pool if condition in r.get("conditions", [])]
+    if meal_type and meal_type != "all":
+        pool = [r for r in pool if r.get("meal_type") == meal_type]
+    if quick:
+        pool = [r for r in pool if (r.get("prep_minutes") or r.get("cook_time", 999)) <= 15]
+    if search:
+        s = search.lower()
+        pool = [r for r in pool if s in r["title"].lower()
+                or s in r.get("description", "").lower()
+                or any(s in t for t in r.get("nutritional_tags", []))
+                or any(s in t for t in r.get("health_scores", []))]
+    # Project a focused-payload (keeps the why-this-works for the asked condition)
+    out = []
+    for r in pool:
+        why = (r.get("why_this_works") or {}).get(condition) if condition else None
+        out.append({
+            **{k: v for k, v in r.items() if k != "why_this_works"},
+            "why_this_works_for_condition": why,
+        })
+    return out
+
+
+@api_router.get("/healthcare/swaps")
+async def healthcare_swaps(condition: Optional[str] = None):
+    if not condition:
+        return SWAPS
+    return [s for s in SWAPS if condition in s.get("best_for", []) or not s.get("best_for")]
+
+
+@api_router.get("/healthcare/streak")
+async def healthcare_streak(user=Depends(get_current_user)):
+    """Compute current streak of days with at least one logged meal, plus weekly count."""
+    today = datetime.now(timezone.utc).date()
+    days = [(today - timedelta(days=i)).isoformat() for i in range(0, 30)]
+    logs = await db.meal_logs.find(
+        {"user_id": user["id"], "date": {"$in": days}}, {"_id": 0, "date": 1, "recipe_id": 1}
+    ).to_list(500)
+    days_with_logs = {log["date"] for log in logs}
+    # Current streak: walk back from today
+    streak = 0
+    for d in days:
+        if d in days_with_logs:
+            streak += 1
+        else:
+            break
+    week = [(today - timedelta(days=i)).isoformat() for i in range(0, 7)]
+    meals_this_week = sum(1 for log in logs if log["date"] in week)
+    distinct_recipes = len({log["recipe_id"] for log in logs if log["date"] in week})
+    return {
+        "current_streak_days": streak,
+        "meals_this_week": meals_this_week,
+        "distinct_recipes_this_week": distinct_recipes,
+    }
 
 
 # ========= NUTRITION TRACKING =========

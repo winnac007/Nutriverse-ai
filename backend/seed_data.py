@@ -894,6 +894,31 @@ RECIPES = [
 ]
 
 
+def _apply_healthcare_enrichments():
+    """One-time merge: pull ENRICHMENTS + EXTRA_RECIPES from healthcare_data."""
+    try:
+        from healthcare_data import ENRICHMENTS, EXTRA_RECIPES
+    except Exception:
+        return
+    # Enrich existing recipes
+    for r in RECIPES:
+        e = ENRICHMENTS.get(r["id"])
+        if e:
+            r.update(e)
+    # Append extras (with their inline _enrichment merged in)
+    existing_ids = {r["id"] for r in RECIPES}
+    for extra in EXTRA_RECIPES:
+        if extra["id"] in existing_ids:
+            continue
+        merged = {**extra}
+        enr = merged.pop("_enrichment", {})
+        merged.update(enr)
+        RECIPES.append(merged)
+
+
+_apply_healthcare_enrichments()
+
+
 def get_all_recipes():
     return RECIPES
 

@@ -7,10 +7,10 @@ import { HeartPulse, Dumbbell, Globe2, ChefHat, Sparkles, ArrowRight, MapPin } f
 import { motion } from "framer-motion";
 
 const cats = [
-  { id: "healthcare", title: "Healthcare", icon: HeartPulse, gradient: "nv-gradient-hc", image: "https://images.unsplash.com/photo-1751890893842-7807b463b344?w=800", tagline: "Disease-aware nutrition" },
-  { id: "fitness", title: "Fitness", icon: Dumbbell, gradient: "nv-gradient-ft", image: "https://images.unsplash.com/photo-1587996616596-b714c1c54146?w=800", tagline: "Goal-based macros" },
-  { id: "cultural", title: "Cultural", icon: Globe2, gradient: "nv-gradient-cu", image: "https://images.unsplash.com/photo-1661607775751-dc9efc8f3a9c?w=800", tagline: "40+ cuisines" },
-  { id: "chef-special", title: "Chef Specials", icon: ChefHat, gradient: "nv-gradient-cs", image: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=800", tagline: "Desserts · Bakery" },
+  { id: "healthcare", title: "Healthcare", icon: HeartPulse, gradient: "nv-gradient-hc", image: "https://images.unsplash.com/photo-1751890893842-7807b463b344?w=800", tagline: "Disease-aware nutrition", to: "/app/healthcare" },
+  { id: "fitness", title: "Fitness", icon: Dumbbell, gradient: "nv-gradient-ft", image: "https://images.unsplash.com/photo-1587996616596-b714c1c54146?w=800", tagline: "Goal-based macros", to: "/app/category/fitness" },
+  { id: "cultural", title: "Cultural", icon: Globe2, gradient: "nv-gradient-cu", image: "https://images.unsplash.com/photo-1661607775751-dc9efc8f3a9c?w=800", tagline: "40+ cuisines", to: "/app/category/cultural" },
+  { id: "chef-special", title: "Chef Specials", icon: ChefHat, gradient: "nv-gradient-cs", image: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=800", tagline: "Desserts · Bakery", to: "/app/category/chef-special" },
 ];
 
 export default function Home() {
@@ -79,7 +79,7 @@ export default function Home() {
         <div className="grid gap-4 sm:grid-cols-2">
           {cats.map((c, i) => (
             <motion.div key={c.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}>
-              <Link to={`/app/category/${c.id}`} data-testid={`home-cat-${c.id}`}
+              <Link to={c.to} data-testid={`home-cat-${c.id}`}
                 className="block relative overflow-hidden nv-card nv-shadow aspect-[16/10] group">
                 <img src={c.image} alt={c.title} className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500" />
                 <div className={`absolute inset-0 ${c.gradient} opacity-50 mix-blend-multiply`} />
