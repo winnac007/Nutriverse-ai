@@ -1,7 +1,6 @@
 import React from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import BottomNav from "./BottomNav";
-import CoachWidget from "./CoachWidget";
 import { useAuth } from "../lib/auth";
 
 export default function AppLayout() {
@@ -15,7 +14,6 @@ export default function AppLayout() {
       <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-6 pb-28">
         <Outlet />
       </main>
-      <CoachWidget />
       <BottomNav />
     </div>
   );

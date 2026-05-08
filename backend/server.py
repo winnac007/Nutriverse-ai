@@ -13,9 +13,12 @@ import bcrypt
 import jwt
 import json
 import re
+import anthropic
 
 from seed_data import get_all_recipes, get_recipe
 from healthcare_data import CONDITIONS, SWAPS
+from condition_rules import filter_for_conditions, generate_why_this_works
+from spoonacular import fetch_personalized_recipes, normalize_spoonacular_recipe
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -26,7 +29,9 @@ db = client[os.environ['DB_NAME']]
 
 JWT_SECRET = os.environ.get('JWT_SECRET', 'nutriverse-dev')
 JWT_ALG = "HS256"
-EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
+ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
+SPOONACULAR_API_KEY = os.environ.get('SPOONACULAR_API_KEY', '')
+anthropic_client = anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
 
 app = FastAPI(title="NutriVerse API")
 api_router = APIRouter(prefix="/api")
@@ -47,24 +52,32 @@ class UserLogin(BaseModel):
 class ProfileUpdate(BaseModel):
     name: Optional[str] = None
     category: Optional[str] = None
+    # Legacy single-condition (kept for backward compat)
     condition: Optional[str] = None
+    # New multi-condition support
+    conditions: Optional[List[str]] = None
+    condition_answers: Optional[Dict[str, Any]] = None
     goal: Optional[str] = None
+    goal_30day: Optional[str] = None
     age: Optional[int] = None
     gender: Optional[str] = None
     weight_kg: Optional[float] = None
     height_cm: Optional[float] = None
-    body_type: Optional[str] = None  # ectomorph | mesomorph | endomorph
+    body_type: Optional[str] = None
     activity_level: Optional[str] = None
     location: Optional[str] = None
     country: Optional[str] = None
     state: Optional[str] = None
     city: Optional[str] = None
+    dietary_type: Optional[str] = None  # vegetarian | non-veg | vegan | eggetarian
     dietary_prefs: Optional[List[str]] = None
     allergies: Optional[List[str]] = None
     timeline_weeks: Optional[int] = None
-    cooking_ability: Optional[str] = None  # beginner | intermediate | advanced
-    budget: Optional[str] = None  # low | medium | high
+    cooking_ability: Optional[str] = None
+    budget: Optional[str] = None
     challenges: Optional[str] = None
+    health_plan: Optional[Dict[str, Any]] = None
+    preferences: Optional[Dict[str, Any]] = None
     onboarded: Optional[bool] = None
 
 
@@ -173,12 +186,16 @@ async def register(body: UserRegister):
     user_doc = {
         "id": user_id, "email": body.email, "password": hash_password(body.password),
         "name": body.name, "is_premium": False, "onboarded": False,
-        "category": None, "condition": None, "goal": None,
+        "category": "healthcare",
+        "conditions": [], "condition_answers": {}, "condition": None,
+        "goal": None, "goal_30day": None,
         "age": None, "gender": None, "weight_kg": None, "height_cm": None,
         "body_type": None, "activity_level": None,
         "location": None, "country": None, "state": None, "city": None,
-        "dietary_prefs": [], "allergies": [], "saved_recipes": [],
+        "dietary_type": None, "dietary_prefs": [], "allergies": [], "saved_recipes": [],
         "timeline_weeks": None, "cooking_ability": None, "budget": None, "challenges": None,
+        "health_plan": None,
+        "preferences": {},
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.users.insert_one(user_doc)
@@ -503,13 +520,13 @@ async def smart_plan(body: AIPlanRequest, user=Depends(get_current_user)):
     )
 
     try:
-        from emergentintegrations.llm.chat import LlmChat, UserMessage
-        chat = LlmChat(
-            api_key=EMERGENT_LLM_KEY,
-            session_id=f"smartplan-{user['id']}-{uuid.uuid4().hex[:8]}",
-            system_message=SMART_PLANNER_SYSTEM,
-        ).with_model("anthropic", "claude-sonnet-4-5-20250929")
-        raw = await chat.send_message(UserMessage(text=user_text))
+        response = await anthropic_client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=4096,
+            system=SMART_PLANNER_SYSTEM,
+            messages=[{"role": "user", "content": user_text}],
+        )
+        raw = response.content[0].text
         plan = _extract_json(raw)
     except Exception:
         logging.exception("AI plan failed, falling back")
@@ -614,13 +631,13 @@ async def ai_coach(body: CoachAsk, user=Depends(get_current_user)):
         + f"\n\ntoday_logs_count: {len(logs)}\ntoday_totals: {totals}\nuser_question: {body.question}"
     )
     try:
-        from emergentintegrations.llm.chat import LlmChat, UserMessage
-        chat = LlmChat(
-            api_key=EMERGENT_LLM_KEY,
-            session_id=f"coach-{user['id']}",
-            system_message=COACH_SYSTEM,
-        ).with_model("anthropic", "claude-sonnet-4-5-20250929")
-        reply = await chat.send_message(UserMessage(text=context))
+        response = await anthropic_client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=512,
+            system=COACH_SYSTEM,
+            messages=[{"role": "user", "content": context}],
+        )
+        reply = response.content[0].text
     except Exception:
         logging.exception("Coach AI failed")
         reply = ("Got it — keep it simple right now: a bowl of dal with rice or a protein smoothie. "
@@ -669,6 +686,148 @@ async def lifestyle_today(user=Depends(get_current_user)):
     today = datetime.now(timezone.utc).date().isoformat()
     doc = await db.lifestyle.find_one({"user_id": user["id"], "date": today}, {"_id": 0})
     return doc or {"date": today, "user_id": user["id"]}
+
+
+# ========= PERSONALIZED RECIPES (Spoonacular + Condition Rules) =========
+@api_router.get("/recipes/personalized")
+async def personalized_recipes(user=Depends(get_current_user)):
+    """
+    Fetch recipes personalised for the user's conditions, preferences, and dietary type.
+    Pipeline:
+      1. Call Spoonacular with user's cuisine/diet/allergy/time preferences (cached 30 days)
+      2. Apply clinical condition rules to filter out unsafe recipes
+      3. Return normalized recipes with condition tags and explanations
+    Falls back to seed_data if Spoonacular is unavailable or unconfigured.
+    """
+    conditions = user.get("conditions") or ([user["condition"]] if user.get("condition") else [])
+
+    # Try Spoonacular first
+    raw_recipes = await fetch_personalized_recipes(user, db)
+
+    if raw_recipes:
+        # Apply condition rule engine
+        safe_recipes = filter_for_conditions(raw_recipes, conditions)
+
+        # Normalize to app format
+        normalized = []
+        for recipe in safe_recipes[:12]:
+            norm = normalize_spoonacular_recipe(recipe)
+            if conditions:
+                norm["why_this_works"] = generate_why_this_works(recipe, conditions)
+            normalized.append(norm)
+
+        if normalized:
+            return normalized
+
+    # Fallback: seed_data filtered by conditions
+    seed = get_all_recipes()
+    if conditions:
+        seed = [r for r in seed if any(c in r.get("conditions", []) for c in conditions)]
+    return seed[:12]
+
+
+# ========= ONBOARDING PLAN GENERATION =========
+ONBOARDING_PLAN_SYSTEM = """You are a certified clinical nutritionist AI for NutriVerse — a health-first nutrition app.
+Based on the user's health conditions, condition-specific answers, and lifestyle data, generate a personalized health plan.
+
+OUTPUT must be valid JSON with this exact shape (no other text, no markdown fences):
+{
+  "summary": "2-3 sentence personalized health summary addressing their specific conditions and goals.",
+  "daily_calories": <integer>,
+  "macros": {"protein_g": <int>, "carbs_g": <int>, "fat_g": <int>},
+  "food_rules": [
+    "Short actionable rule 1 (e.g., Avoid refined sugar — stabilises blood glucose)",
+    "Short actionable rule 2",
+    "Short actionable rule 3"
+  ],
+  "foods_to_eat": ["food1", "food2", "food3", "food4", "food5"],
+  "foods_to_avoid": ["food1", "food2", "food3"],
+  "first_week_recipe_ids": ["<id1>", "<id2>", "<id3>", "<id4>", "<id5>"]
+}
+
+Rules:
+- food_rules must be specific to the user's exact condition combination
+- first_week_recipe_ids must come ONLY from the provided recipes_pool
+- Be clinically accurate but easy to understand"""
+
+
+class OnboardingPlanRequest(BaseModel):
+    conditions: List[str]
+    condition_answers: Dict[str, Any]
+    dietary_type: str
+    allergies: List[str]
+    cooking_ability: str
+    budget: str
+    goal_30day: str
+    age: Optional[int] = None
+    gender: Optional[str] = None
+    weight_kg: Optional[float] = None
+    height_cm: Optional[float] = None
+    activity_level: Optional[str] = None
+
+
+@api_router.post("/onboarding/generate-plan")
+async def generate_onboarding_plan(body: OnboardingPlanRequest, user=Depends(get_current_user)):
+    all_recipes = get_all_recipes()
+    conditions_set = set(body.conditions)
+    pool = [
+        r for r in all_recipes
+        if any(c in r.get("conditions", []) for c in conditions_set) or r.get("category") == "healthcare"
+    ][:40]
+    pool_summary = [{"id": r["id"], "title": r["title"], "conditions": r.get("conditions", [])} for r in pool]
+
+    user_text = (
+        f"conditions: {body.conditions}\n"
+        f"condition_answers: {json.dumps(body.condition_answers)}\n"
+        f"dietary_type: {body.dietary_type} | allergies: {body.allergies}\n"
+        f"cooking_ability: {body.cooking_ability} | budget: {body.budget}\n"
+        f"goal_30day: {body.goal_30day}\n"
+        f"age: {body.age} | gender: {body.gender} | weight_kg: {body.weight_kg} | height_cm: {body.height_cm}\n"
+        f"activity_level: {body.activity_level}\n"
+        f"recipes_pool: {json.dumps(pool_summary)}"
+    )
+
+    try:
+        response = await anthropic_client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=1024,
+            system=ONBOARDING_PLAN_SYSTEM,
+            messages=[{"role": "user", "content": user_text}],
+        )
+        plan = _extract_json(response.content[0].text)
+    except Exception:
+        logging.exception("Onboarding plan AI failed, using fallback")
+        plan = None
+
+    if not plan:
+        tdee = calc_tdee(
+            body.age or 30, body.gender or "female",
+            body.weight_kg or 65, body.height_cm or 165,
+            body.activity_level or "moderate", "maintain",
+        )
+        fallback_ids = [r["id"] for r in pool[:5]]
+        plan = {
+            "summary": f"Your plan is tailored for {', '.join(body.conditions)}. Focus on whole foods, consistent meal timing, and staying hydrated.",
+            "daily_calories": tdee["target_calories"],
+            "macros": {"protein_g": tdee["protein_g"], "carbs_g": tdee["carbs_g"], "fat_g": tdee["fat_g"]},
+            "food_rules": [
+                "Eat balanced meals every 3-4 hours to maintain energy",
+                "Prioritise whole grains over refined carbohydrates",
+                "Include a protein source in every meal",
+            ],
+            "foods_to_eat": ["lentils", "leafy greens", "oats", "curd", "nuts"],
+            "foods_to_avoid": ["refined sugar", "processed foods", "fried snacks"],
+            "first_week_recipe_ids": fallback_ids,
+        }
+
+    # Save health_plan to user profile
+    await db.users.update_one(
+        {"id": user["id"]},
+        {"$set": {"health_plan": plan, "conditions": body.conditions, "condition_answers": body.condition_answers,
+                  "dietary_type": body.dietary_type, "allergies": body.allergies,
+                  "cooking_ability": body.cooking_ability, "budget": body.budget, "goal_30day": body.goal_30day}},
+    )
+    return plan
 
 
 # Wire up

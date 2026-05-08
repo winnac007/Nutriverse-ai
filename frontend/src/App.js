@@ -16,7 +16,6 @@ import MealPlan from "./pages/MealPlan";
 import Track from "./pages/Track";
 import Profile from "./pages/Profile";
 import StoryMap from "./pages/StoryMap";
-import Healthcare from "./pages/Healthcare";
 
 function OnboardingGuard({ children }) {
   const { user, loading } = useAuth();
@@ -43,7 +42,6 @@ function App() {
               <Route path="track" element={<Track />} />
               <Route path="profile" element={<Profile />} />
               <Route path="storymap" element={<StoryMap />} />
-              <Route path="healthcare" element={<Healthcare />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
