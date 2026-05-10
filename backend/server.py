@@ -1,3 +1,4 @@
+import urllib.parse
 from fastapi import FastAPI, APIRouter, HTTPException, Depends, Header
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -25,9 +26,34 @@ from spoonacular import fetch_personalized_recipes, normalize_spoonacular_recipe
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+# Robust MongoDB Connection
+MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+DB_NAME = os.environ.get('DB_NAME', 'nutriverse')
+
+def create_mongo_client(uri: str):
+    """Safely creates a Motor client, handling special characters in credentials."""
+    try:
+        return AsyncIOMotorClient(uri)
+    except Exception:
+        # If it fails, try to encode the password part
+        if uri.startswith("mongodb") and "@" in uri:
+            try:
+                prefix, rest = uri.split("://", 1)
+                user_pass, host_rest = rest.rsplit("@", 1)
+                if ":" in user_pass:
+                    user, password = user_pass.split(":", 1)
+                    # Only quote if it looks like it hasn't been quoted
+                    # (crude check: if it contains special chars but no %)
+                    if any(c in password for c in ":/@#[]?"):
+                        safe_pass = urllib.parse.quote_plus(password)
+                        new_uri = f"{prefix}://{user}:{safe_pass}@{host_rest}"
+                        return AsyncIOMotorClient(new_uri)
+            except Exception:
+                pass
+        raise
+
+client = create_mongo_client(MONGO_URL)
+db = client[DB_NAME]
 
 JWT_SECRET = os.environ.get('JWT_SECRET', 'nutriverse-dev-secure-key-32-chars-long')
 JWT_ALG = "HS256"
@@ -41,7 +67,7 @@ if GEMINI_API_KEY:
     gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 
-async def call_ai(system_prompt: str, user_prompt: str, max_tokens: int = 2048, model_gemini: str = "gemini-3-pro-preview", model_anthropic: str = "claude-3-5-sonnet-20240620", response_mime_type: str = None):
+async def call_ai(system_prompt: str, user_prompt: str, max_tokens: int = 2048, model_gemini: str = "gemini-2.5-flash", model_anthropic: str = "claude-3-5-sonnet-20240620", response_mime_type: str = None):
     """
     Tries Gemini first, falls back to Anthropic.
     """
