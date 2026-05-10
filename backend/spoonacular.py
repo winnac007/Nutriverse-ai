@@ -227,6 +227,64 @@ async def fetch_personalized_recipes(user: Dict[str, Any], db) -> List[Dict[str,
     return recipes
 
 
+async def search_recipes(
+    query: Optional[str] = None,
+    cuisine: Optional[str] = None,
+    diet: Optional[str] = None,
+    intolerances: Optional[str] = None,
+    type: Optional[str] = None,
+    maxReadyTime: Optional[int] = None,
+    number: int = 12,
+    db = None
+) -> List[Dict[str, Any]]:
+    """Generic search for Spoonacular recipes with caching."""
+    if not SPOONACULAR_API_KEY:
+        return []
+
+    params = {
+        "apiKey": SPOONACULAR_API_KEY,
+        "query": query,
+        "cuisine": cuisine,
+        "diet": diet,
+        "intolerances": intolerances,
+        "type": type,
+        "maxReadyTime": maxReadyTime,
+        "number": number,
+        "addRecipeNutrition": True,
+        "addRecipeInformation": True,
+        "fillIngredients": True,
+    }
+    # Remove None values
+    params = {k: v for k, v in params.items() if v is not None}
+    
+    key = f"search_{_cache_key(params)}"
+
+    if db is not None:
+        cached = await db.spoonacular_cache.find_one({"cache_key": key})
+        if cached:
+            return cached.get("recipes", [])
+
+    try:
+        resp = requests.get(f"{SPOONACULAR_BASE}/recipes/complexSearch", params=params, timeout=10)
+        resp.raise_for_status()
+        results = resp.json().get("results", [])
+        
+        if db is not None:
+            await db.spoonacular_cache.update_one(
+                {"cache_key": key},
+                {"$set": {
+                    "cache_key": key,
+                    "recipes": results,
+                    "cached_at": datetime.now(timezone.utc).isoformat()
+                }},
+                upsert=True
+            )
+        return results
+    except Exception as e:
+        logger.error(f"Spoonacular search error: {e}")
+        return []
+
+
 def normalize_spoonacular_recipe(recipe: Dict[str, Any]) -> Dict[str, Any]:
     """
     Convert a Spoonacular recipe object to the app's internal recipe format

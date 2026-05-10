@@ -21,7 +21,7 @@ from google.genai import types
 from seed_data import get_all_recipes, get_recipe
 from healthcare_data import CONDITIONS, COMMON_CONDITIONS, SWAPS
 from condition_rules import filter_for_conditions, generate_why_this_works, resolve_macro_conflicts
-from spoonacular import fetch_personalized_recipes, normalize_spoonacular_recipe
+from spoonacular import fetch_personalized_recipes, normalize_spoonacular_recipe, search_recipes
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -104,6 +104,17 @@ async def call_ai(system_prompt: str, user_prompt: str, max_tokens: int = 2048, 
             logging.exception("Anthropic AI failed")
 
     raise Exception("All AI providers failed")
+
+
+def load_prompt(name: str) -> str:
+    """Load a system prompt from the prompts directory."""
+    try:
+        path = ROOT_DIR / "prompts" / f"{name}.txt"
+        if path.exists():
+            return path.read_text().strip()
+    except Exception:
+        logging.error(f"Failed to load prompt: {name}")
+    return ""
 
 
 app = FastAPI(title="NutriVerse API")
@@ -351,6 +362,28 @@ async def list_recipes(
     budget: Optional[str] = None,  # "100" | "200" | "300" — filters by cost_per_serving
     search: Optional[str] = None,
 ):
+    # Try Spoonacular first
+    if SPOONACULAR_API_KEY:
+        spoon_results = await search_recipes(
+            query=search or condition or goal,
+            cuisine=country or region,
+            type=category,
+            number=20,
+            db=db
+        )
+        if spoon_results:
+            normalized = [normalize_spoonacular_recipe(r) for r in spoon_results]
+            # Apply local filters if specific ones provided
+            if tier:
+                normalized = [r for r in normalized if r.get("tier") == tier]
+            if budget:
+                try:
+                    b_val = int(budget)
+                    normalized = [r for r in normalized if (r.get("nutrition", {}).get("calories") or 0) <= b_val * 2] # crude budget proxy
+                except: pass
+            return normalized
+
+    # Fallback to Seed Data
     recipes = get_all_recipes()
     if category:
         recipes = [r for r in recipes if r["category"] == category]
@@ -621,34 +654,7 @@ async def save_meal_plan(body: SaveMealPlan, user=Depends(get_current_user)):
 
 
 # ========= SMART AI MEAL PLANNER (preview-then-paywall) =========
-SMART_PLANNER_SYSTEM = """You are a certified nutritionist and fitness coach AI for NutriVerse.
-Analyze the user's personal data and generate a highly personalized nutrition plan.
-
-OUTPUT must be valid JSON with this exact shape (no other text, no markdown fences):
-{
-  "analysis": "3-4 line analysis of the user's body condition, goals, and recommended approach.",
-  "calorie_estimate": <integer>,
-  "macros": {"protein_g": <int>, "carbs_g": <int>, "fat_g": <int>},
-  "preview_meal": {
-    "meal_type": "breakfast|lunch|dinner",
-    "title": "<dish name>",
-    "calories": <int>,
-    "ingredients": ["<short item list>"],
-    "reasoning": "<one-sentence why this meal>"
-  },
-  "weekly_plan": [
-    {"day":"Mon","breakfast":{"recipe_id":"<id>","reason":"..."},"lunch":{"recipe_id":"<id>","reason":"..."},"dinner":{"recipe_id":"<id>","reason":"..."}},
-    ... 7 entries Mon..Sun
-  ],
-  "grocery_list": ["item1","item2",...],
-  "weekly_variations": ["short variation tip 1","tip 2","tip 3"]
-}
-
-Rules:
-- Use ONLY recipe_ids from the recipes_pool the user provides.
-- Match user's body_type, condition, goal, allergies, dietary_prefs, location, budget, cooking_ability.
-- Use proper nutritional vocabulary; be concise and practical.
-- Indian users: prefer Indian recipes; otherwise prefer their region's cuisine."""
+SMART_PLANNER_SYSTEM = load_prompt("smart_planner")
 
 
 def _extract_json(text: str):
@@ -807,16 +813,7 @@ async def smart_plan(body: AIPlanRequest, user=Depends(get_current_user)):
 
 
 # ========= ADAPTIVE AI COACH (Premium ask-anything) =========
-COACH_SYSTEM = """You are an adaptive AI lifestyle and nutrition coach for NutriVerse Premium users.
-Behavior:
-- Be concise (max 6 short sentences), practical, personalized
-- Act like a real coach, not a generic assistant
-- Focus on sustainability over perfection
-- Adapt tone based on the user's emotional/physical state
-- For "I ate unhealthy" type messages, use Reality Mode: rebalance remaining meals without judgment
-- For "What should I eat now?" answer with a specific food + portion + simple reason
-- Suggest sleep/hydration/light-activity tips when relevant
-Return plain text only — no JSON, no markdown fences."""
+COACH_SYSTEM = load_prompt("coach")
 
 
 @api_router.post("/ai/coach")
@@ -931,28 +928,7 @@ async def personalized_recipes(user=Depends(get_current_user)):
 
 
 # ========= ONBOARDING PLAN GENERATION =========
-ONBOARDING_PLAN_SYSTEM = """You are a certified clinical nutritionist AI for NutriVerse — a health-first nutrition app.
-Based on the user's health conditions, condition-specific answers, and lifestyle data, generate a personalized health plan.
-
-OUTPUT must be valid JSON with this exact shape (no other text, no markdown fences):
-{
-  "summary": "2-3 sentence personalized health summary addressing their specific conditions and goals.",
-  "daily_calories": <integer>,
-  "macros": {"protein_g": <int>, "carbs_g": <int>, "fat_g": <int>},
-  "food_rules": [
-    "Short actionable rule 1 (e.g., Avoid refined sugar — stabilises blood glucose)",
-    "Short actionable rule 2",
-    "Short actionable rule 3"
-  ],
-  "foods_to_eat": ["food1", "food2", "food3", "food4", "food5"],
-  "foods_to_avoid": ["food1", "food2", "food3"],
-  "first_week_recipe_ids": ["<id1>", "<id2>", "<id3>", "<id4>", "<id5>"]
-}
-
-Rules:
-- food_rules must be specific to the user's exact condition combination
-- first_week_recipe_ids must come ONLY from the provided recipes_pool
-- Be clinically accurate but easy to understand"""
+ONBOARDING_PLAN_SYSTEM = load_prompt("onboarding_plan")
 
 
 class OnboardingPlanRequest(BaseModel):
@@ -972,12 +948,34 @@ class OnboardingPlanRequest(BaseModel):
 
 @api_router.post("/onboarding/generate-plan")
 async def generate_onboarding_plan(body: OnboardingPlanRequest, user=Depends(get_current_user)):
-    all_recipes = get_all_recipes()
-    conditions_set = set(body.conditions)
-    pool = [
-        r for r in all_recipes
-        if any(c in r.get("conditions", []) for c in conditions_set) or r.get("category") == "healthcare"
-    ][:40]
+    # Fetch from Spoonacular instead of seed data
+    pool = []
+    if SPOONACULAR_API_KEY:
+        # Mock a user object for fetch_personalized_recipes
+        mock_user = {
+            "id": user["id"],
+            "conditions": body.conditions,
+            "dietary_type": body.dietary_type,
+            "allergies": body.allergies,
+            "cooking_ability": body.cooking_ability,
+            "location": user.get("location"),
+            "preferences": user.get("preferences", {})
+        }
+        raw_pool = await fetch_personalized_recipes(mock_user, db)
+        if raw_pool:
+            # Apply clinical filters
+            safe_pool = filter_for_conditions(raw_pool, body.conditions)
+            pool = [normalize_spoonacular_recipe(r) for r in safe_pool[:40]]
+
+    # Fallback to seed data if API fails or no results
+    if not pool:
+        all_recipes = get_all_recipes()
+        conditions_set = set(body.conditions)
+        pool = [
+            r for r in all_recipes
+            if any(c in r.get("conditions", []) for c in conditions_set) or r.get("category") == "healthcare"
+        ][:40]
+
     pool_summary = [{"id": r["id"], "title": r["title"], "conditions": r.get("conditions", [])} for r in pool]
 
     user_text = (
