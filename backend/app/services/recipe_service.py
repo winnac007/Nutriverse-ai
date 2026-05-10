@@ -145,7 +145,7 @@ async def search_recipes(
     query: Optional[str] = None, cuisine: Optional[str] = None,
     diet: Optional[str] = None, intolerances: Optional[str] = None,
     type: Optional[str] = None, maxReadyTime: Optional[int] = None,
-    number: int = 12, db = None
+    number: int = 12, offset: int = 0, db = None
 ) -> List[Dict[str, Any]]:
     if not settings.SPOONACULAR_API_KEY:
         logger.warning("search_recipes: SPOONACULAR_API_KEY is missing")
@@ -154,7 +154,7 @@ async def search_recipes(
     params = {
         "apiKey": settings.SPOONACULAR_API_KEY, "query": query, "cuisine": cuisine,
         "diet": diet, "intolerances": intolerances, 
-        "maxReadyTime": maxReadyTime, "number": number,
+        "maxReadyTime": maxReadyTime, "number": number, "offset": offset,
         "addRecipeNutrition": True, "addRecipeInformation": True, "fillIngredients": True,
         "sort": "healthiness",
     }

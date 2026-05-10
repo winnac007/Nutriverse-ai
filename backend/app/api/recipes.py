@@ -18,6 +18,7 @@ async def list_recipes(
     tier: Optional[str] = None,
     budget: Optional[str] = None,
     search: Optional[str] = None,
+    offset: int = 0,
 ):
     active_category = category if category and category != "all" else "healthcare"
 
@@ -26,7 +27,8 @@ async def list_recipes(
             query=search or condition or goal,
             cuisine=country or region,
             type=category if category != "all" else None,
-            number=20,
+            number=12,
+            offset=offset,
             db=db
         )
         if spoon_results:
