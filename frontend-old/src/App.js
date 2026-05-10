@@ -13,6 +13,10 @@ import Explore from "./pages/Explore";
 import Category from "./pages/Category";
 import RecipeDetail from "./pages/RecipeDetail";
 import MealPlan from "./pages/MealPlan";
+import DailyPlan from "./pages/DailyPlan";
+import FoodGuidelines from "./pages/FoodGuidelines";
+import GroceryList from "./pages/GroceryList";
+import Progress from "./pages/Progress";
 import Track from "./pages/Track";
 import Profile from "./pages/Profile";
 import StoryMap from "./pages/StoryMap";
@@ -39,6 +43,10 @@ function App() {
               <Route path="category/:cat" element={<Category />} />
               <Route path="recipe/:id" element={<RecipeDetail />} />
               <Route path="meal-plan" element={<MealPlan />} />
+              <Route path="daily-plan" element={<DailyPlan />} />
+              <Route path="food-guidelines" element={<FoodGuidelines />} />
+              <Route path="grocery" element={<GroceryList />} />
+              <Route path="progress" element={<Progress />} />
               <Route path="track" element={<Track />} />
               <Route path="profile" element={<Profile />} />
               <Route path="storymap" element={<StoryMap />} />

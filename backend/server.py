@@ -14,10 +14,12 @@ import jwt
 import json
 import re
 import anthropic
+from google import genai
+from google.genai import types
 
 from seed_data import get_all_recipes, get_recipe
-from healthcare_data import CONDITIONS, SWAPS
-from condition_rules import filter_for_conditions, generate_why_this_works
+from healthcare_data import CONDITIONS, COMMON_CONDITIONS, SWAPS
+from condition_rules import filter_for_conditions, generate_why_this_works, resolve_macro_conflicts
 from spoonacular import fetch_personalized_recipes, normalize_spoonacular_recipe
 
 ROOT_DIR = Path(__file__).parent
@@ -27,11 +29,56 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-JWT_SECRET = os.environ.get('JWT_SECRET', 'nutriverse-dev')
+JWT_SECRET = os.environ.get('JWT_SECRET', 'nutriverse-dev-secure-key-32-chars-long')
 JWT_ALG = "HS256"
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
 SPOONACULAR_API_KEY = os.environ.get('SPOONACULAR_API_KEY', '')
 anthropic_client = anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+gemini_client = None
+if GEMINI_API_KEY:
+    gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+
+
+async def call_ai(system_prompt: str, user_prompt: str, max_tokens: int = 2048, model_gemini: str = "gemini-3-pro-preview", model_anthropic: str = "claude-3-5-sonnet-20240620", response_mime_type: str = None):
+    """
+    Tries Gemini first, falls back to Anthropic.
+    """
+    # Try Gemini
+    if gemini_client:
+        try:
+            config = {
+                "system_instruction": system_prompt,
+                "max_output_tokens": max_tokens,
+            }
+            if response_mime_type:
+                config["response_mime_type"] = response_mime_type
+
+            response = await gemini_client.aio.models.generate_content(
+                model=model_gemini,
+                contents=user_prompt,
+                config=types.GenerateContentConfig(**config)
+            )
+            return response.text
+        except Exception:
+            logging.exception("Gemini AI failed, falling back to Anthropic")
+
+    # Fallback to Anthropic
+    if ANTHROPIC_API_KEY:
+        try:
+            response = await anthropic_client.messages.create(
+                model=model_anthropic,
+                max_tokens=max_tokens,
+                system=system_prompt,
+                messages=[{"role": "user", "content": user_prompt}],
+            )
+            return response.content[0].text
+        except Exception:
+            logging.exception("Anthropic AI failed")
+
+    raise Exception("All AI providers failed")
+
 
 app = FastAPI(title="NutriVerse API")
 api_router = APIRouter(prefix="/api")
@@ -112,6 +159,23 @@ class AIPlanRequest(BaseModel):
 
 class CoachAsk(BaseModel):
     question: str
+
+
+class MealSwapRequest(BaseModel):
+    day: str
+    meal_type: str
+    current_recipe_id: str
+
+
+class UpdateMealRequest(BaseModel):
+    day: str
+    meal_type: str
+    recipe_id: str
+
+
+class WeightLog(BaseModel):
+    weight_kg: float
+    note: Optional[str] = None
 
 
 # ============ AUTH HELPERS ============
@@ -220,6 +284,13 @@ async def update_profile(body: ProfileUpdate, user=Depends(get_current_user)):
     update = {k: v for k, v in body.model_dump(exclude_unset=True).items() if v is not None}
     if update:
         await db.users.update_one({"id": user["id"]}, {"$set": update})
+        # Invalidate meal plan if diet-critical fields changed
+        plan_invalidating_fields = {"conditions", "dietary_type", "allergies", "goal_30day", "budget"}
+        if plan_invalidating_fields & set(update.keys()):
+            await db.meal_plans.update_one(
+                {"user_id": user["id"]},
+                {"$set": {"invalidated": True}},
+            )
     return await db.users.find_one({"id": user["id"]}, {"_id": 0, "password": 0})
 
 
@@ -251,6 +322,7 @@ async def list_recipes(
     goal: Optional[str] = None,
     tag: Optional[str] = None,
     tier: Optional[str] = None,  # budget | premium
+    budget: Optional[str] = None,  # "100" | "200" | "300" — filters by cost_per_serving
     search: Optional[str] = None,
 ):
     recipes = get_all_recipes()
@@ -268,6 +340,12 @@ async def list_recipes(
         recipes = [r for r in recipes if tag in r.get("tags", [])]
     if tier:
         recipes = [r for r in recipes if r.get("tier") == tier]
+    if budget:
+        try:
+            budget_val = int(budget)
+            recipes = [r for r in recipes if (r.get("cost_per_serving") or 0) <= budget_val or r.get("tier") == "budget"]
+        except ValueError:
+            pass
     if search:
         s = search.lower()
         recipes = [r for r in recipes if s in r["title"].lower()
@@ -310,13 +388,68 @@ async def calculate_tdee(body: TDEERequest):
 # ========= HEALTHCARE HUB =========
 @api_router.get("/healthcare/conditions")
 async def healthcare_conditions():
-    """Conditions list with recipe counts."""
+    """Common conditions list (backward-compatible 8 conditions) with recipe counts."""
     recipes = [r for r in get_all_recipes() if r.get("category") == "healthcare"]
     out = []
-    for c in CONDITIONS:
+    for c in COMMON_CONDITIONS:
         count = sum(1 for r in recipes if c["id"] in r.get("conditions", []))
         out.append({**c, "recipe_count": count})
     return out
+
+
+@api_router.get("/healthcare/conditions/all")
+async def all_conditions():
+    """Full conditions list across all 10 categories."""
+    return CONDITIONS
+
+
+@api_router.get("/healthcare/conditions/search")
+async def search_conditions(q: Optional[str] = None, category: Optional[str] = None):
+    """Search conditions by name or keyword; optionally filter by category."""
+    pool = CONDITIONS
+    if category:
+        pool = [c for c in pool if c.get("category") == category]
+    if q:
+        q_lower = q.lower()
+        pool = [
+            c for c in pool
+            if q_lower in c["label"].lower()
+            or any(q_lower in kw for kw in c.get("keywords", []))
+            or q_lower in c.get("blurb", "").lower()
+            or q_lower in (c.get("category") or "").lower()
+        ]
+    return pool
+
+
+@api_router.get("/healthcare/food-guidelines")
+async def food_guidelines(conditions: Optional[str] = None, user=Depends(get_current_user)):
+    """
+    Structured per-condition food guidelines.
+    Falls back to user's conditions if ?conditions param omitted.
+    """
+    if conditions:
+        cond_list = [c.strip() for c in conditions.split(",") if c.strip()]
+    else:
+        cond_list = user.get("conditions") or ([user["condition"]] if user.get("condition") else [])
+
+    cond_map = {c["id"]: c for c in CONDITIONS}
+    result = {}
+    for cid in cond_list:
+        cdata = cond_map.get(cid)
+        if not cdata:
+            continue
+        # Merge health_plan foods if available (AI-generated from onboarding)
+        health_plan = user.get("health_plan") or {}
+        result[cid] = {
+            "id": cid,
+            "label": cdata["label"],
+            "foods_to_eat": cdata.get("foods_to_eat", []),
+            "foods_to_avoid": cdata.get("foods_to_avoid", []),
+            "food_rules": cdata.get("food_rules", []),
+            "plan_foods_to_eat": health_plan.get("foods_to_eat", []),
+            "plan_foods_to_avoid": health_plan.get("foods_to_avoid", []),
+        }
+    return result
 
 
 @api_router.get("/healthcare/recipes")
@@ -435,7 +568,19 @@ async def delete_log(log_id: str, user=Depends(get_current_user)):
 @api_router.get("/meal-plan")
 async def get_meal_plan(user=Depends(get_current_user)):
     plan = await db.meal_plans.find_one({"user_id": user["id"]}, {"_id": 0})
-    return plan or {"user_id": user["id"], "items": []}
+    if not plan:
+        return {"user_id": user["id"], "items": []}
+    # Signal to frontend whether the plan needs refreshing
+    needs_refresh = bool(plan.get("invalidated"))
+    if not needs_refresh and plan.get("updated_at"):
+        try:
+            updated = datetime.fromisoformat(plan["updated_at"].replace("Z", "+00:00"))
+            if datetime.now(timezone.utc) - updated > timedelta(days=7):
+                needs_refresh = True
+        except Exception:
+            pass
+    plan["needs_refresh"] = needs_refresh
+    return plan
 
 
 @api_router.post("/meal-plan")
@@ -481,19 +626,53 @@ Rules:
 
 
 def _extract_json(text: str):
+    """
+    Robustly extracts and parses JSON from text, handling markdown fences and common AI errors.
+    """
+    if not text:
+        return None
+        
     # Strip markdown fences
     text = re.sub(r"```(?:json)?", "", text).strip("` \n")
-    m = re.search(r"\{.*\}", text, re.DOTALL)
-    return json.loads(m.group(0)) if m else None
+    
+    # Find the outer-most JSON structure
+    start_brace = text.find('{')
+    start_bracket = text.find('[')
+    
+    if start_brace == -1 and start_bracket == -1:
+        return None
+        
+    start = start_brace if (start_bracket == -1 or (start_brace != -1 and start_brace < start_bracket)) else start_bracket
+    
+    end_brace = text.rfind('}')
+    end_bracket = text.rfind(']')
+    end = end_brace if (end_bracket == -1 or (end_brace != -1 and end_brace > end_bracket)) else end_bracket
+    
+    if start != -1 and end != -1:
+        text = text[start:end+1]
+    
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        # Attempt to fix common missing comma issue
+        try:
+            # Fix missing comma between fields: "field": "value" "next_field":
+            fixed = re.sub(r'("[\w]+"\s*:\s*(?:"[^"]*"|\d+|true|false|null))\s*("\w+"\s*:)', r'\1,\2', text)
+            return json.loads(fixed)
+        except Exception:
+            logging.error(f"JSON extraction failed for text: {text[:200]}...")
+            return None
 
 
 def _user_profile_text(user: Dict[str, Any]) -> str:
+    conditions = user.get("conditions") or ([user["condition"]] if user.get("condition") else [])
     return (
         f"name: {user.get('name')}\n"
         f"age: {user.get('age')} | gender: {user.get('gender')} | "
         f"weight: {user.get('weight_kg')}kg | height: {user.get('height_cm')}cm | "
         f"body_type: {user.get('body_type') or 'unknown'}\n"
-        f"category: {user.get('category')} | goal: {user.get('goal')} | condition: {user.get('condition') or 'none'}\n"
+        f"category: {user.get('category')} | goal: {user.get('goal')}\n"
+        f"conditions: {conditions}\n"
         f"activity: {user.get('activity_level')} | location: {user.get('location') or user.get('city')}, {user.get('country')}\n"
         f"dietary_prefs: {user.get('dietary_prefs')} | allergies: {user.get('allergies')}\n"
         f"timeline_weeks: {user.get('timeline_weeks')} | cooking: {user.get('cooking_ability')} | budget: {user.get('budget')}\n"
@@ -520,13 +699,13 @@ async def smart_plan(body: AIPlanRequest, user=Depends(get_current_user)):
     )
 
     try:
-        response = await anthropic_client.messages.create(
-            model="claude-sonnet-4-6",
+        raw = await call_ai(
+            system_prompt=SMART_PLANNER_SYSTEM,
+            user_prompt=user_text,
             max_tokens=4096,
-            system=SMART_PLANNER_SYSTEM,
-            messages=[{"role": "user", "content": user_text}],
+            model_anthropic="claude-3-5-sonnet-20240620",
+            response_mime_type="application/json"
         )
-        raw = response.content[0].text
         plan = _extract_json(raw)
     except Exception:
         logging.exception("AI plan failed, falling back")
@@ -631,13 +810,12 @@ async def ai_coach(body: CoachAsk, user=Depends(get_current_user)):
         + f"\n\ntoday_logs_count: {len(logs)}\ntoday_totals: {totals}\nuser_question: {body.question}"
     )
     try:
-        response = await anthropic_client.messages.create(
-            model="claude-sonnet-4-6",
+        reply = await call_ai(
+            system_prompt=COACH_SYSTEM,
+            user_prompt=context,
             max_tokens=512,
-            system=COACH_SYSTEM,
-            messages=[{"role": "user", "content": context}],
+            model_anthropic="claude-3-5-sonnet-20240620"
         )
-        reply = response.content[0].text
     except Exception:
         logging.exception("Coach AI failed")
         reply = ("Got it — keep it simple right now: a bowl of dal with rice or a protein smoothie. "
@@ -788,13 +966,14 @@ async def generate_onboarding_plan(body: OnboardingPlanRequest, user=Depends(get
     )
 
     try:
-        response = await anthropic_client.messages.create(
-            model="claude-sonnet-4-6",
+        raw = await call_ai(
+            system_prompt=ONBOARDING_PLAN_SYSTEM,
+            user_prompt=user_text,
             max_tokens=1024,
-            system=ONBOARDING_PLAN_SYSTEM,
-            messages=[{"role": "user", "content": user_text}],
+            model_anthropic="claude-3-5-sonnet-20240620",
+            response_mime_type="application/json"
         )
-        plan = _extract_json(response.content[0].text)
+        plan = _extract_json(raw)
     except Exception:
         logging.exception("Onboarding plan AI failed, using fallback")
         plan = None
@@ -820,6 +999,13 @@ async def generate_onboarding_plan(body: OnboardingPlanRequest, user=Depends(get
             "first_week_recipe_ids": fallback_ids,
         }
 
+    # Apply conflict resolution to macros
+    if plan.get("macros"):
+        resolved_macros, trade_offs = resolve_macro_conflicts(body.conditions, plan["macros"])
+        plan["macros"] = resolved_macros
+        if trade_offs:
+            plan["conflict_notes"] = trade_offs
+
     # Save health_plan to user profile
     await db.users.update_one(
         {"id": user["id"]},
@@ -828,6 +1014,161 @@ async def generate_onboarding_plan(body: OnboardingPlanRequest, user=Depends(get
                   "cooking_ability": body.cooking_ability, "budget": body.budget, "goal_30day": body.goal_30day}},
     )
     return plan
+
+
+# ========= MEAL SWAP =========
+@api_router.post("/meal-plan/swap")
+async def meal_swap(body: MealSwapRequest, user=Depends(get_current_user)):
+    """Return up to 3 calorie-matched, condition-safe swap candidates."""
+    # Get current recipe to know its calorie target
+    current = get_recipe(body.current_recipe_id)
+    target_cal = (current["nutrition"]["calories"] if current else 400)
+    cal_lo, cal_hi = target_cal * 0.85, target_cal * 1.15
+
+    # Load all recipes and apply condition filter
+    conditions = user.get("conditions") or ([user["condition"]] if user.get("condition") else [])
+    pool = get_all_recipes()
+
+    # Get current week's plan to exclude already-used recipes
+    plan = await db.meal_plans.find_one({"user_id": user["id"]}, {"_id": 0})
+    used_ids = {item["recipe_id"] for item in (plan or {}).get("items", [])}
+    used_ids.discard(body.current_recipe_id)  # allow swapping to current if no alternatives
+
+    # Filter: condition-safe, calorie window, not the same recipe, not already used this week
+    candidates = []
+    for r in pool:
+        if r["id"] == body.current_recipe_id:
+            continue
+        if r["id"] in used_ids:
+            continue
+        cal = r.get("nutrition", {}).get("calories", 0)
+        if not (cal_lo <= cal <= cal_hi):
+            continue
+        if conditions:
+            cond_match = any(c in r.get("conditions", []) for c in conditions)
+            if not cond_match:
+                continue
+        candidates.append(r)
+
+    # Sort by number of matching conditions, take top 3
+    candidates.sort(key=lambda r: sum(1 for c in conditions if c in r.get("conditions", [])), reverse=True)
+    return candidates[:3]
+
+
+@api_router.put("/meal-plan/update-meal")
+async def update_meal(body: UpdateMealRequest, user=Depends(get_current_user)):
+    """Swap a single meal in the stored plan. Does not invalidate the whole plan."""
+    plan = await db.meal_plans.find_one({"user_id": user["id"]}, {"_id": 0})
+    if not plan:
+        raise HTTPException(404, "No meal plan found")
+
+    items = plan.get("items", [])
+    updated = False
+    for item in items:
+        if item["day"] == body.day and item["meal_type"] == body.meal_type:
+            item["recipe_id"] = body.recipe_id
+            item["swapped"] = True
+            updated = True
+            break
+
+    if not updated:
+        items.append({"day": body.day, "meal_type": body.meal_type, "recipe_id": body.recipe_id, "swapped": True})
+
+    await db.meal_plans.update_one(
+        {"user_id": user["id"]},
+        {"$set": {"items": items, "updated_at": datetime.now(timezone.utc).isoformat()}},
+    )
+    return {"ok": True, "updated": updated}
+
+
+@api_router.get("/meal-plan/grocery-list")
+async def grocery_list(user=Depends(get_current_user)):
+    """
+    Derive a deduplicated grocery list from the current week's meal plan.
+    Returns items grouped by category.
+    """
+    plan = await db.meal_plans.find_one({"user_id": user["id"]}, {"_id": 0})
+
+    # If AI generated a grocery list, return it grouped
+    if plan and plan.get("grocery_list"):
+        raw = plan["grocery_list"]
+        # AI lists are flat strings — categorise them heuristically
+        CATEGORY_KEYWORDS = {
+            "Produce": ["spinach", "tomato", "onion", "garlic", "lemon", "ginger", "carrot", "cucumber",
+                        "broccoli", "apple", "banana", "berry", "pepper", "potato", "avocado", "lime",
+                        "cilantro", "parsley", "mint", "kale", "lettuce", "capsicum"],
+            "Protein": ["chicken", "fish", "salmon", "egg", "tofu", "lentil", "dal", "beans", "chickpea",
+                        "paneer", "tuna", "beef", "turkey", "shrimp", "lamb"],
+            "Grains": ["rice", "quinoa", "oat", "bread", "pasta", "wheat", "roti", "chapati", "millet",
+                       "barley", "buckwheat", "corn", "flour"],
+            "Dairy": ["milk", "yogurt", "curd", "ghee", "butter", "cheese", "cream"],
+            "Oils & Condiments": ["olive oil", "oil", "vinegar", "soy sauce", "mustard", "honey", "maple",
+                                  "salt", "pepper", "cumin", "turmeric", "paprika", "cinnamon", "spice"],
+            "Nuts & Seeds": ["walnut", "almond", "cashew", "peanut", "seed", "flaxseed", "chia", "pumpkin"],
+        }
+        grouped = {cat: [] for cat in CATEGORY_KEYWORDS}
+        grouped["Other"] = []
+        for item in raw:
+            item_lower = item.lower()
+            placed = False
+            for cat, keywords in CATEGORY_KEYWORDS.items():
+                if any(kw in item_lower for kw in keywords):
+                    grouped[cat].append(item)
+                    placed = True
+                    break
+            if not placed:
+                grouped["Other"].append(item)
+        return {k: v for k, v in grouped.items() if v}
+
+    # Fallback: aggregate from recipe ingredients
+    if not plan or not plan.get("items"):
+        return {}
+
+    recipe_ids = list({item["recipe_id"] for item in plan["items"]})
+    ingredient_map: Dict[str, list] = {}
+    for rid in recipe_ids:
+        recipe = get_recipe(rid)
+        if not recipe:
+            continue
+        for ing in recipe.get("ingredients", []):
+            name = ing.get("name", "")
+            amt = ing.get("amount", "")
+            key = name.lower()
+            if key not in ingredient_map:
+                ingredient_map[key] = {"name": name, "amounts": []}
+            ingredient_map[key]["amounts"].append(str(amt))
+
+    flat = [f"{v['name']} ({', '.join(v['amounts'][:2])})" for v in ingredient_map.values()]
+    return {"All Ingredients": flat}
+
+
+# ========= WEIGHT TRACKING =========
+@api_router.post("/health/weight")
+async def log_weight(body: WeightLog, user=Depends(get_current_user)):
+    today = datetime.now(timezone.utc).date().isoformat()
+    doc = {
+        "id": str(uuid.uuid4()),
+        "user_id": user["id"],
+        "weight_kg": body.weight_kg,
+        "note": body.note,
+        "date": today,
+        "logged_at": datetime.now(timezone.utc).isoformat(),
+    }
+    # Upsert by date — only one weight log per day
+    await db.weight_logs.update_one(
+        {"user_id": user["id"], "date": today},
+        {"$set": doc},
+        upsert=True,
+    )
+    return {k: v for k, v in doc.items() if k != "_id"}
+
+
+@api_router.get("/health/weight")
+async def get_weight_history(user=Depends(get_current_user)):
+    logs = await db.weight_logs.find(
+        {"user_id": user["id"]}, {"_id": 0}
+    ).sort("date", -1).to_list(30)
+    return logs
 
 
 # Wire up

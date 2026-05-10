@@ -13,6 +13,7 @@ export default function Explore() {
   const [search, setSearch] = useState("");
   const [tag, setTag] = useState("");
   const [tier, setTier] = useState("all");
+  const [budget, setBudget] = useState("all");
   const [country, setCountry] = useState("all");
   const [region, setRegion] = useState("all");
   const [countries, setCountries] = useState([]);
@@ -34,8 +35,9 @@ export default function Explore() {
     if (tier !== "all") params.tier = tier;
     if (country !== "all") params.country = country;
     if (region !== "all") params.region = region;
+    if (budget !== "all") params.budget = budget;
     api.get("/recipes", { params }).then((r) => setRecipes(r.data));
-  }, [category, search, tag, tier, country, region]);
+  }, [category, search, tag, tier, country, region, budget]);
 
   return (
     <div className="space-y-6">
@@ -85,6 +87,23 @@ export default function Explore() {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Budget filter chips */}
+      <div className="flex gap-2 overflow-x-auto pb-1 -mx-0 scrollbar-none">
+        {[
+          { v: "all", l: "Any budget" },
+          { v: "100", l: "₹100/day" },
+          { v: "200", l: "₹200/day" },
+          { v: "300", l: "₹300/day" },
+        ].map((b) => (
+          <button key={b.v} onClick={() => setBudget(b.v)}
+            className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+              budget === b.v ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground bg-card"
+            }`}>
+            {b.l}
+          </button>
+        ))}
       </div>
 
       <div className="flex gap-2 overflow-x-auto nv-scroll pb-2">

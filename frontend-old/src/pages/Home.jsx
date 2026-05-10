@@ -3,18 +3,47 @@ import { Link } from "react-router-dom";
 import api from "../lib/api";
 import { useAuth } from "../lib/auth";
 import RecipeCard from "../components/RecipeCard";
-import { ArrowRight, MapPin, Flame, Utensils, Apple, Droplets, ChevronRight, Lightbulb } from "lucide-react";
+import MedicalDisclaimer from "../components/MedicalDisclaimer";
+import { ArrowRight, MapPin, Flame, Utensils, Apple, ChevronRight, Lightbulb, Zap } from "lucide-react";
 
 // ── Condition meta ──────────────────────────────────────────────────────────
 const CONDITION_META = {
-  diabetes:          { emoji: "🩸", label: "Diabetes" },
-  "heart-disease":   { emoji: "❤️",  label: "Heart Health" },
-  thyroid:           { emoji: "🦋", label: "Thyroid" },
-  pcos:              { emoji: "🌸", label: "PCOS" },
-  "weight-management":{ emoji: "⚖️", label: "Weight Management" },
-  "gut-health":      { emoji: "🌿", label: "Gut Health" },
-  "kidney-disease":  { emoji: "💧", label: "Kidney Health" },
-  immunity:          { emoji: "🛡️",  label: "Immunity & Wellness" },
+  diabetes:              { emoji: "🩸", label: "Diabetes" },
+  "diabetes-t1":         { emoji: "🩸", label: "Diabetes T1" },
+  prediabetes:           { emoji: "🩸", label: "Pre-Diabetes" },
+  "heart-disease":       { emoji: "❤️",  label: "Heart Health" },
+  hypertension:          { emoji: "💓", label: "Blood Pressure" },
+  "high-cholesterol":    { emoji: "❤️",  label: "High Cholesterol" },
+  "high-triglycerides":  { emoji: "❤️",  label: "High Triglycerides" },
+  thyroid:               { emoji: "🦋", label: "Thyroid" },
+  hyperthyroid:          { emoji: "🦋", label: "Hyperthyroid" },
+  pcos:                  { emoji: "🌸", label: "PCOS" },
+  menopause:             { emoji: "🌸", label: "Menopause" },
+  pregnancy:             { emoji: "🤱", label: "Pregnancy" },
+  "weight-management":   { emoji: "⚖️", label: "Weight Mgmt" },
+  obesity:               { emoji: "⚖️", label: "Obesity" },
+  "gut-health":          { emoji: "🌿", label: "Gut Health" },
+  ibs:                   { emoji: "🌿", label: "IBS" },
+  gerd:                  { emoji: "🌿", label: "Acid Reflux" },
+  "fatty-liver":         { emoji: "🫀", label: "Fatty Liver" },
+  celiac:                { emoji: "🌾", label: "Coeliac" },
+  gastritis:             { emoji: "🌿", label: "Gastritis" },
+  "kidney-disease":      { emoji: "💧", label: "Kidney Health" },
+  "kidney-stones":       { emoji: "💧", label: "Kidney Stones" },
+  immunity:              { emoji: "🛡️",  label: "Immunity" },
+  "iron-deficiency":     { emoji: "🩸", label: "Iron Deficiency" },
+  "b12-deficiency":      { emoji: "✨", label: "B12 Deficiency" },
+  "vitamin-d":           { emoji: "☀️",  label: "Vitamin D" },
+  "calcium-deficiency":  { emoji: "🦴", label: "Calcium Deficiency" },
+  "gluten-intolerance":  { emoji: "🌾", label: "Gluten Intolerance" },
+  "lactose-intolerance": { emoji: "🥛", label: "Lactose Intolerance" },
+  hashimotos:            { emoji: "🦋", label: "Hashimoto's" },
+  "rheumatoid-arthritis":{ emoji: "🦴", label: "Rheumatoid Arthritis" },
+  depression:            { emoji: "🧠", label: "Depression" },
+  migraine:              { emoji: "🧠", label: "Migraine" },
+  gout:                  { emoji: "💧", label: "Gout" },
+  osteoporosis:          { emoji: "🦴", label: "Osteoporosis" },
+  "insulin-resistance":  { emoji: "🩸", label: "Insulin Resistance" },
 };
 
 // ── Daily health tips per condition (rotate by day of year) ─────────────────
@@ -99,7 +128,15 @@ function getDailyTip(conditions) {
     const tips = DAILY_TIPS[cond];
     if (tips) return { tip: tips[dayOfYear % tips.length], condition: cond };
   }
-  return { tip: "Eat whole foods, stay hydrated, and move your body daily.", condition: null };
+  // Generic fallback for conditions without specific tips
+  const genericTips = [
+    "Eat whole foods, stay hydrated, and move your body daily.",
+    "Consistent meal timing supports both metabolism and energy levels.",
+    "Include a variety of colorful vegetables at every meal for micronutrient coverage.",
+    "Sleep 7-9 hours — it's the foundation of all other health goals.",
+    "Drink water before you feel thirsty; thirst is a late sign of mild dehydration.",
+  ];
+  return { tip: genericTips[dayOfYear % genericTips.length], condition: null };
 }
 
 function getGreeting() {
@@ -132,6 +169,7 @@ export default function Home() {
   const [today, setToday] = useState({ totals: { calories: 0, protein: 0, carbs: 0, fat: 0 } });
   const [mealPlan, setMealPlan] = useState(null);
   const [planRecipes, setPlanRecipes] = useState({});
+  const [streak, setStreak] = useState(null);
 
   const conditions = user?.conditions || (user?.condition ? [user.condition] : []);
   const healthPlan = user?.health_plan;
@@ -151,6 +189,7 @@ export default function Home() {
 
     api.get("/nutrition/today").then((r) => setToday(r.data)).catch(() => {});
     api.get("/meal-plan").then((r) => setMealPlan(r.data)).catch(() => {});
+    api.get("/healthcare/streak").then((r) => setStreak(r.data)).catch(() => {});
   }, [user?.id]);
 
   // Load recipe details for today's meal plan items
@@ -236,6 +275,27 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Streak Card ── */}
+      {streak && (streak.current_streak_days > 0 || streak.meals_this_week > 0) && (
+        <section className="nv-card p-4 flex items-center gap-4 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/20 border-orange-200/60 dark:border-orange-800/40">
+          <div className="size-12 rounded-2xl bg-orange-100 dark:bg-orange-900/40 flex items-center justify-center text-2xl shrink-0">
+            🔥
+          </div>
+          <div className="flex-1">
+            <div className="font-semibold text-sm">
+              {streak.current_streak_days > 0
+                ? `${streak.current_streak_days}-day streak`
+                : "Start your streak today"}
+            </div>
+            <div className="text-xs text-muted-foreground mt-0.5">
+              {streak.meals_this_week} meal{streak.meals_this_week !== 1 ? "s" : ""} logged this week
+              {streak.distinct_recipes_this_week > 0 && ` · ${streak.distinct_recipes_this_week} different recipes`}
+            </div>
+          </div>
+          <Zap className="size-5 text-orange-400 shrink-0" />
+        </section>
+      )}
+
       {/* ── Health Plan Rules ── */}
       {healthPlan?.food_rules?.length > 0 && (
         <section className="space-y-3">
@@ -250,6 +310,7 @@ export default function Home() {
               </div>
             ))}
           </div>
+          {conditions.length > 0 && <MedicalDisclaimer variant="inline" />}
         </section>
       )}
 
@@ -346,9 +407,12 @@ export default function Home() {
       {/* ── Foods to avoid (from health plan) ── */}
       {healthPlan?.foods_to_avoid?.length > 0 && (
         <section className="nv-card p-5 space-y-3">
-          <h3 className="font-semibold text-sm flex items-center gap-1.5">
-            <span>⚠️</span> Foods to limit or avoid
-          </h3>
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-sm flex items-center gap-1.5">
+              <span>⚠️</span> Foods to limit or avoid
+            </h3>
+            <Link to="/app/food-guidelines" className="text-xs text-primary">See all</Link>
+          </div>
           <div className="flex flex-wrap gap-2">
             {healthPlan.foods_to_avoid.map((f) => (
               <span key={f} className="px-3 py-1 rounded-full bg-destructive/10 text-destructive text-xs font-medium">
@@ -362,9 +426,12 @@ export default function Home() {
       {/* ── Foods to eat (from health plan) ── */}
       {healthPlan?.foods_to_eat?.length > 0 && (
         <section className="nv-card p-5 space-y-3">
-          <h3 className="font-semibold text-sm flex items-center gap-1.5">
-            <span>✅</span> Focus foods for your conditions
-          </h3>
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-sm flex items-center gap-1.5">
+              <span>✅</span> Focus foods for your conditions
+            </h3>
+            <Link to="/app/food-guidelines" className="text-xs text-primary">Full guide</Link>
+          </div>
           <div className="flex flex-wrap gap-2">
             {healthPlan.foods_to_eat.map((f) => (
               <span key={f} className="px-3 py-1 rounded-full bg-green-500/10 text-green-700 dark:text-green-400 text-xs font-medium">

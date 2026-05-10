@@ -14,7 +14,106 @@ Rules are derived from published guidelines:
 Nutrition values from Spoonacular use per-serving amounts.
 """
 
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Tuple
+
+# ── Condition priority matrix (lower number = higher priority in conflicts) ────
+# Priority 1: critical medical conditions that always win macro conflicts
+# Priority 2: moderate medical conditions
+# Priority 3: lifestyle conditions (weight management, immunity, etc.)
+CONDITION_PRIORITY = {
+    # Critical (1) — always override on conflict
+    "kidney-disease": 1,
+    "celiac": 1,
+    "diabetes-t1": 1,
+    "pregnancy": 1,
+    # Moderate (2)
+    "diabetes": 2,
+    "heart-disease": 2,
+    "hypertension": 2,
+    "pcos": 3,
+    "thyroid": 3,
+    "hyperthyroid": 3,
+    "hashimotos": 3,
+    "ibs": 3,
+    "gerd": 3,
+    "fatty-liver": 3,
+    "gastritis": 3,
+    "kidney-stones": 3,
+    "iron-deficiency": 4,
+    "b12-deficiency": 4,
+    "vitamin-d": 4,
+    "calcium-deficiency": 4,
+    "prediabetes": 4,
+    "insulin-resistance": 4,
+    "high-cholesterol": 4,
+    "high-triglycerides": 4,
+    "gluten-intolerance": 4,
+    "lactose-intolerance": 5,
+    "gout": 4,
+    "osteoporosis": 4,
+    "rheumatoid-arthritis": 4,
+    "menopause": 5,
+    "obesity": 5,
+    # Lifestyle (high number = lowest priority)
+    "weight-management": 6,
+    "immunity": 6,
+    "gut-health": 6,
+    "depression": 6,
+    "migraine": 6,
+}
+
+
+def resolve_macro_conflicts(conditions: List[str], base_macros: Dict[str, float]) -> Tuple[Dict[str, float], List[str]]:
+    """
+    Resolve macro conflicts when conditions impose contradictory requirements.
+    Returns adjusted macros and a list of trade-off notes to show the user.
+    Higher-priority conditions override lower-priority ones on conflicts.
+
+    Known conflicts handled:
+      - CKD (priority 1) vs high-protein goals: CKD wins, protein capped at 0.6-0.8g/kg
+      - CKD vs high-potassium needs: CKD wins
+      - Diabetes vs high-carb goals: diabetes wins, carbs capped
+      - Pregnancy vs anything: pregnancy protein needs override
+    """
+    trade_offs = []
+    macros = dict(base_macros)
+
+    sorted_conditions = sorted(conditions, key=lambda c: CONDITION_PRIORITY.get(c, 99))
+
+    # CKD takes absolute priority on protein
+    if "kidney-disease" in conditions:
+        if macros.get("protein_g", 0) > 50:
+            macros["protein_g"] = 50
+            trade_offs.append(
+                "Kidney disease requires lower protein (≤50g/day). "
+                "Other conditions requesting high protein have been adjusted."
+            )
+
+    # Pregnancy boosts protein requirements
+    if "pregnancy" in conditions and macros.get("protein_g", 0) < 71:
+        macros["protein_g"] = max(macros.get("protein_g", 60), 71)
+        trade_offs.append("Pregnancy increases protein needs to at least 71g/day.")
+
+    # Diabetes caps net carbs
+    if "diabetes" in conditions or "diabetes-t1" in conditions or "prediabetes" in conditions:
+        max_carbs = 150 if "diabetes-t1" in conditions else 130
+        if macros.get("carbs_g", 0) > max_carbs:
+            macros["carbs_g"] = max_carbs
+            trade_offs.append(
+                f"Diabetes management requires limiting carbs to ≤{max_carbs}g/day. "
+                "Carbs have been adjusted down."
+            )
+
+    # High-cholesterol caps saturated fat (tracked via total fat proxy)
+    if "high-cholesterol" in conditions and macros.get("fat_g", 0) > 60:
+        macros["fat_g"] = 60
+        trade_offs.append(
+            "High cholesterol requires limiting fat to ≤60g/day, "
+            "prioritising unsaturated sources."
+        )
+
+    return macros, trade_offs
+
 
 # ── Goitrogen-containing ingredients (thyroid concern when raw) ────────────────
 THYROID_GOITROGENS = {

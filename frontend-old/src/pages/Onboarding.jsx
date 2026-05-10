@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../components/ui/select";
-import { Check, ChevronRight, Loader2, Sparkles } from "lucide-react";
+import { Check, ChevronRight, Loader2, Sparkles, Search, X, AlertTriangle } from "lucide-react";
 import api from "../lib/api";
 import { useAuth } from "../lib/auth";
 import { toast } from "sonner";
+import MedicalDisclaimer from "../components/MedicalDisclaimer";
 
 // ── Health conditions ───────────────────────────────────────────────────────
 const HEALTH_CONDITIONS = [
@@ -131,6 +132,11 @@ export default function Onboarding() {
   });
   const [selectedConditions, setSelectedConditions] = useState([]);
   const [conditionAnswers, setConditionAnswers] = useState({});
+  const [conditionSearch, setConditionSearch] = useState("");
+  const [conditionSearchResults, setConditionSearchResults] = useState([]);
+  const [conditionSearchLoading, setConditionSearchLoading] = useState(false);
+  const [commonConditions, setCommonConditions] = useState([]);
+  const searchTimeout = useRef(null);
   const [lifestyle, setLifestyle] = useState({
     dietary_type: "", allergies: [], cooking_ability: "", budget: "",
   });
@@ -142,11 +148,35 @@ export default function Onboarding() {
 
   const setMetric = (k, v) => setMetrics((m) => ({ ...m, [k]: v }));
 
+  // ── Load common conditions on mount ────────────────────────────────────
+  useEffect(() => {
+    api.get("/healthcare/conditions")
+      .then(({ data }) => setCommonConditions(data))
+      .catch(() => setCommonConditions(HEALTH_CONDITIONS)); // fallback to hardcoded
+  }, []);
+
+  // ── Debounced condition search ──────────────────────────────────────────
+  useEffect(() => {
+    if (!conditionSearch.trim()) {
+      setConditionSearchResults([]);
+      return;
+    }
+    clearTimeout(searchTimeout.current);
+    setConditionSearchLoading(true);
+    searchTimeout.current = setTimeout(() => {
+      api.get("/healthcare/conditions/search", { params: { q: conditionSearch } })
+        .then(({ data }) => setConditionSearchResults(data))
+        .catch(() => setConditionSearchResults([]))
+        .finally(() => setConditionSearchLoading(false));
+    }, 300);
+    return () => clearTimeout(searchTimeout.current);
+  }, [conditionSearch]);
+
   // ── Conditions toggle ───────────────────────────────────────────────────
   const toggleCondition = (id) => {
     setSelectedConditions((prev) => {
       if (prev.includes(id)) return prev.filter((c) => c !== id);
-      if (prev.length >= 3) { toast.error("Select up to 3 conditions"); return prev; }
+      if (prev.length >= 5) { toast.error("Select up to 5 conditions"); return prev; }
       return [...prev, id];
     });
   };
@@ -356,37 +386,79 @@ export default function Onboarding() {
         </div>
       )}
 
-      {/* ── STEP 1: Health Condition Multi-Select ── */}
+      {/* ── STEP 1: Health Condition Multi-Select (searchable) ── */}
       {step === 1 && (
-        <div className="space-y-6 flex-1">
+        <div className="space-y-5 flex-1">
           <div>
             <h1 className="text-3xl font-display font-bold">What health conditions are you managing?</h1>
-            <p className="text-muted-foreground mt-2">Select up to 3. We'll personalise everything around them.</p>
+            <p className="text-muted-foreground mt-2">Select up to 5. Search for any condition.</p>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            {HEALTH_CONDITIONS.map((c) => {
+
+          <MedicalDisclaimer variant="inline" />
+
+          {/* Selected badges */}
+          {selectedConditions.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {selectedConditions.map((id) => {
+                const meta = (conditionSearchResults.length > 0 ? conditionSearchResults : commonConditions)
+                  .find((c) => c.id === id) || { id, label: id };
+                return (
+                  <span key={id} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                    {meta.label}
+                    <button type="button" onClick={() => toggleCondition(id)} className="ml-0.5 hover:text-primary/60">
+                      <X className="size-3" />
+                    </button>
+                  </span>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Search box */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Input
+              placeholder="Search conditions (e.g. thyroid, IBS, gout…)"
+              value={conditionSearch}
+              onChange={(e) => setConditionSearch(e.target.value)}
+              className="pl-9"
+            />
+            {conditionSearchLoading && (
+              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 size-4 animate-spin text-muted-foreground" />
+            )}
+          </div>
+
+          {/* Results or common conditions */}
+          <div className="space-y-2 max-h-72 overflow-y-auto pr-0.5">
+            {(conditionSearch.trim() ? conditionSearchResults : commonConditions).map((c) => {
               const selected = selectedConditions.includes(c.id);
               return (
                 <button
                   key={c.id}
                   type="button"
                   onClick={() => toggleCondition(c.id)}
-                  className={`rounded-2xl border-2 p-4 text-left transition-all
-                    ${selected ? "border-primary bg-primary/5" : "border-border hover:border-muted-foreground/40"}`}
+                  className={`w-full text-left rounded-2xl border-2 p-3.5 transition-all ${
+                    selected ? "border-primary bg-primary/5" : "border-border hover:border-muted-foreground/40"
+                  }`}
                 >
-                  <div className="text-2xl mb-2">{c.emoji}</div>
-                  <div className="font-semibold text-sm">{c.label}</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">{c.desc}</div>
-                  {selected && (
-                    <div className="mt-2 inline-flex items-center gap-1 text-xs text-primary font-medium">
-                      <Check className="size-3" /> Selected
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-sm">{c.label}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5 truncate">
+                        {c.blurb || c.description || ""}
+                      </div>
                     </div>
-                  )}
+                    {selected && <Check className="size-4 text-primary shrink-0" />}
+                  </div>
                 </button>
               );
             })}
+            {conditionSearch.trim() && conditionSearchResults.length === 0 && !conditionSearchLoading && (
+              <p className="text-sm text-muted-foreground text-center py-6">No conditions found for "{conditionSearch}"</p>
+            )}
           </div>
-          <div className="flex gap-3">
+
+          <div className="flex gap-3 pt-2">
             <Button variant="outline" onClick={prev} className="rounded-full flex-1">Back</Button>
             <Button
               disabled={selectedConditions.length === 0}
@@ -402,7 +474,10 @@ export default function Onboarding() {
       {/* ── STEP 2: Condition-specific questions (one condition at a time) ── */}
       {step === 2 && selectedConditions.length > 0 && (() => {
         const condId = selectedConditions[conditionIndex];
-        const condMeta = HEALTH_CONDITIONS.find((c) => c.id === condId);
+        // Support both hardcoded and new dynamic conditions
+        const condMeta = HEALTH_CONDITIONS.find((c) => c.id === condId)
+          || commonConditions.find((c) => c.id === condId)
+          || { id: condId, label: condId.replace(/-/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()), emoji: "💊" };
         const questions = CONDITION_QUESTIONS[condId] || [];
         const answers = conditionAnswers[condId] || {};
         const allAnswered = questions.every((q) => answers[q.key]);

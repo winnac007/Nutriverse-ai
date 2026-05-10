@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import api from "../lib/api";
 import { Button } from "../components/ui/button";
-import { Sparkles, Lock, Utensils } from "lucide-react";
+import { Sparkles, Lock, Utensils, RefreshCw, Calendar, ShoppingCart } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import PremiumGate from "../components/PremiumGate";
+import MedicalDisclaimer from "../components/MedicalDisclaimer";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const MEALS = ["breakfast", "lunch", "dinner"];
@@ -46,11 +47,42 @@ export default function MealPlan() {
   const itemFor = (day, meal_type) => savedPlan.items?.find((i) => i.day === day && i.meal_type === meal_type);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
       <header>
         <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight">Smart Meal Plan</h1>
         <p className="text-muted-foreground mt-1">Body-type aware. Goal-tuned. Coach-led.</p>
       </header>
+
+      {/* Quick-access links */}
+      <div className="grid grid-cols-3 gap-2">
+        <Link to="/app/daily-plan"
+          className="nv-card p-3 flex flex-col items-center gap-1 text-center hover:-translate-y-0.5 transition-transform">
+          <Calendar className="size-5 text-primary" />
+          <span className="text-xs font-medium">Today's Plan</span>
+        </Link>
+        <Link to="/app/grocery"
+          className="nv-card p-3 flex flex-col items-center gap-1 text-center hover:-translate-y-0.5 transition-transform">
+          <ShoppingCart className="size-5 text-primary" />
+          <span className="text-xs font-medium">Grocery List</span>
+        </Link>
+        <Link to="/app/food-guidelines"
+          className="nv-card p-3 flex flex-col items-center gap-1 text-center hover:-translate-y-0.5 transition-transform">
+          <Utensils className="size-5 text-primary" />
+          <span className="text-xs font-medium">Food Guide</span>
+        </Link>
+      </div>
+
+      {/* Needs refresh notice */}
+      {savedPlan?.needs_refresh && (
+        <div className="nv-card p-4 flex items-center gap-3 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800/40">
+          <RefreshCw className="size-4 text-blue-500" />
+          <div className="flex-1">
+            <p className="text-sm text-blue-700 dark:text-blue-300 font-medium">Your plan needs a refresh</p>
+            <p className="text-xs text-blue-600/70 dark:text-blue-400/70">Your preferences changed. Regenerate to get an updated plan.</p>
+          </div>
+          <Button size="sm" onClick={generate} className="shrink-0">Refresh</Button>
+        </div>
+      )}
 
       {/* Generate / regenerate */}
       <div className="nv-card nv-shadow p-5 flex items-center gap-4 relative overflow-hidden">
@@ -134,6 +166,9 @@ export default function MealPlan() {
           )}
         </section>
       )}
+
+      {/* Medical disclaimer */}
+      <MedicalDisclaimer variant="inline" />
 
       {/* Calendar view of saved plan */}
       <section className="space-y-3">
