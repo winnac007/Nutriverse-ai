@@ -1199,10 +1199,19 @@ async def get_weight_history(user=Depends(get_current_user)):
 
 # Wire up
 app.include_router(api_router)
+
+# Robust CORS configuration
+raw_origins = os.environ.get('CORS_ORIGINS', '*')
+if raw_origins == '*':
+    origins = ["*"]
+else:
+    # Clean origins: strip whitespace and trailing slashes
+    origins = [o.strip().rstrip('/') for o in raw_origins.split(',') if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
