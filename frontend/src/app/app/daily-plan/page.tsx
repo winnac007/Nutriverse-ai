@@ -225,7 +225,8 @@ export default function DailyPlan() {
                         className="w-full text-left p-3 rounded-lg hover:bg-background/80 transition-colors flex items-center gap-3"
                       >
                         {candidate.image && (
-                          <img src={candidate.image} alt="" className="size-10 rounded-lg object-cover shrink-0" />
+                          <img src={candidate.image} alt="" className="size-10 rounded-lg object-cover shrink-0" loading="lazy"
+                            onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800"; }} />
                         )}
                         <div className="flex-1 min-w-0">
                           <div className="text-sm font-medium truncate">{candidate.title}</div>

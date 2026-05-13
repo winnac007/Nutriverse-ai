@@ -6,7 +6,6 @@ import requests
 from datetime import datetime, timezone, timedelta
 from typing import Any, Dict, List, Optional
 from app.core.config import settings
-from app.data.seed_data import get_all_recipes, get_recipe
 
 logger = logging.getLogger(__name__)
 
@@ -216,3 +215,32 @@ def normalize_spoonacular_recipe(recipe: Dict[str, Any], category: str = "health
         "source_url": recipe.get("sourceUrl", ""), "condition_tags": recipe.get("condition_tags", []),
         "why_this_works": recipe.get("why_this_works", {}),
     }
+
+async def get_spoonacular_recipe_by_id(spoonacular_id: int, db) -> Optional[Dict[str, Any]]:
+    """Fetch a single recipe from MongoDB cache or directly from Spoonacular API."""
+    if db is not None:
+        # Search all cached search results for this recipe id
+        cached = await db.spoonacular_cache.find_one(
+            {"recipes": {"$elemMatch": {"id": spoonacular_id}}}
+        )
+        if cached:
+            for r in cached["recipes"]:
+                if r.get("id") == spoonacular_id:
+                    return r
+    if not settings.SPOONACULAR_API_KEY:
+        return None
+    try:
+        resp = requests.get(
+            f"{SPOONACULAR_BASE}/recipes/{spoonacular_id}/information",
+            params={
+                "apiKey": settings.SPOONACULAR_API_KEY,
+                "addRecipeNutrition": True,
+                "fillIngredients": True,
+            },
+            timeout=10,
+        )
+        resp.raise_for_status()
+        return resp.json()
+    except Exception as e:
+        logger.error(f"Spoonacular single recipe fetch error for id={spoonacular_id}: {e}")
+        return None

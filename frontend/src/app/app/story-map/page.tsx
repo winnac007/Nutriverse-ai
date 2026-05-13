@@ -104,7 +104,8 @@ export default function StoryMap() {
                       {regionRecipes.map((rec) => (
                         <Link key={rec.id} href={`/app/recipe/${rec.id}`}
                           className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                          <img src={rec.image} alt={rec.title} className="size-10 rounded-lg object-cover" />
+                          <img src={rec.image} alt={rec.title} className="size-10 rounded-lg object-cover" loading="lazy"
+                            onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800"; }} />
                           <span className="text-sm font-medium" style={{color: "#3a2618"}}>{rec.title}</span>
                         </Link>
                       ))}

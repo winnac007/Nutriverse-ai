@@ -3,7 +3,6 @@ from app.models.schema import AIPlanRequest, CoachAsk, OnboardingPlanRequest
 from app.services.ai_service import call_ai, extract_json, user_profile_text
 from app.services.recipe_service import fetch_personalized_recipes, normalize_spoonacular_recipe
 from app.services.clinical_service import filter_for_conditions, generate_why_this_works, resolve_macro_conflicts
-from app.data.seed_data import get_all_recipes, get_recipe
 from app.core.database import db
 from app.core.security import get_current_user, calc_tdee
 from app.core.prompts import load_prompt
@@ -17,10 +16,9 @@ router = APIRouter(prefix="/ai", tags=["ai"])
 
 @router.post("/smart-plan")
 async def smart_plan(body: AIPlanRequest, user=Depends(get_current_user)):
-    pool = get_all_recipes()
-    if user.get("category") and user["category"] != "cultural":
-        pool = [r for r in pool if r["category"] in (user["category"], "chef-special", "cultural")]
-    pool_summary = [{"id": r["id"], "title": r["title"], "calories": r["nutrition"]["calories"], "category": r["category"], "country": r.get("country"), "tier": r.get("tier")} for r in pool]
+    raw_pool = await fetch_personalized_recipes(user, db)
+    pool = [normalize_spoonacular_recipe(r) for r in raw_pool]
+    pool_summary = [{"id": r["id"], "title": r["title"], "calories": r.get("nutrition", {}).get("calories"), "category": r.get("category"), "country": r.get("country"), "tier": r.get("tier")} for r in pool]
     user_text = user_profile_text(user) + f"\n\nextra_context: {body.context or 'none'}\n\nrecipes_pool:\n{json.dumps(pool_summary)}"
     try:
         raw = await call_ai(system_prompt=load_prompt("smart_planner"), user_prompt=user_text, max_tokens=4096, response_mime_type="application/json")
@@ -28,11 +26,10 @@ async def smart_plan(body: AIPlanRequest, user=Depends(get_current_user)):
     except: plan = None
     if not plan:
         targets = calc_tdee(user.get("age") or 30, user.get("gender") or "male", user.get("weight_kg") or 70, user.get("height_cm") or 170, user.get("activity_level") or "moderate", user.get("goal") or "maintain")
-        sample = next((r for r in pool if r["category"] == user.get("category")), pool[0])
-        ids = [r["id"] for r in pool[:6]] or [r["id"] for r in get_all_recipes()[:6]]
+        ids = [r["id"] for r in pool[:6]]
         days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        weekly = [{"day": d, "breakfast": {"recipe_id": ids[i % len(ids)], "reason": "Balanced fuel"}, "lunch": {"recipe_id": ids[(i+1) % len(ids)], "reason": "Macro-aligned"}, "dinner": {"recipe_id": ids[(i+2) % len(ids)], "reason": "Protein-rich"}} for i, d in enumerate(days)]
-        plan = {"analysis": f"Profile suggests {user.get('goal') or 'maintenance'} approach.", "calorie_estimate": targets["target_calories"], "macros": {"protein_g": targets["protein_g"], "carbs_g": targets["carbs_g"], "fat_g": targets["fat_g"]}, "preview_meal": {"meal_type": "lunch", "title": sample["title"], "calories": sample["nutrition"]["calories"], "ingredients": [i["name"] for i in sample["ingredients"][:5]], "reasoning": "Aligned with category."}, "weekly_plan": weekly, "grocery_list": ["chicken", "oats", "spinach"], "weekly_variations": ["Swap protein"]}
+        weekly = [{"day": d, "breakfast": {"recipe_id": ids[i % len(ids)], "reason": "Balanced fuel"} if ids else {}, "lunch": {"recipe_id": ids[(i+1) % len(ids)], "reason": "Macro-aligned"} if ids else {}, "dinner": {"recipe_id": ids[(i+2) % len(ids)], "reason": "Protein-rich"} if ids else {}} for i, d in enumerate(days)]
+        plan = {"analysis": f"Profile suggests {user.get('goal') or 'maintenance'} approach.", "calorie_estimate": targets["target_calories"], "macros": {"protein_g": targets["protein_g"], "carbs_g": targets["carbs_g"], "fat_g": targets["fat_g"]}, "weekly_plan": weekly, "grocery_list": ["chicken", "oats", "spinach"], "weekly_variations": ["Swap protein"]}
     is_premium = bool(user.get("is_premium"))
     response = {"analysis": plan.get("analysis"), "calorie_estimate": plan.get("calorie_estimate"), "macros": plan.get("macros"), "preview_meal": plan.get("preview_meal"), "is_premium": is_premium}
     if is_premium:
@@ -72,8 +69,7 @@ async def generate_onboarding_plan(body: OnboardingPlanRequest, user=Depends(get
             safe_pool = filter_for_conditions(raw_pool, body.conditions)
             pool = [normalize_spoonacular_recipe(r) for r in safe_pool[:40]]
     if not pool:
-        all_recipes = get_all_recipes()
-        pool = [r for r in all_recipes if any(c in r.get("conditions", []) for c in body.conditions) or r.get("category") == "healthcare"][:40]
+        pool = []  # No seed data; AI will generate plan without a pool
     pool_summary = [{"id": r["id"], "title": r["title"], "conditions": r.get("conditions", [])} for r in pool]
     user_text = f"conditions: {body.conditions}\ncondition_answers: {json.dumps(body.condition_answers)}\ndietary_type: {body.dietary_type} | allergies: {body.allergies}\ncooking_ability: {body.cooking_ability} | budget: {body.budget}\ngoal_30day: {body.goal_30day}\nage: {body.age} | gender: {body.gender} | weight_kg: {body.weight_kg} | height_cm: {body.height_cm}\nactivity_level: {body.activity_level}\nrecipes_pool: {json.dumps(pool_summary)}"
     try:

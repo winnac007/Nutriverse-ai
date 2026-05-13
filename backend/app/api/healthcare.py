@@ -1,7 +1,7 @@
 from typing import Optional
 from fastapi import APIRouter, Depends
 from app.data.healthcare_data import CONDITIONS, COMMON_CONDITIONS, SWAPS
-from app.data.seed_data import get_all_recipes
+from app.services.recipe_service import search_recipes, normalize_spoonacular_recipe
 from app.core.database import db
 from app.core.security import get_current_user
 from datetime import datetime, timezone, timedelta
@@ -10,12 +10,7 @@ router = APIRouter(prefix="/healthcare", tags=["healthcare"])
 
 @router.get("/conditions")
 async def healthcare_conditions():
-    recipes = [r for r in get_all_recipes() if r.get("category") == "healthcare"]
-    out = []
-    for c in COMMON_CONDITIONS:
-        count = sum(1 for r in recipes if c["id"] in r.get("conditions", []))
-        out.append({**c, "recipe_count": count})
-    return out
+    return [{**c, "recipe_count": 0} for c in COMMON_CONDITIONS]
 
 @router.get("/conditions/all")
 async def all_conditions():
@@ -49,18 +44,10 @@ async def food_guidelines(conditions: Optional[str] = None, user=Depends(get_cur
 
 @router.get("/recipes")
 async def healthcare_recipes(condition: Optional[str] = None, meal_type: Optional[str] = None, search: Optional[str] = None, quick: Optional[bool] = None):
-    pool = [r for r in get_all_recipes() if r.get("category") == "healthcare"]
-    if condition: pool = [r for r in pool if condition in r.get("conditions", [])]
-    if meal_type and meal_type != "all": pool = [r for r in pool if r.get("meal_type") == meal_type]
-    if quick: pool = [r for r in pool if (r.get("prep_minutes") or r.get("cook_time", 999)) <= 15]
-    if search:
-        s = search.lower()
-        pool = [r for r in pool if s in r["title"].lower() or s in r.get("description", "").lower() or any(s in t for t in r.get("nutritional_tags", [])) or any(s in t for t in r.get("health_scores", []))]
-    out = []
-    for r in pool:
-        why = (r.get("why_this_works") or {}).get(condition) if condition else None
-        out.append({**{k: v for k, v in r.items() if k != "why_this_works"}, "why_this_works_for_condition": why})
-    return out
+    query = search or condition or "healthy"
+    max_time = 15 if quick else None
+    raw = await search_recipes(query=query, number=12, maxReadyTime=max_time, db=db)
+    return [normalize_spoonacular_recipe(r, category="healthcare") for r in raw]
 
 @router.get("/swaps")
 async def healthcare_swaps(condition: Optional[str] = None):

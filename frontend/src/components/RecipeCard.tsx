@@ -26,6 +26,9 @@ export default function RecipeCard({ recipe }: { recipe: any }) {
           alt={recipe.title}
           className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${locked ? "blur-md" : ""}`}
           loading="lazy"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800`;
+          }}
         />
         {recipe.is_premium && (
           <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#FFD166] text-black text-xs font-semibold">

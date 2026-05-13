@@ -185,7 +185,8 @@ export default function MealPlan() {
                       {rec ? (
                         <Link href={`/app/recipe/${rec.id}`} className="block group">
                           <div className="aspect-[16/10] rounded-lg overflow-hidden mb-2">
-                            <img src={rec.image} alt={rec.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                            <img src={rec.image} alt={rec.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" loading="lazy"
+                              onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800"; }} />
                           </div>
                           <div className="text-sm font-medium line-clamp-2">{rec.title}</div>
                           <div className="text-xs text-muted-foreground mt-1">{rec.nutrition?.calories} kcal</div>

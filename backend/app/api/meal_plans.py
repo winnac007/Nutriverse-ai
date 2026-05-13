@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.models.schema import SaveMealPlan, MealSwapRequest, UpdateMealRequest
 from app.core.database import db
 from app.core.security import get_current_user
-from app.data.seed_data import get_all_recipes, get_recipe
+from app.services.recipe_service import search_recipes, normalize_spoonacular_recipe, get_spoonacular_recipe_by_id
 from datetime import datetime, timezone, timedelta
 from typing import Dict
 
@@ -32,22 +32,31 @@ async def save_meal_plan(body: SaveMealPlan, user=Depends(get_current_user)):
 
 @router.post("/swap")
 async def meal_swap(body: MealSwapRequest, user=Depends(get_current_user)):
-    current = get_recipe(body.current_recipe_id)
-    target_cal = (current["nutrition"]["calories"] if current else 400)
+    # Resolve current recipe to get its calorie target
+    target_cal = 400
+    if body.current_recipe_id.startswith("sp-"):
+        try:
+            raw = await get_spoonacular_recipe_by_id(int(body.current_recipe_id[3:]), db)
+            if raw:
+                cur = normalize_spoonacular_recipe(raw)
+                target_cal = cur.get("nutrition", {}).get("calories") or 400
+        except (ValueError, TypeError):
+            pass
     cal_lo, cal_hi = target_cal * 0.85, target_cal * 1.15
     conditions = user.get("conditions") or ([user["condition"]] if user.get("condition") else [])
-    pool = get_all_recipes()
+    # Search Spoonacular for swap candidates using condition as query
+    query = conditions[0] if conditions else "healthy"
+    raw_pool = await search_recipes(query=query, number=20, db=db)
     plan = await db.meal_plans.find_one({"user_id": user["id"]}, {"_id": 0})
     used_ids = {item["recipe_id"] for item in (plan or {}).get("items", [])}
     used_ids.discard(body.current_recipe_id)
     candidates = []
-    for r in pool:
-        if r["id"] == body.current_recipe_id or r["id"] in used_ids: continue
-        cal = r.get("nutrition", {}).get("calories", 0)
-        if not (cal_lo <= cal <= cal_hi): continue
-        if conditions and not any(c in r.get("conditions", []) for c in conditions): continue
-        candidates.append(r)
-    candidates.sort(key=lambda r: sum(1 for c in conditions if c in r.get("conditions", [])), reverse=True)
+    for r in raw_pool:
+        normalized = normalize_spoonacular_recipe(r)
+        if normalized["id"] == body.current_recipe_id or normalized["id"] in used_ids: continue
+        cal = normalized.get("nutrition", {}).get("calories", 0)
+        if cal and not (cal_lo <= cal <= cal_hi): continue
+        candidates.append(normalized)
     return candidates[:3]
 
 @router.put("/update-meal")
@@ -95,7 +104,13 @@ async def grocery_list(user=Depends(get_current_user)):
     recipe_ids = list({item["recipe_id"] for item in plan["items"]})
     ingredient_map: Dict[str, list] = {}
     for rid in recipe_ids:
-        recipe = get_recipe(rid)
+        recipe = None
+        if rid.startswith("sp-"):
+            try:
+                raw = await get_spoonacular_recipe_by_id(int(rid[3:]), db)
+                if raw: recipe = normalize_spoonacular_recipe(raw)
+            except (ValueError, TypeError):
+                pass
         if not recipe: continue
         for ing in recipe.get("ingredients", []):
             name = ing.get("name", "")

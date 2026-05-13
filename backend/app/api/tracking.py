@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.models.schema import MealLog, WeightLog, LifestyleLog
-from app.data.seed_data import get_recipe
+from app.services.recipe_service import get_spoonacular_recipe_by_id, normalize_spoonacular_recipe
 from app.core.database import db
 from app.core.security import get_current_user
 import uuid
@@ -8,9 +8,18 @@ from datetime import datetime, timezone, timedelta
 
 router = APIRouter(tags=["tracking"])
 
+async def _resolve_recipe(recipe_id: str):
+    if recipe_id.startswith("sp-"):
+        try:
+            raw = await get_spoonacular_recipe_by_id(int(recipe_id[3:]), db)
+            return normalize_spoonacular_recipe(raw) if raw else None
+        except (ValueError, TypeError):
+            return None
+    return None
+
 @router.post("/nutrition/log")
 async def log_meal(body: MealLog, user=Depends(get_current_user)):
-    recipe = get_recipe(body.recipe_id)
+    recipe = await _resolve_recipe(body.recipe_id)
     if not recipe: raise HTTPException(404, "Recipe not found")
     today = datetime.now(timezone.utc).date().isoformat()
     entry = {

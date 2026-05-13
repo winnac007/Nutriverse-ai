@@ -55,7 +55,8 @@ export default function RecipeDetail({ params }: { params: Promise<{ id: string 
   return (
     <div className="space-y-8">
       <div className="relative -mx-4 sm:-mx-6 aspect-[4/3] sm:aspect-[16/9] overflow-hidden sm:rounded-2xl">
-        <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
+        <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" loading="lazy"
+          onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800"; }} />
         <div className="absolute inset-0 nv-hero-overlay" />
         <Link href="/app/explore" className="absolute top-4 left-4 size-10 rounded-full glass grid place-items-center">
           <ArrowLeft className="size-4" />
@@ -108,7 +109,8 @@ export default function RecipeDetail({ params }: { params: Promise<{ id: string 
           ) : (
             <button onClick={() => setShowVideo(true)}
               className="w-full aspect-video relative group">
-              <img src={recipe.image} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              <img src={recipe.image} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy"
+                onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800"; }} />
               <div className="absolute inset-0 bg-black/40 grid place-items-center">
                 <div className="flex flex-col items-center gap-2">
                   <PlayCircle className="size-16 text-white group-hover:scale-110 transition-transform" />
