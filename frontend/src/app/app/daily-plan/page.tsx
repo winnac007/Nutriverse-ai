@@ -4,14 +4,11 @@ import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/auth";
-import MedicalDisclaimer from "@/components/MedicalDisclaimer";
-import { ChevronRight, RefreshCw, Calendar, Utensils, Check } from "lucide-react";
+import { ChevronRight, Calendar, Clock, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 
-const MEAL_ICONS: Record<string, string> = { breakfast: "🌅", lunch: "☀️", dinner: "🌙" };
-const MEAL_LABELS: Record<string, string> = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner" };
-
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const MEAL_TYPES = ["Breakfast", "Lunch", "Dinner", "Snacks"];
 
 function todayDayKey() {
   return new Date().toLocaleDateString("en-US", { weekday: "short" });
@@ -19,11 +16,9 @@ function todayDayKey() {
 
 export default function DailyPlan() {
   const { user } = useAuth();
-  const [selectedDay, setSelectedDay] = useState(todayDayKey());
+  const [selectedType, setSelectedType] = useState("Breakfast");
   const [plan, setPlan] = useState<any>(null);
   const [recipeCache, setRecipeCache] = useState<Record<string, any>>({});
-  const [swapping, setSwapping] = useState<string | null>(null);
-  const [swapCandidates, setSwapCandidates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchPlan = useCallback(async () => {
@@ -40,7 +35,8 @@ export default function DailyPlan() {
 
   useEffect(() => { fetchPlan(); }, [fetchPlan]);
 
-  const todayItems = (plan?.items || []).filter((i: any) => i.day === selectedDay);
+  const todayDay = todayDayKey();
+  const todayItems = (plan?.items || []).filter((i: any) => i.day === todayDay);
 
   useEffect(() => {
     todayItems.forEach(({ recipe_id }: { recipe_id: string }) => {
@@ -50,232 +46,115 @@ export default function DailyPlan() {
           .catch(() => {});
       }
     });
-  }, [plan, selectedDay]);
-
-  async function handleSwap(meal_type: string, current_recipe_id: string) {
-    setSwapping(meal_type);
-    setSwapCandidates([]);
-    try {
-      const { data } = await api.post("/meal-plan/swap", {
-        day: selectedDay,
-        meal_type,
-        current_recipe_id,
-      });
-      if (data.length === 0) {
-        toast.info("No alternative recipes found — try adjusting your preferences.");
-        setSwapping(null);
-        return;
-      }
-      data.forEach((r: any) => setRecipeCache((prev) => ({ ...prev, [r.id]: r })));
-      setSwapCandidates(data);
-    } catch {
-      toast.error("Could not get swap suggestions");
-      setSwapping(null);
-    }
-  }
-
-  async function confirmSwap(meal_type: string, recipe_id: string) {
-    try {
-      await api.put("/meal-plan/update-meal", { day: selectedDay, meal_type, recipe_id });
-      await fetchPlan();
-      toast.success("Meal swapped!");
-    } catch {
-      toast.error("Swap failed");
-    } finally {
-      setSwapping(null);
-      setSwapCandidates([]);
-    }
-  }
-
-  async function logMeal(recipe_id: string, meal_type: string) {
-    try {
-      await api.post("/nutrition/log", { recipe_id, meal_type, servings: 1 });
-      toast.success("Meal logged!");
-    } catch {
-      toast.error("Could not log meal");
-    }
-  }
-
-  const hasPlan = plan?.items?.length > 0;
-  const healthPlan = user?.health_plan;
-  const calTarget = healthPlan?.daily_calories || 2000;
+  }, [plan]);
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-8 pb-32 pt-6">
+      {/* Header - Image 5 */}
       <header className="flex items-center justify-between">
-        <div>
-          <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Today's</p>
-          <h1 className="text-2xl font-display font-bold tracking-tight">Daily Plan</h1>
-        </div>
-        <Link href="/app/meal-plan" className="text-xs text-primary inline-flex items-center gap-1">
-          <Calendar className="size-3.5" /> Full week
+        <h1 className="font-serif text-3xl text-[#3A2618]">Today's Plan</h1>
+        <Link href="/app/meal-plan" className="size-10 rounded-full border border-[#D9C39A]/40 bg-white grid place-items-center text-[#3A2618]/60">
+          <Calendar className="size-5" />
         </Link>
       </header>
 
-      <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none">
-        {DAYS.map((day) => {
-          const isToday = day === todayDayKey();
-          const isSelected = day === selectedDay;
-          const hasItems = (plan?.items || []).some((i: any) => i.day === day);
-          return (
-            <button
-              key={day}
-              onClick={() => setSelectedDay(day)}
-              className={`flex-shrink-0 px-3.5 py-2 rounded-xl text-xs font-medium transition-all ${
-                isSelected
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:bg-muted/80"
-              }`}
-            >
-              {day}
-              {isToday && <span className="block text-[9px] leading-tight opacity-70">Today</span>}
-              {!isToday && hasItems && <span className="block w-1 h-1 rounded-full bg-current opacity-40 mx-auto" />}
-            </button>
-          );
-        })}
+      {/* Meal Type Tabs - Image 5 */}
+      <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
+        {MEAL_TYPES.map((type) => (
+          <button
+            key={type}
+            onClick={() => setSelectedType(type)}
+            className={`shrink-0 px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all ${
+              selectedType === type 
+                ? "bg-[#3A2618] text-white border-[#3A2618]" 
+                : "bg-white border-[#D9C39A]/40 text-[#3A2618]/60 hover:border-[#3A2618]"
+            }`}
+          >
+            {type}
+          </button>
+        ))}
       </div>
 
-      {plan?.needs_refresh && (
-        <div className="nv-card p-4 flex items-center gap-3 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800/40">
-          <RefreshCw className="size-4 text-blue-500 animate-spin" />
-          <p className="text-sm text-blue-700 dark:text-blue-300">
-            Your plan is being refreshed with your updated preferences.
-          </p>
-        </div>
-      )}
-
-      {loading ? (
-        <div className="space-y-3">
-          {["breakfast", "lunch", "dinner"].map((mt) => (
-            <div key={mt} className="nv-card p-5 h-28 animate-pulse bg-muted/50" />
-          ))}
-        </div>
-      ) : !hasPlan ? (
-        <div className="nv-card p-8 text-center space-y-3">
-          <Utensils className="size-10 mx-auto text-muted-foreground/50" />
-          <p className="text-sm text-muted-foreground">No meal plan yet.</p>
-          <Link href="/app/meal-plan"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary">
-            Generate your plan <ChevronRight className="size-4" />
-          </Link>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {["breakfast", "lunch", "dinner"].map((meal_type) => {
-            const item = todayItems.find((i: any) => i.meal_type === meal_type);
-            const recipe = item ? recipeCache[item.recipe_id] : null;
-            const isSwappingThis = swapping === meal_type;
+      {/* Meal List - Image 5 */}
+      <div className="space-y-4">
+        {loading ? (
+          <div className="flex flex-col items-center py-20 opacity-20">
+            <Loader2 className="size-8 animate-spin text-[#004D40]" />
+          </div>
+        ) : todayItems.length > 0 ? (
+          todayItems.map((item: any, i) => {
+            const recipe = recipeCache[item.recipe_id];
+            // Only show meals matching selected type (mocking Breakfast/Lunch/Dinner mapping)
+            const matchesType = selectedType.toLowerCase() === item.meal_type.toLowerCase();
+            if (!matchesType && selectedType !== "Snacks") return null;
 
             return (
-              <div key={meal_type} className="space-y-2">
-                <div className="nv-card p-4 space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-lg shrink-0">
-                      {MEAL_ICONS[meal_type]}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs text-muted-foreground">{MEAL_LABELS[meal_type]}</div>
-                      {recipe ? (
-                        <Link href={`/app/recipe/${item.recipe_id}`}
-                          className="font-semibold text-sm hover:text-primary truncate block">
-                          {recipe.title}
-                        </Link>
-                      ) : item ? (
-                        <div className="text-sm font-medium text-muted-foreground">Loading…</div>
-                      ) : (
-                        <div className="text-sm text-muted-foreground italic">No meal assigned</div>
-                      )}
-                      {recipe && (
-                        <div className="text-xs text-muted-foreground">
-                          {recipe.nutrition?.calories} kcal ·{" "}
-                          {recipe.nutrition?.protein}g protein ·{" "}
-                          {recipe.nutrition?.carbs}g carbs
-                        </div>
-                      )}
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Link 
+                  href={`/app/recipe/${item.recipe_id}`}
+                  className="bg-white border border-[#D9C39A]/40 rounded-[2rem] p-4 flex items-center gap-4 group hover:shadow-xl hover:shadow-[#3A2618]/5 transition-all duration-500"
+                >
+                  <div className="size-20 rounded-full overflow-hidden border border-[#D9C39A]/20 shrink-0">
+                    <img 
+                      src={recipe?.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200"} 
+                      alt="" 
+                      className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-serif text-lg text-[#3A2618] truncate group-hover:text-[#004D40] transition-colors">
+                      {recipe?.title || "Loading..."}
+                    </h3>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#3A2618]/40 mt-1">
+                      {recipe?.category === 'healthcare' ? 'Balanced • Satisfying' : 'Light • Energizing'}
+                    </p>
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-[#3A2618]/30 uppercase tracking-widest mt-2">
+                      <Clock className="size-3" /> {recipe?.cook_time || 20} min
                     </div>
                   </div>
-
-                  {item && (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => logMeal(item.recipe_id, meal_type)}
-                        className="flex-1 text-xs font-medium py-1.5 px-3 rounded-lg bg-green-500/10 text-green-700 dark:text-green-400 hover:bg-green-500/20 transition-colors flex items-center justify-center gap-1"
-                      >
-                        <Check className="size-3" /> Log meal
-                      </button>
-                      <button
-                        onClick={() => handleSwap(meal_type, item.recipe_id)}
-                        disabled={isSwappingThis}
-                        className="flex-1 text-xs font-medium py-1.5 px-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors flex items-center justify-center gap-1 disabled:opacity-50"
-                      >
-                        <RefreshCw className={`size-3 ${isSwappingThis ? "animate-spin" : ""}`} />
-                        {isSwappingThis ? "Finding…" : "Swap"}
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                {isSwappingThis && swapCandidates.length > 0 && (
-                  <div className="nv-card p-4 space-y-2 border-primary/30 bg-primary/5">
-                    <p className="text-xs font-semibold text-primary">Choose a swap:</p>
-                    {swapCandidates.map((candidate) => (
-                      <button
-                        key={candidate.id}
-                        onClick={() => confirmSwap(meal_type, candidate.id)}
-                        className="w-full text-left p-3 rounded-lg hover:bg-background/80 transition-colors flex items-center gap-3"
-                      >
-                        {candidate.image && (
-                          <img src={candidate.image} alt="" className="size-10 rounded-lg object-cover shrink-0" loading="lazy"
-                            onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800"; }} />
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium truncate">{candidate.title}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {candidate.nutrition?.calories} kcal
-                          </div>
-                        </div>
-                        <ChevronRight className="size-4 text-muted-foreground shrink-0" />
-                      </button>
-                    ))}
-                    <button
-                      onClick={() => { setSwapping(null); setSwapCandidates([]); }}
-                      className="w-full text-xs text-muted-foreground py-1.5"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                )}
-              </div>
+                  <ChevronRight className="size-5 text-[#3A2618]/20 group-hover:text-[#3A2618] transition-colors shrink-0" />
+                </Link>
+              </motion.div>
             );
-          })}
-        </div>
-      )}
+          })
+        ) : (
+          <div className="text-center py-24 text-[#3A2618]/30 font-serif text-xl">
+            Your plan is being prepared.
+          </div>
+        )}
+      </div>
 
-      {hasPlan && todayItems.length > 0 && (
-        <section className="nv-card p-4">
-          <div className="text-xs text-muted-foreground mb-2">Today's planned intake</div>
-          {(() => {
-            const totalCal = todayItems.reduce((sum: number, item: any) => {
-              const r = recipeCache[item.recipe_id];
-              return sum + (r?.nutrition?.calories || 0);
-            }, 0);
-            const pct = Math.min(100, calTarget > 0 ? Math.round((totalCal / calTarget) * 100) : 0);
-            return (
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-sm">
-                  <span className="font-medium">{totalCal} kcal</span>
-                  <span className="text-muted-foreground">/ {calTarget} target</span>
-                </div>
-                <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${pct}%` }} />
-                </div>
-              </div>
-            );
-          })()}
-        </section>
-      )}
+      {/* Footer CTA - Image 5 */}
+      <div className="fixed bottom-32 left-6 right-6 flex justify-center">
+        <Link href="/app/meal-plan" className="w-full max-w-sm">
+          <button className="w-full bg-[#3A2618] text-white rounded-full py-5 text-sm font-bold uppercase tracking-[0.2em] shadow-xl shadow-[#3A2618]/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+            View Full Plan
+          </button>
+        </Link>
+      </div>
 
-      <MedicalDisclaimer variant="page-footer" />
+      {/* Bottom Nav Sync */}
+      <nav className="fixed bottom-6 left-6 right-6 h-16 bg-white border border-[#D9C39A]/40 rounded-full shadow-lg shadow-[#3A2618]/5 flex items-center justify-around px-4 z-50">
+        <Link href="/app" className="p-3 text-[#3A2618]/30"><Leaf className="size-6" /></Link>
+        <Link href="/app/daily-plan" className="p-3 text-[#004D40]"><Utensils className="size-6" /></Link>
+        <button className="size-12 rounded-full bg-[#004D40] text-white flex items-center justify-center shadow-lg shadow-[#004D40]/20 -translate-y-4">
+          <Search className="size-6" />
+        </button>
+        <Link href="/app/progress" className="p-3 text-[#3A2618]/30 hover:text-[#3A2618]"><BarChart2 className="size-6" /></Link>
+        <Link href="/app/profile" className="p-3 text-[#3A2618]/30 hover:text-[#3A2618]"><User className="size-6" /></Link>
+      </nav>
     </div>
   );
 }
+
+// Mock imports for navigation consistency
+const Leaf = ({ className }: { className?: string }) => <div className={className}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 8-.5 2.2-2 4.4-3.8 6a7 7 0 0 1-5.2 4Z"/><path d="M7 20s0-2 1-4.5"/><path d="M14 20l1.5-3"/></svg></div>;
+const Utensils = ({ className }: { className?: string }) => <div className={className}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div>;
+const Search = ({ className }: { className?: string }) => <div className={className}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>;
+const BarChart2 = ({ className }: { className?: string }) => <div className={className}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>;
+const User = ({ className }: { className?: string }) => <div className={className}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>;

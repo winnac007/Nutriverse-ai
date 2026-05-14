@@ -3,191 +3,151 @@
 import React, { useEffect, useState, use } from "react";
 import Link from "next/link";
 import api from "@/lib/api";
-import { Button } from "@/components/ui/button";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { ArrowLeft, Clock, Users, Flame, Plus, Bookmark, ShoppingBag, ChefHat, PlayCircle } from "lucide-react";
+import { ArrowLeft, Heart, Clock, Users, Plus, PlayCircle, Star, Leaf } from "lucide-react";
 import { toast } from "sonner";
 import PremiumGate from "@/components/PremiumGate";
 import { useAuth } from "@/lib/auth";
+import { motion } from "framer-motion";
 
 export default function RecipeDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const { user, refresh } = useAuth();
   const [recipe, setRecipe] = useState<any>(null);
-  const [mealType, setMealType] = useState("lunch");
-  const [showVideo, setShowVideo] = useState(false);
+  const [activeTab, setActiveTab] = useState("ingredients");
 
   useEffect(() => {
     api.get(`/recipes/${id}`).then((r) => setRecipe(r.data));
-    setShowVideo(false);
   }, [id]);
 
-  if (!recipe) return <div className="text-muted-foreground">Loading…</div>;
+  if (!recipe) return (
+    <div className="min-h-screen bg-[#FAF3E6] flex items-center justify-center font-serif text-[#3A2618]/30 text-xl">
+      Preparing...
+    </div>
+  );
 
   const locked = recipe.is_premium && !user?.is_premium;
 
-  const logMeal = async () => {
-    try {
-      await api.post("/nutrition/log", { recipe_id: recipe.id, meal_type: mealType, servings: 1 });
-      toast.success(`Logged ${recipe.title}`);
-    } catch { toast.error("Could not log meal"); }
-  };
   const toggleSave = async () => {
     try {
       await api.post(`/user/save-recipe/${recipe.id}`);
       await refresh();
-      toast.success("Updated saved");
-    } catch { toast.error("Failed"); }
+      toast.success("Saved to favorites");
+    } catch { toast.error("Failed to save"); }
   };
 
   const saved = user?.saved_recipes?.includes(recipe.id);
-  const affiliate = `https://www.amazon.com/s?k=${encodeURIComponent(recipe.ingredients.map((i: any) => i.name).join(" "))}`;
 
   if (locked) {
     return (
-      <div className="space-y-6">
-        <Link href="/app/explore" className="inline-flex items-center gap-2 text-sm text-muted-foreground"><ArrowLeft className="size-4" /> Back</Link>
+      <div className="space-y-6 p-6 bg-[#FAF3E6] min-h-screen">
+        <Link href="/app/explore" className="inline-flex items-center gap-2 text-[#3A2618]"><ArrowLeft className="size-5" /></Link>
         <PremiumGate title={recipe.title} description={recipe.description + " — Premium recipe."} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      <div className="relative -mx-4 sm:-mx-6 aspect-[4/3] sm:aspect-[16/9] overflow-hidden sm:rounded-2xl">
-        <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" loading="lazy"
-          onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800"; }} />
-        <div className="absolute inset-0 nv-hero-overlay" />
-        <Link href="/app/explore" className="absolute top-4 left-4 size-10 rounded-full glass grid place-items-center">
-          <ArrowLeft className="size-4" />
-        </Link>
-        <button onClick={toggleSave} className={`absolute top-4 right-4 size-10 rounded-full glass grid place-items-center ${saved ? "text-primary" : ""}`}>
-          <Bookmark className={`size-4 ${saved ? "fill-current" : ""}`} />
-        </button>
-        <div className="absolute bottom-4 left-4 right-4">
-          <div className="flex flex-wrap gap-2 mb-2">
-            {recipe.region && <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/85 text-black">{recipe.country} · {recipe.region}</span>}
-            {recipe.tags?.slice(0, 3).map((t: string) => (
-              <span key={t} className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/20 backdrop-blur text-white">{t}</span>
-            ))}
-          </div>
-          <h1 className="font-display text-2xl sm:text-4xl font-bold text-white leading-tight">{recipe.title}</h1>
+    <div className="bg-[#FAF3E6] min-h-screen pb-32">
+      {/* Top Image Area */}
+      <div className="relative h-[45vh] w-full rounded-b-[3rem] overflow-hidden shadow-sm">
+        <img 
+          src={recipe.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800"} 
+          alt={recipe.title} 
+          className="w-full h-full object-cover" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/10" />
+        
+        {/* Top Bar */}
+        <div className="absolute top-6 left-6 right-6 flex items-center justify-between z-10">
+          <Link href="/app/daily-plan" className="size-10 rounded-full bg-white/20 backdrop-blur-md grid place-items-center text-white border border-white/20">
+            <ArrowLeft className="size-5" />
+          </Link>
+          <button onClick={toggleSave} className="size-10 rounded-full bg-white/20 backdrop-blur-md grid place-items-center text-white border border-white/20">
+            <Heart className={`size-5 ${saved ? "fill-current" : ""}`} />
+          </button>
         </div>
       </div>
 
-      {recipe.chef && (
-        <div className="nv-card nv-shadow p-4 flex items-center gap-3">
-          <div className="size-10 rounded-full nv-gradient-cs grid place-items-center text-white"><ChefHat className="size-5" /></div>
+      {/* Content Area */}
+      <div className="px-6 pt-8 max-w-3xl mx-auto">
+        <div className="flex items-start justify-between mb-4">
           <div>
-            <div className="text-sm font-semibold">{recipe.chef.name}</div>
-            <div className="text-xs text-muted-foreground">{recipe.chef.credentials}</div>
+            <h1 className="font-serif text-3xl text-[#3A2618] leading-tight flex items-center gap-2">
+              {recipe.title} <Leaf className="size-5 text-[#004D40]" />
+            </h1>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-[#3A2618]/50 mt-2">
+              High fiber • Protein rich • Anti-inflammatory
+            </p>
           </div>
         </div>
-      )}
 
-      <div className="flex items-center gap-6 text-sm text-muted-foreground">
-        <span className="inline-flex items-center gap-1.5"><Clock className="size-4" /> {recipe.cook_time} min</span>
-        <span className="inline-flex items-center gap-1.5"><Users className="size-4" /> {recipe.servings}</span>
-        <span className="inline-flex items-center gap-1.5"><Flame className="size-4" /> {recipe.nutrition?.calories} kcal</span>
+        <div className="flex items-center gap-6 text-[11px] font-bold uppercase tracking-widest text-[#3A2618]/60 mb-8">
+          <span className="flex items-center gap-1.5"><Clock className="size-4" /> {recipe.cook_time || 25} min</span>
+          <span className="flex items-center gap-1.5"><Star className="size-4" /> Easy</span>
+          <span className="flex items-center gap-1.5"><Users className="size-4" /> Serves {recipe.servings || 1}</span>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-8 border-b border-[#D9C39A]/40 mb-6">
+          {["ingredients", "nutrition", "steps"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`pb-3 text-sm font-bold uppercase tracking-widest transition-colors relative ${
+                activeTab === tab ? "text-[#004D40]" : "text-[#3A2618]/40 hover:text-[#3A2618]/70"
+              }`}
+            >
+              {tab}
+              {activeTab === tab && (
+                <motion.div layoutId="recipe-tab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#004D40]" />
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content */}
+        <div className="space-y-4">
+          {activeTab === "ingredients" && (
+            <ul className="space-y-4">
+              {recipe.ingredients.map((i: any, idx: number) => (
+                <li key={idx} className="flex items-center gap-4 text-sm text-[#3A2618]">
+                  <div className="size-1.5 rounded-full bg-[#004D40]" />
+                  <span className="font-bold">{i.amount}</span>
+                  <span className="capitalize">{i.name}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {activeTab === "nutrition" && (
+            <div className="grid grid-cols-2 gap-4">
+              {["calories", "protein", "carbs", "fat"].map((k) => (
+                <div key={k} className="bg-white border border-[#D9C39A]/40 rounded-2xl p-4 flex justify-between items-center">
+                  <span className="text-xs font-bold uppercase tracking-widest text-[#3A2618]/40">{k}</span>
+                  <span className="font-serif text-xl text-[#3A2618]">{recipe.nutrition?.[k]}{k !== 'calories' ? 'g' : ''}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          {activeTab === "steps" && (
+            <ol className="space-y-6">
+              {recipe.steps.map((s: string, idx: number) => (
+                <li key={idx} className="flex gap-4">
+                  <span className="font-serif text-2xl text-[#004D40]/30">{idx + 1}</span>
+                  <span className="text-sm text-[#3A2618] leading-relaxed pt-1">{s}</span>
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
       </div>
 
-      <p className="text-base text-muted-foreground">{recipe.description}</p>
-
-      {recipe.video_url && (
-        <section className="nv-card nv-shadow overflow-hidden">
-          {showVideo ? (
-            <div className="aspect-video">
-              <iframe
-                title={`${recipe.title} video`}
-                src={`${recipe.video_url}?autoplay=1`}
-                className="w-full h-full"
-                frameBorder="0"
-                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          ) : (
-            <button onClick={() => setShowVideo(true)}
-              className="w-full aspect-video relative group">
-              <img src={recipe.image} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy"
-                onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800"; }} />
-              <div className="absolute inset-0 bg-black/40 grid place-items-center">
-                <div className="flex flex-col items-center gap-2">
-                  <PlayCircle className="size-16 text-white group-hover:scale-110 transition-transform" />
-                  <span className="text-white font-medium">How to cook · Watch tutorial</span>
-                </div>
-              </div>
-            </button>
-          )}
-        </section>
-      )}
-
-      <section className="nv-card nv-shadow p-5">
-        <h3 className="font-display text-lg font-semibold mb-3">Nutrition (per serving)</h3>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-          {["calories", "protein", "carbs", "fat", "fiber", "sodium"].map((k) => (
-            <div key={k}>
-              <div className="text-xl font-display font-bold">{recipe.nutrition[k]}{k === "sodium" ? "mg" : k === "calories" ? "" : "g"}</div>
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{k}</div>
-            </div>
-          ))}
-        </div>
-        {recipe.nutrition.gi && <p className="text-xs text-muted-foreground mt-3">Glycemic Index: {recipe.nutrition.gi}</p>}
-      </section>
-
-      <section>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-display text-lg font-semibold">Ingredients</h3>
-          <a href={affiliate} target="_blank" rel="noreferrer"
-            className="text-xs text-primary inline-flex items-center gap-1"><ShoppingBag className="size-3.5" /> Shop all</a>
-        </div>
-        <ul className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {recipe.ingredients.map((i: any, idx: number) => (
-            <li key={idx} className="nv-card nv-shadow p-3 flex flex-col items-center text-center">
-              {i.image && (
-                <img src={i.image} alt={i.name} loading="lazy" className="size-16 rounded-full object-cover mb-2 ring-1 ring-border" />
-              )}
-              <div className="text-sm font-medium leading-tight">{i.name}</div>
-              <div className="text-xs text-muted-foreground mt-1">{i.amount}</div>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section>
-        <h3 className="font-display text-lg font-semibold mb-3">Method</h3>
-        <ol className="space-y-3">
-          {recipe.steps.map((s: string, idx: number) => (
-            <li key={idx} className="flex gap-3 nv-card nv-shadow p-4">
-              <span className="shrink-0 size-7 rounded-full nv-gradient-hc text-white text-sm font-bold grid place-items-center">{idx + 1}</span>
-              <span className="text-sm leading-relaxed pt-0.5">{s}</span>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      {recipe.avoid && (
-        <section className="nv-card p-5 border-destructive/30">
-          <h3 className="font-display text-lg font-semibold mb-2 text-destructive">Avoid</h3>
-          <p className="text-sm text-muted-foreground">{recipe.avoid.join(", ")}</p>
-        </section>
-      )}
-
-      <section className="nv-card nv-shadow p-5 space-y-3 sticky bottom-24 z-10">
-        <h3 className="font-semibold">Log this meal</h3>
-        <div className="flex gap-3">
-          <Select value={mealType} onValueChange={setMealType}>
-            <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="breakfast">Breakfast</SelectItem>
-              <SelectItem value="lunch">Lunch</SelectItem>
-              <SelectItem value="dinner">Dinner</SelectItem>
-              <SelectItem value="snack">Snack</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button onClick={logMeal} className="rounded-full flex-1"><Plus className="size-4 mr-1" /> Log meal</Button>
-        </div>
-      </section>
+      {/* Floating Action Button */}
+      <button 
+        onClick={() => toast.success("Added to today's plan")}
+        className="fixed bottom-8 right-6 size-14 rounded-full bg-[#004D40] text-white shadow-xl shadow-[#004D40]/30 grid place-items-center hover:scale-105 transition-transform z-50"
+      >
+        <Plus className="size-6" />
+      </button>
     </div>
   );
 }

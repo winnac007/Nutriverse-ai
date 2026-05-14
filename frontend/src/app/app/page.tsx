@@ -4,141 +4,8 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/auth";
-import RecipeCard from "@/components/RecipeCard";
-import MedicalDisclaimer from "@/components/MedicalDisclaimer";
-import { ArrowRight, MapPin, Flame, Utensils, Apple, ChevronRight, Lightbulb, Zap } from "lucide-react";
-
-// ── Condition meta ──────────────────────────────────────────────────────────
-const CONDITION_META: Record<string, { emoji: string, label: string }> = {
-  diabetes:              { emoji: "🩸", label: "Diabetes" },
-  "diabetes-t1":         { emoji: "🩸", label: "Diabetes T1" },
-  prediabetes:           { emoji: "🩸", label: "Pre-Diabetes" },
-  "heart-disease":       { emoji: "❤️",  label: "Heart Health" },
-  hypertension:          { emoji: "💓", label: "Blood Pressure" },
-  "high-cholesterol":    { emoji: "❤️",  label: "High Cholesterol" },
-  "high-triglycerides":  { emoji: "❤️",  label: "High Triglycerides" },
-  thyroid:               { emoji: "🦋", label: "Thyroid" },
-  hyperthyroid:          { emoji: "🦋", label: "Hyperthyroid" },
-  pcos:                  { emoji: "🌸", label: "PCOS" },
-  menopause:             { emoji: "🌸", label: "Menopause" },
-  pregnancy:             { emoji: "🤱", label: "Pregnancy" },
-  "weight-management":   { emoji: "⚖️", label: "Weight Mgmt" },
-  obesity:               { emoji: "⚖️", label: "Obesity" },
-  "gut-health":          { emoji: "🌿", label: "Gut Health" },
-  ibs:                   { emoji: "🌿", label: "IBS" },
-  gerd:                  { emoji: "🌿", label: "Acid Reflux" },
-  "fatty-liver":         { emoji: "🫀", label: "Fatty Liver" },
-  celiac:                { emoji: "🌾", label: "Coeliac" },
-  gastritis:             { emoji: "🌿", label: "Gastritis" },
-  "kidney-disease":      { emoji: "💧", label: "Kidney Health" },
-  "kidney-stones":       { emoji: "💧", label: "Kidney Stones" },
-  immunity:              { emoji: "🛡️",  label: "Immunity" },
-  "iron-deficiency":     { emoji: "🩸", label: "Iron Deficiency" },
-  "b12-deficiency":      { emoji: "✨", label: "B12 Deficiency" },
-  "vitamin-d":           { emoji: "☀️",  label: "Vitamin D" },
-  "calcium-deficiency":  { emoji: "🦴", label: "Calcium Deficiency" },
-  "gluten-intolerance":  { emoji: "🌾", label: "Gluten Intolerance" },
-  "lactose-intolerance": { emoji: "🥛", label: "Lactose Intolerance" },
-  hashimotos:            { emoji: "🦋", label: "Hashimoto's" },
-  "rheumatoid-arthritis":{ emoji: "🦴", label: "Rheumatoid Arthritis" },
-  depression:            { emoji: "🧠", label: "Depression" },
-  migraine:              { emoji: "🧠", label: "Migraine" },
-  gout:                  { emoji: "💧", label: "Gout" },
-  osteoporosis:          { emoji: "🦴", label: "Osteoporosis" },
-  "insulin-resistance":  { emoji: "🩸", label: "Insulin Resistance" },
-};
-
-// ── Daily health tips per condition ─────────────────
-const DAILY_TIPS: Record<string, string[]> = {
-  diabetes: [
-    "Eat meals at consistent times every day to prevent blood sugar swings.",
-    "Choose low-GI foods like oats, lentils, and most non-starchy vegetables.",
-    "Add a 10-minute walk after meals — it can reduce post-meal glucose spikes by 30%.",
-    "Avoid skipping meals. Fasting too long raises stress hormones that spike blood sugar.",
-    "Pair carbs with protein or fat to slow glucose absorption.",
-    "Stay hydrated — even mild dehydration can raise blood sugar levels.",
-    "Include cinnamon in your diet — it's been shown to improve insulin sensitivity.",
-  ],
-  "heart-disease": [
-    "Replace saturated fats with unsaturated fats from nuts, seeds, and avocado.",
-    "Eat fatty fish like salmon or mackerel twice a week for heart-protective omega-3s.",
-    "Reduce sodium to under 1500mg/day — read labels on packaged foods carefully.",
-    "A handful of walnuts daily has been shown to improve cholesterol levels.",
-    "Oats contain beta-glucan which actively reduces LDL (bad) cholesterol.",
-    "Garlic can naturally help lower blood pressure — include it in daily cooking.",
-    "DASH diet principles: more vegetables, whole grains, lean protein — less salt.",
-  ],
-  thyroid: [
-    "Selenium-rich foods (Brazil nuts, sunflower seeds) support thyroid hormone production.",
-    "Avoid raw cruciferous vegetables in large amounts — cook them instead.",
-    "Take your thyroid medication on an empty stomach, 30–60 min before breakfast.",
-    "Iron deficiency can worsen hypothyroidism — include leafy greens and legumes.",
-    "Limit soy products if you're on thyroid medication — they can block absorption.",
-    "Zinc from pumpkin seeds and lentils supports healthy thyroid function.",
-    "Eat iodine-rich foods like fish and dairy — iodine is essential for thyroid hormones.",
-  ],
-  pcos: [
-    "Low-GI eating helps manage insulin resistance common in PCOS.",
-    "Anti-inflammatory foods like turmeric, berries, and omega-3s can ease PCOS symptoms.",
-    "Inositol (found in fruits and legumes) supports hormonal balance in PCOS.",
-    "Reducing refined sugar intake is one of the most impactful changes for PCOS.",
-    "Regular meals prevent blood sugar crashes that worsen hormonal imbalances.",
-    "Magnesium in dark chocolate, almonds, and spinach helps with insulin sensitivity.",
-    "Spearmint tea has been shown to reduce androgen levels in PCOS.",
-  ],
-  "weight-management": [
-    "Protein at every meal increases satiety and boosts metabolism.",
-    "Eating slowly and without screens helps you eat 20–30% less naturally.",
-    "Drinking 500ml of water before meals can reduce calorie intake significantly.",
-    "Adequate sleep (7–8 hrs) is non-negotiable for healthy weight management.",
-    "Strength training builds muscle which burns more calories even at rest.",
-    "Fibre from vegetables and legumes keeps you full for longer.",
-    "Don't cut calories too drastically — it slows metabolism and causes muscle loss.",
-  ],
-  "gut-health": [
-    "Eat a diverse range of plant foods — aim for 30 different plants per week.",
-    "Fermented foods like curd, idli, and dosa naturally boost gut bacteria.",
-    "Prebiotic foods (garlic, onions, bananas) feed your beneficial gut bacteria.",
-    "Stay well hydrated — water keeps things moving smoothly through your gut.",
-    "Stress directly harms your gut microbiome — include daily relaxation practices.",
-    "Chew your food thoroughly — digestion begins in the mouth.",
-    "Eat plenty of fibre from fruits, vegetables, and whole grains daily.",
-  ],
-  "kidney-disease": [
-    "Limit sodium to reduce blood pressure and fluid retention.",
-    "Control portion sizes of high-potassium foods like bananas and potatoes.",
-    "Boiling vegetables and discarding the water reduces potassium content significantly.",
-    "Work with your doctor on protein intake — the right amount varies by CKD stage.",
-    "Stay hydrated but follow your doctor's recommended daily fluid limit.",
-    "Avoid processed and packaged foods which are high in hidden phosphorus and sodium.",
-    "Egg whites are an excellent low-phosphorus protein source for kidney health.",
-  ],
-  immunity: [
-    "Vitamin C from amla, bell peppers, and citrus is a powerful immune booster.",
-    "Zinc (from pumpkin seeds, legumes) is essential for immune cell function.",
-    "Turmeric with black pepper has strong anti-inflammatory and immune properties.",
-    "Adequate sleep is the single most important factor for a healthy immune system.",
-    "Fermented foods support gut health, where 70% of your immune system lives.",
-    "Reduce refined sugar — it can suppress immune response for several hours after consumption.",
-    "Regular moderate exercise boosts immune surveillance and reduces inflammation.",
-  ],
-};
-
-function getDailyTip(conditions: string[]) {
-  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
-  for (const cond of conditions) {
-    const tips = DAILY_TIPS[cond];
-    if (tips) return { tip: tips[dayOfYear % tips.length], condition: cond };
-  }
-  const genericTips = [
-    "Eat whole foods, stay hydrated, and move your body daily.",
-    "Consistent meal timing supports both metabolism and energy levels.",
-    "Include a variety of colorful vegetables at every meal for micronutrient coverage.",
-    "Sleep 7-9 hours — it's the foundation of all other health goals.",
-    "Drink water before you feel thirsty; thirst is a late sign of mild dehydration.",
-  ];
-  return { tip: genericTips[dayOfYear % genericTips.length], condition: null };
-}
+import { Bell, ChevronRight, Leaf, Droplets, Zap, User, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -147,53 +14,22 @@ function getGreeting() {
   return "Good evening";
 }
 
-function MacroBar({ label, value, max, color }: { label: string, value: number, max: number, color: string }) {
-  const pct = Math.min(100, max > 0 ? Math.round((value / max) * 100) : 0);
-  return (
-    <div className="space-y-1">
-      <div className="flex justify-between text-xs">
-        <span className="text-muted-foreground">{label}</span>
-        <span className="font-medium">{value}g</span>
-      </div>
-      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-        <div className={`h-full rounded-full transition-all ${color}`} style={{ width: `${pct}%` }} />
-      </div>
-    </div>
-  );
-}
-
 export default function Home() {
   const { user } = useAuth();
-  const [recipes, setRecipes] = useState<any[]>([]);
-  const [today, setToday] = useState({ totals: { calories: 0, protein: 0, carbs: 0, fat: 0 } });
   const [mealPlan, setMealPlan] = useState<any>(null);
   const [planRecipes, setPlanRecipes] = useState<Record<string, any>>({});
-  const [streak, setStreak] = useState<any>(null);
-
-  const conditions = user?.conditions || [];
-  const healthPlan = user?.health_plan;
-  const { tip: dailyTip, condition: tipCondition } = getDailyTip(conditions);
-  const tipMeta = tipCondition ? CONDITION_META[tipCondition] : null;
+  const [today, setToday] = useState({ totals: { calories: 0, water_glasses: 6 } });
 
   useEffect(() => {
     if (!user?.id) return;
-    api.get("/recipes/personalized")
-      .then((r) => setRecipes(r.data.slice(0, 6)))
-      .catch(() => {
-        const condParam = conditions[0];
-        const params = condParam ? { condition: condParam } : { category: "healthcare" };
-        api.get("/recipes", { params }).then((r) => setRecipes(r.data.slice(0, 6))).catch(() => {});
-      });
-
     api.get("/nutrition/today").then((r) => setToday(r.data)).catch(() => {});
     api.get("/meal-plan").then((r) => setMealPlan(r.data)).catch(() => {});
-    api.get("/healthcare/streak").then((r) => setStreak(r.data)).catch(() => {});
-  }, [user?.id, conditions]);
+  }, [user?.id]);
 
   useEffect(() => {
     if (!mealPlan?.items?.length) return;
     const todayDay = new Date().toLocaleDateString("en-US", { weekday: "short" });
-    const todayItems = mealPlan.items.filter((i: any) => i.day === todayDay || mealPlan.items.length <= 3);
+    const todayItems = mealPlan.items.filter((i: any) => i.day === todayDay);
     const ids: string[] = [...new Set(todayItems.map((i: any) => i.recipe_id))] as string[];
     ids.forEach((id) => {
       if (!planRecipes[id]) {
@@ -204,234 +40,121 @@ export default function Home() {
     });
   }, [mealPlan]);
 
-  const macroTargets = healthPlan?.macros || { protein_g: 60, carbs_g: 200, fat_g: 55 };
-  const calTarget = healthPlan?.daily_calories || 2000;
-
   const todayDay = new Date().toLocaleDateString("en-US", { weekday: "short" });
   const todayMeals = mealPlan?.items
     ? mealPlan.items.filter((i: any) => i.day === todayDay).slice(0, 3)
     : [];
 
   return (
-    <div className="space-y-8 pb-6">
-      <header className="flex items-start justify-between">
+    <div className="min-h-screen bg-background pb-32 pt-8 px-6 max-w-md mx-auto space-y-8">
+      {/* Top Header */}
+      <header className="flex items-center justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">{getGreeting()}</p>
-          <h1 className="text-3xl font-display font-bold tracking-tight mt-1">
-            {user?.name?.split(" ")[0]}
+          <h1 className="font-serif text-2xl text-foreground">
+            {getGreeting()}, <br />
+            <span className="text-primary italic font-serif">{user?.name?.split(" ")[0] || "Aisha"} ✨</span>
           </h1>
-          {user?.location && (
-            <p className="text-sm text-muted-foreground mt-1 inline-flex items-center gap-1">
-              <MapPin className="size-3.5" /> {user.location}
-            </p>
-          )}
-          {conditions.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-2">
-              {conditions.map((c) => {
-                const meta = CONDITION_META[c];
-                return meta ? (
-                  <span key={c} className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                    {meta.emoji} {meta.label}
-                  </span>
-                ) : null;
-              })}
-            </div>
-          )}
+          <p className="text-foreground/40 text-[10px] uppercase tracking-widest font-bold mt-1">Today is a fresh start.</p>
         </div>
-        {user?.is_premium ? (
-          <span className="text-xs font-semibold px-3 py-1 rounded-full nv-gradient-pm text-black">PREMIUM</span>
-        ) : (
-          <Link href="/app/profile" className="text-xs font-semibold px-3 py-1 rounded-full border border-[#c28a00]/40 text-[#c28a00] hover:bg-[#ffd166]/10">
-            Upgrade
-          </Link>
-        )}
+        <div className="flex items-center gap-3">
+          <button className="size-10 rounded-full glass-zen grid place-items-center text-foreground/60 border border-border/40">
+            <Bell className="size-5" />
+          </button>
+          <div className="size-10 rounded-full overflow-hidden border-2 border-white shadow-sm">
+            <img src="https://i.pravatar.cc/100?u=aisha" alt="Profile" className="w-full h-full object-cover" />
+          </div>
+        </div>
       </header>
 
-      <section className="nv-card nv-shadow p-5 space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold flex items-center gap-1.5">
-            <Flame className="size-4 text-orange-500" /> Today's nutrition
-          </h2>
-          <Link href="/app/track" className="text-xs text-primary inline-flex items-center gap-1">
-            Track <ArrowRight className="size-3" />
-          </Link>
+      {/* Today's Focus Card */}
+      <motion.section 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative bg-white border border-border/40 rounded-[2rem] p-6 shadow-sm overflow-hidden"
+      >
+        <div className="relative z-10">
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-foreground/40 mb-2 block">Today's Focus</span>
+          <h2 className="font-serif text-xl text-foreground max-w-[180px]">Eat mindfully and stay hydrated</h2>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="text-center">
-            <div className="text-3xl font-display font-bold">{today.totals.calories || 0}</div>
-            <div className="text-xs text-muted-foreground">/ {calTarget} kcal</div>
-          </div>
-          <div className="flex-1 space-y-2">
-            <MacroBar label="Protein" value={today.totals.protein || 0} max={macroTargets.protein_g} color="bg-blue-500" />
-            <MacroBar label="Carbs"   value={today.totals.carbs || 0}   max={macroTargets.carbs_g}   color="bg-amber-500" />
-            <MacroBar label="Fat"     value={today.totals.fat || 0}     max={macroTargets.fat_g}     color="bg-rose-500" />
-          </div>
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 opacity-10">
+          <Leaf className="size-16 text-primary" />
         </div>
-      </section>
+      </motion.section>
 
-      {streak && (streak.current_streak_days > 0 || streak.meals_this_week > 0) && (
-        <section className="nv-card p-4 flex items-center gap-4 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/20 border-orange-200/60 dark:border-orange-800/40">
-          <div className="size-12 rounded-2xl bg-orange-100 dark:bg-orange-900/40 flex items-center justify-center text-2xl shrink-0">
-            🔥
-          </div>
-          <div className="flex-1">
-            <div className="font-semibold text-sm">
-              {streak.current_streak_days > 0
-                ? `${streak.current_streak_days}-day streak`
-                : "Start your streak today"}
-            </div>
-            <div className="text-xs text-muted-foreground mt-0.5">
-              {streak.meals_this_week} meal{streak.meals_this_week !== 1 ? "s" : ""} logged this week
-              {streak.distinct_recipes_this_week > 0 && ` · ${streak.distinct_recipes_this_week} different recipes`}
-            </div>
-          </div>
-          <Zap className="size-5 text-orange-400 shrink-0" />
-        </section>
-      )}
-
-      {healthPlan?.food_rules?.length > 0 && (
-        <section className="space-y-3">
-          <h2 className="font-display text-lg font-semibold">Your health rules</h2>
-          <div className="space-y-2">
-            {healthPlan.food_rules.map((rule: string, i: number) => (
-              <div key={i} className="nv-card p-4 flex items-start gap-3">
-                <div className="size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
-                  {i + 1}
-                </div>
-                <p className="text-sm">{rule}</p>
-              </div>
-            ))}
-          </div>
-          {conditions.length > 0 && <MedicalDisclaimer variant="inline" />}
-        </section>
-      )}
-
-      {todayMeals.length > 0 && (
-        <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="font-display text-lg font-semibold flex items-center gap-1.5">
-              <Utensils className="size-4" /> Today's meals
-            </h2>
-            <Link href="/app/meal-plan" className="text-xs text-primary inline-flex items-center gap-1">
-              Full plan <ChevronRight className="size-3" />
-            </Link>
-          </div>
-          <div className="space-y-2">
-            {todayMeals.map((item: any) => {
-              const recipe = planRecipes[item.recipe_id];
-              return (
-                <Link key={item.recipe_id + item.meal_type} href={`/app/recipe/${item.recipe_id}`}
-                  className="nv-card p-4 flex items-center gap-3 hover:-translate-y-0.5 transition-transform block">
-                  <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-lg shrink-0">
-                    {item.meal_type === "breakfast" ? "🌅" : item.meal_type === "lunch" ? "☀️" : "🌙"}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs text-muted-foreground capitalize">{item.meal_type}</div>
-                    <div className="font-medium text-sm truncate">{recipe?.title || "Loading…"}</div>
-                    {recipe && (
-                      <div className="text-xs text-muted-foreground">{recipe.nutrition?.calories} kcal</div>
-                    )}
-                  </div>
-                  <ChevronRight className="size-4 text-muted-foreground shrink-0" />
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
-      {!todayMeals.length && (
-        <Link href="/app/meal-plan" className="block nv-card nv-shadow p-5 hover:-translate-y-0.5 transition-transform">
-          <div className="flex items-center gap-4">
-            <div className="size-12 rounded-2xl nv-gradient-hc grid place-items-center text-white text-2xl">🍽️</div>
-            <div className="flex-1">
-              <h3 className="font-semibold">Get your meal plan</h3>
-              <p className="text-sm text-muted-foreground">AI-powered meals tailored to your conditions</p>
-            </div>
-            <ChevronRight className="size-5 text-muted-foreground" />
-          </div>
-        </Link>
-      )}
-
-      <section className="nv-card p-5 border-l-4 border-l-primary bg-primary/5">
-        <div className="flex items-start gap-3">
-          <Lightbulb className="size-5 text-primary shrink-0 mt-0.5" />
-          <div>
-            <div className="text-xs font-semibold text-primary mb-1 uppercase tracking-wide">
-              {tipMeta ? `${tipMeta.emoji} ${tipMeta.label} tip` : "Daily tip"}
-            </div>
-            <p className="text-sm leading-relaxed">{dailyTip}</p>
-          </div>
-        </div>
-      </section>
-
+      {/* Today's Meals */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-lg font-semibold flex items-center gap-1.5">
-            <Apple className="size-4" /> Recipes for you
-          </h2>
-          <Link href="/app/explore" className="text-xs text-primary inline-flex items-center gap-1">
-            Explore all <ChevronRight className="size-3" />
+          <h3 className="font-serif text-lg text-foreground">Today's Meals</h3>
+          <Link href="/app/meal-plan" className="text-[10px] font-bold uppercase tracking-widest text-primary flex items-center gap-1">
+            View plan <ChevronRight className="size-3" />
           </Link>
         </div>
-        {recipes.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2">
-            {recipes.map((r) => <RecipeCard key={r.id} recipe={r} />)}
-          </div>
-        ) : (
-          <div className="nv-card p-8 text-center text-muted-foreground text-sm">
-            Loading personalised recipes…
-          </div>
-        )}
+        <div className="grid grid-cols-3 gap-3">
+          {["Breakfast", "Lunch", "Dinner"].map((meal, i) => {
+            const item = todayMeals[i];
+            const recipe = item ? planRecipes[item.recipe_id] : null;
+            return (
+              <div key={meal} className="space-y-2 group cursor-pointer">
+                <div className="aspect-square rounded-[1.5rem] overflow-hidden border border-border/20 shadow-inner relative">
+                  <img 
+                    src={recipe?.image || `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&sig=${i}`} 
+                    alt={meal}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                </div>
+                <div className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 text-center">{meal}</div>
+              </div>
+            );
+          })}
+        </div>
       </section>
 
-      {healthPlan?.foods_to_avoid?.length > 0 && (
-        <section className="nv-card p-5 space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-sm flex items-center gap-1.5">
-              <span>⚠️</span> Foods to limit or avoid
-            </h3>
-            <Link href="/app/food-guidelines" className="text-xs text-primary">See all</Link>
+      {/* Trackers Grid */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-white border border-border/40 rounded-[2rem] p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[9px] font-bold uppercase tracking-widest text-foreground/40">Water</span>
+            <Droplets className="size-4 text-blue-400/60" />
           </div>
-          <div className="flex flex-wrap gap-2">
-            {healthPlan.foods_to_avoid.map((f: string) => (
-              <span key={f} className="px-3 py-1 rounded-full bg-destructive/10 text-destructive text-xs font-medium">
-                {f}
-              </span>
+          <div className="text-2xl font-serif text-foreground mb-4">6/8 <span className="text-[10px] font-sans text-foreground/30 ml-1">glasses</span></div>
+          <div className="flex gap-1">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <div key={i} className={`h-1.5 flex-1 rounded-full ${i <= 6 ? "bg-blue-400" : "bg-blue-50"}`} />
             ))}
-          </div>
-        </section>
-      )}
-
-      {healthPlan?.foods_to_eat?.length > 0 && (
-        <section className="nv-card p-5 space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-sm flex items-center gap-1.5">
-              <span>✅</span> Focus foods for your conditions
-            </h3>
-            <Link href="/app/food-guidelines" className="text-xs text-primary">Full guide</Link>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {healthPlan.foods_to_eat.map((f: string) => (
-              <span key={f} className="px-3 py-1 rounded-full bg-green-500/10 text-green-700 dark:text-green-400 text-xs font-medium">
-                {f}
-              </span>
-            ))}
-          </div>
-        </section>
-      )}
-
-      <Link href="/app/track"
-        className="flex items-center justify-between nv-card p-5 hover:-translate-y-0.5 transition-transform">
-        <div className="flex items-center gap-3">
-          <div className="size-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center text-lg">📊</div>
-          <div>
-            <div className="font-semibold text-sm">Track your progress</div>
-            <div className="text-xs text-muted-foreground">Log meals and see weekly trends</div>
           </div>
         </div>
-        <ChevronRight className="size-5 text-muted-foreground" />
-      </Link>
+        <div className="bg-white border border-border/40 rounded-[2rem] p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[9px] font-bold uppercase tracking-widest text-foreground/40">Mindful Streak</span>
+            <Leaf className="size-4 text-primary/60" />
+          </div>
+          <div className="text-2xl font-serif text-foreground mb-4">7 <span className="text-[10px] font-sans text-foreground/30 ml-1">days</span></div>
+          <div className="h-1.5 w-full bg-primary/10 rounded-full overflow-hidden">
+            <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: "100%" }}
+                className="h-full bg-primary" 
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Tip of the Day Card */}
+      <motion.section 
+        whileHover={{ scale: 0.98 }}
+        className="bg-[#FAF8F2] border border-border/60 rounded-[2rem] p-6 flex items-start gap-4 relative overflow-hidden"
+      >
+        <div className="size-10 rounded-full bg-white grid place-items-center shrink-0 shadow-sm border border-border/20">
+            <Zap className="size-5 text-accent" />
+        </div>
+        <div className="flex-1 pr-4">
+            <span className="text-[9px] font-bold uppercase tracking-widest text-foreground/40 mb-1 block">Tip of the Day</span>
+            <p className="text-xs text-foreground/70 leading-relaxed italic font-serif">
+                "Chew slowly. Your body listens to every bite. Take deep breaths."
+            </p>
+        </div>
+        <ChevronRight className="size-4 text-foreground/20 absolute right-6 top-1/2 -translate-y-1/2" />
+      </motion.section>
     </div>
   );
 }

@@ -2,14 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { Clock, Flame, Lock } from "lucide-react";
+import { Clock, Flame, Lock, ChevronRight } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-
-const catColor: Record<string, string> = {
-  healthcare: "bg-[#00d4aa]/15 text-[#00d4aa] border-[#00d4aa]/30",
-  fitness: "bg-[#ff6b35]/15 text-[#ff6b35] border-[#ff6b35]/30",
-  cultural: "bg-[#7c5cfc]/15 text-[#7c5cfc] border-[#7c5cfc]/30",
-};
 
 export default function RecipeCard({ recipe }: { recipe: any }) {
   const { user } = useAuth();
@@ -18,32 +12,36 @@ export default function RecipeCard({ recipe }: { recipe: any }) {
   return (
     <Link
       href={locked ? "/app/profile" : `/app/recipe/${recipe.id}`}
-      className="group block nv-card overflow-hidden hover:-translate-y-1 transition-all duration-300"
+      className="group block bg-white border border-[#D9C39A]/40 rounded-[2rem] overflow-hidden hover:shadow-xl hover:shadow-[#3A2618]/5 transition-all duration-500"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
           src={recipe.image || `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800`}
           alt={recipe.title}
-          className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${locked ? "blur-md" : ""}`}
+          className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${locked ? "blur-md" : ""}`}
           loading="lazy"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800`;
-          }}
         />
         {recipe.is_premium && (
-          <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#FFD166] text-black text-xs font-semibold">
+          <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF3E6] border border-[#D9C39A] text-[#3A2618] text-[10px] font-bold uppercase tracking-widest shadow-sm">
             <Lock className="size-3" /> Premium
           </div>
         )}
-        <div className={`absolute top-3 left-3 px-2.5 py-1 rounded-full border text-xs font-medium capitalize ${catColor[recipe.category] || catColor.healthcare}`}>
-          {recipe.country || recipe.category}
-        </div>
       </div>
-      <div className="p-4">
-        <h3 className="text-base font-semibold leading-tight line-clamp-2">{recipe.title}</h3>
-        <div className="mt-3 flex items-center gap-4 text-sm text-muted-foreground">
-          <span className="inline-flex items-center gap-1"><Clock className="size-4" />{recipe.cook_time}m</span>
-          <span className="inline-flex items-center gap-1"><Flame className="size-4" />{recipe.nutrition?.calories} kcal</span>
+      <div className="p-6">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#004D40]">{recipe.category}</span>
+          <span className="size-1 rounded-full bg-[#D9C39A]" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#3A2618]/40">{recipe.country || "Global"}</span>
+        </div>
+        <h3 className="font-serif text-xl text-[#3A2618] leading-tight mb-4 group-hover:text-[#004D40] transition-colors">{recipe.title}</h3>
+        <div className="flex items-center justify-between mt-auto">
+          <div className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-widest text-[#3A2618]/50">
+            <span className="flex items-center gap-1.5"><Clock className="size-3.5" />{recipe.cook_time}m</span>
+            <span className="flex items-center gap-1.5"><Flame className="size-3.5" />{recipe.nutrition?.calories || 0} Cal</span>
+          </div>
+          <div className="size-8 rounded-full border border-[#D9C39A]/40 grid place-items-center group-hover:bg-[#004D40] group-hover:border-[#004D40] group-hover:text-white transition-all duration-300">
+            <ChevronRight className="size-4" />
+          </div>
         </div>
       </div>
     </Link>

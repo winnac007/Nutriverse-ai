@@ -3,273 +3,129 @@
 import React, { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import Link from "next/link";
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, Cell,
 } from "recharts";
-import { TrendingDown, TrendingUp, Minus, Flame, Target, Calendar } from "lucide-react";
-import { toast } from "sonner";
-
-function WeightInput({ onLogged }: { onLogged: () => void }) {
-  const [weight, setWeight] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-
-  async function handleLog(e: React.FormEvent) {
-    e.preventDefault();
-    if (!weight || isNaN(parseFloat(weight))) return;
-    setSubmitting(true);
-    try {
-      await api.post("/health/weight", { weight_kg: parseFloat(weight) });
-      toast.success("Weight logged!");
-      setWeight("");
-      onLogged();
-    } catch {
-      toast.error("Could not log weight");
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  return (
-    <form onSubmit={handleLog} className="flex gap-2">
-      <input
-        type="number" step="0.1" min="20" max="300"
-        value={weight}
-        onChange={(e: any) => setWeight(e.target.value)}
-        placeholder="Enter weight (kg)"
-        className="flex-1 px-4 py-2.5 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-      />
-      <button
-        type="submit" disabled={submitting || !weight}
-        className="px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50 transition-opacity"
-      >
-        Log
-      </button>
-    </form>
-  );
-}
-
-function WeightTrend({ data }: { data: any[] }) {
-  if (!data?.length) return null;
-
-  const first = data[data.length - 1]?.weight_kg;
-  const last = data[0]?.weight_kg;
-  const diff = last - first;
-  const TrendIcon = diff < -0.5 ? TrendingDown : diff > 0.5 ? TrendingUp : Minus;
-  const trendColor = diff < -0.5 ? "text-green-500" : diff > 0.5 ? "text-red-500" : "text-muted-foreground";
-
-  const chartData = [...data].reverse().map((entry) => ({
-    date: entry.date.slice(5),
-    weight: entry.weight_kg,
-  }));
-
-  return (
-    <section className="nv-card p-5 space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="font-semibold text-sm">Weight Trend</h2>
-        <div className={`flex items-center gap-1 text-sm font-medium ${trendColor}`}>
-          <TrendIcon className="size-4" />
-          {Math.abs(diff).toFixed(1)}kg
-        </div>
-      </div>
-      <div className="h-[120px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData}>
-            <XAxis dataKey="date" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
-            <YAxis domain={["auto", "auto"]} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} width={35} />
-            <Tooltip
-              contentStyle={{ fontSize: 12, borderRadius: 8 }}
-              formatter={(v: any) => [`${v} kg`, "Weight"]}
-            />
-            <Line type="monotone" dataKey="weight" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 3 }} />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-      <div className="flex justify-between text-xs text-muted-foreground">
-        <span>Current: <strong className="text-foreground">{last} kg</strong></span>
-        <span>30-day change: <strong className={trendColor}>{diff >= 0 ? "+" : ""}{diff.toFixed(1)} kg</strong></span>
-      </div>
-    </section>
-  );
-}
-
-function NutrientCompliance({ weekData, macroTargets }: { weekData: any[], macroTargets: any }) {
-  if (!weekData?.length || !macroTargets) return null;
-
-  const metrics = [
-    { key: "calories", label: "Calories", target: macroTargets.target_calories || 2000, unit: "kcal" },
-    { key: "protein", label: "Protein", target: macroTargets.protein_g || 60, unit: "g" },
-    { key: "carbs", label: "Carbs", target: macroTargets.carbs_g || 200, unit: "g" },
-  ];
-
-  return (
-    <section className="nv-card p-5 space-y-3">
-      <h2 className="font-semibold text-sm">7-Day Nutrient Compliance</h2>
-      {metrics.map(({ key, label, target, unit }) => {
-        const avg = weekData.reduce((s, d) => s + (d[key] || 0), 0) / Math.max(1, weekData.length);
-        const pct = Math.min(100, target > 0 ? Math.round((avg / target) * 100) : 0);
-        const color = pct >= 80 && pct <= 120 ? "bg-green-500" : pct < 60 ? "bg-red-400" : "bg-amber-400";
-        return (
-          <div key={key} className="space-y-1">
-            <div className="flex justify-between text-xs">
-              <span>{label}</span>
-              <span className="text-muted-foreground">{Math.round(avg)}{unit} avg / {target}{unit} target</span>
-            </div>
-            <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-              <div className={`h-full rounded-full transition-all ${color}`} style={{ width: `${pct}%` }} />
-            </div>
-          </div>
-        );
-      })}
-    </section>
-  );
-}
-
-function ConditionInsights({ weekData, user }: { weekData: any[], user: any }) {
-  const conditions = user?.conditions || [];
-  if (!conditions.length || !weekData?.length) return null;
-
-  const avgSodium = weekData.reduce((s, d) => s + (d.sodium || 0), 0) / Math.max(1, weekData.length);
-  const avgFiber = weekData.reduce((s, d) => s + (d.fiber || 0), 0) / Math.max(1, weekData.length);
-
-  const insights = [];
-  if (conditions.includes("hypertension") || conditions.includes("heart-disease")) {
-    const sodiumLimit = 1500;
-    insights.push(avgSodium < sodiumLimit
-      ? `Your avg sodium is ${Math.round(avgSodium)}mg/day — well within the ${sodiumLimit}mg limit.`
-      : `Your avg sodium is ${Math.round(avgSodium)}mg/day. Target is under ${sodiumLimit}mg.`
-    );
-  }
-  if (conditions.includes("diabetes") || conditions.includes("gut-health")) {
-    insights.push(avgFiber >= 25
-      ? `Excellent fiber intake — avg ${Math.round(avgFiber)}g/day supports blood sugar control.`
-      : `Fiber avg is ${Math.round(avgFiber)}g/day. Aim for 25-35g to support your conditions.`
-    );
-  }
-
-  if (!insights.length) return null;
-
-  return (
-    <section className="space-y-2">
-      <h2 className="font-semibold text-sm">Condition Insights</h2>
-      {insights.map((insight, i) => (
-        <div key={i} className="nv-card p-4 flex items-start gap-3">
-          <Target className="size-4 text-primary shrink-0 mt-0.5" />
-          <p className="text-sm">{insight}</p>
-        </div>
-      ))}
-    </section>
-  );
-}
+import { ArrowLeft, Leaf, Utensils, Search, BarChart2, User, Circle } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Progress() {
   const { user } = useAuth();
   const [weightHistory, setWeightHistory] = useState<any[]>([]);
-  const [streak, setStreak] = useState<any>(null);
   const [weekData, setWeekData] = useState<any[]>([]);
-  const [macroTargets, setMacroTargets] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("Overview");
 
-  async function loadAll() {
-    try {
-      const [weightRes, streakRes, weekRes] = await Promise.all([
-        api.get("/health/weight"),
-        api.get("/healthcare/streak"),
-        api.get("/nutrition/week"),
-      ]);
-      setWeightHistory(weightRes.data);
-      setStreak(streakRes.data);
-      setWeekData(weekRes.data);
-
-      const healthPlan = user?.health_plan;
-      if (healthPlan?.macros || healthPlan?.daily_calories) {
-        setMacroTargets({
-          target_calories: healthPlan.daily_calories || 2000,
-          protein_g: healthPlan.macros?.protein_g || 60,
-          carbs_g: healthPlan.macros?.carbs_g || 200,
-          fat_g: healthPlan.macros?.fat_g || 55,
-        });
-      } else if (user?.age && user?.weight_kg) {
-        const { data } = await api.post("/tdee/calculate", {
-          age: user.age, gender: user.gender, weight_kg: user.weight_kg,
-          height_cm: user.height_cm, activity_level: user.activity_level || "moderate",
-          goal: user.goal || "maintain",
-        });
-        setMacroTargets(data);
-      }
-    } catch {
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (user?.id) {
+      api.get("/health/weight").then(r => setWeightHistory(r.data)).catch(() => {});
+      api.get("/nutrition/week").then(r => setWeekData(r.data)).catch(() => {});
     }
-  }
+  }, [user?.id]);
 
-  useEffect(() => { if (user?.id) loadAll(); }, [user?.id]);
+  const mockGlucose = [
+    { time: "08:00", val: 90 }, { time: "10:00", val: 110 }, 
+    { time: "12:00", val: 105 }, { time: "14:00", val: 125 }, 
+    { time: "16:00", val: 100 }, { time: "18:00", val: 115 }
+  ];
 
-  if (loading) {
-    return (
-      <div className="space-y-4">
-        <div className="h-8 bg-muted rounded-lg animate-pulse" />
-        {[1, 2, 3].map((i) => <div key={i} className="h-36 bg-muted rounded-2xl animate-pulse" />)}
-      </div>
-    );
-  }
+  const mockEnergy = [
+    { day: "M", val: 6 }, { day: "T", val: 8 }, { day: "W", val: 7 },
+    { day: "T", val: 9 }, { day: "F", val: 8 }, { day: "S", val: 10 }, { day: "S", val: 9 }
+  ];
 
   return (
-    <div className="space-y-6 pb-8">
-      <header>
-        <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Your</p>
-        <h1 className="text-2xl font-display font-bold tracking-tight">Progress</h1>
-      </header>
+    <div className="bg-[#FAF3E6] min-h-screen pb-32 pt-6">
+      <div className="px-6">
+        {/* Header - Image 7 */}
+        <header className="flex items-center gap-4 mb-8">
+          <Link href="/app" className="text-[#3A2618]"><ArrowLeft className="size-5" /></Link>
+          <h1 className="font-serif text-2xl text-[#3A2618]">Your Progress</h1>
+        </header>
 
-      {streak && (
-        <section className="grid grid-cols-3 gap-3">
-          {[
-            { icon: "🔥", value: streak.current_streak_days, label: "Day streak" },
-            { icon: "🍽️", value: streak.meals_this_week, label: "Meals this week" },
-            { icon: "🥗", value: streak.distinct_recipes_this_week, label: "Unique recipes" },
-          ].map(({ icon, value, label }) => (
-            <div key={label} className="nv-card p-4 text-center">
-              <div className="text-2xl mb-1">{icon}</div>
-              <div className="text-2xl font-display font-bold">{value}</div>
-              <div className="text-xs text-muted-foreground">{label}</div>
-            </div>
+        {/* Tabs - Image 7 */}
+        <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-none">
+          {["Overview", "Nutrition", "Habits", "Snacks"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`shrink-0 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${
+                activeTab === tab 
+                  ? "bg-[#004D40] text-white" 
+                  : "bg-transparent text-[#3A2618]/40 hover:text-[#3A2618]"
+              }`}
+            >
+              {tab}
+            </button>
           ))}
-        </section>
-      )}
+        </div>
 
-      <section className="nv-card p-5 space-y-3">
-        <h2 className="font-semibold text-sm flex items-center gap-1.5">
-          <Calendar className="size-4" /> Log today's weight
-        </h2>
-        <WeightInput onLogged={() => api.get("/health/weight").then(({ data }) => setWeightHistory(data)).catch(() => {})} />
-      </section>
+        <div className="space-y-4">
+          {/* Glucose Stability - Image 7 */}
+          <motion.section 
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            className="bg-white border border-[#D9C39A]/40 rounded-[2rem] p-6 shadow-sm"
+          >
+            <h2 className="font-serif text-lg text-[#3A2618] mb-6">Glucose Stability</h2>
+            <div className="h-[140px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={mockGlucose}>
+                  <Line type="monotone" dataKey="val" stroke="#004D40" strokeWidth={3} dot={{ r: 4, fill: "#004D40", stroke: "#fff", strokeWidth: 2 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex justify-between text-[10px] uppercase tracking-widest text-[#3A2618]/30 mt-4">
+              <span>Stable</span>
+              <span className="text-[#004D40]">Excellent</span>
+            </div>
+          </motion.section>
 
-      <WeightTrend data={weightHistory} />
+          {/* Energy Levels - Image 7 */}
+          <motion.section 
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+            className="bg-white border border-[#D9C39A]/40 rounded-[2rem] p-6 shadow-sm"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="font-serif text-lg text-[#3A2618]">Energy Levels</h2>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#004D40]">Good</span>
+            </div>
+            <div className="h-[120px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={mockEnergy}>
+                  <Bar dataKey="val" radius={[4, 4, 4, 4]} barSize={12}>
+                    {mockEnergy.map((entry, index) => (
+                      <Cell key={index} fill={entry.val >= 8 ? "#004D40" : "#004D4040"} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </motion.section>
 
-      {weekData.length > 0 && (
-        <section className="nv-card p-5 space-y-3">
-          <h2 className="font-semibold text-sm flex items-center gap-1.5">
-            <Flame className="size-4 text-orange-500" /> 7-Day Calories
-          </h2>
-          <div className="h-[120px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={weekData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                <XAxis dataKey="date" tickFormatter={(d) => d.slice(5)} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
-                <YAxis tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} formatter={(v: any) => [`${v} kcal`, "Calories"]} />
-                <Bar dataKey="calories" radius={[4, 4, 0, 0]}>
-                  {weekData.map((entry: any, index: number) => (
-                    <Cell key={index} fill={entry.calories > 0 ? "hsl(var(--primary))" : "hsl(var(--muted))"} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </section>
-      )}
+          {/* Mindful Eating - Image 7 */}
+          <motion.section 
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+            className="bg-white border border-[#D9C39A]/40 rounded-[2rem] p-6 shadow-sm flex items-center justify-between"
+          >
+            <div className="flex items-center gap-3">
+              <Circle className="size-5 text-[#004D40]" strokeWidth={3} />
+              <h2 className="font-serif text-lg text-[#3A2618]">Mindful Eating</h2>
+            </div>
+            <span className="text-xs font-bold uppercase tracking-widest text-[#3A2618]/40">On Track</span>
+          </motion.section>
+        </div>
+      </div>
 
-      <NutrientCompliance weekData={weekData} macroTargets={macroTargets} />
-
-      <ConditionInsights weekData={weekData} user={user} />
+      {/* Bottom Nav Sync */}
+      <nav className="fixed bottom-6 left-6 right-6 h-16 bg-white border border-[#D9C39A]/40 rounded-full shadow-lg shadow-[#3A2618]/5 flex items-center justify-around px-4 z-50">
+        <Link href="/app" className="p-3 text-[#3A2618]/30"><Leaf className="size-6" /></Link>
+        <Link href="/app/daily-plan" className="p-3 text-[#3A2618]/30 hover:text-[#3A2618]"><Utensils className="size-6" /></Link>
+        <button className="size-12 rounded-full bg-[#004D40] text-white flex items-center justify-center shadow-lg shadow-[#004D40]/20 -translate-y-4">
+          <Search className="size-6" />
+        </button>
+        <Link href="/app/progress" className="p-3 text-[#004D40]"><BarChart2 className="size-6" /></Link>
+        <Link href="/app/profile" className="p-3 text-[#3A2618]/30 hover:text-[#3A2618]"><User className="size-6" /></Link>
+      </nav>
     </div>
   );
 }
