@@ -107,7 +107,7 @@ export default function MealPlan() {
         {smart && (
           <div style={{ background: "#FFFFFF", borderRadius: "1.25rem", border: "1px solid #E5DDD0", padding: "1.25rem", boxShadow: "0 2px 12px rgba(61,92,62,0.06)" }}>
             <p style={{ fontFamily: "'DM Sans'", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "#A8B8A8", margin: "0 0 0.75rem" }}>Your Daily Targets</p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.5rem", textAlign: "center" }}>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-center">
               {[
                 { val: smart.calorie_estimate, unit: "kcal", label: "Calories" },
                 { val: `${smart.macros?.protein_g}g`, unit: "", label: "Protein" },

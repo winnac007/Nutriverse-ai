@@ -170,6 +170,12 @@ h1, h2, h3, h4, h5, .font-serif {
 .zen-dot-active { background: #3D5C3E; }
 .zen-dot-inactive { background: #E0D8CC; }
 
+/* Safe-area utilities (iOS notch / home indicator) */
+.pt-safe  { padding-top: env(safe-area-inset-top, 0); }
+.pb-safe  { padding-bottom: env(safe-area-inset-bottom, 0); }
+.pl-safe  { padding-left: env(safe-area-inset-left, 0); }
+.pr-safe  { padding-right: env(safe-area-inset-right, 0); }
+
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }

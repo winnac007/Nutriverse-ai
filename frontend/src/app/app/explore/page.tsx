@@ -179,7 +179,7 @@ export default function Explore() {
             <p style={{ fontSize: "0.82rem", color: "#8D9E8D", margin: 0 }}>Try adjusting your filters or search query</p>
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.85rem" }}>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
             {recipes.map((r, i) => (
               <div key={`${r.id}-${i}`} style={{ animation: "fadeUp 0.3s ease forwards", animationDelay: `${(i % 12) * 40}ms`, opacity: 0 }}>
                 <RecipeCard recipe={r} />

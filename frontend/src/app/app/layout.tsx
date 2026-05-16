@@ -36,7 +36,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div style={{ minHeight: "100vh", background: "#FAF7F0" }}>
-      <main style={{ maxWidth: 480, margin: "0 auto", paddingBottom: "5.5rem" }}>
+      <main className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto" style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}>
         {children}
       </main>
       <BottomNav />

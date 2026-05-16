@@ -778,7 +778,7 @@ export default function Onboarding() {
           <p style={{ color: T.textMuted, fontSize: "0.84rem", lineHeight: 1.7, margin: "0 0 1.5rem", fontWeight: 300 }}>These help us calculate your exact nutrition targets.</p>
           {error && <p style={{ color: "#f87171", fontSize: "0.8rem", margin: "0 0 1rem", padding: "0.6rem 1rem", background: "rgba(248,113,113,0.08)", borderRadius: 8, border: "1px solid rgba(248,113,113,0.2)" }}>{error}</p>}
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.65rem", marginBottom: "1.1rem" }}>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
             {[
               { key: "age",    label: "Age",         placeholder: "e.g. 28",  min: 15,  max: 90  },
               { key: "weight", label: "Weight (kg)", placeholder: "e.g. 68",  min: 30,  max: 200 },

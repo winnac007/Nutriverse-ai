@@ -10,25 +10,25 @@ export default function Landing() {
 
       {/* Nav */}
       <header style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, background: "rgba(250,247,240,0.88)", backdropFilter: "blur(20px)", borderBottom: "1px solid #E5DDD0" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "1rem 2rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+        <div className="max-w-[1100px] mx-auto px-4 sm:px-8 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
             {/* Zen circle logo */}
-            <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+            <svg width="32" height="32" viewBox="0 0 36 36" fill="none" className="sm:w-[36px] sm:h-[36px]">
               <circle cx="18" cy="18" r="16" stroke="#3D5C3E" strokeWidth="2.5" fill="none" opacity="0.7"/>
               <ellipse cx="18" cy="20" rx="7" ry="5" fill="#3D5C3E" opacity="0.15"/>
               <path d="M14 22 Q18 16 22 22" stroke="#3D5C3E" strokeWidth="1.5" fill="none"/>
               <circle cx="18" cy="14" r="2.5" fill="#3D5C3E"/>
               <path d="M16 12 L15 10 M20 12 L21 10" stroke="#3D5C3E" strokeWidth="1.2" strokeLinecap="round"/>
             </svg>
-            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.3rem", fontWeight: 500, color: "#1F2E1F", letterSpacing: "0.05em" }}>ZENPLATE</span>
+            <span style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500, color: "#1F2E1F", letterSpacing: "0.05em" }} className="text-lg sm:text-xl">ZENPLATE</span>
           </div>
-          <nav style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
+          <nav className="hidden md:flex items-center gap-8">
             {["Features", "How it Works", "Recipes"].map(l => (
               <span key={l} style={{ fontSize: "0.78rem", fontWeight: 500, color: "#8D9E8D", cursor: "pointer", letterSpacing: "0.03em" }}>{l}</span>
             ))}
           </nav>
           <Link href="/auth" style={{ textDecoration: "none" }}>
-            <button style={{ background: "#3D5C3E", color: "#FFFFFF", border: "none", borderRadius: 999, padding: "0.6rem 1.5rem", fontSize: "0.82rem", fontWeight: 600, fontFamily: "'DM Sans', sans-serif", cursor: "pointer", letterSpacing: "0.02em" }}>
+            <button style={{ background: "#3D5C3E", color: "#FFFFFF", border: "none", borderRadius: 999, fontWeight: 600, fontFamily: "'DM Sans', sans-serif", cursor: "pointer", letterSpacing: "0.02em" }} className="px-4 py-2 sm:px-6 sm:py-2.5 text-xs sm:text-sm">
               Get Started
             </button>
           </Link>
@@ -36,9 +36,9 @@ export default function Landing() {
       </header>
 
       {/* Hero */}
-      <section style={{ paddingTop: "7rem", paddingBottom: "4rem", position: "relative", overflow: "hidden" }}>
+      <section className="pt-24 sm:pt-28 pb-16 relative overflow-hidden">
         {/* Botanical background art */}
-        <svg style={{ position: "absolute", top: 60, right: -60, width: 500, height: 500, opacity: 0.12 }} viewBox="0 0 300 300" fill="none">
+        <svg style={{ position: "absolute", top: 60, right: -60, width: 500, height: 500, opacity: 0.12 }} viewBox="0 0 300 300" fill="none" className="hidden md:block">
           <ellipse cx="200" cy="80" rx="55" ry="100" fill="#3D5C3E" transform="rotate(-25 200 80)"/>
           <ellipse cx="240" cy="150" rx="40" ry="80" fill="#3D5C3E" transform="rotate(15 240 150)"/>
           <ellipse cx="170" cy="200" rx="35" ry="70" fill="#3D5C3E" transform="rotate(-40 170 200)"/>
@@ -46,31 +46,31 @@ export default function Landing() {
           <line x1="200" y1="80" x2="240" y2="150" stroke="#3D5C3E" strokeWidth="2" opacity="0.4"/>
         </svg>
 
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 2rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "center" }}>
+        <div className="max-w-[1100px] mx-auto px-4 sm:px-8 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           {/* Left */}
-          <div>
+          <div className="text-center md:text-left z-10">
             <p style={{ fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "#C4974A", marginBottom: "1.5rem" }}>🌿 Mindful Nutrition • AI Powered</p>
-            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(3rem, 5vw, 5rem)", fontWeight: 400, color: "#1F2E1F", lineHeight: 1.05, margin: "0 0 1.5rem" }}>
+            <h1 style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400, color: "#1F2E1F", lineHeight: 1.05, margin: "0 0 1.5rem" }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
               Eat with intention.<br />
               <em style={{ color: "#3D5C3E" }}>Heal with food.</em>
             </h1>
-            <p style={{ fontSize: "1.05rem", color: "#7D8E7D", lineHeight: 1.75, marginBottom: "2.5rem", maxWidth: 400, fontWeight: 300 }}>
+            <p style={{ fontSize: "1.05rem", color: "#7D8E7D", lineHeight: 1.75, marginBottom: "2.5rem", fontWeight: 300 }} className="max-w-md mx-auto md:mx-0">
               Personalised nutrition plans built around your health conditions, culture, and goals. Real food. Real healing.
             </p>
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
-              <Link href="/onboarding" style={{ textDecoration: "none" }}>
-                <button style={{ background: "#3D5C3E", color: "#FFFFFF", border: "none", borderRadius: 999, padding: "1rem 2.5rem", fontSize: "1rem", fontWeight: 600, fontFamily: "'DM Sans', sans-serif", cursor: "pointer", boxShadow: "0 8px 32px rgba(61,92,62,0.28)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 flex-wrap">
+              <Link href="/onboarding" style={{ textDecoration: "none" }} className="w-full sm:w-auto">
+                <button style={{ background: "#3D5C3E", color: "#FFFFFF", border: "none", borderRadius: 999, fontWeight: 600, fontFamily: "'DM Sans', sans-serif", cursor: "pointer", boxShadow: "0 8px 32px rgba(61,92,62,0.28)" }} className="px-6 py-3 sm:px-10 sm:py-4 text-base w-full sm:w-auto flex justify-center items-center gap-2">
                   Begin your journey
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
                 </button>
               </Link>
-              <Link href="/auth" style={{ textDecoration: "none", fontSize: "0.9rem", color: "#3D5C3E", fontWeight: 500, borderBottom: "1.5px solid rgba(61,92,62,0.3)", paddingBottom: "0.1rem" }}>
+              <Link href="/auth" style={{ textDecoration: "none", color: "#3D5C3E", fontWeight: 500, borderBottom: "1.5px solid rgba(61,92,62,0.3)", paddingBottom: "0.1rem" }} className="text-sm sm:text-base mt-2 sm:mt-0">
                 Sign in
               </Link>
             </div>
 
             {/* Social proof */}
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginTop: "2.5rem" }}>
+            <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 mt-8">
               <div style={{ display: "flex" }}>
                 {[1,2,3,4].map(i => (
                   <div key={i} style={{ width: 32, height: 32, borderRadius: "50%", border: "2px solid #FAF7F0", marginLeft: i > 1 ? -10 : 0, overflow: "hidden" }}>
@@ -78,15 +78,15 @@ export default function Landing() {
                   </div>
                 ))}
               </div>
-              <p style={{ fontSize: "0.8rem", color: "#8D9E8D", fontWeight: 400 }}>
+              <p style={{ fontSize: "0.8rem", color: "#8D9E8D", fontWeight: 400 }} className="text-center sm:text-left">
                 <strong style={{ color: "#1F2E1F", fontWeight: 600 }}>2,400+</strong> people healing with Zenplate
               </p>
             </div>
           </div>
 
           {/* Right — phone mockup */}
-          <div style={{ position: "relative", display: "flex", justifyContent: "center" }}>
-            <div style={{ width: 280, background: "#FFFFFF", borderRadius: "2.5rem", boxShadow: "0 40px 100px rgba(31,46,31,0.18), 0 10px 30px rgba(31,46,31,0.1)", overflow: "hidden", border: "1px solid #E5DDD0" }}>
+          <div className="relative flex justify-center mt-10 md:mt-0 w-full z-10">
+            <div className="w-[260px] sm:w-[280px]" style={{ background: "#FFFFFF", borderRadius: "2.5rem", boxShadow: "0 40px 100px rgba(31,46,31,0.18), 0 10px 30px rgba(31,46,31,0.1)", overflow: "hidden", border: "1px solid #E5DDD0" }}>
               {/* Phone status bar */}
               <div style={{ background: "#F0EBE0", padding: "0.75rem 1.25rem 0.5rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontSize: "0.72rem", fontWeight: 600, color: "#1F2E1F" }}>9:41</span>
@@ -137,11 +137,11 @@ export default function Landing() {
               </div>
             </div>
             {/* Floating badge */}
-            <div style={{ position: "absolute", top: "20%", right: -20, background: "#FFFFFF", borderRadius: "1rem", padding: "0.75rem 1rem", boxShadow: "0 8px 24px rgba(31,46,31,0.12)", border: "1px solid #E5DDD0" }}>
+            <div className="absolute top-[10%] -right-2 sm:-right-8 bg-white rounded-2xl p-3 shadow-[0_8px_24px_rgba(31,46,31,0.12)] border border-[#E5DDD0]">
               <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#3D5C3E", margin: 0, fontWeight: 500 }}>PCOS</p>
               <p style={{ fontSize: "0.65rem", color: "#8D9E8D", margin: "0.1rem 0 0" }}>Hormonal balance</p>
             </div>
-            <div style={{ position: "absolute", bottom: "20%", left: -30, background: "#3D5C3E", borderRadius: "1rem", padding: "0.75rem 1rem", boxShadow: "0 8px 24px rgba(61,92,62,0.3)" }}>
+            <div className="absolute bottom-[20%] -left-2 sm:-left-8 bg-[#3D5C3E] rounded-2xl p-3 shadow-[0_8px_24px_rgba(61,92,62,0.3)]">
               <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "0.9rem", color: "#FFFFFF", margin: 0 }}>Kichari Bowl</p>
               <p style={{ fontSize: "0.6rem", color: "rgba(255,255,255,0.65)", margin: "0.1rem 0 0" }}>PCOS Friendly ✓</p>
             </div>
@@ -150,19 +150,19 @@ export default function Landing() {
       </section>
 
       {/* Features */}
-      <section style={{ padding: "5rem 2rem", background: "#FFFFFF" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "4rem" }}>
+      <section className="py-20 px-4 sm:px-8 bg-white">
+        <div className="max-w-[1100px] mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
             <p style={{ fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", color: "#C4974A", marginBottom: "1rem" }}>✦ You'll Get</p>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2rem, 4vw, 3.5rem)", fontWeight: 400, color: "#1F2E1F", margin: 0 }}>Mindful nutrition, personalised for you</h2>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400, color: "#1F2E1F", margin: 0 }} className="text-3xl sm:text-4xl md:text-5xl">Mindful nutrition, personalised for you</h2>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "2rem" }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {[
               { emoji: "🌿", title: "Mindful Choices", desc: "Recipes aligned with your health conditions, dietary type, and cultural roots." },
               { emoji: "🍽️", title: "Personalised Nutrition", desc: "AI-generated 7-day meal plans with macro targets calibrated to your body." },
               { emoji: "🌸", title: "Lasting Wellness", desc: "Track progress, log meals, and watch your body respond to real nourishment." },
             ].map((f, i) => (
-              <div key={i} style={{ background: "#FAF7F0", borderRadius: "1.5rem", padding: "2rem", border: "1px solid #E5DDD0" }}>
+              <div key={i} style={{ background: "#FAF7F0", border: "1px solid #E5DDD0" }} className="rounded-[1.5rem] p-6 sm:p-8">
                 <div style={{ fontSize: "2rem", marginBottom: "1rem" }}>{f.emoji}</div>
                 <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.3rem", color: "#1F2E1F", margin: "0 0 0.75rem" }}>{f.title}</h3>
                 <p style={{ fontSize: "0.88rem", color: "#7D8E7D", lineHeight: 1.7, margin: 0 }}>{f.desc}</p>
@@ -173,21 +173,21 @@ export default function Landing() {
       </section>
 
       {/* CTA Footer */}
-      <section style={{ padding: "5rem 2rem", background: "linear-gradient(135deg, #2D4A2E 0%, #1A2E1B 100%)", position: "relative", overflow: "hidden" }}>
-        <svg style={{ position: "absolute", right: 0, bottom: 0, opacity: 0.15 }} width="300" height="300" viewBox="0 0 300 300" fill="none">
+      <section style={{ background: "linear-gradient(135deg, #2D4A2E 0%, #1A2E1B 100%)", position: "relative", overflow: "hidden" }} className="py-20 px-4 sm:px-8">
+        <svg style={{ position: "absolute", right: 0, bottom: 0, opacity: 0.15 }} width="300" height="300" viewBox="0 0 300 300" fill="none" className="hidden sm:block">
           <ellipse cx="250" cy="200" rx="80" ry="130" fill="#FFFFFF" transform="rotate(-25 250 200)"/>
           <ellipse cx="200" cy="270" rx="60" ry="100" fill="#FFFFFF" transform="rotate(15 200 270)"/>
         </svg>
-        <div style={{ maxWidth: 600, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 1 }}>
+        <div className="max-w-[600px] mx-auto text-center relative z-10">
           <p style={{ fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(196,151,74,0.9)", marginBottom: "1.5rem" }}>✦ Begin Your Healing</p>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2rem, 5vw, 3.5rem)", color: "#FFFFFF", fontWeight: 400, margin: "0 0 1.5rem", lineHeight: 1.2 }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", color: "#FFFFFF", fontWeight: 400, margin: "0 0 1.5rem", lineHeight: 1.2 }} className="text-3xl sm:text-4xl md:text-5xl">
             Your plate is your medicine.
           </h2>
           <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "1rem", lineHeight: 1.7, marginBottom: "2.5rem" }}>
             Small choices, made with awareness, create lasting change.
           </p>
           <Link href="/onboarding" style={{ textDecoration: "none" }}>
-            <button style={{ background: "#FFFFFF", color: "#1F2E1F", border: "none", borderRadius: 999, padding: "1.1rem 3rem", fontSize: "1rem", fontWeight: 600, fontFamily: "'DM Sans', sans-serif", cursor: "pointer", boxShadow: "0 8px 32px rgba(0,0,0,0.2)" }}>
+            <button style={{ background: "#FFFFFF", color: "#1F2E1F", border: "none", borderRadius: 999, fontWeight: 600, fontFamily: "'DM Sans', sans-serif", cursor: "pointer", boxShadow: "0 8px 32px rgba(0,0,0,0.2)" }} className="px-8 py-3.5 sm:px-12 sm:py-4 text-base w-full sm:w-auto">
               Start for free →
             </button>
           </Link>

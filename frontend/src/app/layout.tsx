@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Playfair_Display, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
@@ -21,6 +21,14 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "ZenPlate — Eat with intention. Heal with food.",
   description: "AI-powered personalised nutrition plans for your health conditions, culture, and goals.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+  themeColor: "#FAF7F0",
 };
 
 export default function RootLayout({
