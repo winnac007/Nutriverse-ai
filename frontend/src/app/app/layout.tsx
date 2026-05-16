@@ -21,15 +21,22 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   if (loading || !user || !user.onboarded) {
     return (
-      <div className="min-h-screen grid place-items-center text-muted-foreground bg-background">
-        Loading…
+      <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "#FAF7F0", fontFamily: "'DM Sans', sans-serif", color: "#8D9E8D" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style={{ animation: "spin 3s linear infinite" }}>
+            <circle cx="24" cy="24" r="20" stroke="#3D5C3E" strokeWidth="2" fill="none" opacity="0.3" strokeDasharray="100 30"/>
+            <circle cx="24" cy="18" r="5" fill="#3D5C3E" opacity="0.6"/>
+          </svg>
+          <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
+          <span style={{ fontSize: "0.85rem" }}>Loading…</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-6 pb-28">
+    <div style={{ minHeight: "100vh", background: "#FAF7F0" }}>
+      <main style={{ maxWidth: 480, margin: "0 auto", paddingBottom: "5.5rem" }}>
         {children}
       </main>
       <BottomNav />

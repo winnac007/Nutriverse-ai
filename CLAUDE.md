@@ -18,7 +18,7 @@ yarn lint             # ESLint/TypeScript check
 cd backend
 source venv/bin/activate          # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-uvicorn server:app --reload --host 0.0.0.0 --port 8000
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### Run backend tests
@@ -28,7 +28,7 @@ cd backend && pytest tests/
 
 ### Backend linting
 ```bash
-black server.py && flake8 server.py && mypy server.py
+cd backend && black app/ && flake8 app/
 ```
 
 ## Environment Variables
@@ -55,6 +55,22 @@ CORS_ORIGINS=http://localhost:3000
 - **Backend**: FastAPI (async), MongoDB via Motor, JWT auth (PyJWT + bcrypt), Anthropic SDK
 - **Build**: Next.js native — path alias `@` maps to `frontend/src/`
 
+### Backend Structure
+The backend uses a feature-based directory layout under `backend/app/`:
+- `main.py` — FastAPI app entry point; all routers mounted at `/api` prefix
+- `api/` — Route handlers: `ai.py`, `recipes.py`, `meal_plans.py`, `tracking.py`, `healthcare.py`, `auth.py`
+- `services/` — Business logic: `recipe_service.py` (Spoonacular), `ai_service.py`, `clinical_service.py`
+- `data/` — `healthcare_data.py` (conditions), `condition_rules.py` (clinical taggers + conflict resolution)
+- `core/` — `database.py`, `security.py`, `config.py`, `prompts.py`
+- `models/schema.py` — Pydantic request/response models
+
+### Recipe Data Source
+**All recipes come from Spoonacular API only** — there is no seed data. `backend/app/data/seed_data.py` is an empty stub.
+- Spoonacular results are cached in MongoDB (`spoonacular_cache` collection, 30-day TTL)
+- Recipe IDs use `sp-{id}` format (e.g., `sp-716429`)
+- `recipe_service.py` provides `search_recipes()`, `fetch_personalized_recipes()`, `get_spoonacular_recipe_by_id()`, `normalize_spoonacular_recipe()`
+- Allowed Spoonacular image domains are whitelisted in `frontend/next.config.ts`
+
 ### Request Flow
 1. All API calls go through `frontend/src/lib/api.ts` — a single Axios instance that auto-injects `Authorization: Bearer <token>` from `localStorage.nv_token`
 2. Backend validates the JWT in `get_current_user()` (FastAPI dependency), fetches user from MongoDB, and passes the full user object to the route handler
@@ -62,32 +78,65 @@ CORS_ORIGINS=http://localhost:3000
 
 ### Auth & Routing Guards
 - `AuthProvider` (`frontend/src/lib/auth.tsx`) exposes `useAuth()` → `{ user, loading, login, register, logout, refresh }`
-- Auth redirection is handled in `frontend/src/app/(app)/layout.tsx` for protected routes.
-- Standard Next.js `middleware.ts` or client-side layout checks ensure `/app/*` routes are only reachable after auth and onboarding.
+- Auth redirection is handled in `frontend/src/app/(app)/layout.tsx` for protected routes
+- `/app/*` routes are only reachable after auth and onboarding (`user.onboarded === true`)
 
-### Onboarding Flow (7 steps)
-The `frontend/src/app/onboarding/page.tsx` wizard collects everything needed to personalise the app:
-1. Basic metrics (age, gender, weight, height, activity, location)
-2. Health condition multi-select (up to 5)
-3. Condition-specific Q&A — dynamic per selected conditions
-4. Lifestyle & diet (dietary type, allergies, cooking ability, budget)
-5. Taste preferences (cuisines, spice level, disliked ingredients, meal pattern)
-6. 30-day goal
-7. AI plan generation loading screen — calls `POST /api/onboarding/generate-plan`
+### Onboarding Flow — Adaptive Questionnaire
+`frontend/src/app/onboarding/page.tsx` is a single-page adaptive questionnaire (no separate sub-pages):
 
-On completion, the user profile has `conditions[]`, `condition_answers{}`, `preferences{}`, `health_plan{}` (AI-generated), and `onboarded: true`.
+**Phases:**
+1. **Intro** — Branded splash, "Begin →"
+2. **Gateway** (3 Qs) — Detects user persona from what brought them here + health track + journey duration
+3. **Persona Reveal** — Animated reveal of archetype: Healer / Guardian / Listener / Architect
+4. **Deep** (4 Qs per persona) — Persona-specific questions about condition, symptoms, lifestyle
+5. **Shared** (7 Qs) — Cuisine, diet type, allergies, cooking time, budget, 30-day goal, reflection
+6. **Biometrics** — Age, gender, weight (kg), height (cm), activity level
+7. **Generating** — Calls `POST /api/ai/onboarding/generate-plan`, then `refresh()`, then `router.push("/app")`
+
+**Persona detection:** g1 answer → direct `personaHint`; g2 track selection → `TRACKS[track].persona`
+**`/onboarding/personalize`** — redirects to `/onboarding` (old page, superseded)
+
+On completion, the user document has: `conditions[]`, `condition_answers{}`, `dietary_type`, `allergies[]`, `cooking_ability`, `budget`, `goal_30day`, `age`, `gender`, `weight_kg`, `height_cm`, `activity_level`, `health_plan{}` (AI-generated), `onboarded: true`.
+
+### Condition & Clinical System
+- `healthcare_data.py` — `COMMON_CONDITIONS` list with id, label, category, description
+- `condition_rules.py` — `filter_for_conditions()`, `generate_why_this_works()`, `resolve_macro_conflicts()`
+- `resolve_macro_conflicts(conditions, macros)` returns adjusted macros + trade-off notes when conditions conflict (e.g., PCOS high-protein vs. CKD low-protein); uses priority-based matrix
 
 ### Recipe Personalisation Pipeline
-`GET /api/recipes/personalized` runs in three stages:
-1. **Spoonacular API** (`spoonacular.py`) — queries with user's cuisine preference, diet type, etc.
-2. **Condition rule engine** (`condition_rules.py`) — applies clinical rules to real nutritional values.
-3. **`generate_why_this_works()`** — produces human-readable per-condition explanations.
+`fetch_personalized_recipes(user, db)` in `recipe_service.py`:
+1. **Spoonacular API** — queries with user's cuisine preference, diet type, conditions as keywords
+2. **Condition rule engine** — `filter_for_conditions()` applies clinical rules to nutritional values
+3. **`generate_why_this_works()`** — per-condition human-readable explanations
 
 ### AI Integration (Anthropic)
-- `POST /api/ai/smart-plan` — generates 7-day meal plan.
-- `POST /api/ai/coach` — premium-only conversational coach.
-- `POST /api/onboarding/generate-plan` — runs once at onboarding to output health rules and macros.
+- `POST /api/ai/smart-plan` — generates 7-day meal plan (premium saves full plan to DB)
+- `POST /api/ai/coach` — premium-only conversational coach
+- `POST /api/ai/onboarding/generate-plan` — runs at onboarding end; saves `health_plan` + all profile fields
+
+### Frontend Pages (under `frontend/src/app/app/`)
+- `page.tsx` — Home dashboard
+- `explore/page.tsx` — Recipe search/browse
+- `meal-plan/page.tsx` — Weekly meal plan
+- `daily-plan/page.tsx` — Today's B/L/D with swap
+- `food-guidelines/page.tsx` — Foods to eat/avoid per condition
+- `grocery/page.tsx` — Weekly grocery checklist
+- `progress/page.tsx` — Weight trend + streak + nutrient compliance
+- `track/page.tsx` — Meal logging
+- `recipe/[id]/page.tsx` — Recipe detail
+- `story-map/page.tsx` — Visual meal journey
+- `profile/page.tsx` — User settings
 
 ### Styling Conventions
-- Tailwind utility classes throughout; custom gradient classes (`nv-gradient-hc`, etc.) and card styles defined in `globals.css`
+- Tailwind utility classes throughout; custom gradient classes and card styles in `globals.css`
 - Radix-based `shadcn/ui` components live in `frontend/src/components/ui/`
+- Onboarding uses inline styles (dark themed, persona-colored) — intentional, not Tailwind
+- All recipe images use `loading="lazy"` + `onError` fallback to Unsplash placeholder
+
+### MongoDB Collections
+- `users` — user profile + `health_plan`, `onboarded`, `conditions`, `preferences`
+- `meal_plans` — AI-generated weekly plan items
+- `meal_logs` — per-meal nutrition logs
+- `coach_messages` — AI coach conversation history
+- `spoonacular_cache` — 30-day Spoonacular API response cache
+- `weight_logs` — `{user_id, weight_kg, date, note}` for weight tracking

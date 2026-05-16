@@ -83,5 +83,16 @@ async def generate_onboarding_plan(body: OnboardingPlanRequest, user=Depends(get
         resolved_macros, trade_offs = resolve_macro_conflicts(body.conditions, plan["macros"])
         plan["macros"] = resolved_macros
         if trade_offs: plan["conflict_notes"] = trade_offs
-    await db.users.update_one({"id": user["id"]}, {"$set": {"health_plan": plan, "conditions": body.conditions, "condition_answers": body.condition_answers, "dietary_type": body.dietary_type, "allergies": body.allergies, "cooking_ability": body.cooking_ability, "budget": body.budget, "goal_30day": body.goal_30day}})
+    update_fields: dict = {
+        "health_plan": plan, "onboarded": True,
+        "conditions": body.conditions, "condition_answers": body.condition_answers,
+        "dietary_type": body.dietary_type, "allergies": body.allergies,
+        "cooking_ability": body.cooking_ability, "budget": body.budget, "goal_30day": body.goal_30day,
+    }
+    if body.age: update_fields["age"] = body.age
+    if body.gender: update_fields["gender"] = body.gender
+    if body.weight_kg: update_fields["weight_kg"] = body.weight_kg
+    if body.height_cm: update_fields["height_cm"] = body.height_cm
+    if body.activity_level: update_fields["activity_level"] = body.activity_level
+    await db.users.update_one({"id": user["id"]}, {"$set": update_fields})
     return plan

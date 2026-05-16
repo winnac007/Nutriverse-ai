@@ -8,8 +8,8 @@ module.exports = {
   theme: {
         extend: {
                 fontFamily: {
-                        sans: ['Satoshi', 'sans-serif'],
-                        serif: ['Stardom', 'serif'],
+                        sans: ['DM Sans', 'sans-serif'],
+                        serif: ['Playfair Display', 'Georgia', 'serif'],
                 },
                 borderRadius: {
 
