@@ -1,198 +1,239 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-export default function Landing() {
+export default function Splash() {
+  const router = useRouter();
+
   return (
-    <div style={{ minHeight: "100vh", background: "#FAF7F0", fontFamily: "'DM Sans', sans-serif" }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');`}</style>
+    <div
+      onClick={() => router.push("/auth")}
+      style={{
+        minHeight: "100vh",
+        background: "#F5EFE2",
+        fontFamily: "var(--font-dm-sans), 'DM Sans', sans-serif",
+        display: "flex",
+        justifyContent: "center",
+        cursor: "pointer",
+      }}
+    >
+      {/* Phone-shaped viewport */}
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 440,
+          minHeight: "100vh",
+          position: "relative",
+          overflow: "hidden",
+          background: "#F5EFE2",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {/* Image slot: bamboo leaves top-left */}
+        <div
+          data-image-slot="bamboo-top-left"
+          style={{
+            position: "absolute",
+            top: 24,
+            left: -10,
+            width: 130,
+            height: 200,
+            zIndex: 1,
+            pointerEvents: "none",
+            background:
+              "linear-gradient(135deg, rgba(160,180,140,0.18), rgba(160,180,140,0.02))",
+            borderRadius: "0 60% 60% 60% / 0 50% 50% 50%",
+          }}
+        />
 
-      {/* Nav */}
-      <header style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, background: "rgba(250,247,240,0.88)", backdropFilter: "blur(20px)", borderBottom: "1px solid #E5DDD0" }}>
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {/* Zen circle logo */}
-            <svg width="32" height="32" viewBox="0 0 36 36" fill="none" className="sm:w-[36px] sm:h-[36px]">
-              <circle cx="18" cy="18" r="16" stroke="#3D5C3E" strokeWidth="2.5" fill="none" opacity="0.7"/>
-              <ellipse cx="18" cy="20" rx="7" ry="5" fill="#3D5C3E" opacity="0.15"/>
-              <path d="M14 22 Q18 16 22 22" stroke="#3D5C3E" strokeWidth="1.5" fill="none"/>
-              <circle cx="18" cy="14" r="2.5" fill="#3D5C3E"/>
-              <path d="M16 12 L15 10 M20 12 L21 10" stroke="#3D5C3E" strokeWidth="1.2" strokeLinecap="round"/>
+        {/* Image slot: bamboo leaves top-right */}
+        <div
+          data-image-slot="bamboo-top-right"
+          style={{
+            position: "absolute",
+            top: 60,
+            right: -20,
+            width: 150,
+            height: 220,
+            zIndex: 1,
+            pointerEvents: "none",
+            background:
+              "linear-gradient(225deg, rgba(160,180,140,0.20), rgba(160,180,140,0.02))",
+            borderRadius: "60% 0 60% 60% / 50% 0 50% 50%",
+          }}
+        />
+
+        {/* Image slot: background watercolor landscape (mountains/pagoda/river) */}
+        <div
+          data-image-slot="landscape-watercolor"
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "55%",
+            zIndex: 1,
+            pointerEvents: "none",
+            background:
+              "linear-gradient(to top, rgba(170,180,150,0.35) 0%, rgba(200,200,170,0.18) 40%, rgba(245,239,226,0) 100%)",
+          }}
+        />
+
+        {/* Centre content */}
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "60px 32px 80px",
+            position: "relative",
+            zIndex: 3,
+          }}
+        >
+          {/* Enso circle + bowl with sprout */}
+          <div style={{ position: "relative", width: 220, height: 220, marginBottom: 36 }}>
+            {/* Enso (brush-stroke circle, not fully closed) */}
+            <svg viewBox="0 0 220 220" width="220" height="220" style={{ position: "absolute", inset: 0 }}>
+              <defs>
+                <linearGradient id="ensoGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#3D5C3E" stopOpacity="0.95" />
+                  <stop offset="60%" stopColor="#3D5C3E" stopOpacity="0.55" />
+                  <stop offset="100%" stopColor="#3D5C3E" stopOpacity="0.15" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M 110 18
+                   A 92 92 0 1 1 32 158"
+                fill="none"
+                stroke="url(#ensoGrad)"
+                strokeWidth="14"
+                strokeLinecap="round"
+              />
+              {/* Rough texture splash dots */}
+              <circle cx="36" cy="162" r="3" fill="#3D5C3E" opacity="0.55" />
+              <circle cx="44" cy="170" r="2" fill="#3D5C3E" opacity="0.35" />
+              <circle cx="28" cy="155" r="2" fill="#3D5C3E" opacity="0.4" />
             </svg>
-            <span style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500, color: "#1F2E1F", letterSpacing: "0.05em" }} className="text-lg sm:text-xl">ZENPLATE</span>
-          </div>
-          <nav className="hidden md:flex items-center gap-8">
-            {["Features", "How it Works", "Recipes"].map(l => (
-              <span key={l} style={{ fontSize: "0.78rem", fontWeight: 500, color: "#8D9E8D", cursor: "pointer", letterSpacing: "0.03em" }}>{l}</span>
-            ))}
-          </nav>
-          <Link href="/auth" style={{ textDecoration: "none" }}>
-            <button style={{ background: "#3D5C3E", color: "#FFFFFF", border: "none", borderRadius: 999, fontWeight: 600, fontFamily: "'DM Sans', sans-serif", cursor: "pointer", letterSpacing: "0.02em" }} className="px-4 py-2 sm:px-6 sm:py-2.5 text-xs sm:text-sm">
-              Get Started
-            </button>
-          </Link>
-        </div>
-      </header>
 
-      {/* Hero */}
-      <section className="pt-24 sm:pt-28 pb-16 relative overflow-hidden">
-        {/* Botanical background art */}
-        <svg style={{ position: "absolute", top: 60, right: -60, width: 500, height: 500, opacity: 0.12 }} viewBox="0 0 300 300" fill="none" className="hidden md:block">
-          <ellipse cx="200" cy="80" rx="55" ry="100" fill="#3D5C3E" transform="rotate(-25 200 80)"/>
-          <ellipse cx="240" cy="150" rx="40" ry="80" fill="#3D5C3E" transform="rotate(15 240 150)"/>
-          <ellipse cx="170" cy="200" rx="35" ry="70" fill="#3D5C3E" transform="rotate(-40 170 200)"/>
-          <line x1="200" y1="80" x2="180" y2="250" stroke="#3D5C3E" strokeWidth="3" opacity="0.5"/>
-          <line x1="200" y1="80" x2="240" y2="150" stroke="#3D5C3E" strokeWidth="2" opacity="0.4"/>
-        </svg>
-
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-8 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
-          {/* Left */}
-          <div className="text-center md:text-left z-10">
-            <p style={{ fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "#C4974A", marginBottom: "1.5rem" }}>🌿 Mindful Nutrition • AI Powered</p>
-            <h1 style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400, color: "#1F2E1F", lineHeight: 1.05, margin: "0 0 1.5rem" }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
-              Eat with intention.<br />
-              <em style={{ color: "#3D5C3E" }}>Heal with food.</em>
-            </h1>
-            <p style={{ fontSize: "1.05rem", color: "#7D8E7D", lineHeight: 1.75, marginBottom: "2.5rem", fontWeight: 300 }} className="max-w-md mx-auto md:mx-0">
-              Personalised nutrition plans built around your health conditions, culture, and goals. Real food. Real healing.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 flex-wrap">
-              <Link href="/onboarding" style={{ textDecoration: "none" }} className="w-full sm:w-auto">
-                <button style={{ background: "#3D5C3E", color: "#FFFFFF", border: "none", borderRadius: 999, fontWeight: 600, fontFamily: "'DM Sans', sans-serif", cursor: "pointer", boxShadow: "0 8px 32px rgba(61,92,62,0.28)" }} className="px-6 py-3 sm:px-10 sm:py-4 text-base w-full sm:w-auto flex justify-center items-center gap-2">
-                  Begin your journey
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
-                </button>
-              </Link>
-              <Link href="/auth" style={{ textDecoration: "none", color: "#3D5C3E", fontWeight: 500, borderBottom: "1.5px solid rgba(61,92,62,0.3)", paddingBottom: "0.1rem" }} className="text-sm sm:text-base mt-2 sm:mt-0">
-                Sign in
-              </Link>
-            </div>
-
-            {/* Social proof */}
-            <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 mt-8">
-              <div style={{ display: "flex" }}>
-                {[1,2,3,4].map(i => (
-                  <div key={i} style={{ width: 32, height: 32, borderRadius: "50%", border: "2px solid #FAF7F0", marginLeft: i > 1 ? -10 : 0, overflow: "hidden" }}>
-                    <img src={`https://i.pravatar.cc/64?img=${i+10}`} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  </div>
-                ))}
-              </div>
-              <p style={{ fontSize: "0.8rem", color: "#8D9E8D", fontWeight: 400 }} className="text-center sm:text-left">
-                <strong style={{ color: "#1F2E1F", fontWeight: 600 }}>2,400+</strong> people healing with Zenplate
-              </p>
+            {/* Bowl + sprout centered */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <svg viewBox="0 0 100 100" width="86" height="86">
+                {/* sprout */}
+                <path d="M50 48 Q50 36 50 28" stroke="#3D5C3E" strokeWidth="2" fill="none" strokeLinecap="round" />
+                <path d="M50 36 Q40 32 38 24 Q46 26 50 34 Z" fill="#3D5C3E" />
+                <path d="M50 36 Q60 32 62 24 Q54 26 50 34 Z" fill="#4A6E4B" />
+                {/* bowl */}
+                <path d="M28 52 L72 52 Q72 74 50 78 Q28 74 28 52 Z" fill="#3D5C3E" />
+                <ellipse cx="50" cy="52" rx="22" ry="3.5" fill="#2D4530" />
+              </svg>
             </div>
           </div>
 
-          {/* Right — phone mockup */}
-          <div className="relative flex justify-center mt-10 md:mt-0 w-full z-10">
-            <div className="w-[260px] sm:w-[280px]" style={{ background: "#FFFFFF", borderRadius: "2.5rem", boxShadow: "0 40px 100px rgba(31,46,31,0.18), 0 10px 30px rgba(31,46,31,0.1)", overflow: "hidden", border: "1px solid #E5DDD0" }}>
-              {/* Phone status bar */}
-              <div style={{ background: "#F0EBE0", padding: "0.75rem 1.25rem 0.5rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.72rem", fontWeight: 600, color: "#1F2E1F" }}>9:41</span>
-                <div style={{ display: "flex", gap: "0.35rem", alignItems: "center" }}>
-                  {[3,4,5].map(i => <div key={i} style={{ width: 3, height: i, background: "#1F2E1F", borderRadius: 1 }} />)}
-                  <svg width="14" height="10" viewBox="0 0 24 17" fill="none" stroke="#1F2E1F" strokeWidth="2"><path d="M1 6.4C4.2 3.2 8.4 1.4 12 1.4c3.6 0 7.8 1.8 11 5M5 10.8C7.4 8.4 9.7 7.2 12 7.2c2.3 0 4.6 1.2 7 3.6M9 14.8C10.1 13.6 11.1 13 12 13c.9 0 1.9.6 3 1.8"/><circle cx="12" cy="17" r="1.5" fill="#1F2E1F"/></svg>
-                </div>
-              </div>
-              {/* App preview content */}
-              <div style={{ background: "#F5F0E8", padding: "1rem" }}>
-                {/* Greeting */}
-                <div style={{ marginBottom: "0.75rem" }}>
-                  <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1F2E1F", margin: 0 }}>Good morning,</p>
-                  <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#3D5C3E", margin: 0 }}>Aisha 🌿</p>
-                  <p style={{ fontSize: "0.65rem", color: "#8D9E8D", margin: "0.15rem 0 0" }}>Today is a fresh start.</p>
-                </div>
-                {/* Focus card */}
-                <div style={{ background: "#FFFFFF", borderRadius: "0.75rem", padding: "0.7rem", marginBottom: "0.75rem", border: "1px solid #E5DDD0" }}>
-                  <p style={{ fontSize: "0.5rem", color: "#A8B8A8", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 600, margin: "0 0 0.2rem" }}>Today's Focus</p>
-                  <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "0.8rem", color: "#1F2E1F", margin: 0 }}>Eat mindfully and stay hydrated</p>
-                </div>
-                {/* Meal thumbnails */}
-                <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "0.85rem", color: "#1F2E1F", margin: "0 0 0.5rem" }}>Today's Meals</p>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0.4rem" }}>
-                  {["1546069901-ba9599a7e63c", "1512621776951-a57141f2eefd", "1504674900247-0877df9cc836"].map((id, i) => (
-                    <div key={i} style={{ aspectRatio: "1", borderRadius: "0.5rem", overflow: "hidden", background: "#E8E0D0" }}>
-                      <img src={`https://images.unsplash.com/photo-${id}?w=100`} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    </div>
-                  ))}
-                </div>
-                {/* Streak */}
-                <div style={{ background: "#FFFFFF", borderRadius: "0.75rem", padding: "0.7rem", marginTop: "0.75rem", border: "1px solid #E5DDD0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <div style={{ fontSize: "1.2rem" }}>🌿</div>
-                  <div>
-                    <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "0.85rem", color: "#1F2E1F", margin: 0 }}>12 days in a row</p>
-                    <p style={{ fontSize: "0.55rem", color: "#8D9E8D", margin: 0 }}>Mindful streak</p>
-                  </div>
-                </div>
-              </div>
-              {/* Bottom nav */}
-              <div style={{ background: "#FFFFFF", padding: "0.5rem 1rem 0.75rem", display: "flex", justifyContent: "space-around", borderTop: "1px solid #E5DDD0" }}>
-                {["🏠","🍽️","📷","📊","👤"].map((ic, i) => (
-                  <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-                    <span style={{ fontSize: "1rem" }}>{ic}</span>
-                    <div style={{ width: 4, height: 4, borderRadius: "50%", background: i === 0 ? "#3D5C3E" : "transparent" }} />
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* Floating badge */}
-            <div className="absolute top-[10%] -right-2 sm:-right-8 bg-white rounded-2xl p-3 shadow-[0_8px_24px_rgba(31,46,31,0.12)] border border-[#E5DDD0]">
-              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#3D5C3E", margin: 0, fontWeight: 500 }}>PCOS</p>
-              <p style={{ fontSize: "0.65rem", color: "#8D9E8D", margin: "0.1rem 0 0" }}>Hormonal balance</p>
-            </div>
-            <div className="absolute bottom-[20%] -left-2 sm:-left-8 bg-[#3D5C3E] rounded-2xl p-3 shadow-[0_8px_24px_rgba(61,92,62,0.3)]">
-              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "0.9rem", color: "#FFFFFF", margin: 0 }}>Kichari Bowl</p>
-              <p style={{ fontSize: "0.6rem", color: "rgba(255,255,255,0.65)", margin: "0.1rem 0 0" }}>PCOS Friendly ✓</p>
-            </div>
-          </div>
-        </div>
-      </section>
+          {/* Wordmark */}
+          <h1
+            style={{
+              fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+              fontSize: 38,
+              fontWeight: 500,
+              color: "#2D4530",
+              letterSpacing: "0.18em",
+              margin: 0,
+              textAlign: "center",
+            }}
+          >
+            ZENPLATE
+          </h1>
 
-      {/* Features */}
-      <section className="py-20 px-4 sm:px-8 bg-white">
-        <div className="max-w-[1100px] mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <p style={{ fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", color: "#C4974A", marginBottom: "1rem" }}>✦ You'll Get</p>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400, color: "#1F2E1F", margin: 0 }} className="text-3xl sm:text-4xl md:text-5xl">Mindful nutrition, personalised for you</h2>
+          {/* Divider with lotus */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              marginTop: 18,
+              marginBottom: 22,
+              width: 200,
+            }}
+          >
+            <div style={{ flex: 1, height: 1, background: "#C4A66A", opacity: 0.6 }} />
+            <svg width="18" height="14" viewBox="0 0 24 18" fill="none">
+              <path d="M12 16 Q4 12 6 4 Q12 8 12 16 Z" fill="#C4974A" opacity="0.85" />
+              <path d="M12 16 Q20 12 18 4 Q12 8 12 16 Z" fill="#C4974A" opacity="0.85" />
+              <path d="M12 16 Q12 8 12 2 Q14 9 12 16 Z" fill="#D4B070" />
+            </svg>
+            <div style={{ flex: 1, height: 1, background: "#C4A66A", opacity: 0.6 }} />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            {[
-              { emoji: "🌿", title: "Mindful Choices", desc: "Recipes aligned with your health conditions, dietary type, and cultural roots." },
-              { emoji: "🍽️", title: "Personalised Nutrition", desc: "AI-generated 7-day meal plans with macro targets calibrated to your body." },
-              { emoji: "🌸", title: "Lasting Wellness", desc: "Track progress, log meals, and watch your body respond to real nourishment." },
-            ].map((f, i) => (
-              <div key={i} style={{ background: "#FAF7F0", border: "1px solid #E5DDD0" }} className="rounded-[1.5rem] p-6 sm:p-8">
-                <div style={{ fontSize: "2rem", marginBottom: "1rem" }}>{f.emoji}</div>
-                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.3rem", color: "#1F2E1F", margin: "0 0 0.75rem" }}>{f.title}</h3>
-                <p style={{ fontSize: "0.88rem", color: "#7D8E7D", lineHeight: 1.7, margin: 0 }}>{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* CTA Footer */}
-      <section style={{ background: "linear-gradient(135deg, #2D4A2E 0%, #1A2E1B 100%)", position: "relative", overflow: "hidden" }} className="py-20 px-4 sm:px-8">
-        <svg style={{ position: "absolute", right: 0, bottom: 0, opacity: 0.15 }} width="300" height="300" viewBox="0 0 300 300" fill="none" className="hidden sm:block">
-          <ellipse cx="250" cy="200" rx="80" ry="130" fill="#FFFFFF" transform="rotate(-25 250 200)"/>
-          <ellipse cx="200" cy="270" rx="60" ry="100" fill="#FFFFFF" transform="rotate(15 200 270)"/>
-        </svg>
-        <div className="max-w-[600px] mx-auto text-center relative z-10">
-          <p style={{ fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(196,151,74,0.9)", marginBottom: "1.5rem" }}>✦ Begin Your Healing</p>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", color: "#FFFFFF", fontWeight: 400, margin: "0 0 1.5rem", lineHeight: 1.2 }} className="text-3xl sm:text-4xl md:text-5xl">
-            Your plate is your medicine.
-          </h2>
-          <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "1rem", lineHeight: 1.7, marginBottom: "2.5rem" }}>
-            Small choices, made with awareness, create lasting change.
+          {/* Tagline */}
+          <p
+            style={{
+              fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+              fontSize: 17,
+              color: "#2D4530",
+              margin: 0,
+              textAlign: "center",
+              lineHeight: 1.7,
+              fontStyle: "italic",
+              opacity: 0.85,
+            }}
+          >
+            Eat with intention.
+            <br />
+            Heal with food.
           </p>
-          <Link href="/onboarding" style={{ textDecoration: "none" }}>
-            <button style={{ background: "#FFFFFF", color: "#1F2E1F", border: "none", borderRadius: 999, fontWeight: 600, fontFamily: "'DM Sans', sans-serif", cursor: "pointer", boxShadow: "0 8px 32px rgba(0,0,0,0.2)" }} className="px-8 py-3.5 sm:px-12 sm:py-4 text-base w-full sm:w-auto">
-              Start for free →
-            </button>
-          </Link>
         </div>
-      </section>
+
+        {/* Bottom CTA — Enter ZenPlate */}
+        <div
+          style={{
+            position: "relative",
+            zIndex: 5,
+            padding: "0 32px 40px",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push("/auth");
+            }}
+            style={{
+              background: "#3D5C3E",
+              color: "#FFFFFF",
+              border: "none",
+              borderRadius: 999,
+              padding: "16px 56px",
+              fontFamily: "var(--font-dm-sans), 'DM Sans', sans-serif",
+              fontSize: 15,
+              fontWeight: 500,
+              letterSpacing: "0.04em",
+              cursor: "pointer",
+              boxShadow: "0 8px 24px rgba(61,92,62,0.28)",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 10,
+            }}
+          >
+            Begin
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -2,8 +2,8 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import BottomNav from "@/components/BottomNav";
 import { useAuth } from "@/lib/auth";
+import BottomNav from "@/components/BottomNav";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -11,32 +11,40 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!loading) {
-      if (!user) {
-        router.replace("/auth");
-      } else if (!user.onboarded) {
-        router.replace("/onboarding");
-      }
+      if (!user) router.replace("/auth");
+      else if (!user.onboarded) router.replace("/onboarding");
     }
   }, [user, loading, router]);
 
-  if (loading || !user || !user.onboarded) {
+  if (loading || !user?.onboarded) {
     return (
-      <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "#FAF7F0", fontFamily: "'DM Sans', sans-serif", color: "#8D9E8D" }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style={{ animation: "spin 3s linear infinite" }}>
-            <circle cx="24" cy="24" r="20" stroke="#3D5C3E" strokeWidth="2" fill="none" opacity="0.3" strokeDasharray="100 30"/>
-            <circle cx="24" cy="18" r="5" fill="#3D5C3E" opacity="0.6"/>
-          </svg>
-          <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
-          <span style={{ fontSize: "0.85rem" }}>Loading…</span>
-        </div>
+      <div style={{
+        minHeight: "100vh",
+        background: "#F5EFE2",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+        gap: 16,
+      }}>
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <path d="M20 4 Q20 14 20 8" stroke="#3D5C3E" strokeWidth="2" strokeLinecap="round" />
+          <path d="M20 12 Q14 9 12 4 Q18 7 20 12 Z" fill="#3D5C3E" fillOpacity="0.6" />
+          <path d="M20 12 Q26 9 28 4 Q22 7 20 12 Z" fill="#3D5C3E" fillOpacity="0.8" />
+          <path d="M12 24 L28 24 Q28 34 20 36 Q12 34 12 24 Z" fill="#3D5C3E" opacity="0.9" />
+          <ellipse cx="20" cy="24" rx="8" ry="2" fill="#2D4530" />
+        </svg>
+        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#8D9E8D" }}>Loading…</p>
       </div>
     );
   }
 
   return (
     <div style={{ minHeight: "100vh", background: "#FAF7F0" }}>
-      <main className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto" style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}>
+      <main
+        className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto"
+        style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
+      >
         {children}
       </main>
       <BottomNav />

@@ -16,11 +16,13 @@ const tabs = [
     ),
   },
   {
-    href: "/app/meal-plan",
+    href: "/app/daily-plan",
     label: "Meals",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
-        <path d="M3 11l19-9-9 19-2-8-8-2z" />
+        <path d="M4 16 Q4 20 12 20 Q20 20 20 16 L18 10 H6 Z" />
+        <path d="M8 10 Q8 6 12 6 Q16 6 16 10" />
+        <path d="M3 16 H21" />
       </svg>
     ),
   },
