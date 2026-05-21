@@ -4,11 +4,17 @@ import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/auth";
-import { ChevronRight, Calendar, Clock, Loader2 } from "lucide-react";
-import { toast } from "sonner";
-import { motion } from "framer-motion";
 
 const MEAL_TYPES = ["Breakfast", "Lunch", "Dinner", "Snacks"];
+
+const MEAL_TAGS: Record<string, string[]> = {
+  Breakfast: ["Light", "Energizing"],
+  Lunch: ["Balanced", "Filling"],
+  Dinner: ["Protein-rich", "Satisfying"],
+  Snacks: ["Light", "Gut-friendly"],
+};
+
+const FALLBACK_IMG = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200";
 
 function todayDayKey() {
   return new Date().toLocaleDateString("en-US", { weekday: "short" });
@@ -27,7 +33,7 @@ export default function DailyPlan() {
       const { data } = await api.get("/meal-plan");
       setPlan(data);
     } catch {
-      toast.error("Could not load meal plan");
+      /* fail silently */
     } finally {
       setLoading(false);
     }
@@ -42,119 +48,225 @@ export default function DailyPlan() {
     todayItems.forEach(({ recipe_id }: { recipe_id: string }) => {
       if (!recipeCache[recipe_id]) {
         api.get(`/recipes/${recipe_id}`)
-          .then(({ data }) => setRecipeCache((prev) => ({ ...prev, [recipe_id]: data })))
+          .then(({ data }) => setRecipeCache(prev => ({ ...prev, [recipe_id]: data })))
           .catch(() => {});
       }
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [plan]);
 
-  return (
-    <div className="space-y-8 pb-32 pt-6">
-      {/* Header - Image 5 */}
-      <header className="flex items-center justify-between">
-        <h1 className="font-serif text-3xl text-[#3A2618]">Today's Plan</h1>
-        <Link href="/app/meal-plan" className="size-10 rounded-full border border-[#D9C39A]/40 bg-white grid place-items-center text-[#3A2618]/60">
-          <Calendar className="size-5" />
-        </Link>
-      </header>
+  const currentMealItems = todayItems.filter(
+    (i: any) => i.meal_type?.toLowerCase() === selectedType.toLowerCase()
+  );
 
-      {/* Meal Type Tabs - Image 5 */}
-      <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
-        {MEAL_TYPES.map((type) => (
+  return (
+    <div style={{
+      minHeight: "100vh",
+      background: "#F5EFE2",
+      fontFamily: "var(--font-dm-sans), 'DM Sans', sans-serif",
+    }}>
+      {/* Header */}
+      <div style={{
+        position: "relative",
+        padding: "18px 20px 0",
+        overflow: "hidden",
+      }}>
+        {/* Leaf decoration top-left */}
+        <div style={{
+          position: "absolute", top: 0, left: -10, width: 100, height: 130,
+          pointerEvents: "none", opacity: 0.55,
+          background: "radial-gradient(ellipse at 60% 40%, rgba(160,180,140,0.45), transparent 70%)",
+        }} />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 2 }}>
           <button
-            key={type}
-            onClick={() => setSelectedType(type)}
-            className={`shrink-0 px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all ${
-              selectedType === type 
-                ? "bg-[#3A2618] text-white border-[#3A2618]" 
-                : "bg-white border-[#D9C39A]/40 text-[#3A2618]/60 hover:border-[#3A2618]"
-            }`}
+            onClick={() => window.history.back()}
+            style={{ background: "transparent", border: "none", cursor: "pointer", padding: 4 }}
           >
-            {type}
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2D4530" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
+            </svg>
           </button>
-        ))}
+          <Link href="/app/meal-plan" style={{ background: "transparent", border: "none", cursor: "pointer", padding: 4, display: "flex" }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2D4530" strokeWidth="1.8" strokeLinecap="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
+            </svg>
+          </Link>
+        </div>
+        <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "12px 20px 0" }}>
+          <h1 style={{
+            fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+            fontSize: 26, fontWeight: 500, color: "#2D4530", margin: 0,
+            display: "inline-flex", alignItems: "center", gap: 8,
+          }}>
+            Today&apos;s Plan
+            <svg width="20" height="16" viewBox="0 0 24 18" fill="none">
+              <path d="M12 16 Q4 12 6 4 Q12 8 12 16 Z" fill="#C4974A" opacity="0.85" />
+              <path d="M12 16 Q20 12 18 4 Q12 8 12 16 Z" fill="#C4974A" opacity="0.85" />
+            </svg>
+          </h1>
+          <p style={{ fontSize: 13, color: "#7B8A7B", margin: "6px 0 0", lineHeight: 1.5 }}>
+            Personalized for your goals and wellness journey.
+          </p>
+        </div>
       </div>
 
-      {/* Meal List - Image 5 */}
-      <div className="space-y-4">
-        {loading ? (
-          <div className="flex flex-col items-center py-20 opacity-20">
-            <Loader2 className="size-8 animate-spin text-[#004D40]" />
-          </div>
-        ) : todayItems.length > 0 ? (
-          todayItems.map((item: any, i) => {
-            const recipe = recipeCache[item.recipe_id];
-            // Only show meals matching selected type (mocking Breakfast/Lunch/Dinner mapping)
-            const matchesType = selectedType.toLowerCase() === item.meal_type.toLowerCase();
-            if (!matchesType && selectedType !== "Snacks") return null;
+      {/* Meal type tabs */}
+      <div style={{ padding: "16px 20px 0", display: "flex", gap: 8 }}>
+        {MEAL_TYPES.map(type => {
+          const active = selectedType === type;
+          return (
+            <button key={type} onClick={() => setSelectedType(type)} style={{
+              padding: "8px 14px", borderRadius: 999, fontSize: 13.5, fontWeight: active ? 600 : 400,
+              background: active ? "#3D5C3E" : "transparent",
+              color: active ? "#fff" : "#5C6B5C",
+              border: active ? "none" : "1px solid transparent",
+              fontFamily: "inherit", cursor: "pointer", transition: "all 0.2s",
+            }}>
+              {type}
+            </button>
+          );
+        })}
+      </div>
 
+      {/* Recipe rows */}
+      <div style={{ padding: "16px 20px 0", display: "flex", flexDirection: "column", gap: 12 }}>
+        {loading ? (
+          <div style={{ textAlign: "center", padding: "40px 0", color: "#A8B8A8", fontSize: 14 }}>
+            Loading your plan…
+          </div>
+        ) : currentMealItems.length === 0 ? (
+          <EmptyMealState mealType={selectedType} user={user} />
+        ) : (
+          currentMealItems.map((item: any) => {
+            const recipe = recipeCache[item.recipe_id];
+            const tags = MEAL_TAGS[selectedType] || [];
             return (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Link 
-                  href={`/app/recipe/${item.recipe_id}`}
-                  className="bg-white border border-[#D9C39A]/40 rounded-[2rem] p-4 flex items-center gap-4 group hover:shadow-xl hover:shadow-[#3A2618]/5 transition-all duration-500"
-                >
-                  <div className="size-20 rounded-full overflow-hidden border border-[#D9C39A]/20 shrink-0">
-                    <img 
-                      src={recipe?.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200"} 
-                      alt="" 
-                      className="w-full h-full object-cover transition-transform group-hover:scale-110"
+              <Link key={item.recipe_id} href={`/app/recipe/${item.recipe_id}`} style={{ textDecoration: "none" }}>
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 14,
+                  background: "#FFFFFF", borderRadius: 18, overflow: "hidden",
+                  boxShadow: "0 1px 8px rgba(31,46,31,0.06)",
+                }}>
+                  <div style={{ width: 100, height: 90, flexShrink: 0, background: "#F5F0E8" }}>
+                    <img
+                      src={recipe?.image || FALLBACK_IMG}
+                      alt={recipe?.title || "Recipe"}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      loading="lazy"
+                      onError={e => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
                     />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-serif text-lg text-[#3A2618] truncate group-hover:text-[#004D40] transition-colors">
-                      {recipe?.title || "Loading..."}
+                  <div style={{ flex: 1, padding: "12px 14px 12px 0" }}>
+                    <h3 style={{
+                      fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+                      fontSize: 16, fontWeight: 500, color: "#2D4530", margin: "0 0 4px",
+                    }}>
+                      {recipe?.title || item.recipe_id}
                     </h3>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#3A2618]/40 mt-1">
-                      {recipe?.category === 'healthcare' ? 'Balanced • Satisfying' : 'Light • Energizing'}
+                    <p style={{ fontSize: 12, color: "#7B8A7B", margin: "0 0 8px" }}>
+                      {tags.join(" • ")}
                     </p>
-                    <div className="flex items-center gap-2 text-[10px] font-bold text-[#3A2618]/30 uppercase tracking-widest mt-2">
-                      <Clock className="size-3" /> {recipe?.cook_time || 20} min
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9DA89D" strokeWidth="2" strokeLinecap="round">
+                        <circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" />
+                      </svg>
+                      <span style={{ fontSize: 12, color: "#9DA89D" }}>
+                        {recipe?.cook_time ? `${recipe.cook_time} min` : "—"}
+                      </span>
                     </div>
                   </div>
-                  <ChevronRight className="size-5 text-[#3A2618]/20 group-hover:text-[#3A2618] transition-colors shrink-0" />
-                </Link>
-              </motion.div>
+                  <div style={{ paddingRight: 14 }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C8D4C8" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
+                  </div>
+                </div>
+              </Link>
             );
           })
-        ) : (
-          <div className="text-center py-24 text-[#3A2618]/30 font-serif text-xl">
-            Your plan is being prepared.
-          </div>
         )}
       </div>
 
-      {/* Footer CTA - Image 5 */}
-      <div className="fixed bottom-32 left-6 right-6 flex justify-center">
-        <Link href="/app/meal-plan" className="w-full max-w-sm">
-          <button className="w-full bg-[#3A2618] text-white rounded-full py-5 text-sm font-bold uppercase tracking-[0.2em] shadow-xl shadow-[#3A2618]/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
-            View Full Plan
-          </button>
+      {/* View Full Plan banner */}
+      <div style={{ padding: "20px 20px 0" }}>
+        <Link href="/app/meal-plan" style={{ textDecoration: "none" }}>
+          <div style={{
+            display: "flex", alignItems: "center", gap: 14,
+            background: "#FFFFFF", borderRadius: 18, padding: "14px 16px",
+            boxShadow: "0 1px 8px rgba(31,46,31,0.06)",
+          }}>
+            <div style={{
+              width: 40, height: 40, borderRadius: "50%", background: "#F0EDE0",
+              display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+            }}>
+              <svg width="18" height="18" viewBox="0 0 24 18" fill="none">
+                <path d="M12 16 Q4 12 6 4 Q12 8 12 16 Z" fill="#C4974A" opacity="0.85" />
+                <path d="M12 16 Q20 12 18 4 Q12 8 12 16 Z" fill="#C4974A" opacity="0.85" />
+                <path d="M12 16 Q12 8 12 2 Q14 9 12 16 Z" fill="#D4B070" />
+              </svg>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{
+                fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+                fontSize: 15, fontWeight: 500, color: "#2D4530",
+              }}>View Full Plan</div>
+              <div style={{ fontSize: 12, color: "#7B8A7B", marginTop: 2 }}>See your complete meal plan</div>
+            </div>
+            <div style={{
+              width: 34, height: 34, borderRadius: "50%", background: "#3D5C3E",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
+            </div>
+          </div>
         </Link>
       </div>
 
-      {/* Bottom Nav Sync */}
-      <nav className="fixed bottom-6 left-6 right-6 h-16 bg-white border border-[#D9C39A]/40 rounded-full shadow-lg shadow-[#3A2618]/5 flex items-center justify-around px-4 z-50">
-        <Link href="/app" className="p-3 text-[#3A2618]/30"><Leaf className="size-6" /></Link>
-        <Link href="/app/daily-plan" className="p-3 text-[#004D40]"><Utensils className="size-6" /></Link>
-        <button className="size-12 rounded-full bg-[#004D40] text-white flex items-center justify-center shadow-lg shadow-[#004D40]/20 -translate-y-4">
-          <Search className="size-6" />
-        </button>
-        <Link href="/app/progress" className="p-3 text-[#3A2618]/30 hover:text-[#3A2618]"><BarChart2 className="size-6" /></Link>
-        <Link href="/app/profile" className="p-3 text-[#3A2618]/30 hover:text-[#3A2618]"><User className="size-6" /></Link>
-      </nav>
+      {/* Landscape image slot */}
+      <div style={{ padding: "20px 0 0", position: "relative", overflow: "hidden", height: 140 }}>
+        <div
+          data-image-slot="landscape-bottom"
+          style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(to top, rgba(170,180,150,0.45) 0%, rgba(200,200,170,0.25) 50%, transparent 100%)",
+          }}
+        />
+      </div>
     </div>
   );
 }
 
-// Mock imports for navigation consistency
-const Leaf = ({ className }: { className?: string }) => <div className={className}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 8-.5 2.2-2 4.4-3.8 6a7 7 0 0 1-5.2 4Z"/><path d="M7 20s0-2 1-4.5"/><path d="M14 20l1.5-3"/></svg></div>;
-const Utensils = ({ className }: { className?: string }) => <div className={className}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></div>;
-const Search = ({ className }: { className?: string }) => <div className={className}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>;
-const BarChart2 = ({ className }: { className?: string }) => <div className={className}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>;
-const User = ({ className }: { className?: string }) => <div className={className}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>;
+function EmptyMealState({ mealType, user }: { mealType: string; user: any }) {
+  return (
+    <div style={{
+      background: "#FFFFFF", borderRadius: 18, padding: "28px 20px",
+      textAlign: "center", boxShadow: "0 1px 8px rgba(31,46,31,0.06)",
+    }}>
+      <div style={{
+        width: 52, height: 52, borderRadius: "50%", background: "#F0EDE0",
+        display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px",
+      }}>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3D5C3E" strokeWidth="1.6" strokeLinecap="round">
+          <path d="M4 16 Q4 20 12 20 Q20 20 20 16 L18 10 H6 Z" />
+          <path d="M8 10 Q8 6 12 6 Q16 6 16 10" />
+        </svg>
+      </div>
+      <p style={{
+        fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+        fontSize: 16, color: "#2D4530", margin: "0 0 8px",
+      }}>
+        No {mealType} planned yet
+      </p>
+      <p style={{ fontSize: 12.5, color: "#7B8A7B", margin: "0 0 16px", lineHeight: 1.5 }}>
+        {user?.onboarded
+          ? "Generate your personalized meal plan to see today's meals."
+          : "Complete your profile to get a personalized plan."}
+      </p>
+      <Link href="/app/meal-plan" style={{
+        display: "inline-block", background: "#3D5C3E", color: "#fff",
+        borderRadius: 999, padding: "10px 22px", fontSize: 13, fontWeight: 500,
+        textDecoration: "none",
+      }}>
+        Generate Plan
+      </Link>
+    </div>
+  );
+}

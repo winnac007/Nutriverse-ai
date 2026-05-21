@@ -3,151 +3,313 @@
 import React, { useEffect, useState, use } from "react";
 import Link from "next/link";
 import api from "@/lib/api";
-import { ArrowLeft, Heart, Clock, Users, Plus, PlayCircle, Star, Leaf } from "lucide-react";
-import { toast } from "sonner";
-import PremiumGate from "@/components/PremiumGate";
 import { useAuth } from "@/lib/auth";
-import { motion } from "framer-motion";
+import { toast } from "sonner";
+
+const FALLBACK_IMG = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600";
 
 export default function RecipeDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const { user, refresh } = useAuth();
   const [recipe, setRecipe] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState("ingredients");
+  const [activeTab, setActiveTab] = useState<"Ingredients" | "Nutrition" | "Steps">("Ingredients");
 
   useEffect(() => {
-    api.get(`/recipes/${id}`).then((r) => setRecipe(r.data));
+    api.get(`/recipes/${id}`).then(r => setRecipe(r.data)).catch(() => {});
   }, [id]);
 
-  if (!recipe) return (
-    <div className="min-h-screen bg-[#FAF3E6] flex items-center justify-center font-serif text-[#3A2618]/30 text-xl">
-      Preparing...
-    </div>
-  );
-
-  const locked = recipe.is_premium && !user?.is_premium;
+  const saved = user?.saved_recipes?.includes(id);
 
   const toggleSave = async () => {
     try {
-      await api.post(`/user/save-recipe/${recipe.id}`);
+      await api.post(`/user/save-recipe/${id}`);
       await refresh();
-      toast.success("Saved to favorites");
-    } catch { toast.error("Failed to save"); }
+      toast.success(saved ? "Removed from saved" : "Saved to favorites");
+    } catch {
+      toast.error("Failed to save");
+    }
   };
 
-  const saved = user?.saved_recipes?.includes(recipe.id);
+  if (!recipe) return (
+    <div style={{
+      minHeight: "100vh", background: "#F5EFE2",
+      display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 14,
+    }}>
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+        <path d="M20 8 Q20 20 20 14" stroke="#3D5C3E" strokeWidth="2" strokeLinecap="round">
+          <animateTransform attributeName="transform" type="rotate" from="0 20 20" to="360 20 20" dur="1.2s" repeatCount="indefinite" />
+        </path>
+        <path d="M20 16 Q14 13 12 7 Q18 10 20 15 Z" fill="#3D5C3E" fillOpacity="0.6" />
+        <path d="M20 16 Q26 13 28 7 Q22 10 20 15 Z" fill="#3D5C3E" />
+      </svg>
+      <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#8D9E8D" }}>Preparing recipe…</p>
+    </div>
+  );
 
-  if (locked) {
-    return (
-      <div className="space-y-6 p-6 bg-[#FAF3E6] min-h-screen">
-        <Link href="/app/explore" className="inline-flex items-center gap-2 text-[#3A2618]"><ArrowLeft className="size-5" /></Link>
-        <PremiumGate title={recipe.title} description={recipe.description + " — Premium recipe."} />
-      </div>
-    );
-  }
+  const nutrition = recipe.nutrition || {};
+  const tags = [
+    recipe.nutrition?.fiber > 5 && "High fiber",
+    recipe.nutrition?.protein > 15 && "Protein rich",
+    recipe.tags?.includes("anti-inflammatory") && "Anti-inflammatory",
+    recipe.dietary_type && recipe.dietary_type,
+  ].filter(Boolean) as string[];
 
   return (
-    <div className="bg-[#FAF3E6] min-h-screen pb-32">
-      {/* Top Image Area */}
-      <div className="relative h-[45vh] w-full rounded-b-[3rem] overflow-hidden shadow-sm">
-        <img 
-          src={recipe.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800"} 
-          alt={recipe.title} 
-          className="w-full h-full object-cover" 
+    <div style={{
+      minHeight: "100vh", background: "#F5EFE2",
+      fontFamily: "var(--font-dm-sans), 'DM Sans', sans-serif",
+    }}>
+      {/* Hero image */}
+      <div style={{ position: "relative", height: 300, background: "#E8E3D8", overflow: "hidden" }}>
+        <img
+          src={recipe.image || FALLBACK_IMG}
+          alt={recipe.title}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          loading="eager"
+          onError={e => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/10" />
-        
-        {/* Top Bar */}
-        <div className="absolute top-6 left-6 right-6 flex items-center justify-between z-10">
-          <Link href="/app/daily-plan" className="size-10 rounded-full bg-white/20 backdrop-blur-md grid place-items-center text-white border border-white/20">
-            <ArrowLeft className="size-5" />
-          </Link>
-          <button onClick={toggleSave} className="size-10 rounded-full bg-white/20 backdrop-blur-md grid place-items-center text-white border border-white/20">
-            <Heart className={`size-5 ${saved ? "fill-current" : ""}`} />
+        {/* Gradient overlay */}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 50%, rgba(0,0,0,0.1) 100%)",
+        }} />
+        {/* Top bar */}
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0,
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "16px 18px",
+        }}>
+          <button
+            onClick={() => window.history.back()}
+            style={{
+              width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.9)",
+              border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2D4530" strokeWidth="2.2" strokeLinecap="round">
+              <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
+            </svg>
           </button>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button onClick={toggleSave} style={{
+              width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.9)",
+              border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill={saved ? "#C25E4B" : "none"} stroke={saved ? "#C25E4B" : "#2D4530"} strokeWidth="2" strokeLinecap="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </button>
+            <button style={{
+              width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.9)",
+              border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2D4530" strokeWidth="2" strokeLinecap="round">
+                <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        {/* Dots indicator */}
+        <div style={{ position: "absolute", bottom: 14, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 5 }}>
+          {[0, 1, 2, 3].map(i => (
+            <div key={i} style={{ width: i === 1 ? 8 : 6, height: i === 1 ? 8 : 6, borderRadius: "50%", background: i === 1 ? "#fff" : "rgba(255,255,255,0.5)" }} />
+          ))}
         </div>
       </div>
 
-      {/* Content Area */}
-      <div className="px-6 pt-8 max-w-3xl mx-auto">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h1 className="font-serif text-3xl text-[#3A2618] leading-tight flex items-center gap-2">
-              {recipe.title} <Leaf className="size-5 text-[#004D40]" />
-            </h1>
-            <p className="text-[11px] font-bold uppercase tracking-widest text-[#3A2618]/50 mt-2">
-              High fiber • Protein rich • Anti-inflammatory
-            </p>
-          </div>
+      {/* Content card */}
+      <div style={{
+        background: "#F5EFE2", borderTopLeftRadius: 0, padding: "20px 20px 0",
+      }}>
+        {/* Title + tags */}
+        <h1 style={{
+          fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+          fontSize: 26, fontWeight: 500, color: "#2D4530", margin: "0 0 6px",
+          display: "inline-flex", alignItems: "center", gap: 8, flexWrap: "wrap",
+        }}>
+          {recipe.title}
+          <svg width="18" height="14" viewBox="0 0 24 18" fill="none">
+            <path d="M12 16 Q4 12 6 4 Q12 8 12 16 Z" fill="#C4974A" opacity="0.85" />
+            <path d="M12 16 Q20 12 18 4 Q12 8 12 16 Z" fill="#C4974A" opacity="0.85" />
+          </svg>
+        </h1>
+        {tags.length > 0 && (
+          <p style={{ fontSize: 13, color: "#7B8A7B", margin: "0 0 14px" }}>
+            {tags.slice(0, 3).join(" • ")}
+          </p>
+        )}
+
+        {/* Stats row */}
+        <div style={{ display: "flex", alignItems: "center", gap: 18, marginBottom: 16, paddingBottom: 16, borderBottom: "1px solid #EAE3D2" }}>
+          {[
+            {
+              icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9DA89D" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>,
+              label: recipe.cook_time ? `${recipe.cook_time} min` : "—",
+            },
+            {
+              icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9DA89D" strokeWidth="2" strokeLinecap="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>,
+              label: recipe.cooking_ability || "Easy",
+            },
+            {
+              icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9DA89D" strokeWidth="2" strokeLinecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></svg>,
+              label: `Serves ${recipe.servings || 1}`,
+            },
+          ].map((s, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+              {s.icon}
+              <span style={{ fontSize: 13, color: "#7B8A7B" }}>{s.label}</span>
+            </div>
+          ))}
         </div>
 
-        <div className="flex items-center gap-6 text-[11px] font-bold uppercase tracking-widest text-[#3A2618]/60 mb-8">
-          <span className="flex items-center gap-1.5"><Clock className="size-4" /> {recipe.cook_time || 25} min</span>
-          <span className="flex items-center gap-1.5"><Star className="size-4" /> Easy</span>
-          <span className="flex items-center gap-1.5"><Users className="size-4" /> Serves {recipe.servings || 1}</span>
-        </div>
+        {/* Why you'll love it */}
+        {recipe.description && (
+          <div style={{
+            background: "#FFFFFF", borderRadius: 16, padding: "14px 16px",
+            display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 16,
+            boxShadow: "0 1px 6px rgba(31,46,31,0.04)",
+          }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: "50%", background: "#F0EDE0",
+              display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+            }}>
+              <svg width="16" height="16" viewBox="0 0 24 18" fill="none">
+                <path d="M12 16 Q4 12 6 4 Q12 8 12 16 Z" fill="#3D5C3E" opacity="0.85" />
+                <path d="M12 16 Q20 12 18 4 Q12 8 12 16 Z" fill="#3D5C3E" opacity="0.85" />
+              </svg>
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontSize: 12, fontWeight: 600, color: "#3D5C3E", margin: "0 0 4px", letterSpacing: "0.05em" }}>Why you&apos;ll love it</p>
+              <p style={{ fontSize: 13, color: "#5C6B5C", margin: 0, lineHeight: 1.55 }}>
+                {recipe.description.slice(0, 120)}{recipe.description.length > 120 ? "…" : ""}
+              </p>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C8D4C8" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
+          </div>
+        )}
 
         {/* Tabs */}
-        <div className="flex gap-8 border-b border-[#D9C39A]/40 mb-6">
-          {["ingredients", "nutrition", "steps"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`pb-3 text-sm font-bold uppercase tracking-widest transition-colors relative ${
-                activeTab === tab ? "text-[#004D40]" : "text-[#3A2618]/40 hover:text-[#3A2618]/70"
-              }`}
-            >
+        <div style={{ display: "flex", borderBottom: "1px solid #EAE3D2", marginBottom: 16 }}>
+          {(["Ingredients", "Nutrition", "Steps"] as const).map(tab => (
+            <button key={tab} onClick={() => setActiveTab(tab)} style={{
+              flex: 1, padding: "10px 0", background: "transparent", border: "none",
+              fontSize: 14, fontWeight: activeTab === tab ? 600 : 400,
+              color: activeTab === tab ? "#2D4530" : "#9DA89D",
+              fontFamily: "inherit", cursor: "pointer",
+              borderBottom: activeTab === tab ? "2px solid #3D5C3E" : "2px solid transparent",
+              marginBottom: -1, transition: "all 0.2s",
+            }}>
               {tab}
-              {activeTab === tab && (
-                <motion.div layoutId="recipe-tab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#004D40]" />
-              )}
             </button>
           ))}
         </div>
 
-        {/* Tab Content */}
-        <div className="space-y-4">
-          {activeTab === "ingredients" && (
-            <ul className="space-y-4">
-              {recipe.ingredients.map((i: any, idx: number) => (
-                <li key={idx} className="flex items-center gap-4 text-sm text-[#3A2618]">
-                  <div className="size-1.5 rounded-full bg-[#004D40]" />
-                  <span className="font-bold">{i.amount}</span>
-                  <span className="capitalize">{i.name}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-          {activeTab === "nutrition" && (
-            <div className="grid grid-cols-2 gap-4">
-              {["calories", "protein", "carbs", "fat"].map((k) => (
-                <div key={k} className="bg-white border border-[#D9C39A]/40 rounded-2xl p-4 flex justify-between items-center">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#3A2618]/40">{k}</span>
-                  <span className="font-serif text-xl text-[#3A2618]">{recipe.nutrition?.[k]}{k !== 'calories' ? 'g' : ''}</span>
+        {/* Tab content */}
+        <div style={{ position: "relative" }}>
+          {activeTab === "Ingredients" && (
+            <div style={{ paddingBottom: 20 }}>
+              {(recipe.ingredients || []).map((ing: any, i: number) => (
+                <div key={i} style={{
+                  display: "flex", alignItems: "center", gap: 10,
+                  padding: "9px 0", borderBottom: i < recipe.ingredients.length - 1 ? "1px solid #EAE3D2" : "none",
+                }}>
+                  <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#3D5C3E", flexShrink: 0 }} />
+                  <span style={{ fontSize: 13.5, color: "#2D4530", lineHeight: 1.4 }}>
+                    {ing.amount ? `${ing.amount} ` : ""}{ing.unit ? `${ing.unit} ` : ""}{ing.name}
+                  </span>
                 </div>
               ))}
+              {/* Botanical watermark */}
+              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8, opacity: 0.2, pointerEvents: "none" }}>
+                <svg width="60" height="80" viewBox="0 0 60 80" fill="none">
+                  <path d="M30 70 Q30 40 30 20" stroke="#3D5C3E" strokeWidth="1.5" strokeLinecap="round" />
+                  <path d="M30 40 Q18 34 16 20 Q26 26 30 38 Z" fill="#3D5C3E" />
+                  <path d="M30 40 Q42 34 44 20 Q34 26 30 38 Z" fill="#3D5C3E" />
+                </svg>
+              </div>
+              {/* Add to grocery */}
+              <div style={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
+                <button style={{
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  background: "transparent", border: "none", cursor: "pointer",
+                  fontSize: 13, color: "#3D5C3E", fontFamily: "inherit", fontWeight: 500,
+                  padding: "8px 16px",
+                }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0" />
+                  </svg>
+                  Add to grocery list
+                </button>
+              </div>
             </div>
           )}
-          {activeTab === "steps" && (
-            <ol className="space-y-6">
-              {recipe.steps.map((s: string, idx: number) => (
-                <li key={idx} className="flex gap-4">
-                  <span className="font-serif text-2xl text-[#004D40]/30">{idx + 1}</span>
-                  <span className="text-sm text-[#3A2618] leading-relaxed pt-1">{s}</span>
-                </li>
+
+          {activeTab === "Nutrition" && (
+            <div style={{ paddingBottom: 20 }}>
+              {[
+                { label: "Calories", val: nutrition.calories, unit: "kcal", color: "#C4974A" },
+                { label: "Protein", val: nutrition.protein, unit: "g", color: "#4A7A5B" },
+                { label: "Carbs", val: nutrition.carbs, unit: "g", color: "#7AACCF" },
+                { label: "Fat", val: nutrition.fat, unit: "g", color: "#C25E4B" },
+                { label: "Fiber", val: nutrition.fiber, unit: "g", color: "#3D5C3E" },
+                { label: "Sodium", val: nutrition.sodium, unit: "mg", color: "#9DA89D" },
+              ].map(n => (
+                <div key={n.label} style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  padding: "10px 0", borderBottom: "1px solid #EAE3D2",
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: n.color, flexShrink: 0 }} />
+                    <span style={{ fontSize: 14, color: "#2D4530" }}>{n.label}</span>
+                  </div>
+                  <span style={{ fontSize: 14, fontWeight: 500, color: "#2D4530" }}>
+                    {n.val != null ? `${Math.round(n.val)} ${n.unit}` : "—"}
+                  </span>
+                </div>
               ))}
-            </ol>
+              <p style={{ fontSize: 11, color: "#A8B8A8", marginTop: 12, textAlign: "center" }}>
+                * Nutritional values are estimates per serving
+              </p>
+            </div>
+          )}
+
+          {activeTab === "Steps" && (
+            <div style={{ paddingBottom: 20 }}>
+              {(recipe.steps || []).map((step: string, i: number) => (
+                <div key={i} style={{ display: "flex", gap: 14, marginBottom: 16 }}>
+                  <div style={{
+                    width: 26, height: 26, borderRadius: "50%", background: "#3D5C3E",
+                    display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                    fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+                    fontSize: 13, color: "#fff", fontWeight: 500, marginTop: 1,
+                  }}>
+                    {i + 1}
+                  </div>
+                  <p style={{ fontSize: 13.5, color: "#2D4530", lineHeight: 1.6, margin: 0, flex: 1 }}>{step}</p>
+                </div>
+              ))}
+              {(!recipe.steps || recipe.steps.length === 0) && (
+                <p style={{ fontSize: 13, color: "#9DA89D", textAlign: "center", padding: "20px 0" }}>
+                  Cooking steps not available for this recipe.
+                </p>
+              )}
+            </div>
           )}
         </div>
       </div>
 
-      {/* Floating Action Button */}
-      <button 
-        onClick={() => toast.success("Added to today's plan")}
-        className="fixed bottom-8 right-6 size-14 rounded-full bg-[#004D40] text-white shadow-xl shadow-[#004D40]/30 grid place-items-center hover:scale-105 transition-transform z-50"
-      >
-        <Plus className="size-6" />
-      </button>
+      {/* Start Cooking CTA */}
+      <div style={{ padding: "0 20px 32px" }}>
+        <button style={{
+          width: "100%", background: "#3D5C3E", color: "#fff", border: "none",
+          borderRadius: 999, padding: "17px 24px", fontSize: 16, fontWeight: 500,
+          fontFamily: "inherit", cursor: "pointer", boxShadow: "0 8px 24px rgba(61,92,62,0.28)",
+          display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 10,
+        }}>
+          Start Cooking
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
+        </button>
+      </div>
     </div>
   );
 }

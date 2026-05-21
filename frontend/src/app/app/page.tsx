@@ -12,7 +12,7 @@ function getGreeting() {
   return "Good evening";
 }
 
-const DAYS = ["M", "T", "W", "T", "F", "S", "S"];
+const WEEK_DAYS = ["M", "T", "W", "T", "F", "S", "S"];
 const MEAL_FALLBACKS = [
   "1546069901-ba9599a7e63c",
   "1512621776951-a57141f2eefd",
@@ -274,80 +274,113 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── Water + Streak ──────────────────────────── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        {/* ── Water + Daily Rhythm ─────────────────────── */}
+        <div className="grid grid-cols-2 gap-3">
 
           {/* Water */}
           <div style={s.card}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.4rem" }}>
               <p style={s.label}>Water</p>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7AACCF" strokeWidth="2">
-                <path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/>
-              </svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9DA89D" strokeWidth="1.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
             </div>
-            <p style={s.bigNum}>
-              {water}<span style={s.unit}>/ 8</span>
+            <p style={{ ...s.bigNum, marginBottom: "0.5rem" }}>
+              {water}<span style={s.unit}>/ 8 glasses</span>
             </p>
-            {/* Progress bars — fluid */}
-            <div style={{ display: "flex", gap: "2px" }}>
+            {/* Glass icons */}
+            <div style={{ display: "flex", gap: "3px", flexWrap: "wrap" }}>
               {[1,2,3,4,5,6,7,8].map(i => (
-                <div key={i} style={{ flex: 1, height: 4, borderRadius: 999, background: i <= water ? "#7AACCF" : "#EAE4D8" }} />
+                <svg key={i} width="14" height="18" viewBox="0 0 14 18" fill="none">
+                  <path d="M2 2 L3 16 Q3.5 17 7 17 Q10.5 17 11 16 L12 2 Z" fill={i <= water ? "#7AACCF" : "#EAE4D8"} />
+                  <path d="M2 2 L12 2 Q11 5 7 5 Q3 5 2 2 Z" fill={i <= water ? "#9BBFD8" : "#D5CEC4"} opacity="0.6" />
+                </svg>
               ))}
             </div>
           </div>
 
-          {/* Streak */}
+          {/* Daily Rhythm */}
           <div style={s.card}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-              <p style={s.label}>Streak</p>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3D5C3E" strokeWidth="2">
-                <path d="M17 8C8 10 5.9 16.17 3.82 22c3.5-5 9-7 13.18-7 0-3.17-1.5-6.17-4-8z"/>
-              </svg>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.4rem" }}>
+              <p style={s.label}>Daily Rhythm</p>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9DA89D" strokeWidth="1.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
             </div>
-            <p style={s.bigNum}>
+            <p style={{ ...s.bigNum, marginBottom: "0.1rem" }}>
               {streak}<span style={s.unit}>days</span>
             </p>
-            {/* Dots — purely flex:1, no fixed width */}
-            <div style={{ display: "flex", gap: "3px", alignItems: "flex-end" }}>
-              {DAYS.map((d, i) => (
-                <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2, minWidth: 0 }}>
-                  <div style={{
-                    width: "100%",
-                    aspectRatio: "1",
-                    borderRadius: "50%",
-                    background: i < (streak % 7 || (streak > 0 ? 7 : 0)) ? "#3D5C3E" : "#EAE4D8",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                  }}>
-                    {i < (streak % 7 || (streak > 0 ? 7 : 0)) && (
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.5" style={{ width: "55%", height: "55%" }}>
-                        <polyline points="20 6 9 17 4 12"/>
-                      </svg>
-                    )}
-                  </div>
-                  <span style={{ fontFamily: "'DM Sans'", fontSize: "0.5rem", color: "#A8B8A8", lineHeight: 1 }}>{d}</span>
-                </div>
-              ))}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+              <svg width="28" height="36" viewBox="0 0 28 36" fill="none" opacity="0.7">
+                <path d="M14 30 Q14 18 14 10" stroke="#3D5C3E" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M14 18 Q8 15 7 8 Q13 11 14 17 Z" fill="#3D5C3E" fillOpacity="0.7" />
+                <path d="M14 18 Q20 15 21 8 Q15 11 14 17 Z" fill="#3D5C3E" />
+              </svg>
             </div>
           </div>
         </div>
 
         {/* ── Tip of the Day ──────────────────────────── */}
-        <div style={{ ...s.card, display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
-          <div style={{ position: "absolute", bottom: -8, right: -8, opacity: 0.05, pointerEvents: "none" }}>
-            <svg width="70" height="70" viewBox="0 0 24 24" fill="#3D5C3E">
-              <path d="M17 8C8 10 5.9 16.17 3.82 22c3.5-5 9-7 13.18-7 0-3.17-1.5-6.17-4-8z"/>
-            </svg>
+        <div style={{ ...s.card, overflow: "hidden", padding: 0 }}>
+          <div style={{ display: "flex", alignItems: "stretch" }}>
+            <div style={{ flex: 1, padding: "0.95rem 1rem" }}>
+              <p style={s.label}>Tip of the Day</p>
+              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "0.88rem", color: "#4A5E4A", margin: "0.2rem 0 0", lineHeight: 1.55, fontStyle: "italic" }}>
+                Chew slowly. Your body listens to every bite.
+              </p>
+            </div>
+            <div
+              data-image-slot="tip-landscape"
+              style={{
+                width: 90, minWidth: 90, flexShrink: 0,
+                background: "linear-gradient(135deg, rgba(170,185,150,0.5), rgba(200,210,180,0.35))",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}
+            >
+              <div style={{ width: 30, height: 30, borderRadius: "50%", background: "rgba(255,255,255,0.6)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3D5C3E" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
+              </div>
+            </div>
           </div>
-          <div style={{ width: 34, height: 34, minWidth: 34, borderRadius: "50%", background: "#FDF5E6", border: "1px solid #F0E0BC", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C4974A" strokeWidth="2">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-            </svg>
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={s.label}>Tip of the Day</p>
-            <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "0.88rem", color: "#4A5E4A", margin: 0, lineHeight: 1.55, fontStyle: "italic" }}>
-              "Chew slowly. Your body listens to every bite."
-            </p>
+        </div>
+
+        {/* ── Mindful Streak ───────────────────────────── */}
+        <div style={s.card}>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
+            <div
+              data-image-slot="streak-plant"
+              style={{
+                width: 52, height: 52, minWidth: 52, borderRadius: 12, flexShrink: 0,
+                background: "linear-gradient(135deg, rgba(160,180,140,0.3), rgba(130,155,115,0.2))",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}
+            >
+              <svg width="24" height="32" viewBox="0 0 24 32" fill="none">
+                <path d="M12 28 Q12 16 12 8" stroke="#3D5C3E" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M12 16 Q7 13 6 6 Q11 9 12 15 Z" fill="#3D5C3E" fillOpacity="0.6" />
+                <path d="M12 16 Q17 13 18 6 Q13 9 12 15 Z" fill="#3D5C3E" />
+              </svg>
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={s.label}>Mindful Streak</p>
+              <div style={{ display: "flex", alignItems: "baseline", gap: "0.3rem", marginBottom: "0.6rem" }}>
+                <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.6rem", color: "#1F2E1F", fontWeight: 500 }}>{streak}</span>
+                <span style={{ fontFamily: "'DM Sans'", fontSize: "0.7rem", color: "#A8B8A8" }}>days in a row</span>
+              </div>
+              <div style={{ display: "flex", gap: "3px", alignItems: "flex-end" }}>
+                {WEEK_DAYS.map((d, i) => {
+                  const done = i < (streak % 7 || (streak > 0 ? 7 : 0));
+                  return (
+                    <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2, minWidth: 0 }}>
+                      <div style={{
+                        width: "100%", aspectRatio: "1", borderRadius: "50%",
+                        background: done ? "#3D5C3E" : "#EAE4D8",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                      }}>
+                        {done && <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.5" style={{ width: "55%", height: "55%" }}><polyline points="20 6 9 17 4 12"/></svg>}
+                      </div>
+                      <span style={{ fontFamily: "'DM Sans'", fontSize: "0.48rem", color: "#A8B8A8", lineHeight: 1 }}>{d}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
 

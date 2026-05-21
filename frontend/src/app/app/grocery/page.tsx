@@ -1,13 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import api from "@/lib/api";
 
-const FALLBACK_GROCERIES = [
-  {
-    category: "Vegetables",
-    emoji: "🥬",
+const FALLBACK_CATEGORIES: Record<string, { items: { name: string; img: string }[]; extra: number }> = {
+  Vegetables: {
     items: [
       { name: "Spinach", img: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=120" },
       { name: "Tomato", img: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=120" },
@@ -16,9 +13,7 @@ const FALLBACK_GROCERIES = [
     ],
     extra: 3,
   },
-  {
-    category: "Grains & Pulses",
-    emoji: "🌾",
+  "Grains & Pulses": {
     items: [
       { name: "Brown Rice", img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=120" },
       { name: "Moong Dal", img: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=120" },
@@ -27,164 +22,243 @@ const FALLBACK_GROCERIES = [
     ],
     extra: 2,
   },
-  {
-    category: "Fruits",
-    emoji: "🍎",
+  Fruits: {
     items: [
       { name: "Banana", img: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=120" },
       { name: "Apple", img: "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=120" },
-      { name: "Blueberry", img: "https://images.unsplash.com/photo-1498557850523-fd3d118b962e?w=120" },
-      { name: "Papaya", img: "https://images.unsplash.com/photo-1526318472351-c75fcf070305?w=120" },
+      { name: "Blueberries", img: "https://images.unsplash.com/photo-1498557850523-fd3d118b962e?w=120" },
+      { name: "Papaya", img: "https://images.unsplash.com/photo-1517282009859-f000ec3b26fe?w=120" },
     ],
     extra: 1,
   },
-  {
-    category: "Spices & Others",
-    emoji: "🌿",
+  "Spices & Others": {
     items: [
-      { name: "Turmeric", img: "https://images.unsplash.com/photo-1615486171448-4e12e105e608?w=120" },
-      { name: "Cumin", img: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=120" },
-      { name: "Flax Seeds", img: "https://images.unsplash.com/photo-1508061461528-98e3b123683a?w=120" },
-      { name: "Himalayan Salt", img: "https://images.unsplash.com/photo-1589927986089-35812388d1f4?w=120" },
+      { name: "Turmeric", img: "https://images.unsplash.com/photo-1615485291234-9d694218abbe?w=120" },
+      { name: "Cumin", img: "https://images.unsplash.com/photo-1599909533731-4aec3958da09?w=120" },
+      { name: "Flax Seeds", img: "https://images.unsplash.com/photo-1598432489028-0f8e2cf52df7?w=120" },
+      { name: "Himalayan Salt", img: "https://images.unsplash.com/photo-1542736143-29a8432162bc?w=120" },
     ],
     extra: 5,
   },
-];
+};
 
 export default function GroceryList() {
-  const [groceries, setGroceries] = useState(FALLBACK_GROCERIES);
-  const [loading, setLoading] = useState(true);
-  const [checked, setChecked] = useState<Set<string>>(new Set());
+  const [categories, setCategories] = useState<typeof FALLBACK_CATEGORIES>(FALLBACK_CATEGORIES);
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api.get("/meal-plan/grocery-list")
-      .then((r) => { if (r.data?.length) setGroceries(r.data); })
+      .then(({ data }) => {
+        if (data && Object.keys(data).length > 0) {
+          const mapped: typeof FALLBACK_CATEGORIES = {};
+          Object.entries(data).forEach(([cat, items]) => {
+            const arr = items as string[];
+            mapped[cat] = {
+              items: arr.slice(0, 4).map(name => ({
+                name: name.split("(")[0].trim(),
+                img: `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=120`,
+              })),
+              extra: Math.max(0, arr.length - 4),
+            };
+          });
+          if (Object.keys(mapped).length > 0) setCategories(mapped);
+        }
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
-  const toggle = (key: string) => setChecked(prev => {
-    const n = new Set(prev);
-    if (n.has(key)) { n.delete(key); } else { n.add(key); }
-    return n;
+  const filteredCategories = Object.entries(categories).filter(([cat, data]) => {
+    if (!search) return true;
+    const q = search.toLowerCase();
+    return cat.toLowerCase().includes(q) || data.items.some(i => i.name.toLowerCase().includes(q));
   });
 
-  const clearChecked = () => setChecked(new Set());
+  const toggle = (cat: string) => setCollapsed(prev => ({ ...prev, [cat]: !prev[cat] }));
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAF7F0", paddingBottom: "6rem" }}>
+    <div style={{
+      minHeight: "100vh", background: "#F5EFE2",
+      fontFamily: "var(--font-dm-sans), 'DM Sans', sans-serif",
+    }}>
       {/* Header */}
-      <div style={{ position: "relative", background: "linear-gradient(180deg, #F0EBE0 0%, #FAF7F0 100%)", padding: "2.5rem 1.25rem 1.25rem", overflow: "hidden" }}>
-        <svg style={{ position: "absolute", top: -10, right: -10, width: 130, height: 130, opacity: 0.28 }} viewBox="0 0 130 130" fill="none">
-          <ellipse cx="90" cy="30" rx="28" ry="48" fill="#3D5C3E" transform="rotate(-30 90 30)"/>
-          <ellipse cx="112" cy="68" rx="20" ry="36" fill="#3D5C3E" opacity="0.6" transform="rotate(12 112 68)"/>
-        </svg>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
-          <Link href="/app/meal-plan" style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.7)", border: "1px solid #E5DDD0", display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3D5C3E" strokeWidth="2"><polyline points="15 18 9 12 15 6"/></svg>
-          </Link>
-          <button style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.7)", border: "1px solid #E5DDD0", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3D5C3E" strokeWidth="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      <div style={{ position: "relative", padding: "18px 20px 0", overflow: "hidden" }}>
+        {/* Leaf decoration top-right */}
+        <div style={{
+          position: "absolute", top: 0, right: -10, width: 130, height: 160,
+          pointerEvents: "none", opacity: 0.55,
+          background: "radial-gradient(ellipse at 30% 50%, rgba(160,180,140,0.45), transparent 65%)",
+        }} />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 2 }}>
+          <button
+            onClick={() => window.history.back()}
+            style={{ background: "transparent", border: "none", cursor: "pointer", padding: 4 }}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2D4530" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
+            </svg>
+          </button>
+          <button style={{ background: "transparent", border: "none", cursor: "pointer", padding: 4 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2D4530" strokeWidth="1.8" strokeLinecap="round">
+              <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
+              <circle cx="3" cy="6" r="1" fill="#2D4530" /><circle cx="3" cy="12" r="1" fill="#2D4530" /><circle cx="3" cy="18" r="1" fill="#2D4530" />
+            </svg>
           </button>
         </div>
-        <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 400, color: "#1F2E1F", margin: "0 0 0.2rem" }}>Grocery List</h1>
-        <p style={{ fontSize: "0.8rem", color: "#8D9E8D", margin: 0 }}>This Week ↓</p>
+        <div style={{ position: "relative", zIndex: 2, marginTop: 12 }}>
+          <h1 style={{
+            fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+            fontSize: 30, fontWeight: 500, color: "#2D4530", margin: 0,
+          }}>Grocery List</h1>
+          <button style={{
+            background: "transparent", border: "none", cursor: "pointer", padding: 0,
+            fontSize: 13, color: "#7B8A7B", fontFamily: "inherit", marginTop: 2,
+            display: "inline-flex", alignItems: "center", gap: 4,
+          }}>
+            This Week
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="6 9 12 15 18 9" /></svg>
+          </button>
+        </div>
       </div>
 
-      <div style={{ padding: "1rem 1.25rem 0" }}>
-        {/* Search bar */}
-        <div style={{ position: "relative", marginBottom: "1.25rem" }}>
-          <svg style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A8B8A8" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      {/* Search */}
+      <div style={{ padding: "14px 20px 0" }}>
+        <div style={{
+          display: "flex", alignItems: "center", gap: 10,
+          background: "#FFFFFF", border: "1px solid #EAE3D2", borderRadius: 14,
+          padding: "10px 14px", boxShadow: "0 1px 4px rgba(31,46,31,0.04)",
+        }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9DA89D" strokeWidth="2" strokeLinecap="round">
+            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
           <input
             value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Search for items..."
-            style={{ width: "100%", padding: "0.75rem 0.75rem 0.75rem 2.5rem", border: "1.5px solid #E0D8CC", borderRadius: "0.85rem", fontSize: "0.88rem", fontFamily: "'DM Sans'", color: "#1F2E1F", background: "#FFFFFF", outline: "none", boxSizing: "border-box" }}
+            style={{
+              flex: 1, border: "none", outline: "none", background: "transparent",
+              fontSize: 14, color: "#2D4530", fontFamily: "inherit",
+            }}
           />
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9DA89D" strokeWidth="1.8" strokeLinecap="round">
+            <line x1="4" y1="6" x2="20" y2="6" /><line x1="4" y1="12" x2="14" y2="12" /><line x1="4" y1="18" x2="20" y2="18" />
+            <path d="M17 9l3 3-3 3" />
+          </svg>
         </div>
+      </div>
 
-        {/* Checked items bar */}
-        {checked.size > 0 && (
-          <div style={{ background: "rgba(61,92,62,0.08)", borderRadius: "0.75rem", padding: "0.6rem 1rem", marginBottom: "1rem", display: "flex", alignItems: "center", justifyContent: "space-between", border: "1px solid rgba(61,92,62,0.15)" }}>
-            <span style={{ fontSize: "0.8rem", color: "#3D5C3E", fontWeight: 500 }}>{checked.size} item{checked.size > 1 ? "s" : ""} checked</span>
-            <button onClick={clearChecked} style={{ fontSize: "0.75rem", color: "#8D9E8D", background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans'" }}>Clear checked</button>
+      {/* Categories */}
+      <div style={{ padding: "14px 20px 0", display: "flex", flexDirection: "column", gap: 14 }}>
+        {loading ? (
+          <div style={{ textAlign: "center", padding: "30px 0", color: "#A8B8A8", fontSize: 14 }}>
+            Loading your grocery list…
           </div>
-        )}
-
-        {/* Categories */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-          {loading ? (
-            [1, 2, 3].map(i => (
-              <div key={i}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.75rem" }}>
-                  <div style={{ height: 14, width: 80, background: "#E8E0D4", borderRadius: 4 }} />
-                  <div style={{ height: 14, width: 40, background: "#E8E0D4", borderRadius: 4 }} />
+        ) : filteredCategories.map(([cat, data]) => {
+          const isCollapsed = collapsed[cat];
+          return (
+            <div key={cat} style={{
+              background: "#FFFFFF", borderRadius: 18, overflow: "hidden",
+              boxShadow: "0 1px 6px rgba(31,46,31,0.05)",
+            }}>
+              {/* Category header */}
+              <button onClick={() => toggle(cat)} style={{
+                width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+                padding: "14px 16px", background: "transparent", border: "none", cursor: "pointer",
+                fontFamily: "inherit",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{
+                    fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+                    fontSize: 16, fontWeight: 500, color: "#2D4530",
+                  }}>{cat}</span>
                 </div>
-                <div style={{ display: "flex", gap: "0.75rem" }}>
-                  {[1,2,3,4].map(j => <div key={j} style={{ width: 72, height: 72, borderRadius: "50%", background: "#E8E0D4" }} />)}
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 12, color: "#9DA89D" }}>{data.items.length + data.extra} items</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9DA89D" strokeWidth="2" strokeLinecap="round"
+                    style={{ transform: isCollapsed ? "rotate(-90deg)" : "none", transition: "transform 0.2s" }}>
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
                 </div>
-              </div>
-            ))
-          ) : (
-            groceries.map((section) => {
-              const filtered = section.items.filter(item =>
-                !search || item.name.toLowerCase().includes(search.toLowerCase())
-              );
-              if (search && !filtered.length) return null;
-              return (
-                <div key={section.category}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
-                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.05rem", color: "#1F2E1F", margin: 0, fontWeight: 500 }}>
-                      {section.emoji} {section.category}
-                    </h3>
-                    <span style={{ fontSize: "0.72rem", color: "#A8B8A8" }}>{section.items.length + section.extra} items</span>
-                  </div>
-                  <div style={{ display: "flex", gap: "0.75rem", overflowX: "auto", paddingBottom: "0.5rem" }}>
-                    {filtered.map((item) => {
-                      const key = `${section.category}-${item.name}`;
-                      const isChecked = checked.has(key);
-                      return (
-                        <button key={item.name} onClick={() => toggle(key)} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.4rem", cursor: "pointer", background: "none", border: "none", flexShrink: 0, width: 72 }}>
-                          <div style={{ width: 72, height: 72, borderRadius: "50%", overflow: "hidden", border: isChecked ? "2.5px solid #3D5C3E" : "1.5px solid #E5DDD0", background: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", opacity: isChecked ? 0.6 : 1, transition: "all 0.2s" }}>
-                            <img src={item.img} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover", mixBlendMode: "multiply" }} loading="lazy" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                            {isChecked && (
-                              <div style={{ position: "absolute", inset: 0, background: "rgba(61,92,62,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3D5C3E" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
-                              </div>
-                            )}
-                          </div>
-                          <span style={{ fontFamily: "'DM Sans'", fontSize: "0.62rem", color: isChecked ? "#A8B8A8" : "#4A5E4A", textAlign: "center", lineHeight: 1.3, textDecoration: isChecked ? "line-through" : "none" }}>{item.name}</span>
-                        </button>
-                      );
-                    })}
-                    {section.extra > 0 && !search && (
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.4rem", flexShrink: 0, width: 72 }}>
-                        <div style={{ width: 72, height: 72, borderRadius: "50%", background: "#F5F0E8", border: "1.5px dashed #E5DDD0", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                          <span style={{ fontFamily: "'Playfair Display', serif", color: "#A8B8A8", fontSize: "1rem" }}>+{section.extra}</span>
-                        </div>
-                        <span style={{ fontSize: "0.62rem", color: "#A8B8A8" }}>more</span>
+              </button>
+              {/* Items grid */}
+              {!isCollapsed && (
+                <div style={{ padding: "0 16px 16px", display: "flex", gap: 12, alignItems: "flex-start" }}>
+                  {data.items.map((item, i) => (
+                    <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, flex: "0 0 60px" }}>
+                      <div style={{ width: 60, height: 60, borderRadius: 14, overflow: "hidden", background: "#F5F0E8" }}>
+                        <img
+                          src={item.img} alt={item.name}
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                          loading="lazy"
+                          onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
+                        />
                       </div>
-                    )}
-                  </div>
+                      <span style={{ fontSize: 10.5, color: "#5C6B5C", textAlign: "center", lineHeight: 1.3 }}>{item.name}</span>
+                    </div>
+                  ))}
+                  {data.extra > 0 && (
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, flex: "0 0 60px" }}>
+                      <div style={{
+                        width: 60, height: 60, borderRadius: 14, background: "#F0EDE0",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                      }}>
+                        <span style={{ fontSize: 13, color: "#7B8A7B", fontWeight: 500 }}>+{data.extra}</span>
+                      </div>
+                      <span style={{ fontSize: 10.5, color: "#9DA89D", textAlign: "center" }}>more</span>
+                    </div>
+                  )}
                 </div>
-              );
-            })
-          )}
-        </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
 
-        {/* Eat fresh banner */}
-        <div style={{ background: "linear-gradient(135deg, #F5F0E8 0%, #EDE5D8 100%)", borderRadius: "1.25rem", border: "1px solid #E5DDD0", padding: "1.1rem 1.25rem", marginTop: "1.5rem", display: "flex", alignItems: "center", gap: "0.9rem", position: "relative", overflow: "hidden" }}>
-          <svg style={{ position: "absolute", right: -8, bottom: -8, opacity: 0.1 }} width="70" height="70" viewBox="0 0 24 24" fill="#3D5C3E"><path d="M17 8C8 10 5.9 16.17 3.82 22c3.5-5 9-7 13.18-7 0-3.17-1.5-6.17-4-8z"/></svg>
-          <span style={{ fontSize: "1.5rem" }}>🌿</span>
-          <div>
-            <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "0.9rem", color: "#1F2E1F", margin: "0 0 0.15rem" }}>Eat fresh, live well</p>
-            <p style={{ fontSize: "0.72rem", color: "#8D9E8D", margin: 0 }}>Choose whole, natural foods for a nourished body and mind.</p>
+      {/* Bottom banner */}
+      <div style={{ padding: "16px 20px 0" }}>
+        <div style={{
+          background: "#FFFFFF", borderRadius: 18, overflow: "hidden",
+          boxShadow: "0 1px 6px rgba(31,46,31,0.05)", display: "flex",
+        }}>
+          <div style={{ padding: "16px", flex: 1 }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: "50%", background: "#F0EDE0",
+              display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 10,
+            }}>
+              <svg width="16" height="16" viewBox="0 0 24 18" fill="none">
+                <path d="M12 16 Q4 12 6 4 Q12 8 12 16 Z" fill="#3D5C3E" opacity="0.85" />
+                <path d="M12 16 Q20 12 18 4 Q12 8 12 16 Z" fill="#3D5C3E" opacity="0.85" />
+              </svg>
+            </div>
+            <p style={{
+              fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+              fontSize: 15, color: "#2D4530", margin: "0 0 4px",
+            }}>Eat fresh, live well</p>
+            <p style={{ fontSize: 12, color: "#7B8A7B", lineHeight: 1.5, margin: 0 }}>
+              Choose whole, natural foods for a nourished body and mind.
+            </p>
+          </div>
+          <div
+            data-image-slot="grocery-banner-right"
+            style={{
+              width: 100,
+              background: "linear-gradient(135deg, rgba(170,185,150,0.4), rgba(200,210,180,0.3))",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}
+          >
+            <div style={{ fontSize: 32 }}>🥗</div>
           </div>
         </div>
+      </div>
 
-        {/* Add item button */}
-        <button style={{ width: "100%", background: "#3D5C3E", color: "#FFFFFF", border: "none", borderRadius: 999, padding: "1rem", fontSize: "0.95rem", fontWeight: 600, fontFamily: "'DM Sans'", cursor: "pointer", marginTop: "1.25rem", boxShadow: "0 4px 20px rgba(61,92,62,0.25)", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      {/* Add Item CTA */}
+      <div style={{ padding: "16px 20px 28px" }}>
+        <button style={{
+          width: "100%", background: "#3D5C3E", color: "#fff", border: "none",
+          borderRadius: 999, padding: "16px 24px", fontSize: 16, fontWeight: 500,
+          fontFamily: "inherit", cursor: "pointer", boxShadow: "0 8px 24px rgba(61,92,62,0.28)",
+        }}>
           Add Item
         </button>
       </div>
