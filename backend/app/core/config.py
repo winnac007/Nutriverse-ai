@@ -12,6 +12,7 @@ class Settings:
     JWT_ALG: str = "HS256"
     ANTHROPIC_API_KEY: str = os.environ.get('ANTHROPIC_API_KEY', '')
     SPOONACULAR_API_KEY: str = os.environ.get('SPOONACULAR_API_KEY', '')
+    USDA_API_KEY: str = os.environ.get('USDA_API_KEY', '')
     GEMINI_API_KEY: str = os.environ.get('GEMINI_API_KEY', '')
     CORS_ORIGINS: str = os.environ.get('CORS_ORIGINS', '*')
     PROMPTS_DIR: Path = ROOT_DIR / "prompts"

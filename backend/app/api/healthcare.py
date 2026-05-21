@@ -46,8 +46,15 @@ async def food_guidelines(conditions: Optional[str] = None, user=Depends(get_cur
 async def healthcare_recipes(condition: Optional[str] = None, meal_type: Optional[str] = None, search: Optional[str] = None, quick: Optional[bool] = None):
     query = search or condition or "healthy"
     max_time = 15 if quick else None
-    raw = await search_recipes(query=query, number=12, maxReadyTime=max_time, db=db)
-    return [normalize_spoonacular_recipe(r, category="healthcare") for r in raw]
+    results = await search_recipes(query=query, number=12, maxReadyTime=max_time, db=db)
+    
+    normalized = []
+    for r in results:
+        if r.get("source") == "spoonacular":
+            normalized.append(normalize_spoonacular_recipe(r, category="healthcare"))
+        else:
+            normalized.append(r)
+    return normalized
 
 @router.get("/swaps")
 async def healthcare_swaps(condition: Optional[str] = None):

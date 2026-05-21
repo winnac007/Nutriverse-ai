@@ -35,8 +35,8 @@ app.include_router(ai_router, prefix="/api")
 async def root():
     return {
         "message": "NutriVerse API", 
-        "version": "2.0",
-        "spoonacular_configured": bool(settings.SPOONACULAR_API_KEY)
+        "version": "2.1",
+        "data_mode": "local"
     }
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -44,7 +44,4 @@ logger = logging.getLogger(__name__)
 
 @app.on_event("startup")
 async def startup_event():
-    if not settings.SPOONACULAR_API_KEY:
-        logger.warning("SPOONACULAR_API_KEY is not set in environment!")
-    else:
-        logger.info(f"SPOONACULAR_API_KEY is configured (starts with: {settings.SPOONACULAR_API_KEY[:4]}...)")
+    logger.info("NutriVerse API starting up in local data mode")

@@ -41,22 +41,19 @@ async def list_recipes(
     search: Optional[str] = None,
     offset: int = 0,
 ):
-    if not settings.SPOONACULAR_API_KEY:
-        raise HTTPException(503, "Recipe search unavailable: Spoonacular API key not configured")
-
     active_category = category if category and category != "all" else "healthcare"
 
     DIET_TAGS = {"vegetarian", "vegan", "gluten-free", "dairy-free", "pescatarian"}
     diet_param = tag if tag and tag.lower() in DIET_TAGS else None
 
-    # Use country/region as cuisine filter; region overrides when it maps cleanly
+    # Use country/region as cuisine filter
     cuisine = None
     if country and country != "all":
         cuisine = country
     if region and region != "all":
-        cuisine = region  # Spoonacular accepts sub-region names as cuisine strings
+        cuisine = region
 
-    spoon_results = await search_recipes(
+    results = await search_recipes(
         query=search or condition or goal,
         cuisine=cuisine,
         type=category if category and category != "all" else None,
@@ -66,10 +63,17 @@ async def list_recipes(
         db=db,
     )
 
-    if not spoon_results:
+    if not results:
         return []
 
-    normalized = [normalize_spoonacular_recipe(r, category=active_category) for r in spoon_results]
+    # Local recipes are already normalized, but we might still get some from cache/legacy
+    normalized = []
+    for r in results:
+        if r.get("source") == "spoonacular":
+            normalized.append(normalize_spoonacular_recipe(r, category=active_category))
+        else:
+            # Assume it's already in our local format
+            normalized.append(r)
 
     if tier and tier != "all":
         normalized = [r for r in normalized if r.get("tier") == tier]
@@ -78,7 +82,7 @@ async def list_recipes(
     if tag and tag.lower() not in DIET_TAGS:
         normalized = [r for r in normalized if tag.lower() in [t.lower() for t in r.get("tags", [])]]
 
-    # Budget → calorie band proxy (Spoonacular has no cost data)
+    # Budget → calorie band proxy
     if budget and budget != "all":
         try:
             b_val = int(budget)
@@ -105,14 +109,21 @@ async def list_regions(country: Optional[str] = None):
 
 @router.get("/{recipe_id}")
 async def recipe_detail(recipe_id: str):
-    if not recipe_id.startswith("sp-"):
-        raise HTTPException(404, "Recipe not found")
-    try:
-        spoon_id = int(recipe_id[3:])
-    except ValueError:
-        raise HTTPException(404, "Invalid recipe id")
+    # Support both local- and sp- prefixes
+    recipe = await get_recipe_by_id(recipe_id, db)
+    
+    if not recipe and recipe_id.startswith("sp-"):
+        # Fallback for legacy numeric IDs if needed
+        try:
+            spoon_id = int(recipe_id[3:])
+            recipe = await get_spoonacular_recipe_by_id(spoon_id, db)
+        except ValueError:
+            pass
 
-    raw = await get_spoonacular_recipe_by_id(spoon_id, db)
-    if not raw:
+    if not recipe:
         raise HTTPException(404, "Recipe not found")
-    return normalize_spoonacular_recipe(raw)
+    
+    if recipe.get("source") == "spoonacular":
+        return normalize_spoonacular_recipe(recipe)
+        
+    return recipe

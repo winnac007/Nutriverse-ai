@@ -17,7 +17,13 @@ router = APIRouter(prefix="/ai", tags=["ai"])
 @router.post("/smart-plan")
 async def smart_plan(body: AIPlanRequest, user=Depends(get_current_user)):
     raw_pool = await fetch_personalized_recipes(user, db)
-    pool = [normalize_spoonacular_recipe(r) for r in raw_pool]
+    pool = []
+    for r in raw_pool:
+        if r.get("source") == "spoonacular":
+            pool.append(normalize_spoonacular_recipe(r))
+        else:
+            pool.append(r)
+    
     pool_summary = [{"id": r["id"], "title": r["title"], "calories": r.get("nutrition", {}).get("calories"), "category": r.get("category"), "country": r.get("country"), "tier": r.get("tier")} for r in pool]
     user_text = user_profile_text(user) + f"\n\nextra_context: {body.context or 'none'}\n\nrecipes_pool:\n{json.dumps(pool_summary)}"
     try:
@@ -62,12 +68,16 @@ async def coach_history(user=Depends(get_current_user)):
 @router.post("/onboarding/generate-plan")
 async def generate_onboarding_plan(body: OnboardingPlanRequest, user=Depends(get_current_user)):
     pool = []
-    if settings.SPOONACULAR_API_KEY:
-        mock_user = {"id": user["id"], "conditions": body.conditions, "dietary_type": body.dietary_type, "allergies": body.allergies, "cooking_ability": body.cooking_ability, "location": user.get("location"), "preferences": user.get("preferences", {})}
-        raw_pool = await fetch_personalized_recipes(mock_user, db)
-        if raw_pool:
-            safe_pool = filter_for_conditions(raw_pool, body.conditions)
-            pool = [normalize_spoonacular_recipe(r) for r in safe_pool[:40]]
+    mock_user = {"id": user["id"], "conditions": body.conditions, "dietary_type": body.dietary_type, "allergies": body.allergies, "cooking_ability": body.cooking_ability, "location": user.get("location"), "preferences": user.get("preferences", {})}
+    raw_pool = await fetch_personalized_recipes(mock_user, db)
+    if raw_pool:
+        safe_pool = filter_for_conditions(raw_pool, body.conditions)
+        for r in safe_pool[:40]:
+            if r.get("source") == "spoonacular":
+                pool.append(normalize_spoonacular_recipe(r))
+            else:
+                pool.append(r)
+    
     if not pool:
         pool = []  # No seed data; AI will generate plan without a pool
     pool_summary = [{"id": r["id"], "title": r["title"], "conditions": r.get("conditions", [])} for r in pool]

@@ -111,34 +111,48 @@ def _cache_key(params: Dict[str, Any]) -> str:
     return hashlib.sha256(serialized.encode()).hexdigest()[:32]
 
 async def fetch_personalized_recipes(user: Dict[str, Any], db) -> List[Dict[str, Any]]:
-    if not settings.SPOONACULAR_API_KEY:
-        logger.warning("fetch_personalized_recipes: SPOONACULAR_API_KEY is missing")
-        return []
-    params = _build_query_params(user)
-    key = _cache_key(params)
-    cached = await db.spoonacular_cache.find_one({"cache_key": key}, {"_id": 0})
-    if cached:
-        cached_at = datetime.fromisoformat(cached["cached_at"])
-        age = datetime.now(timezone.utc) - cached_at.replace(tzinfo=timezone.utc)
-        if age < timedelta(days=CACHE_TTL_DAYS):
-            return cached.get("recipes", [])
+    """Fetch recipes from local MongoDB based on user preferences."""
+    prefs = user.get("preferences") or {}
+    query = {}
+
+    # Cuisine filter
+    preferred_cuisines = prefs.get("cuisines", [])
+    if preferred_cuisines:
+        # Map our cuisine names if needed, but here we assume they match or use text search
+        query["cuisine"] = {"$in": preferred_cuisines}
+    else:
+        loc_cuisine = _cuisine_from_location(user.get("location") or user.get("city"))
+        if loc_cuisine:
+            query["cuisine"] = loc_cuisine
+
+    # Dietary filter
+    dietary_type = user.get("dietary_type", "")
+    if dietary_type and dietary_type != "non-vegetarian":
+        query["diets"] = dietary_type
+
+    # Allergy filter
+    allergies = user.get("allergies") or []
+    if allergies:
+        query["intolerances"] = {"$nin": allergies}
+
+    # Cooking ability (time)
+    cooking_ability = user.get("cooking_ability", "quick")
+    max_time = COOKING_TO_MAX_TIME.get(cooking_ability, 30)
+    query["cook_time"] = {"$lte": max_time}
+
+    # Disliked ingredients
+    disliked = prefs.get("disliked_ingredients", [])
+    if disliked:
+        exclude = [d.split("/")[0].strip().lower() for d in disliked]
+        query["ingredients.name"] = {"$nin": exclude}
+
     try:
-        resp = requests.get(f"{SPOONACULAR_BASE}/recipes/complexSearch", params=params, timeout=15)
-        resp.raise_for_status()
-        recipes = resp.json().get("results", [])
+        cursor = db.recipes.find(query).sort("nutrition.calories", 1).limit(20)
+        recipes = await cursor.to_list(length=20)
+        return recipes
     except Exception as exc:
-        logger.error("Spoonacular API error: %s", exc)
+        logger.error("Local recipe fetch error: %s", exc)
         return []
-    await db.spoonacular_cache.update_one(
-        {"cache_key": key},
-        {"$set": {
-            "cache_key": key, "recipes": recipes,
-            "cached_at": datetime.now(timezone.utc).isoformat(),
-            "query_params": {k: v for k, v in params.items() if k != "apiKey"},
-        }},
-        upsert=True,
-    )
-    return recipes
 
 async def search_recipes(
     query: Optional[str] = None, cuisine: Optional[str] = None,
@@ -146,50 +160,40 @@ async def search_recipes(
     type: Optional[str] = None, maxReadyTime: Optional[int] = None,
     number: int = 12, offset: int = 0, db = None
 ) -> List[Dict[str, Any]]:
-    if not settings.SPOONACULAR_API_KEY:
-        logger.warning("search_recipes: SPOONACULAR_API_KEY is missing")
+    """Search recipes in local MongoDB."""
+    if db is None:
         return []
-    
-    params = {
-        "apiKey": settings.SPOONACULAR_API_KEY, "query": query, "cuisine": cuisine,
-        "diet": diet, "intolerances": intolerances, 
-        "maxReadyTime": maxReadyTime, "number": number, "offset": offset,
-        "addRecipeNutrition": True, "addRecipeInformation": True, "fillIngredients": True,
-        "sort": "healthiness",
-    }
 
-    # Map NutriVerse categories to Spoonacular filters
+    mongo_query = {}
+    
+    if query:
+        mongo_query["$text"] = {"$search": query}
+    
+    if cuisine:
+        mongo_query["cuisine"] = cuisine
+    
+    if diet:
+        mongo_query["diets"] = diet
+    
+    if intolerances:
+        intol_list = intolerances.split(",")
+        mongo_query["intolerances"] = {"$nin": intol_list}
+    
+    if maxReadyTime:
+        mongo_query["cook_time"] = {"$lte": maxReadyTime}
+
+    # Special handling for categories
     if type == "healthcare":
-        params["minHealthScore"] = 40
-        if not query: params["query"] = "healthy"
+        mongo_query["nutrition.calories"] = {"$lte": 500} # Simple heuristic
     elif type == "fitness":
-        params["minProtein"] = 25
-        if not query: params["query"] = "high protein"
-    elif type == "chef-special":
-        params["sort"] = "popularity"
-    elif type in VALID_SPOON_TYPES:
-        params["type"] = type
+        mongo_query["nutrition.protein"] = {"$gte": 20}
     
-    params = {k: v for k, v in params.items() if v is not None}
-    key = f"search_{_cache_key(params)}"
-    
-    if db is not None:
-        cached = await db.spoonacular_cache.find_one({"cache_key": key})
-        if cached:
-            return cached.get("recipes", [])
     try:
-        resp = requests.get(f"{SPOONACULAR_BASE}/recipes/complexSearch", params=params, timeout=10)
-        resp.raise_for_status()
-        results = resp.json().get("results", [])
-        if db is not None:
-            await db.spoonacular_cache.update_one(
-                {"cache_key": key},
-                {"$set": {"cache_key": key, "recipes": results, "cached_at": datetime.now(timezone.utc).isoformat()}},
-                upsert=True
-            )
+        cursor = db.recipes.find(mongo_query).skip(offset).limit(number)
+        results = await cursor.to_list(length=number)
         return results
     except Exception as e:
-        logger.error(f"Spoonacular search error: {e}")
+        logger.error(f"Local recipe search error: {e}")
         return []
 
 def normalize_spoonacular_recipe(recipe: Dict[str, Any], category: str = "healthcare") -> Dict[str, Any]:
@@ -216,31 +220,29 @@ def normalize_spoonacular_recipe(recipe: Dict[str, Any], category: str = "health
         "why_this_works": recipe.get("why_this_works", {}),
     }
 
-async def get_spoonacular_recipe_by_id(spoonacular_id: int, db) -> Optional[Dict[str, Any]]:
-    """Fetch a single recipe from MongoDB cache or directly from Spoonacular API."""
-    if db is not None:
-        # Search all cached search results for this recipe id
-        cached = await db.spoonacular_cache.find_one(
-            {"recipes": {"$elemMatch": {"id": spoonacular_id}}}
-        )
-        if cached:
-            for r in cached["recipes"]:
-                if r.get("id") == spoonacular_id:
-                    return r
-    if not settings.SPOONACULAR_API_KEY:
+async def get_recipe_by_id(recipe_id: str, db) -> Optional[Dict[str, Any]]:
+    """Fetch a single recipe from local MongoDB recipes collection."""
+    if db is None:
         return None
     try:
-        resp = requests.get(
-            f"{SPOONACULAR_BASE}/recipes/{spoonacular_id}/information",
-            params={
-                "apiKey": settings.SPOONACULAR_API_KEY,
-                "addRecipeNutrition": True,
-                "fillIngredients": True,
-            },
-            timeout=10,
-        )
-        resp.raise_for_status()
-        return resp.json()
+        return await db.recipes.find_one({"id": recipe_id})
     except Exception as e:
-        logger.error(f"Spoonacular single recipe fetch error for id={spoonacular_id}: {e}")
+        logger.error(f"Local recipe fetch error for id={recipe_id}: {e}")
         return None
+
+async def get_spoonacular_recipe_by_id(spoonacular_id: int, db) -> Optional[Dict[str, Any]]:
+    """Fetch a single recipe from local recipes collection using either local- or sp- ID format."""
+    if db is None:
+        return None
+    
+    # Try local- format first (new)
+    recipe = await db.recipes.find_one({"id": f"local-{spoonacular_id}"})
+    if recipe:
+        return recipe
+    
+    # Try sp- format (legacy)
+    recipe = await db.recipes.find_one({"id": f"sp-{spoonacular_id}"})
+    if recipe:
+        return recipe
+        
+    return None
