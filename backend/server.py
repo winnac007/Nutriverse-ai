@@ -28,7 +28,7 @@ JWT_SECRET = os.environ.get('JWT_SECRET', 'nutriverse-dev')
 JWT_ALG = "HS256"
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
 
-app = FastAPI(title="NutriVerse API")
+app = FastAPI(title="Zenplato API")
 api_router = APIRouter(prefix="/api")
 
 
@@ -162,7 +162,7 @@ def calc_tdee(age, gender, weight_kg, height_cm, activity_level, goal="maintain"
 # ============ ROUTES ============
 @api_router.get("/")
 async def root():
-    return {"message": "NutriVerse API", "version": "2.0"}
+    return {"message": "Zenplato API", "version": "2.0"}
 
 
 @api_router.post("/auth/register")
@@ -433,7 +433,7 @@ async def save_meal_plan(body: SaveMealPlan, user=Depends(get_current_user)):
 
 
 # ========= SMART AI MEAL PLANNER (preview-then-paywall) =========
-SMART_PLANNER_SYSTEM = """You are a certified nutritionist and fitness coach AI for NutriVerse.
+SMART_PLANNER_SYSTEM = """You are a certified nutritionist and fitness coach AI for Zenplato — a mindful nutrition brand whose motto is 'You are the zen for your body.'
 Analyze the user's personal data and generate a highly personalized nutrition plan.
 
 OUTPUT must be valid JSON with this exact shape (no other text, no markdown fences):
@@ -585,7 +585,7 @@ async def smart_plan(body: AIPlanRequest, user=Depends(get_current_user)):
 
 
 # ========= ADAPTIVE AI COACH (Premium ask-anything) =========
-COACH_SYSTEM = """You are an adaptive AI lifestyle and nutrition coach for NutriVerse Premium users.
+COACH_SYSTEM = """You are an adaptive AI lifestyle and nutrition coach for Zenplato Premium users. Voice: mindful, calm, professional, friendly — never clinical.
 Behavior:
 - Be concise (max 6 short sentences), practical, personalized
 - Act like a real coach, not a generic assistant

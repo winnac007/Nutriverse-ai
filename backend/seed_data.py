@@ -1,4 +1,4 @@
-"""Seed recipe data for NutriVerse — global, healthcare, fitness, chef-specials.
+"""Seed recipe data for Zenplato — global, healthcare, fitness, chef-specials.
 Each recipe has: ingredients with per-item image, cooking video URL, region tags.
 """
 

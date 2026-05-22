@@ -11,7 +11,7 @@ export default function PremiumGate({ title = "Unlock Premium", description }) {
     try {
       await api.post("/user/upgrade");
       await refresh();
-      toast.success("Welcome to NutriVerse Premium!");
+      toast.success("Welcome to Zenplato Premium");
     } catch {
       toast.error("Upgrade failed");
     }
