@@ -1,14 +1,29 @@
-# NutriVerse - Product Requirements Document
+# Zenplato — Product Requirements Document
+*(formerly NutriVerse — rebranded Feb 2026)*
 
 ## Overview
-NutriVerse is a globally intelligent food/nutrition/wellness app supporting Healthcare patients, Fitness enthusiasts, Cultural explorers, and Chef-Special / Bakery, with Basic + Premium tiers.
+**Zenplato — Mindful nutrition. Balanced living.**
+*"You are the zen for your body."*
 
-## Tech
-- React (frontend, light-default), FastAPI (backend), MongoDB
-- Auth: JWT email/password
-- AI: Claude Sonnet 4.5 via Emergent Universal LLM Key
-- Payments: MOCK ₹300/mo upgrade endpoint (no real payment integration yet)
-- Fonts: Cabinet Grotesk + Satoshi
+A globally intelligent food / nutrition / wellness app organised into **3 chapters + 1 indulgence**:
+- **01 Heal & Restore** (Healthcare) — disease-aware nutrition
+- **02 Strength & Fuel** (Fitness) — goal-based macros
+- **03 Travel the Plate** (Cultural / Discover) — 40+ cuisines
+- **Chef Specials** — mindful desserts & bakery
+
+## Brand
+- Palette: Ivory `#f4f1e8`, Sage `#8a9576`, Olive `#5e6b55`, Stone `#bdb3a3`, Espresso `#2e2a26`, Gold `#b59b5a`
+- Type: Playfair Display (display) + DM Sans (body)
+- Logo: leaf-sprout + Playfair wordmark, tracked uppercase
+
+## Implemented (Iteration 4 - Feb 2026 - Zenplato rebrand)
+- Full brand rebrand: palette, typography, wordmark logo, taglines
+- Landing page: 2-slide hero with bowl artifact + vase artifact ("A calmer relationship with what you eat.")
+- Home: time-of-day greeting + numbered chapter cards (01/02/03/04) with leaf decorations + Today's focus + AI-coach CTA + Values strip
+- Travel the Plate atlas: dark world map with glowing pins per country + country grid with real destination imagery (Forbidden City, Eiffel Tower, Santorini, Taj Mahal, Cherry Blossoms…)
+- Heal & Restore hub: renamed condition list (10 conditions incl. Digestive Health, Iron Deficiency, Stress & Sleep), Zenplato palette, single-column condition picker with leaf badges
+- Onboarding: tone "Let's understand you better"; category titles renamed to Heal & Restore / Strength & Fuel / Travel the Plate
+- All currency/copy: Premium ₹300/mo
 
 ## Implemented (Iteration 3 - Feb 2026 - Healthcare Hub redesign)
 - New dedicated Healthcare experience at `/app/healthcare` (Home tile re-routes here)

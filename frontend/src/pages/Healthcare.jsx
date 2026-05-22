@@ -6,12 +6,12 @@ import { Tabs, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Badge } from "../components/ui/badge";
 import {
   ArrowLeft, Search, Heart, Activity, Sparkles, Flower2, Scale, Gauge,
-  Leaf, Shield, Clock, Flame, Zap, ArrowRightLeft, Trophy, Flag, BookOpen, CalendarDays,
+  Leaf, Shield, Clock, Flame, Zap, ArrowRightLeft, Trophy, Flag, BookOpen, CalendarDays, Moon,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../lib/auth";
 
-const ICON_MAP = { Heart, Activity, Sparkles, Flower2, Scale, Gauge, Leaf, Shield };
+const ICON_MAP = { Heart, Activity, Sparkles, Flower2, Scale, Gauge, Leaf, Shield, Zap, Moon: Sparkles };
 
 const HEALTH_SCORE_STYLES = {
   "heart-friendly": { color: "#ef4f6f", bg: "#fde7ec", icon: Heart },

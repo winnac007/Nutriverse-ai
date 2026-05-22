@@ -3,15 +3,78 @@ import { Link } from "react-router-dom";
 import api from "../lib/api";
 import { useAuth } from "../lib/auth";
 import RecipeCard from "../components/RecipeCard";
-import { HeartPulse, Dumbbell, Globe2, ChefHat, Sparkles, ArrowRight, MapPin } from "lucide-react";
+import Logo from "../components/Logo";
+import { ArrowRight, ArrowUpRight, Bell, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import { CHAPTERS } from "../lib/brand";
 
-const cats = [
-  { id: "healthcare", title: "Healthcare", icon: HeartPulse, gradient: "nv-gradient-hc", image: "https://images.unsplash.com/photo-1751890893842-7807b463b344?w=800", tagline: "Disease-aware nutrition", to: "/app/healthcare" },
-  { id: "fitness", title: "Fitness", icon: Dumbbell, gradient: "nv-gradient-ft", image: "https://images.unsplash.com/photo-1587996616596-b714c1c54146?w=800", tagline: "Goal-based macros", to: "/app/category/fitness" },
-  { id: "cultural", title: "Cultural", icon: Globe2, gradient: "nv-gradient-cu", image: "https://images.unsplash.com/photo-1661607775751-dc9efc8f3a9c?w=800", tagline: "40+ cuisines", to: "/app/category/cultural" },
-  { id: "chef-special", title: "Chef Specials", icon: ChefHat, gradient: "nv-gradient-cs", image: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=800", tagline: "Desserts · Bakery", to: "/app/category/chef-special" },
-];
+function Greeting({ name }) {
+  const hour = new Date().getHours();
+  const word = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+  return (
+    <div>
+      <h1 className="font-display text-3xl sm:text-4xl font-semibold leading-tight" style={{ color: "#2e2a26" }}>
+        {word},<br />{name?.split(" ")[0] || "there"}.
+      </h1>
+      <p className="text-sm mt-2" style={{ color: "#6b6258" }}>Today is a new beginning.</p>
+    </div>
+  );
+}
+
+function ChapterCard({ chapter, i }) {
+  const Icon = chapter.icon;
+  const dark = chapter.dark;
+  return (
+    <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
+      <Link
+        to={chapter.to}
+        data-testid={`home-chapter-${chapter.id}`}
+        className={`block relative overflow-hidden rounded-3xl ${chapter.accentClass} nv-shadow group`}
+        style={{ minHeight: "200px" }}
+      >
+        {/* Leaf watermark */}
+        <svg viewBox="0 0 200 200" className="absolute top-3 right-24 w-32 h-32 opacity-30 pointer-events-none">
+          <path d="M30 80 C50 50 90 40 130 60" stroke={chapter.iconColor} strokeWidth="1" fill="none" />
+          {Array.from({ length: 10 }).map((_, k) => (
+            <ellipse key={k} cx={36 + k * 9} cy={76 + Math.sin(k) * 10} rx="5" ry="2.5"
+              fill={chapter.iconColor} opacity="0.55"
+              transform={`rotate(${k * 10} ${36 + k * 9} ${76 + Math.sin(k) * 10})`} />
+          ))}
+        </svg>
+
+        <div className="relative grid grid-cols-[1fr_auto] gap-3 p-5 sm:p-6">
+          <div className="space-y-2.5">
+            <div className="flex items-center gap-2">
+              <span className="font-display text-2xl font-semibold" style={{ color: dark ? "#d9c189" : "#8a6e3a" }}>{chapter.number}</span>
+              <span className="font-overline" style={{ color: dark ? "#d9c189" : undefined }}>{chapter.overline}</span>
+            </div>
+            <h2 className="font-display text-2xl sm:text-3xl font-semibold leading-tight" style={{ color: dark ? "#f4f1e8" : "#2e2a26" }}>
+              {chapter.title}
+            </h2>
+            <div className="w-10 h-px" style={{ background: dark ? "#d9c189" : "#5e6b55", opacity: 0.6 }} />
+            <p className="text-sm leading-relaxed max-w-[18ch]" style={{ color: dark ? "#d4cab8" : "#5b554d" }}>
+              {chapter.desc}
+            </p>
+          </div>
+          {/* Image */}
+          <div className="relative w-28 sm:w-44 rounded-2xl overflow-hidden" style={{ alignSelf: "center" }}>
+            <img src={chapter.image} alt={chapter.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          </div>
+        </div>
+
+        {/* Bottom row: icon chip + arrow */}
+        <div className="relative flex items-center justify-between px-5 sm:px-6 pb-5">
+          <div className="size-10 rounded-full grid place-items-center" style={{ background: dark ? "rgba(244,241,232,0.08)" : "rgba(255,255,255,0.85)" }}>
+            <Icon className="size-4" style={{ color: chapter.iconColor }} />
+          </div>
+          <div className="size-9 rounded-full grid place-items-center" style={{ background: dark ? "rgba(217,193,137,0.18)" : "rgba(255,255,255,0.9)", border: dark ? "1px solid rgba(217,193,137,0.4)" : "1px solid rgba(94,107,85,0.18)" }}>
+            <ArrowUpRight className="size-4" style={{ color: dark ? "#d9c189" : "#5e6b55" }} />
+          </div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
 
 export default function Home() {
   const { user } = useAuth();
@@ -20,7 +83,7 @@ export default function Home() {
 
   useEffect(() => {
     api.get("/recipes", { params: { category: user?.category } })
-      .then((r) => setTrending(r.data.slice(0, 6)));
+      .then((r) => setTrending(r.data.slice(0, 4)));
     api.get("/nutrition/today").then((r) => setToday(r.data)).catch(() => {});
   }, [user?.category]);
 
@@ -28,89 +91,82 @@ export default function Home() {
     <div className="space-y-10">
       <header className="flex items-start justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Welcome back</p>
-          <h1 className="text-3xl sm:text-4xl font-display font-bold tracking-tight mt-1">Hi {user?.name?.split(" ")[0]} 👋</h1>
-          {user?.location && (
-            <p className="text-sm text-muted-foreground mt-1 inline-flex items-center gap-1"><MapPin className="size-3.5" /> {user.location}</p>
-          )}
+          <Logo size="sm" className="mb-3" />
+          <Greeting name={user?.name} />
         </div>
-        {user?.is_premium ? (
-          <span className="text-xs font-semibold px-3 py-1 rounded-full nv-gradient-pm text-black">PREMIUM</span>
-        ) : (
-          <Link data-testid="home-upgrade-pill" to="/app/profile" className="text-xs font-semibold px-3 py-1 rounded-full border border-[#c28a00]/40 text-[#c28a00] hover:bg-[#ffd166]/10">Upgrade</Link>
-        )}
+        <div className="flex items-center gap-2">
+          {user?.is_premium ? (
+            <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider" style={{ background: "#b59b5a", color: "#2e2a26" }}>Premium</span>
+          ) : (
+            <Link data-testid="home-upgrade-pill" to="/app/profile" className="text-[10px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider border" style={{ borderColor: "#b59b5a", color: "#8a6e3a" }}>Upgrade</Link>
+          )}
+          <button className="size-9 rounded-full border grid place-items-center" style={{ borderColor: "#ddd6c4" }}>
+            <Bell className="size-4" style={{ color: "#2e2a26" }} />
+          </button>
+        </div>
       </header>
 
-      <section data-testid="home-today-snapshot" className="nv-card nv-shadow p-5">
+      {/* Today snapshot */}
+      <section data-testid="home-today-snapshot" className="rounded-3xl p-5 zp-card-soft nv-shadow">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-semibold">Today</h2>
-          <Link to="/app/track" className="text-xs text-primary inline-flex items-center gap-1">See all <ArrowRight className="size-3" /></Link>
+          <h2 className="font-display text-lg" style={{ color: "#2e2a26" }}>Today's focus</h2>
+          <Link to="/app/track" className="text-xs inline-flex items-center gap-1" style={{ color: "#5e6b55" }}>See all <ArrowRight className="size-3" /></Link>
         </div>
+        <p className="text-sm mb-4 italic" style={{ color: "#6b6258" }}>Nourish your body. Calm your mind.</p>
         <div className="grid grid-cols-4 gap-3 text-center">
           {["calories", "protein", "carbs", "fat"].map((k) => (
             <div key={k}>
-              <div className="text-2xl font-display font-bold">{today.totals[k] || 0}</div>
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">{k === "calories" ? "kcal" : `${k} g`}</div>
+              <div className="font-display text-2xl font-semibold" style={{ color: "#2e2a26" }}>{today.totals[k] || 0}</div>
+              <div className="font-overline" style={{ color: "#8a6e3a" }}>{k === "calories" ? "kcal" : `${k} g`}</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Storymap CTA */}
-      <Link to="/app/storymap" data-testid="home-storymap" className="block group">
-        <div className="nv-ancient nv-shadow rounded-2xl p-6 sm:p-8 relative overflow-hidden">
-          <div className="relative">
-            <div className="text-[10px] uppercase tracking-[0.3em] mb-2" style={{color: "#6b4423"}}>The Origins Atlas</div>
-            <h3 className="font-display text-2xl sm:text-3xl font-bold leading-tight" style={{color: "#3a2618"}}>
-              Travel the world through food.
-            </h3>
-            <p className="mt-2 text-sm max-w-md" style={{color: "#5b3d22"}}>
-              Zoom into a country, a region, a street — and discover what the locals actually cook.
-            </p>
-            <span className="inline-flex items-center gap-1.5 mt-4 text-sm font-medium" style={{color: "#6b4423"}}>
-              Open the atlas <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />
-            </span>
-          </div>
-        </div>
-      </Link>
-
-      <section>
-        <h2 className="font-display text-xl font-semibold mb-4">Browse categories</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {cats.map((c, i) => (
-            <motion.div key={c.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}>
-              <Link to={c.to} data-testid={`home-cat-${c.id}`}
-                className="block relative overflow-hidden nv-card nv-shadow aspect-[16/10] group">
-                <img src={c.image} alt={c.title} className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500" />
-                <div className={`absolute inset-0 ${c.gradient} opacity-50 mix-blend-multiply`} />
-                <div className="absolute inset-0 nv-hero-overlay" />
-                <div className="absolute bottom-0 left-0 right-0 p-5">
-                  <c.icon className="size-5 text-white mb-1" />
-                  <div className="font-display text-xl font-semibold text-white">{c.title}</div>
-                  <div className="text-xs text-white/80">{c.tagline}</div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+      {/* Three chapters + Chef Specials */}
+      <section className="space-y-5">
+        {CHAPTERS.map((c, i) => <ChapterCard key={c.id} chapter={c} i={i} />)}
       </section>
 
-      <section className="nv-card nv-shadow p-6 relative overflow-hidden">
-        <div className="absolute inset-0 nv-gradient-cu opacity-10" />
-        <div className="relative flex items-center gap-4">
-          <div className="size-12 rounded-2xl nv-gradient-cu grid place-items-center text-white"><Sparkles className="size-6" /></div>
+      {/* AI Coach CTA for premium hint */}
+      <section className="rounded-3xl p-5 sm:p-6 relative overflow-hidden zp-card-soft nv-shadow">
+        <div className="flex items-center gap-4">
+          <div className="size-11 rounded-full grid place-items-center" style={{ background: "rgba(94,107,85,0.18)" }}>
+            <Sparkles className="size-5" style={{ color: "#5e6b55" }} />
+          </div>
           <div className="flex-1">
-            <h3 className="font-display text-lg font-semibold">Smart Personalized Meal Plan</h3>
-            <p className="text-sm text-muted-foreground">Body-type aware. Goal-tuned. Powered by Claude Sonnet 4.5.</p>
+            <h3 className="font-display text-lg" style={{ color: "#2e2a26" }}>Your AI nutrition guide</h3>
+            <p className="text-sm" style={{ color: "#6b6258" }}>A 7-day plan, grocery list, and adaptive coach — tuned to you.</p>
           </div>
-          <Link data-testid="home-ai-plan-link" to="/app/meal-plan" className="text-sm text-primary font-medium">Open →</Link>
+          <Link data-testid="home-ai-plan-link" to="/app/meal-plan" className="text-sm font-medium" style={{ color: "#5e6b55" }}>Open →</Link>
         </div>
       </section>
 
+      {/* Featured */}
       <section>
-        <h2 className="font-display text-xl font-semibold mb-4">Recommended for you</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-display text-xl" style={{ color: "#2e2a26" }}>Featured for you</h2>
+          <Link to="/app/explore" className="text-xs" style={{ color: "#5e6b55" }}>View all</Link>
+        </div>
         <div className="grid gap-4 sm:grid-cols-2">
           {trending.map((r) => <RecipeCard key={r.id} recipe={r} />)}
+        </div>
+      </section>
+
+      {/* Values strip */}
+      <section className="rounded-3xl p-6 zp-card-soft">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 text-center">
+          {[
+            { t: "Curated", d: "with purpose" },
+            { t: "Backed", d: "by science" },
+            { t: "Global", d: "cuisines" },
+            { t: "Personal", d: "to you" },
+          ].map((x) => (
+            <div key={x.t}>
+              <div className="font-display text-base" style={{ color: "#2e2a26" }}>{x.t}</div>
+              <div className="text-xs" style={{ color: "#6b6258" }}>{x.d}</div>
+            </div>
+          ))}
         </div>
       </section>
     </div>

@@ -1,0 +1,68 @@
+// Brand-wide chapter definitions for Zenplato
+import { HeartPulse, Dumbbell, Globe2, ChefHat } from "lucide-react";
+
+export const CHAPTERS = [
+  {
+    id: "healthcare",
+    number: "01",
+    overline: "Healthcare",
+    title: "Heal & Restore",
+    desc: "PCOS, diabetes, thyroid, gut — translated to everyday meals.",
+    icon: HeartPulse,
+    accentClass: "zp-card-soft",
+    iconBg: "rgba(94, 107, 85, 0.16)",
+    iconColor: "#5e6b55",
+    to: "/app/healthcare",
+    image: "https://customer-assets.emergentagent.com/job_nutriverse-preview/artifacts/xdpqa4re_ed8d1d81-e64e-42d0-a4cb-3782940cca11.jpeg",
+    leafTint: "rgba(138, 149, 118, 0.18)",
+  },
+  {
+    id: "fitness",
+    number: "02",
+    overline: "Fitness",
+    title: "Strength & Fuel",
+    desc: "High protein and balanced macros that fit your week.",
+    icon: Dumbbell,
+    accentClass: "zp-card-warm",
+    iconBg: "rgba(181, 155, 90, 0.18)",
+    iconColor: "#8a6e3a",
+    to: "/app/category/fitness",
+    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=900&q=80",
+    leafTint: "rgba(181, 155, 90, 0.16)",
+  },
+  {
+    id: "cultural",
+    number: "03",
+    overline: "Discover",
+    title: "Travel the Plate",
+    desc: "Global cuisines, gently adapted to how you live.",
+    icon: Globe2,
+    accentClass: "zp-card-dark",
+    iconBg: "rgba(181, 155, 90, 0.18)",
+    iconColor: "#d9c189",
+    to: "/app/storymap",
+    image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=900&q=80",
+    leafTint: "rgba(181, 155, 90, 0.12)",
+    dark: true,
+  },
+  {
+    id: "chef-special",
+    number: "04",
+    overline: "Indulgence",
+    title: "Chef Specials",
+    desc: "Mindful desserts & bakery — moments worth slowing for.",
+    icon: ChefHat,
+    accentClass: "zp-card-soft",
+    iconBg: "rgba(46, 42, 38, 0.12)",
+    iconColor: "#2e2a26",
+    to: "/app/category/chef-special",
+    image: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=900&q=80",
+    leafTint: "rgba(189, 179, 163, 0.2)",
+  },
+];
+
+export const BRAND = {
+  name: "Zenplato",
+  tagline: "Mindful nutrition. Balanced living.",
+  microTagline: "You are the zen for your body.",
+};

@@ -1,60 +1,91 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
-import { ArrowRight, HeartPulse, Dumbbell, Globe2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import Logo from "../components/Logo";
+
+const HERO_1 = "https://customer-assets.emergentagent.com/job_nutriverse-preview/artifacts/ze5tyr90_b3135b09-bc03-422c-b9f6-9c11e8f33176.jpeg";
+const HERO_2 = "https://customer-assets.emergentagent.com/job_nutriverse-preview/artifacts/28mwp314_9b9c2ff2-9f48-440e-aa2b-d3ef12165c5c.jpeg";
 
 export default function Landing() {
+  const [slide, setSlide] = useState(0);
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2" data-testid="logo-link">
-          <div className="size-8 rounded-lg nv-gradient-hc grid place-items-center text-black font-bold">N</div>
-          <span className="font-display text-xl font-bold tracking-tight">NutriVerse</span>
-        </Link>
-        <div className="flex items-center gap-3">
-          <Link to="/auth" data-testid="landing-signin" className="text-sm text-muted-foreground hover:text-foreground">Sign in</Link>
-          <Link to="/auth?mode=register">
-            <Button data-testid="landing-getstarted" className="rounded-full">Get started <ArrowRight className="size-4 ml-1" /></Button>
-          </Link>
-        </div>
+    <div className="min-h-screen relative overflow-hidden" style={{ background: "#f7f3e7" }}>
+      <header className="relative max-w-6xl mx-auto px-6 py-5 flex items-center justify-between z-10">
+        <Logo size="sm" />
+        <Link to="/auth" data-testid="landing-signin" className="text-xs font-medium tracking-wider uppercase" style={{ color: "#2e2a26" }}>I have an account</Link>
       </header>
 
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0">
-          <img src="https://images.unsplash.com/photo-1714842981153-ffeaf74e7a1a?w=1600" alt="" className="w-full h-full object-cover opacity-40" />
-          <div className="absolute inset-0 nv-hero-overlay" />
-        </div>
-        <div className="relative max-w-4xl mx-auto px-6 py-24 sm:py-32 text-center">
-          <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-xs uppercase tracking-[0.3em] text-[#00d4aa] mb-6">Food · Nutrition · Wellness</motion.p>
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tighter">
-            Cook the right food,<br />with the right ingredients.
-          </motion.h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Personalized recipes for healthcare conditions, fitness goals, and global cuisines — with precise nutrition, exact amounts, and AI meal planning.
-          </motion.p>
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mt-10 flex flex-wrap items-center justify-center gap-3">
-            <Link to="/auth?mode=register"><Button data-testid="hero-cta" size="lg" className="rounded-full px-8">Start cooking smart</Button></Link>
-            <Link to="/auth"><Button data-testid="hero-signin" size="lg" variant="outline" className="rounded-full px-8">Sign in</Button></Link>
-          </motion.div>
-        </div>
-      </section>
+      <main className="relative max-w-md mx-auto px-0 pb-16">
+        <AnimatePresence mode="wait">
+          {slide === 0 ? (
+            <motion.section key="s1"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              transition={{ duration: 0.6 }} className="text-center">
+              <div className="px-6">
+                <Logo size="xl" className="justify-center mt-6 mb-2" />
+                <p className="font-display text-lg mt-2" style={{ color: "#2e2a26" }}>Mindful nutrition.</p>
+                <p className="font-display text-lg" style={{ color: "#2e2a26" }}>Balanced living.</p>
+              </div>
+              <div className="mt-8 px-4">
+                <div className="relative rounded-3xl overflow-hidden" style={{ boxShadow: "0 20px 50px rgba(60,50,30,0.12)" }}>
+                  <img src={HERO_1} alt="A nourishing Zenplato bowl" className="w-full" />
+                </div>
+              </div>
+              <div className="px-6 mt-10 space-y-4">
+                <Button data-testid="landing-getstarted" onClick={() => setSlide(1)}
+                  className="w-full rounded-full h-14 text-base font-medium border-0 hover:opacity-90"
+                  style={{ background: "#5e6b55", color: "#f4f1e8" }}>
+                  Get Started <ArrowRight className="size-4 ml-2" />
+                </Button>
+                <Link to="/auth" className="block text-center text-sm font-medium" style={{ color: "#2e2a26" }}>I have an account</Link>
+              </div>
+              <p className="text-xs italic mt-8" style={{ color: "#6b6258" }}>You are the zen for your body.</p>
+            </motion.section>
+          ) : (
+            <motion.section key="s2"
+              initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}
+              transition={{ duration: 0.6 }} className="relative">
+              <div className="relative aspect-[3/4] overflow-hidden">
+                <img src={HERO_2} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(247,243,231,0.4) 0%, rgba(247,243,231,0.85) 75%, #f7f3e7 100%)" }} />
+                <div className="absolute inset-0 flex flex-col justify-end px-6 pb-12">
+                  <h1 className="font-display text-4xl sm:text-5xl leading-[1.1]" style={{ color: "#2e2a26" }}>
+                    A calmer<br />relationship<br />with what<br />you eat.
+                  </h1>
+                  <p className="text-sm mt-4 max-w-[20ch]" style={{ color: "#5b554d" }}>
+                    Personalized nutrition guided by mindfulness and real life.
+                  </p>
+                </div>
+              </div>
+              <div className="px-6 mt-2 space-y-4">
+                <Link to="/auth?mode=register">
+                  <Button data-testid="hero-cta"
+                    className="w-full rounded-full h-14 text-base font-medium border-0 hover:opacity-90"
+                    style={{ background: "#5e6b55", color: "#f4f1e8" }}>
+                    Get Started <ArrowRight className="size-4 ml-2" />
+                  </Button>
+                </Link>
+                <Link to="/auth" data-testid="hero-signin" className="block text-center text-sm font-medium" style={{ color: "#2e2a26" }}>
+                  I have an account
+                </Link>
+                <button onClick={() => setSlide(0)} className="block mx-auto text-xs underline pt-2" style={{ color: "#6b6258" }}>← Back</button>
+              </div>
+            </motion.section>
+          )}
+        </AnimatePresence>
 
-      <section className="max-w-6xl mx-auto px-6 py-20">
-        <div className="grid gap-6 sm:grid-cols-3">
-          {[
-            { title: "Healthcare", icon: HeartPulse, color: "nv-gradient-hc", desc: "Disease-specific recipes for diabetes, PCOS, heart & kidney care." },
-            { title: "Fitness", icon: Dumbbell, color: "nv-gradient-ft", desc: "TDEE, macros, and goal-based meals for every training phase." },
-            { title: "Cultural", icon: Globe2, color: "nv-gradient-cu", desc: "40+ cuisines, regional stories, authentic techniques." },
-          ].map((c) => (
-            <div key={c.title} className="nv-card p-6">
-              <div className={`size-12 rounded-2xl grid place-items-center text-white ${c.color}`}><c.icon className="size-6" /></div>
-              <h3 className="mt-4 font-display text-2xl font-semibold">{c.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{c.desc}</p>
-            </div>
+        {/* Pagination dots */}
+        <div className="flex items-center justify-center gap-2 mt-8">
+          {[0, 1].map((i) => (
+            <button key={i} onClick={() => setSlide(i)} aria-label={`Slide ${i + 1}`}
+              className="size-2 rounded-full transition-all"
+              style={{ background: slide === i ? "#5e6b55" : "#d4cab8" }} />
           ))}
         </div>
-      </section>
+      </main>
     </div>
   );
 }

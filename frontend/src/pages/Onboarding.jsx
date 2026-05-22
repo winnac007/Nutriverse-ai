@@ -10,14 +10,15 @@ import { useAuth } from "../lib/auth";
 import { toast } from "sonner";
 
 const CATEGORIES = [
-  { id: "healthcare", title: "Healthcare", desc: "Disease-specific nutrition", icon: HeartPulse, gradient: "nv-gradient-hc" },
-  { id: "fitness", title: "Fitness", desc: "Goal-based meal plans", icon: Dumbbell, gradient: "nv-gradient-ft" },
-  { id: "cultural", title: "Cultural", desc: "Explore global cuisines", icon: Globe2, gradient: "nv-gradient-cu" },
+  { id: "healthcare", title: "Heal & Restore", desc: "Disease-specific nutrition", icon: HeartPulse, gradient: "nv-gradient-hc" },
+  { id: "fitness", title: "Strength & Fuel", desc: "Goal-based meal plans", icon: Dumbbell, gradient: "nv-gradient-ft" },
+  { id: "cultural", title: "Travel the Plate", desc: "Explore global cuisines", icon: Globe2, gradient: "nv-gradient-cu" },
 ];
 
 const CONDITIONS = [
   "diabetes", "heart-disease", "kidney-disease", "thyroid", "obesity",
   "hypertension", "pcos", "cancer", "elderly-nutrition", "post-surgery",
+  "gut-health", "immunity", "iron-deficiency", "stress-sleep", "weight-management",
 ];
 const GOALS = ["lose", "gain", "maintain", "bulking", "cutting", "endurance"];
 
@@ -67,8 +68,9 @@ export default function Onboarding() {
       {step === 0 && (
         <div className="space-y-8">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-display font-bold">What brings you here?</h1>
-            <p className="text-muted-foreground mt-2">Pick a primary focus. You can always change this later.</p>
+            <p className="font-overline" style={{ color: "#5e6b55" }}>Welcome</p>
+            <h1 className="font-display text-3xl sm:text-4xl mt-2" style={{ color: "#2e2a26" }}>Let's understand you better.</h1>
+            <p className="text-muted-foreground mt-2">Pick a primary focus — you can always change this later.</p>
           </div>
           <div className="grid gap-4">
             {CATEGORIES.map((c) => (
