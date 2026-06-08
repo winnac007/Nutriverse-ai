@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Zenplato — The Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#EEEAE2;
+  --cream2:#E8E3D9;
+  --cream3:#DDD7CC;
+  --ink:#1C1A15;
+  --ink2:#3D3A32;
+  --ink3:#7A7060;
+  --olive:#5A6A3A;
+  --olive2:#8A9A5A;
+  --olive-bg:#4A5830;
+  --warm:#F5F1EA;
+  --dark-card:#232118;
+}
+html{scroll-behavior:smooth}
+body{background:var(--cream);font-family:'Jost',sans-serif;color:var(--ink);overflow-x:hidden}
+
+/* ── PAGE VIEW SYSTEM ── */
+.page{display:none;animation:fadeIn 0.45s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══════════════════════════════════
+   HOMEPAGE — Nav stub
+══════════════════════════════════ */
+.site-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:28px 60px;border-bottom:1px solid rgba(28,26,21,0.1);
+}
+.nav-logo{
+  font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;
+  letter-spacing:0.04em;color:var(--ink);text-decoration:none;
+}
+.nav-links{display:flex;gap:36px;list-style:none}
+.nav-links a{
+  font-size:12px;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--ink3);text-decoration:none;font-weight:400;
+  transition:color 0.2s;
+}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{
+  background:var(--ink);color:var(--cream);
+  padding:10px 26px;font-size:10.5px;letter-spacing:0.18em;
+  text-transform:uppercase;font-weight:400;border:none;cursor:pointer;
+  font-family:'Jost',sans-serif;transition:background 0.3s;
+}
+.nav-cta:hover{background:var(--ink2)}
+
+/* ══════════════════════════════════
+   LIBRARY SECTION HEADER
+══════════════════════════════════ */
+.lib-header{
+  max-width:1180px;margin:0 auto;
+  padding:90px 60px 64px;
+}
+.eyebrow{
+  display:flex;align-items:center;gap:16px;margin-bottom:36px;
+}
+.eyebrow-roman{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-weight:300;font-size:17px;color:var(--ink3);
+}
+.eyebrow-dash{width:44px;height:1px;background:var(--ink3);opacity:0.3}
+.eyebrow-text{
+  font-size:10.5px;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--ink3);font-weight:400;
+}
+
+.lib-headline{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:clamp(44px,5vw,68px);line-height:1.08;
+  color:var(--ink);margin-bottom:24px;max-width:680px;
+}
+.lib-headline em{font-style:italic;color:var(--olive)}
+
+.lib-sub{
+  font-size:15px;line-height:1.8;color:var(--ink3);
+  font-weight:300;max-width:420px;
+}
+
+/* ══════════════════════════════════
+   BOOK CARDS GRID
+══════════════════════════════════ */
+.books-grid{
+  max-width:1180px;margin:0 auto;
+  padding:0 60px 80px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:24px;
+}
+
+.book-card{
+  background:var(--warm);cursor:pointer;
+  transition:transform 0.3s ease,box-shadow 0.3s ease;
+  position:relative;overflow:hidden;
+}
+.book-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 48px rgba(28,26,21,0.12);
+}
+
+/* Cover image area */
+.book-cover-img{
+  height:260px;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:24px 20px 20px;
+}
+
+/* Each book has a unique cover style */
+.cover-dark{background:var(--dark-card)}
+.cover-cream{background:#E8E3D7;border:1px solid rgba(28,26,21,0.06)}
+.cover-olive{background:var(--olive-bg)}
+.cover-sage{background:#B8C4A0}
+.cover-rust{background:#7A4A30}
+.cover-warm{background:#C4A882}
+
+.cover-brand{
+  font-size:8px;letter-spacing:0.22em;text-transform:uppercase;
+  font-family:'Jost',sans-serif;font-weight:300;
+}
+.cover-dark .cover-brand,.cover-olive .cover-brand{color:rgba(238,234,226,0.45)}
+.cover-cream .cover-brand,.cover-sage .cover-brand{color:rgba(28,26,21,0.4)}
+.cover-rust .cover-brand,.cover-warm .cover-brand{color:rgba(238,234,226,0.45)}
+
+.cover-title-text{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:26px;line-height:1.15;margin-top:16px;
+}
+.cover-dark .cover-title-text,.cover-olive .cover-title-text,
+.cover-rust .cover-title-text,.cover-warm .cover-title-text{color:#EEEAE2}
+.cover-cream .cover-title-text{color:var(--ink)}
+.cover-sage .cover-title-text{color:var(--ink)}
+
+.cover-img-placeholder{
+  align-self:flex-end;width:80px;height:80px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:40px;opacity:0.55;
+}
+
+.cover-z{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:12px;
+  align-self:flex-end;
+}
+.cover-dark .cover-z{background:rgba(238,234,226,0.12);color:rgba(238,234,226,0.7)}
+.cover-cream .cover-z{background:rgba(28,26,21,0.1);color:rgba(28,26,21,0.6)}
+.cover-olive .cover-z{background:rgba(238,234,226,0.15);color:rgba(238,234,226,0.7)}
+.cover-sage .cover-z{background:rgba(28,26,21,0.12);color:rgba(28,26,21,0.6)}
+.cover-rust .cover-z{background:rgba(238,234,226,0.15);color:rgba(238,234,226,0.7)}
+.cover-warm .cover-z{background:rgba(238,234,226,0.2);color:rgba(238,234,226,0.7)}
+
+/* Price badge */
+.price-badge{
+  position:absolute;top:14px;right:14px;
+  background:var(--olive);color:#fff;
+  font-size:9px;letter-spacing:0.14em;text-transform:uppercase;
+  font-family:'Jost',sans-serif;font-weight:500;
+  padding:4px 10px;
+}
+.price-badge.free{background:var(--ink2)}
+
+/* Card body */
+.book-card-body{padding:24px 22px 20px}
+
+.book-card-title{
+  font-family:'Cormorant Garamond',serif;font-weight:400;
+  font-size:20px;line-height:1.2;color:var(--ink);margin-bottom:10px;
+}
+.book-card-desc{
+  font-size:13px;line-height:1.75;color:var(--ink3);
+  font-weight:300;margin-bottom:20px;
+}
+
+.book-card-meta{
+  display:flex;gap:20px;margin-bottom:20px;
+}
+.meta-item{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;color:var(--ink3);font-weight:300;
+}
+.meta-icon{font-size:13px;opacity:0.6}
+
+.book-divider{width:100%;height:1px;background:rgba(28,26,21,0.08);margin-bottom:16px}
+
+.preview-row{
+  display:flex;align-items:center;justify-content:space-between;
+}
+.preview-link{
+  font-size:12px;letter-spacing:0.05em;color:var(--ink);
+  font-weight:400;
+}
+.preview-arrow{
+  font-size:18px;color:var(--ink3);
+  transition:transform 0.25s;font-family:'Cormorant Garamond',serif;
+}
+.book-card:hover .preview-arrow{transform:translateX(5px)}
+
+
+/* ══════════════════════════════════
+   QUOTE STRIP
+══════════════════════════════════ */
+.quote-strip{
+  background:var(--cream2);
+  padding:80px 60px;text-align:center;position:relative;
+  border-top:1px solid rgba(28,26,21,0.08);
+  border-bottom:1px solid rgba(28,26,21,0.08);
+}
+.quote-mark-open{
+  font-family:'Cormorant Garamond',serif;font-size:80px;
+  line-height:1;color:var(--olive);opacity:0.25;
+  position:absolute;left:80px;top:40px;
+}
+.quote-mark-close{
+  font-family:'Cormorant Garamond',serif;font-size:80px;
+  line-height:1;color:var(--olive);opacity:0.25;
+  position:absolute;right:80px;bottom:30px;
+}
+.quote-text{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:clamp(22px,3vw,34px);line-height:1.45;
+  color:var(--ink);max-width:760px;margin:0 auto 16px;
+}
+.quote-text em{font-style:italic;color:var(--olive)}
+.quote-rule{
+  width:36px;height:1px;background:var(--ink3);
+  opacity:0.3;margin:0 auto;
+}
+
+/* ══════════════════════════════════
+   FOUNDING READER — Dark CTA
+══════════════════════════════════ */
+.founding-section{
+  max-width:1180px;margin:0 auto;padding:80px 60px 100px;
+}
+.founding-card{
+  background:var(--dark-card);
+  border-radius:4px;
+  padding:70px 80px;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:60px;align-items:center;
+  position:relative;overflow:hidden;
+}
+.founding-card::after{
+  content:'';position:absolute;right:-40px;bottom:-40px;
+  width:300px;height:300px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath d='M100 20 C120 20,150 40,160 70 C170 100,160 130,140 150 C120 170,80 170,60 150 C40 130,30 100,40 70 C50 40,80 20,100 20Z' fill='%235A6A3A' opacity='0.15'/%3E%3Cpath d='M100 10 C90 30,70 50,60 80 C50 110,60 140,80 160 C90 170,110 170,120 160 C140 140,150 110,140 80 C130 50,110 30,100 10Z' fill='%235A6A3A' opacity='0.1'/%3E%3C/svg%3E") center/contain no-repeat;
+  opacity:0.8;pointer-events:none;
+}
+.founding-label{
+  font-size:10px;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--olive2);font-weight:400;margin-bottom:24px;
+}
+.founding-headline{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:clamp(36px,4vw,54px);line-height:1.1;
+  color:var(--cream);margin-bottom:0;
+}
+.founding-headline span{color:var(--olive2);display:block}
+.founding-body{
+  font-size:14px;line-height:1.8;color:rgba(238,234,226,0.55);
+  font-weight:300;margin-bottom:36px;
+}
+.founding-divider{width:40px;height:1px;background:var(--olive2);opacity:0.4;margin-bottom:28px}
+.btn-founding{
+  display:inline-flex;align-items:center;gap:16px;
+  background:var(--cream);color:var(--ink);
+  padding:16px 32px;font-size:11px;letter-spacing:0.18em;
+  text-transform:uppercase;font-weight:400;font-family:'Jost',sans-serif;
+  border:none;cursor:pointer;transition:background 0.3s;
+  text-decoration:none;
+}
+.btn-founding:hover{background:var(--cream3)}
+.btn-founding-arrow{font-size:18px;font-family:'Cormorant Garamond',serif}
+
+
+/* ══════════════════════════════════
+   BOOK DETAIL PAGE
+══════════════════════════════════ */
+#page-detail .site-nav{position:sticky;top:0;background:var(--cream);z-index:100}
+
+.back-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:11px;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--ink3);cursor:pointer;background:none;border:none;
+  font-family:'Jost',sans-serif;padding:32px 60px 0;
+  transition:color 0.2s;
+}
+.back-btn:hover{color:var(--ink)}
+.back-btn span{font-family:'Cormorant Garamond',serif;font-size:18px}
+
+.detail-layout{
+  max-width:1180px;margin:0 auto;
+  padding:48px 60px 100px;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:100px;align-items:start;
+}
+
+/* Left: Book info */
+.detail-book-preview{
+  position:sticky;top:100px;
+}
+.detail-cover{
+  width:100%;max-width:320px;height:420px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:32px 28px 26px;margin-bottom:36px;
+  position:relative;
+}
+.detail-cover-brand{
+  font-size:9px;letter-spacing:0.28em;text-transform:uppercase;
+  font-family:'Jost',sans-serif;font-weight:300;
+}
+.detail-cover-title{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:38px;line-height:1.1;
+}
+.detail-cover-sub{
+  font-size:10px;letter-spacing:0.1em;text-transform:uppercase;
+  font-family:'Jost',sans-serif;font-weight:300;
+  opacity:0.45;line-height:1.6;
+}
+
+.detail-meta-row{
+  display:flex;gap:32px;margin-bottom:24px;
+}
+.detail-meta-item{
+  display:flex;flex-direction:column;gap:4px;
+}
+.detail-meta-label{
+  font-size:9.5px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--ink3);font-weight:400;
+}
+.detail-meta-val{
+  font-family:'Cormorant Garamond',serif;font-size:18px;
+  font-weight:300;color:var(--ink);
+}
+
+.detail-price-row{
+  display:flex;align-items:baseline;gap:12px;margin-bottom:8px;
+}
+.detail-price{
+  font-family:'Cormorant Garamond',serif;font-size:36px;
+  font-weight:300;color:var(--ink);
+}
+.detail-price-orig{
+  font-size:18px;color:var(--ink3);text-decoration:line-through;
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+}
+.detail-price-note{
+  font-size:11px;color:var(--olive);letter-spacing:0.05em;font-weight:400;
+}
+
+.what-inside{margin-top:32px}
+.wi-title{
+  font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:16px;font-weight:400;
+}
+.wi-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.wi-list li{
+  display:flex;gap:12px;font-size:13px;color:var(--ink2);
+  font-weight:300;line-height:1.5;
+}
+.wi-list li::before{
+  content:'—';color:var(--olive);font-family:'Cormorant Garamond',serif;
+  flex-shrink:0;
+}
+
+/* Right: Form */
+.detail-form-col{}
+
+.form-section-title{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:clamp(28px,3vw,40px);line-height:1.1;
+  color:var(--ink);margin-bottom:8px;
+}
+.form-section-title em{font-style:italic;color:var(--olive)}
+.form-section-sub{
+  font-size:13px;line-height:1.75;color:var(--ink3);
+  font-weight:300;margin-bottom:40px;
+}
+
+/* Steps indicator */
+.form-steps{
+  display:flex;align-items:center;gap:0;margin-bottom:40px;
+}
+.step-item{
+  display:flex;align-items:center;gap:10px;flex:1;
+}
+.step-num{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:400;letter-spacing:0.05em;
+  transition:all 0.3s;flex-shrink:0;
+}
+.step-num.active{background:var(--ink);color:var(--cream)}
+.step-num.done{background:var(--olive);color:#fff}
+.step-num.inactive{background:transparent;color:var(--ink3);border:1px solid rgba(28,26,21,0.2)}
+.step-label{
+  font-size:10px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--ink3);font-weight:400;
+}
+.step-label.active{color:var(--ink)}
+.step-connector{
+  flex:1;height:1px;background:rgba(28,26,21,0.12);margin:0 12px;
+}
+
+/* Form panels */
+.form-panel{display:none}
+.form-panel.active{display:block;animation:fadeIn 0.35s ease}
+
+/* Fields */
+.field-group{display:flex;flex-direction:column;gap:20px;margin-bottom:28px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{display:flex;flex-direction:column;gap:8px}
+.field label{
+  font-size:10.5px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--ink2);font-weight:400;
+}
+.field input,.field select,.field textarea{
+  background:transparent;
+  border:none;border-bottom:1px solid rgba(28,26,21,0.2);
+  padding:10px 0;font-family:'Jost',sans-serif;font-size:14px;
+  font-weight:300;color:var(--ink);outline:none;
+  transition:border-color 0.2s;width:100%;
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--ink);
+}
+.field input::placeholder,.field textarea::placeholder{color:var(--ink3);opacity:0.6}
+.field select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A7060' stroke-width='1.2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 4px center}
+
+/* Phone with country code */
+.phone-row{display:grid;grid-template-columns:90px 1fr;gap:0}
+.phone-code{
+  border-bottom:1px solid rgba(28,26,21,0.2);
+  background:transparent;font-family:'Jost',sans-serif;
+  font-size:14px;font-weight:300;color:var(--ink);
+  padding:10px 8px 10px 0;outline:none;border-right:none;
+  appearance:none;cursor:pointer;
+  border-top:none;border-left:none;
+}
+.phone-num{border-left:none!important}
+
+/* Personalisation questions */
+.persona-question{margin-bottom:28px}
+.persona-q-label{
+  font-family:'Cormorant Garamond',serif;font-size:18px;
+  font-weight:300;color:var(--ink);margin-bottom:16px;line-height:1.3;
+}
+.persona-options{display:flex;flex-wrap:wrap;gap:8px}
+.persona-opt{
+  padding:8px 16px;border:1px solid rgba(28,26,21,0.2);
+  font-size:12px;font-weight:300;color:var(--ink2);
+  cursor:pointer;transition:all 0.2s;font-family:'Jost',sans-serif;
+  letter-spacing:0.04em;
+}
+.persona-opt:hover{border-color:var(--ink);color:var(--ink)}
+.persona-opt.selected{
+  background:var(--ink);color:var(--cream);border-color:var(--ink);
+}
+
+/* Consent */
+.consent-row{
+  display:flex;align-items:flex-start;gap:12px;margin-bottom:32px;
+}
+.consent-check{
+  width:16px;height:16px;border:1px solid rgba(28,26,21,0.3);
+  cursor:pointer;flex-shrink:0;margin-top:2px;
+  appearance:none;transition:all 0.2s;
+}
+.consent-check:checked{background:var(--ink);border-color:var(--ink)}
+.consent-text{
+  font-size:12px;color:var(--ink3);font-weight:300;line-height:1.65;
+}
+.consent-text a{color:var(--ink);text-decoration:underline}
+
+/* Pricing note */
+.pricing-note{
+  background:var(--warm);padding:18px 20px;
+  margin-bottom:28px;border-left:3px solid var(--olive);
+}
+.pricing-note p{font-size:13px;color:var(--ink2);font-weight:300;line-height:1.6}
+.pricing-note strong{font-weight:500;color:var(--ink)}
+
+/* Buttons */
+.btn-next{
+  width:100%;background:var(--ink);color:var(--cream);
+  border:none;padding:16px 32px;font-family:'Jost',sans-serif;
+  font-size:11px;letter-spacing:0.2em;text-transform:uppercase;
+  font-weight:400;cursor:pointer;transition:background 0.3s;
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  margin-bottom:12px;
+}
+.btn-next:hover{background:var(--ink2)}
+.btn-next-arrow{font-family:'Cormorant Garamond',serif;font-size:20px}
+.btn-back-step{
+  width:100%;background:transparent;color:var(--ink3);
+  border:1px solid rgba(28,26,21,0.15);padding:12px 32px;
+  font-family:'Jost',sans-serif;font-size:11px;letter-spacing:0.15em;
+  text-transform:uppercase;font-weight:400;cursor:pointer;
+  transition:all 0.2s;
+}
+.btn-back-step:hover{border-color:var(--ink);color:var(--ink)}
+
+/* Payment panel */
+.payment-methods{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  margin-bottom:24px;
+}
+.pay-method{
+  padding:14px 12px;border:1px solid rgba(28,26,21,0.15);
+  text-align:center;cursor:pointer;transition:all 0.2s;
+}
+.pay-method:hover,.pay-method.selected{
+  border-color:var(--ink);
+}
+.pay-icon{font-size:22px;margin-bottom:4px}
+.pay-label{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3)}
+
+/* Success screen */
+.success-screen{
+  text-align:center;padding:40px 20px;
+}
+.success-icon{
+  width:72px;height:72px;background:var(--olive);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;margin:0 auto 28px;color:#fff;
+}
+.success-headline{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:38px;line-height:1.1;color:var(--ink);margin-bottom:12px;
+}
+.success-headline em{font-style:italic;color:var(--olive)}
+.success-sub{
+  font-size:14px;color:var(--ink3);font-weight:300;
+  line-height:1.8;max-width:360px;margin:0 auto 36px;
+}
+.success-download{
+  display:inline-flex;align-items:center;gap:14px;
+  background:var(--ink);color:var(--cream);
+  padding:16px 40px;font-size:11px;letter-spacing:0.2em;
+  text-transform:uppercase;font-family:'Jost',sans-serif;
+  font-weight:400;border:none;cursor:pointer;margin-bottom:16px;
+  text-decoration:none;
+}
+.success-note{font-size:12px;color:var(--ink3);font-weight:300}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1000px){
+  .site-nav{padding:22px 32px}
+  .lib-header,.books-grid,.founding-section{padding-left:32px;padding-right:32px}
+  .books-grid{grid-template-columns:1fr 1fr}
+  .founding-card{grid-template-columns:1fr;padding:48px 40px}
+  .detail-layout{grid-template-columns:1fr;gap:48px;padding:32px}
+  .detail-book-preview{position:static}
+  .back-btn{padding:24px 32px 0}
+  .quote-strip{padding:60px 32px}
+  .quote-mark-open,.quote-mark-close{display:none}
+}
+@media(max-width:600px){
+  .site-nav{padding:18px 20px}
+  .nav-links{display:none}
+  .lib-header,.founding-section{padding-left:20px;padding-right:20px}
+  .books-grid{grid-template-columns:1fr;padding:0 20px 60px}
+  .field-row{grid-template-columns:1fr}
+  .payment-methods{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     PAGE 1: HOMEPAGE / LIBRARY SECTION
+══════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+
+  <!-- NAV -->
+  <nav class="site-nav">
+    <a class="nav-logo" href="#">Zenplato</a>
+    <ul class="nav-links">
+      <li><a href="#">About</a></li>
+      <li><a href="#">The Library</a></li>
+      <li><a href="#">How It Works</a></li>
+      <li><a href="#">Early Access</a></li>
+    </ul>
+    <button class="nav-cta">Join Early Access</button>
+  </nav>
+
+  <!-- LIBRARY HEADER -->
+  <div class="lib-header">
+    <div class="eyebrow">
+      <span class="eyebrow-roman">VII</span>
+      <span class="eyebrow-dash"></span>
+      <span class="eyebrow-text">The Library</span>
+    </div>
+    <h2 class="lib-headline">
+      Knowledge that changes<br/>
+      the way you eat,<br/>
+      <em>one page at a time.</em>
+    </h2>
+    <p class="lib-sub">From understanding ingredients to mastering mindful meals, every guide is designed to help you build a healthier relationship with food.</p>
+  </div>
+
+  <!-- BOOK CARDS -->
+  <div class="books-grid">
+
+    <!-- Book 1: Free -->
+    <div class="book-card" onclick="openBook('mindful')">
+      <div class="book-cover-img cover-dark">
+        <div class="cover-brand">zenplato</div>
+        <div class="cover-title-text">The<br/>Mindful<br/>Eating<br/>Handbook</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end">
+          <div style="font-size:9px;color:rgba(238,234,226,0.3);font-family:'Jost',sans-serif;font-weight:300;letter-spacing:0.08em;max-width:120px;line-height:1.5">A gentle guide to building awareness around food.</div>
+          <div class="cover-z">Z</div>
+        </div>
+      </div>
+      <div class="price-badge free">Free</div>
+      <div class="book-card-body">
+        <div class="book-card-title">The Mindful Eating Handbook</div>
+        <div class="book-card-desc">Build awareness, tune into hunger cues, and develop a calmer relationship with food.</div>
+        <div class="book-card-meta">
+          <div class="meta-item"><span class="meta-icon">⏱</span> 48 min read</div>
+          <div class="meta-item"><span class="meta-icon">◎</span> Beginner</div>
+        </div>
+        <div class="book-divider"></div>
+        <div class="preview-row">
+          <span class="preview-link">Preview Guide</span>
+          <span class="preview-arrow">›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Book 2: Paid -->
+    <div class="book-card" onclick="openBook('decode')">
+      <div class="book-cover-img cover-cream">
+        <div class="cover-brand">zenplato</div>
+        <div class="cover-title-text">Decode<br/>Your<br/>Plate</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end">
+          <div style="font-size:9px;color:rgba(28,26,21,0.35);font-family:'Jost',sans-serif;font-weight:300;letter-spacing:0.08em;max-width:130px;line-height:1.5">Understand what your plate needs for your body and your goals.</div>
+          <div class="cover-z">Z</div>
+        </div>
+      </div>
+      <div class="price-badge">₹299</div>
+      <div class="book-card-body">
+        <div class="book-card-title">Decode Your Plate</div>
+        <div class="book-card-desc">Learn how to build balanced meals that support your condition, goals, and lifestyle.</div>
+        <div class="book-card-meta">
+          <div class="meta-item"><span class="meta-icon">⏱</span> 36 min read</div>
+          <div class="meta-item"><span class="meta-icon">◎</span> Beginner</div>
+        </div>
+        <div class="book-divider"></div>
+        <div class="preview-row">
+          <span class="preview-link">Preview Guide</span>
+          <span class="preview-arrow">›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Book 3: Paid -->
+    <div class="book-card" onclick="openBook('antiinflam')">
+      <div class="book-cover-img cover-olive">
+        <div class="cover-brand">zenplato</div>
+        <div class="cover-title-text">Everyday<br/>Anti-<br/>Inflammatory<br/>Recipes</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end">
+          <div style="font-size:9px;color:rgba(238,234,226,0.3);font-family:'Jost',sans-serif;font-weight:300;letter-spacing:0.08em;max-width:130px;line-height:1.5">Simple, comforting recipes that visibly reduce inflammation.</div>
+          <div class="cover-z">Z</div>
+        </div>
+      </div>
+      <div class="price-badge">₹499</div>
+      <div class="book-card-body">
+        <div class="book-card-title">Everyday Anti-Inflammatory Recipes</div>
+        <div class="book-card-desc">Discover easy, delicious recipes that soothe inflammation and support long-term wellness.</div>
+        <div class="book-card-meta">
+          <div class="meta-item"><span class="meta-icon">⏱</span> 60 min read</div>
+          <div class="meta-item"><span class="meta-icon">◎</span> Intermediate</div>
+        </div>
+        <div class="book-divider"></div>
+        <div class="preview-row">
+          <span class="preview-link">Preview Guide</span>
+          <span class="preview-arrow">›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Book 4: Paid -->
+    <div class="book-card" onclick="openBook('kitchen')">
+      <div class="book-cover-img cover-cream">
+        <div class="cover-brand">zenplato</div>
+        <div class="cover-title-text">The<br/>Zenplato<br/>Kitchen<br/>Guide</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end">
+          <div style="font-size:9px;color:rgba(28,26,21,0.35);font-family:'Jost',sans-serif;font-weight:300;letter-spacing:0.08em;max-width:130px;line-height:1.5">Smart swaps, pantry essentials & tools for everyday wellness.</div>
+          <div class="cover-z">Z</div>
+        </div>
+      </div>
+      <div class="price-badge">₹199</div>
+      <div class="book-card-body">
+        <div class="book-card-title">The Zenplato Kitchen Guide</div>
+        <div class="book-card-desc">Your go-to guide for smart swaps, pantry essentials, and effortless healthy cooking.</div>
+        <div class="book-card-meta">
+          <div class="meta-item"><span class="meta-icon">⏱</span> 30 min read</div>
+          <div class="meta-item"><span class="meta-icon">◎</span> Beginner</div>
+        </div>
+        <div class="book-divider"></div>
+        <div class="preview-row">
+          <span class="preview-link">Preview Guide</span>
+          <span class="preview-arrow">›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Book 5: Paid -->
+    <div class="book-card" onclick="openBook('condition')">
+      <div class="book-cover-img cover-rust">
+        <div class="cover-brand">zenplato</div>
+        <div class="cover-title-text">Eat for<br/>Your<br/>Condition</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end">
+          <div style="font-size:9px;color:rgba(238,234,226,0.3);font-family:'Jost',sans-serif;font-weight:300;letter-spacing:0.08em;max-width:130px;line-height:1.5">PCOS, diabetes, thyroid, gut health — a dietary guide for 12 conditions.</div>
+          <div class="cover-z">Z</div>
+        </div>
+      </div>
+      <div class="price-badge">₹599</div>
+      <div class="book-card-body">
+        <div class="book-card-title">Eat for Your Condition</div>
+        <div class="book-card-desc">A comprehensive dietary guide covering PCOS, diabetes, thyroid, gut health, and more.</div>
+        <div class="book-card-meta">
+          <div class="meta-item"><span class="meta-icon">⏱</span> 75 min read</div>
+          <div class="meta-item"><span class="meta-icon">◎</span> All levels</div>
+        </div>
+        <div class="book-divider"></div>
+        <div class="preview-row">
+          <span class="preview-link">Preview Guide</span>
+          <span class="preview-arrow">›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Book 6: Paid -->
+    <div class="book-card" onclick="openBook('habits')">
+      <div class="book-cover-img cover-warm">
+        <div class="cover-brand">zenplato</div>
+        <div class="cover-title-text">The<br/>Rhythm<br/>Method</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end">
+          <div style="font-size:9px;color:rgba(238,234,226,0.35);font-family:'Jost',sans-serif;font-weight:300;letter-spacing:0.08em;max-width:130px;line-height:1.5">Build sustainable eating habits without restriction or guilt.</div>
+          <div class="cover-z">Z</div>
+        </div>
+      </div>
+      <div class="price-badge">₹349</div>
+      <div class="book-card-body">
+        <div class="book-card-title">The Rhythm Method</div>
+        <div class="book-card-desc">Build sustainable eating habits without restriction — a behavioural approach to lasting change.</div>
+        <div class="book-card-meta">
+          <div class="meta-item"><span class="meta-icon">⏱</span> 42 min read</div>
+          <div class="meta-item"><span class="meta-icon">◎</span> Intermediate</div>
+        </div>
+        <div class="book-divider"></div>
+        <div class="preview-row">
+          <span class="preview-link">Preview Guide</span>
+          <span class="preview-arrow">›</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- QUOTE -->
+  <div class="quote-strip">
+    <div class="quote-mark-open">"</div>
+    <p class="quote-text">The goal isn't to eat perfectly. The goal is to understand your food well enough that healthy choices become <em>effortless.</em></p>
+    <div class="quote-rule" style="margin-top:20px"></div>
+    <div class="quote-mark-close">"</div>
+  </div>
+
+  <!-- FOUNDING READER -->
+  <div class="founding-section">
+    <div class="founding-card">
+      <div>
+        <div class="founding-label">Early Access</div>
+        <h2 class="founding-headline">Become a<br/><span>Founding Reader</span></h2>
+      </div>
+      <div>
+        <p class="founding-body">Join early access and receive exclusive Zenplato guides, recipes, and educational content before public release. Founding members get early pricing and a hand in shaping the platform.</p>
+        <div class="founding-divider"></div>
+        <button class="btn-founding" onclick="openBook('mindful')">
+          Join Early Access <span class="btn-founding-arrow">›</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-home -->
+
+
+<!-- ══════════════════════════════════════════
+     PAGE 2: BOOK DETAIL + CHECKOUT
+══════════════════════════════════════════ -->
+<div id="page-detail" class="page">
+
+  <nav class="site-nav">
+    <a class="nav-logo" href="#">Zenplato</a>
+    <ul class="nav-links">
+      <li><a href="#">About</a></li>
+      <li><a href="#">The Library</a></li>
+      <li><a href="#">How It Works</a></li>
+    </ul>
+    <button class="nav-cta">Join Early Access</button>
+  </nav>
+
+  <button class="back-btn" onclick="goHome()">
+    <span>‹</span> Back to The Library
+  </button>
+
+  <div class="detail-layout">
+
+    <!-- LEFT: Book info (dynamic) -->
+    <div class="detail-book-preview">
+      <div class="detail-cover" id="detail-cover-el">
+        <!-- filled by JS -->
+      </div>
+
+      <div class="detail-meta-row">
+        <div class="detail-meta-item">
+          <div class="detail-meta-label">Read Time</div>
+          <div class="detail-meta-val" id="detail-read-time">—</div>
+        </div>
+        <div class="detail-meta-item">
+          <div class="detail-meta-label">Level</div>
+          <div class="detail-meta-val" id="detail-level">—</div>
+        </div>
+        <div class="detail-meta-item">
+          <div class="detail-meta-label">Format</div>
+          <div class="detail-meta-val">PDF</div>
+        </div>
+      </div>
+
+      <div class="detail-price-row">
+        <div class="detail-price" id="detail-price">₹299</div>
+        <div class="detail-price-orig" id="detail-price-orig"></div>
+      </div>
+      <div class="detail-price-note" id="detail-price-note"></div>
+
+      <div class="what-inside">
+        <div class="wi-title">What's Inside</div>
+        <ul class="wi-list" id="detail-inside-list">
+          <!-- filled by JS -->
+        </ul>
+      </div>
+    </div>
+
+    <!-- RIGHT: Multi-step form -->
+    <div class="detail-form-col">
+
+      <h2 class="form-section-title" id="form-headline">Get your<br/><em>guide.</em></h2>
+      <p class="form-section-sub" id="form-subline">Fill in your details below. We'll personalise your experience and send your guide instantly.</p>
+
+      <!-- Steps -->
+      <div class="form-steps">
+        <div class="step-item">
+          <div class="step-num active" id="snum-1">1</div>
+          <div class="step-label active" id="slabel-1">Your Details</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+          <div class="step-num inactive" id="snum-2">2</div>
+          <div class="step-label" id="slabel-2">Personalise</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+          <div class="step-num inactive" id="snum-3">3</div>
+          <div class="step-label" id="slabel-3">Get It</div>
+        </div>
+      </div>
+
+      <!-- STEP 1: Contact details -->
+      <div class="form-panel active" id="panel-1">
+        <div class="field-group">
+          <div class="field-row">
+            <div class="field">
+              <label>First Name</label>
+              <input type="text" placeholder="Priya" id="inp-fname"/>
+            </div>
+            <div class="field">
+              <label>Last Name</label>
+              <input type="text" placeholder="Sharma" id="inp-lname"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Email Address</label>
+            <input type="email" placeholder="priya@example.com" id="inp-email"/>
+          </div>
+          <div class="field">
+            <label>Phone Number</label>
+            <div class="phone-row">
+              <select class="phone-code" id="inp-code">
+                <option value="+91">🇮🇳 +91</option>
+                <option value="+1">🇺🇸 +1</option>
+                <option value="+44">🇬🇧 +44</option>
+                <option value="+971">🇦🇪 +971</option>
+                <option value="+65">🇸🇬 +65</option>
+                <option value="+61">🇦🇺 +61</option>
+                <option value="+49">🇩🇪 +49</option>
+                <option value="+33">🇫🇷 +33</option>
+                <option value="+81">🇯🇵 +81</option>
+                <option value="+86">🇨🇳 +86</option>
+                <option value="+55">🇧🇷 +55</option>
+                <option value="+27">🇿🇦 +27</option>
+              </select>
+              <input type="tel" placeholder="98765 43210" id="inp-phone" class="phone-num"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Country</label>
+            <select id="inp-country">
+              <option value="">Select your country</option>
+              <option value="IN" selected>India</option>
+              <option value="US">United States</option>
+              <option value="GB">United Kingdom</option>
+              <option value="AE">UAE</option>
+              <option value="SG">Singapore</option>
+              <option value="AU">Australia</option>
+              <option value="CA">Canada</option>
+              <option value="DE">Germany</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="consent-row">
+          <input type="checkbox" class="consent-check" id="chk-consent"/>
+          <label class="consent-text" for="chk-consent">
+            I agree to receive my guide and occasional wellness insights from Zenplato. No spam — ever. <a href="#">Privacy Policy.</a>
+          </label>
+        </div>
+
+        <button class="btn-next" onclick="goStep(2)">
+          Continue <span class="btn-next-arrow">›</span>
+        </button>
+      </div>
+
+      <!-- STEP 2: Personalisation -->
+      <div class="form-panel" id="panel-2">
+
+        <div class="persona-question">
+          <div class="persona-q-label">What best describes your current health focus?</div>
+          <div class="persona-options" id="pq-focus">
+            <div class="persona-opt" onclick="selectOpt(this,'focus')">Weight management</div>
+            <div class="persona-opt" onclick="selectOpt(this,'focus')">Managing a condition</div>
+            <div class="persona-opt" onclick="selectOpt(this,'focus')">Better gut health</div>
+            <div class="persona-opt" onclick="selectOpt(this,'focus')">More energy</div>
+            <div class="persona-opt" onclick="selectOpt(this,'focus')">Preventive health</div>
+            <div class="persona-opt" onclick="selectOpt(this,'focus')">General wellness</div>
+          </div>
+        </div>
+
+        <div class="persona-question">
+          <div class="persona-q-label">Do you have any of these conditions? <span style="font-size:13px;color:var(--ink3);font-style:italic;font-family:'Cormorant Garamond',serif">(Select all that apply)</span></div>
+          <div class="persona-options" id="pq-condition">
+            <div class="persona-opt multi" onclick="toggleMulti(this)">PCOS / PCOD</div>
+            <div class="persona-opt multi" onclick="toggleMulti(this)">Diabetes / Pre-diabetes</div>
+            <div class="persona-opt multi" onclick="toggleMulti(this)">Thyroid</div>
+            <div class="persona-opt multi" onclick="toggleMulti(this)">Hypertension</div>
+            <div class="persona-opt multi" onclick="toggleMulti(this)">High Cholesterol</div>
+            <div class="persona-opt multi" onclick="toggleMulti(this)">Fatty Liver</div>
+            <div class="persona-opt multi" onclick="toggleMulti(this)">Gut / Acidity</div>
+            <div class="persona-opt multi" onclick="toggleMulti(this)">Anemia</div>
+            <div class="persona-opt multi" onclick="toggleMulti(this)">None of these</div>
+          </div>
+        </div>
+
+        <div class="persona-question">
+          <div class="persona-q-label">What's your food preference?</div>
+          <div class="persona-options" id="pq-food">
+            <div class="persona-opt" onclick="selectOpt(this,'food')">Vegetarian</div>
+            <div class="persona-opt" onclick="selectOpt(this,'food')">Non-Vegetarian</div>
+            <div class="persona-opt" onclick="selectOpt(this,'food')">Vegan</div>
+            <div class="persona-opt" onclick="selectOpt(this,'food')">Jain</div>
+            <div class="persona-opt" onclick="selectOpt(this,'food')">Eggetarian</div>
+          </div>
+        </div>
+
+        <div class="persona-question">
+          <div class="persona-q-label">How would you describe your cooking comfort?</div>
+          <div class="persona-options" id="pq-cook">
+            <div class="persona-opt" onclick="selectOpt(this,'cook')">I barely cook</div>
+            <div class="persona-opt" onclick="selectOpt(this,'cook')">Simple meals only</div>
+            <div class="persona-opt" onclick="selectOpt(this,'cook')">Comfortable in the kitchen</div>
+            <div class="persona-opt" onclick="selectOpt(this,'cook')">I love cooking</div>
+          </div>
+        </div>
+
+        <button class="btn-next" onclick="goStep(3)" style="margin-top:8px">
+          Continue <span class="btn-next-arrow">›</span>
+        </button>
+        <button class="btn-back-step" onclick="goStep(1)" style="margin-top:10px">← Back</button>
+      </div>
+
+      <!-- STEP 3: Payment / Download -->
+      <div class="form-panel" id="panel-3">
+
+        <div id="payment-area">
+          <!-- Free book: skip payment -->
+          <div id="free-area" style="display:none">
+            <div class="pricing-note">
+              <p>✓ <strong>This guide is completely free.</strong> No card needed. We'll send it straight to your inbox.</p>
+            </div>
+          </div>
+
+          <!-- Paid book: show payment -->
+          <div id="paid-area">
+            <div class="pricing-note">
+              <p><strong id="pay-book-title">Decode Your Plate</strong> — <strong id="pay-price-disp">₹299</strong><br/>One-time payment. Instant PDF download. No subscription.</p>
+            </div>
+
+            <div class="wi-title" style="margin-bottom:14px">Pay With</div>
+            <div class="payment-methods">
+              <div class="pay-method selected" onclick="selPayMethod(this)">
+                <div class="pay-icon">📱</div>
+                <div class="pay-label">UPI</div>
+              </div>
+              <div class="pay-method" onclick="selPayMethod(this)">
+                <div class="pay-icon">💳</div>
+                <div class="pay-label">Card</div>
+              </div>
+              <div class="pay-method" onclick="selPayMethod(this)">
+                <div class="pay-icon">🏦</div>
+                <div class="pay-label">Net Banking</div>
+              </div>
+            </div>
+
+            <div class="field" style="margin-bottom:20px" id="upi-field">
+              <label>UPI ID</label>
+              <input type="text" placeholder="yourname@upi"/>
+            </div>
+
+            <div id="card-fields" style="display:none">
+              <div class="field-group">
+                <div class="field">
+                  <label>Card Number</label>
+                  <input type="text" placeholder="•••• •••• •••• ••••"/>
+                </div>
+                <div class="field-row">
+                  <div class="field">
+                    <label>Expiry</label>
+                    <input type="text" placeholder="MM / YY"/>
+                  </div>
+                  <div class="field">
+                    <label>CVV</label>
+                    <input type="text" placeholder="•••"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="consent-row" style="margin-top:16px">
+            <input type="checkbox" class="consent-check" id="chk-terms" checked/>
+            <label class="consent-text" for="chk-terms">
+              I agree to Zenplato's <a href="#">Terms of Service</a> and understand this is a digital download with no refund once accessed.
+            </label>
+          </div>
+
+          <button class="btn-next" id="final-btn" onclick="showSuccess()" style="margin-top:4px">
+            <span id="final-btn-text">Pay & Download</span> <span class="btn-next-arrow">›</span>
+          </button>
+          <button class="btn-back-step" onclick="goStep(2)" style="margin-top:10px">← Back</button>
+        </div>
+
+        <!-- SUCCESS -->
+        <div id="success-area" style="display:none">
+          <div class="success-screen">
+            <div class="success-icon">✓</div>
+            <h2 class="success-headline">
+              Your guide<br/><em>is on its way.</em>
+            </h2>
+            <p class="success-sub">Check your inbox at <strong id="success-email"></strong>. Your PDF will arrive within 2 minutes. Check spam if you don't see it.</p>
+            <a class="success-download" href="#">
+              Download Now ›
+            </a>
+            <p class="success-note">You can also access all your guides from your Zenplato account.</p>
+          </div>
+        </div>
+
+      </div><!-- /panel-3 -->
+
+    </div><!-- /detail-form-col -->
+  </div><!-- /detail-layout -->
+</div><!-- /page-detail -->
+
+
+<script>
+// ── BOOK DATA ──────────────────────────────
+const books = {
+  mindful: {
+    title:'The Mindful Eating Handbook',
+    coverClass:'cover-dark',
+    coverTitleColor:'#EEEAE2',
+    price:0, priceDisplay:'Free', priceOrig:'₹199', priceNote:'Yours always, no card needed',
+    readTime:'48 min', level:'Beginner',
+    inside:[
+      'How to tune into real hunger vs. emotional hunger',
+      'The 5 mindful eating principles explained simply',
+      'A 7-day awareness journal template',
+      'How to eat slowly — and actually enjoy it',
+      'Building a calmer relationship with food'
+    ],
+    isFree:true
+  },
+  decode: {
+    title:'Decode Your Plate',
+    coverClass:'cover-cream',
+    coverTitleColor:'#1C1A15',
+    price:299, priceDisplay:'₹299', priceOrig:'₹499', priceNote:'Early access price — save ₹200',
+    readTime:'36 min', level:'Beginner',
+    inside:[
+      'What your plate\'s macros are actually doing for you',
+      'Condition-specific meal building — PCOS, diabetes, thyroid',
+      'Portion sizes without obsessive measuring',
+      'The swap library: healthier versions of everyday meals',
+      'Regional Indian meal templates'
+    ],
+    isFree:false
+  },
+  antiinflam: {
+    title:'Everyday Anti-Inflammatory Recipes',
+    coverClass:'cover-olive',
+    coverTitleColor:'#EEEAE2',
+    price:499, priceDisplay:'₹499', priceOrig:'₹799', priceNote:'Early access price — save ₹300',
+    readTime:'60 min', level:'Intermediate',
+    inside:[
+      '40+ simple anti-inflammatory recipes for Indian kitchens',
+      'Ingredients that calm vs. trigger inflammation',
+      'Weekly meal plan for gut and joint recovery',
+      'Ingredient sourcing guide for Indian grocery stores',
+      'How to batch cook for the whole week'
+    ],
+    isFree:false
+  },
+  kitchen: {
+    title:'The Zenplato Kitchen Guide',
+    coverClass:'cover-cream',
+    coverTitleColor:'#1C1A15',
+    price:199, priceDisplay:'₹199', priceOrig:'₹349', priceNote:'Early access price — save ₹150',
+    readTime:'30 min', level:'Beginner',
+    inside:[
+      'The 20 pantry essentials every healthy kitchen needs',
+      'Smart ingredient swaps for common unhealthy staples',
+      'Tools worth buying vs. overhyped gadgets',
+      'How to read food labels without getting confused',
+      'Budget-friendly healthy grocery list'
+    ],
+    isFree:false
+  },
+  condition: {
+    title:'Eat for Your Condition',
+    coverClass:'cover-rust',
+    coverTitleColor:'#EEEAE2',
+    price:599, priceDisplay:'₹599', priceOrig:'₹999', priceNote:'Early access price — save ₹400',
+    readTime:'75 min', level:'All levels',
+    inside:[
+      'Dietary protocols for 12 conditions: PCOS, diabetes, thyroid, gut & more',
+      'Foods to eat and avoid for each condition — with reasons',
+      'Conflict resolution when you have multiple conditions',
+      '7-day meal plans customised per condition',
+      'Blood test markers to track with your doctor'
+    ],
+    isFree:false
+  },
+  habits: {
+    title:'The Rhythm Method',
+    coverClass:'cover-warm',
+    coverTitleColor:'#EEEAE2',
+    price:349, priceDisplay:'₹349', priceOrig:'₹549', priceNote:'Early access price — save ₹200',
+    readTime:'42 min', level:'Intermediate',
+    inside:[
+      'The science of why diets fail — and what actually works',
+      'Building a meal habit stack that fits your life',
+      'Eating mindfully at social events and while travelling',
+      'The identity shift: from dieter to intuitive eater',
+      'How to restart after a slip — without guilt'
+    ],
+    isFree:false
+  }
+};
+
+let currentBook = null;
+
+// ── NAVIGATION ──────────────────────────────
+function openBook(key){
+  currentBook = books[key];
+  renderDetailPage(currentBook);
+  document.getElementById('page-home').classList.remove('active');
+  document.getElementById('page-detail').classList.add('active');
+  window.scrollTo(0,0);
+  goStep(1);
+}
+
+function goHome(){
+  document.getElementById('page-detail').classList.remove('active');
+  document.getElementById('page-home').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ── RENDER DETAIL PAGE ──────────────────────
+function renderDetailPage(b){
+  // Cover
+  const cov = document.getElementById('detail-cover-el');
+  const titleColor = b.coverTitleColor;
+  const brandColor = b.coverClass==='cover-cream'||b.coverClass==='cover-sage'
+    ? 'rgba(28,26,21,0.4)' : 'rgba(238,234,226,0.45)';
+  cov.className = 'detail-cover '+b.coverClass;
+  cov.innerHTML=`
+    <div>
+      <div style="font-size:9px;letter-spacing:0.28em;text-transform:uppercase;font-family:'Jost',sans-serif;font-weight:300;color:${brandColor}">zenplato</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:36px;line-height:1.1;color:${titleColor};margin-top:16px">${b.title}</div>
+    </div>
+    <div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;font-family:'Jost',sans-serif;font-weight:300;opacity:0.35;color:${titleColor}">zenplato guide</div>
+  `;
+
+  // Meta
+  document.getElementById('detail-read-time').textContent = b.readTime;
+  document.getElementById('detail-level').textContent = b.level;
+  document.getElementById('detail-price').textContent = b.priceDisplay;
+  document.getElementById('detail-price-orig').textContent = b.priceOrig;
+  document.getElementById('detail-price-note').textContent = b.priceNote;
+  document.getElementById('detail-price-note').style.color = b.isFree ? '#5A6A3A' : '#5A6A3A';
+
+  // Inside list
+  const ul = document.getElementById('detail-inside-list');
+  ul.innerHTML = b.inside.map(i=>`<li>${i}</li>`).join('');
+
+  // Form headline
+  document.getElementById('form-headline').innerHTML = b.isFree
+    ? 'Get your<br/><em>free guide.</em>'
+    : 'Get your<br/><em>guide.</em>';
+  document.getElementById('form-subline').textContent = b.isFree
+    ? 'Fill in your details and answer a few quick questions. Your PDF will be in your inbox instantly — free, always.'
+    : 'Fill in your details and we\'ll personalise your guide. Secure payment. Instant PDF download.';
+
+  // Step 3 payment area
+  document.getElementById('free-area').style.display = b.isFree ? 'block' : 'none';
+  document.getElementById('paid-area').style.display = b.isFree ? 'none' : 'block';
+  document.getElementById('pay-book-title').textContent = b.title;
+  document.getElementById('pay-price-disp').textContent = b.priceDisplay;
+  document.getElementById('final-btn-text').textContent = b.isFree ? 'Send My Free Guide' : 'Pay & Download';
+}
+
+// ── STEP NAVIGATION ──────────────────────────
+function goStep(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById('panel-'+i).classList.toggle('active', i===n);
+    const snum = document.getElementById('snum-'+i);
+    const slabel = document.getElementById('slabel-'+i);
+    if(i<n){ snum.className='step-num done'; snum.textContent='✓'; }
+    else if(i===n){ snum.className='step-num active'; snum.textContent=i; slabel.classList.add('active'); }
+    else{ snum.className='step-num inactive'; snum.textContent=i; slabel.classList.remove('active'); }
+  });
+  document.getElementById('success-area').style.display='none';
+  document.getElementById('payment-area').style.display='block';
+  window.scrollTo(0,120);
+}
+
+// ── OPTION SELECTION ─────────────────────────
+function selectOpt(el, group){
+  el.closest('.persona-options').querySelectorAll('.persona-opt:not(.multi)').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function toggleMulti(el){
+  el.classList.toggle('selected');
+}
+
+// ── PAYMENT METHOD ───────────────────────────
+function selPayMethod(el){
+  document.querySelectorAll('.pay-method').forEach(m=>m.classList.remove('selected'));
+  el.classList.add('selected');
+  const label = el.querySelector('.pay-label').textContent.trim();
+  document.getElementById('upi-field').style.display = label==='UPI' ? 'block' : 'none';
+  document.getElementById('card-fields').style.display = label==='Card' ? 'block' : 'none';
+}
+
+// ── SUCCESS ──────────────────────────────────
+function showSuccess(){
+  const email = document.getElementById('inp-email').value || 'your inbox';
+  document.getElementById('success-email').textContent = email;
+  document.getElementById('payment-area').style.display='none';
+  document.getElementById('success-area').style.display='block';
+  // Mark step 3 done
+  const snum3 = document.getElementById('snum-3');
+  snum3.className='step-num done'; snum3.textContent='✓';
+}
+</script>
+</body>
+</html>

@@ -8,6 +8,7 @@ from app.api.healthcare import router as healthcare_router
 from app.api.tracking import router as tracking_router
 from app.api.meal_plans import router as meal_plan_router
 from app.api.ai import router as ai_router
+from app.api.ebook import router as ebook_router
 import logging
 
 app = FastAPI(title="NutriVerse API", version="2.0")
@@ -30,6 +31,7 @@ app.include_router(healthcare_router, prefix="/api")
 app.include_router(tracking_router, prefix="/api")
 app.include_router(meal_plan_router, prefix="/api")
 app.include_router(ai_router, prefix="/api")
+app.include_router(ebook_router, prefix="/api")
 
 @app.get("/api")
 async def root():

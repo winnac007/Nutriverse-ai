@@ -1,7 +1,7 @@
 from typing import Optional
 from fastapi import APIRouter, HTTPException
 from app.services.recipe_service import (
-    search_recipes, normalize_spoonacular_recipe, get_spoonacular_recipe_by_id
+    search_recipes, normalize_spoonacular_recipe, get_spoonacular_recipe_by_id, get_recipe_by_id
 )
 from app.core.config import settings
 from app.core.database import db
@@ -69,6 +69,8 @@ async def list_recipes(
     # Local recipes are already normalized, but we might still get some from cache/legacy
     normalized = []
     for r in results:
+        if "_id" in r:
+            r["_id"] = str(r["_id"])
         if r.get("source") == "spoonacular":
             normalized.append(normalize_spoonacular_recipe(r, category=active_category))
         else:
@@ -122,6 +124,9 @@ async def recipe_detail(recipe_id: str):
 
     if not recipe:
         raise HTTPException(404, "Recipe not found")
+        
+    if "_id" in recipe:
+        recipe["_id"] = str(recipe["_id"])
     
     if recipe.get("source") == "spoonacular":
         return normalize_spoonacular_recipe(recipe)

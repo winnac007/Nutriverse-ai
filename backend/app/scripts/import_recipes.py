@@ -30,23 +30,40 @@ async def enrich_nutrition_usda(ingredients: List[str]) -> Dict[str, float]:
     # use the data provided in the Food.com dataset if available.
     return {}
 
+# FDA Daily Values — used to convert Food.com's % Daily Value back to absolute units.
+# Food.com stores everything except calories as PDV (% of these), NOT grams.
+FDA_DAILY_VALUES = {
+    "fat": 78.0,            # g
+    "sugar": 50.0,          # g
+    "sodium": 2300.0,       # mg
+    "protein": 50.0,        # g
+    "saturated_fat": 20.0,  # g
+    "carbs": 275.0,         # g
+}
+
+
 def parse_nutrition(nutr_str: str) -> Dict[str, float]:
     """
-    Parses Food.com nutrition string: 
-    [calories (kcal), total fat (PDV), sugar (PDV), sodium (PDV), protein (PDV), saturated fat (PDV), carbohydrates (PDV)]
+    Parses Food.com nutrition string and converts PDV -> absolute units:
+    [calories (kcal), total fat (PDV), sugar (PDV), sodium (PDV),
+     protein (PDV), saturated fat (PDV), carbohydrates (PDV)]
+    Only calories is already absolute (kcal). The rest are % Daily Value,
+    so grams = PDV/100 * FDA daily value. (sodium is mg.)
     """
     try:
         vals = ast.literal_eval(nutr_str)
+        if not isinstance(vals, list) or len(vals) < 7:
+            return {}
         return {
-            "calories": vals[0],
-            "fat": vals[1],
-            "sugar": vals[2],
-            "sodium": vals[3],
-            "protein": vals[4],
-            "saturated_fat": vals[5],
-            "carbs": vals[6]
+            "calories": round(float(vals[0])),
+            "fat": round(float(vals[1]) / 100 * FDA_DAILY_VALUES["fat"], 1),
+            "sugar": round(float(vals[2]) / 100 * FDA_DAILY_VALUES["sugar"], 1),
+            "sodium": round(float(vals[3]) / 100 * FDA_DAILY_VALUES["sodium"]),
+            "protein": round(float(vals[4]) / 100 * FDA_DAILY_VALUES["protein"], 1),
+            "saturated_fat": round(float(vals[5]) / 100 * FDA_DAILY_VALUES["saturated_fat"], 1),
+            "carbs": round(float(vals[6]) / 100 * FDA_DAILY_VALUES["carbs"], 1),
         }
-    except:
+    except Exception:
         return {}
 
 async def import_recipes(csv_path: str):
@@ -54,10 +71,11 @@ async def import_recipes(csv_path: str):
     db = client[settings.DB_NAME]
     collection = db.recipes
 
-    # Create indexes as per recommendation
     await collection.create_index([("title", "text"), ("tags", "text"), ("cuisine", 1)])
     await collection.create_index([("nutrition.calories", 1), ("cuisine", 1), ("cook_time", 1)])
-    await collection.create_index([("diets", 1), ("intolerances", 1)])
+    # separate indexes — MongoDB forbids compound index on two array fields
+    await collection.create_index([("diets", 1)])
+    await collection.create_index([("intolerances", 1)])
 
     if not os.path.exists(csv_path):
         logger.error(f"File not found: {csv_path}")
@@ -89,9 +107,10 @@ async def import_recipes(csv_path: str):
                     "local_id": row['id'],
                     "title": row['name'].title(),
                     "description": row['description'][:200] if row['description'] else "",
-                    "image": f"https://source.unsplash.com/featured/?{row['name'].split()[0]},food", # Placeholder image
+                    "image": "",  # Food.com dataset has no images; source.unsplash.com is dead. Frontend falls back. Enrich later.
                     "category": "healthcare", # Default category to match expected normalized schema
                     "cuisine": cuisine,
+                    "featured": False,  # long-tail; MealDB (featured) recipes surface first
                     "prep_minutes": 0,
                     "cook_time": int(row['minutes']),
                     "servings": 1,
@@ -121,5 +140,5 @@ async def import_recipes(csv_path: str):
     logger.info(f"Successfully imported {count} recipes.")
 
 if __name__ == "__main__":
-    csv_file = "RAW_recipes.csv" # Adjust path as needed
+    csv_file = "../archive/RAW_recipes.csv" # Adjusted path to point to the archive folder
     asyncio.run(import_recipes(csv_file))

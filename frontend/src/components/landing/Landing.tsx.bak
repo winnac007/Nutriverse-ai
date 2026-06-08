@@ -1,0 +1,27 @@
+import { Nav } from "./Nav";
+import { Hero } from "./Hero";
+import { Journeys } from "./Journeys";
+import { Healthcare } from "./Healthcare";
+import { Fitness } from "./Fitness";
+import { Discover } from "./Discover";
+import { Recipes } from "./Recipes";
+import { Personalization } from "./Personalization";
+import { Pricing } from "./Pricing";
+import { Footer } from "./Footer";
+
+export function Landing() {
+  return (
+    <main className="bg-ivory text-espresso overflow-x-hidden">
+      <Nav />
+      <Hero />
+      <Journeys />
+      <Healthcare />
+      <Fitness />
+      <Discover />
+      <Recipes />
+      <Personalization />
+      <Pricing />
+      <Footer />
+    </main>
+  );
+}

@@ -403,6 +403,20 @@ export default function Home() {
           </div>
         )}
 
+        {/* ── Health Guides CTA ───────────────────────── */}
+        <Link href="/app/ebook" style={{ textDecoration: "none", display: "block" }}>
+          <div style={{ background: "linear-gradient(135deg, #1A0E2E 0%, #2A1442 100%)", borderRadius: "1.1rem", padding: "1.1rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 4px 16px rgba(80,40,120,0.22)", border: "1px solid rgba(180,120,220,0.15)" }}>
+            <div style={{ minWidth: 0 }}>
+              <p style={{ fontFamily: "'DM Sans'", fontSize: "0.58rem", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(200,160,255,0.6)", margin: "0 0 0.2rem" }}>New · Clinical Guide</p>
+              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.05rem", color: "#EAD8FF", margin: 0 }}>Your Health Guide</p>
+              <p style={{ fontFamily: "'DM Sans'", fontSize: "0.73rem", color: "rgba(200,160,255,0.55)", margin: "0.1rem 0 0" }}>Personalised to your condition</p>
+            </div>
+            <div style={{ width: 40, height: 40, minWidth: 40, borderRadius: "50%", background: "rgba(180,120,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", marginLeft: "0.75rem" }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C4A0FF" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+          </div>
+        </Link>
+
         {/* ── Explore CTA ─────────────────────────────── */}
         <Link href="/app/explore" style={{ textDecoration: "none", display: "block" }}>
           <div style={{ background: "linear-gradient(135deg, #3D5C3E 0%, #2D4A2E 100%)", borderRadius: "1.1rem", padding: "1.1rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 4px 16px rgba(61,92,62,0.22)" }}>

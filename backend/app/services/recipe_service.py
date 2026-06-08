@@ -189,7 +189,8 @@ async def search_recipes(
         mongo_query["nutrition.protein"] = {"$gte": 20}
     
     try:
-        cursor = db.recipes.find(mongo_query).skip(offset).limit(number)
+        # Featured (TheMealDB, real photos) surface first; Food.com long-tail after.
+        cursor = db.recipes.find(mongo_query).sort("featured", -1).skip(offset).limit(number)
         results = await cursor.to_list(length=number)
         return results
     except Exception as e:

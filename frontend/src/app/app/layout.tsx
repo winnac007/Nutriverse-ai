@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import BottomNav from "@/components/BottomNav";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+  const isEbook = pathname?.startsWith("/app/ebook");
 
   useEffect(() => {
     if (!loading) {
@@ -40,10 +42,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#FAF7F0" }}>
+    <div style={{ minHeight: "100vh", background: isEbook ? "#0A0D16" : "#FAF7F0" }}>
       <main
-        className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto"
-        style={{ paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
+        className={isEbook ? "" : "max-w-md md:max-w-2xl lg:max-w-4xl mx-auto"}
+        style={isEbook ? {} : { paddingBottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
       >
         {children}
       </main>
