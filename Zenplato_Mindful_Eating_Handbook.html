@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Mindful Eating Handbook · Zenplato</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,400..600&family=Hanken+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F1E8; --paper-2:#FBF6EE; --ink:#26211B; --ink-soft:#5E5447; --ink-faint:#8C8071;
+    --clay:#BC5B38; --clay-soft:#D58A6B; --forest:#3F5247; --forest-soft:#5E7264;
+    --plum:#6C4F5C; --ochre:#C8943C; --gold:#B9882E;
+    --sand:#EEE4D4; --sage-tint:#E6EBE0; --clay-tint:#F4E4D9; --plum-tint:#EFE7E9; --ochre-tint:#F5EAD3;
+    --line:#DCD0BD; --line-soft:#E7DDCC;
+    --shadow:0 1px 2px rgba(38,33,27,.04), 0 10px 30px -14px rgba(38,33,27,.18);
+    --shadow-lg:0 2px 4px rgba(38,33,27,.05), 0 30px 64px -22px rgba(38,33,27,.30);
+    --serif:'Fraunces',Georgia,serif; --sans:'Hanken Grotesk',-apple-system,sans-serif;
+    --maxw:980px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
+    font-size:17px; line-height:1.62; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+    background-image:
+      radial-gradient(120% 80% at 12% -5%, rgba(200,148,60,.10), transparent 55%),
+      radial-gradient(120% 90% at 95% 6%, rgba(188,91,56,.08), transparent 50%);
+    background-attachment:fixed;
+  }
+  /* film grain */
+  body::after{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:9; opacity:.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection{background:var(--clay); color:var(--paper-2);}
+
+  /* progress + nav */
+  .progress{position:fixed; top:0; left:0; height:3px; width:0; z-index:60;
+    background:linear-gradient(90deg,var(--clay),var(--ochre)); transition:width .1s linear;}
+  .nav{position:fixed; top:0; left:0; right:0; z-index:50; display:flex; align-items:center;
+    justify-content:space-between; padding:14px clamp(18px,5vw,40px);
+    background:rgba(247,241,232,.72); backdrop-filter:blur(14px) saturate(140%);
+    border-bottom:1px solid transparent; transition:border-color .3s, background .3s; transform:translateY(-110%); }
+  .nav.show{transform:translateY(0); border-color:var(--line-soft);}
+  .nav .wm{font-family:var(--sans); font-weight:800; letter-spacing:.34em; font-size:12px; color:var(--ink);}
+  .nav .wm span{color:var(--clay);}
+  .nav .menu-btn{display:inline-flex; align-items:center; gap:9px; border:1px solid var(--line);
+    background:var(--paper-2); color:var(--ink); font-family:var(--sans); font-weight:600; font-size:13px;
+    padding:8px 15px; border-radius:100px; cursor:pointer; transition:.2s;}
+  .nav .menu-btn:hover{border-color:var(--clay); color:var(--clay);}
+  .menu-btn svg{width:14px; height:14px;}
+
+  /* TOC drawer */
+  .scrim{position:fixed; inset:0; background:rgba(38,33,27,.42); backdrop-filter:blur(2px);
+    z-index:70; opacity:0; pointer-events:none; transition:opacity .3s;}
+  .scrim.open{opacity:1; pointer-events:auto;}
+  .drawer{position:fixed; top:0; right:0; height:100%; width:min(380px,86vw); z-index:80;
+    background:var(--paper-2); border-left:1px solid var(--line); box-shadow:var(--shadow-lg);
+    transform:translateX(105%); transition:transform .42s cubic-bezier(.22,1,.36,1);
+    padding:30px 28px; overflow-y:auto;}
+  .drawer.open{transform:translateX(0);}
+  .drawer h4{font-family:var(--sans); text-transform:uppercase; letter-spacing:.26em; font-size:11px;
+    color:var(--ink-faint); margin:0 0 20px;}
+  .drawer .close{position:absolute; top:22px; right:22px; border:none; background:none; cursor:pointer;
+    color:var(--ink-soft); font-size:22px; line-height:1;}
+  .drawer a{display:flex; gap:14px; align-items:baseline; text-decoration:none; color:var(--ink-soft);
+    padding:11px 0; border-bottom:1px solid var(--line-soft); transition:.18s;}
+  .drawer a:hover{color:var(--clay); padding-left:6px;}
+  .drawer a .n{font-family:var(--serif); font-weight:600; font-size:15px; color:var(--clay); width:26px; flex:none;
+    font-variant-numeric:tabular-nums;}
+  .drawer a .t{font-weight:500; font-size:15px; line-height:1.3;}
+  .drawer a.lead .t{font-style:italic; font-family:var(--serif);}
+
+  /* layout */
+  section{position:relative;}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 clamp(20px,5vw,40px);}
+  .reveal{opacity:0; transform:translateY(22px); transition:opacity .8s cubic-bezier(.22,1,.36,1), transform .8s cubic-bezier(.22,1,.36,1);}
+  .reveal.in{opacity:1; transform:none;}
+
+  /* ===== COVER ===== */
+  .cover{min-height:100svh; display:flex; flex-direction:column; justify-content:center;
+    padding:80px clamp(22px,6vw,60px) 60px; position:relative; overflow:hidden;}
+  .cover .botanical{position:absolute; right:-60px; top:50%; transform:translateY(-50%);
+    width:min(620px,70vw); opacity:.16; pointer-events:none; color:var(--forest);}
+  .cover-wm{font-weight:800; letter-spacing:.5em; font-size:13px; color:var(--clay); margin-bottom:auto;}
+  .cover-inner{max-width:760px; margin:auto 0;}
+  .cover .eyebrow{display:inline-block; font-size:12px; letter-spacing:.24em; text-transform:uppercase;
+    color:var(--ink-faint); border:1px solid var(--line); border-radius:100px; padding:7px 16px; margin-bottom:28px;}
+  .cover h1{font-family:var(--serif); font-weight:300; font-size:clamp(46px,9vw,104px); line-height:.96;
+    letter-spacing:-.02em; margin:0 0 6px; color:var(--ink); font-optical-sizing:auto;}
+  .cover h1 em{font-style:italic; font-weight:400; color:var(--clay);}
+  .cover .sub{font-family:var(--serif); font-style:italic; font-weight:400; font-size:clamp(19px,3.4vw,28px);
+    color:var(--ink-soft); margin:14px 0 30px;}
+  .cover .promises{display:flex; flex-wrap:wrap; gap:10px 26px; margin:0 0 36px;}
+  .cover .promises span{display:inline-flex; align-items:center; gap:9px; font-weight:600; font-size:14.5px; color:var(--ink-soft);}
+  .cover .promises i{width:6px; height:6px; border-radius:50%; background:var(--clay); display:inline-block;}
+  .cover .bundle{font-size:13.5px; letter-spacing:.04em; color:var(--ink-faint);}
+  .cover .bundle b{color:var(--forest); font-weight:700;}
+  .scrollcue{position:absolute; bottom:26px; left:50%; transform:translateX(-50%); display:flex;
+    flex-direction:column; align-items:center; gap:8px; color:var(--ink-faint); font-size:11px;
+    letter-spacing:.2em; text-transform:uppercase;}
+  .scrollcue .line{width:1px; height:34px; background:linear-gradient(var(--ink-faint),transparent); animation:cue 2.2s ease-in-out infinite;}
+  @keyframes cue{0%,100%{transform:scaleY(.4); opacity:.4; transform-origin:top;}50%{transform:scaleY(1); opacity:1; transform-origin:top;}}
+
+  /* ===== generic page rhythm ===== */
+  .page{padding:clamp(70px,11vw,130px) 0;}
+  .page.tint-sand{background:linear-gradient(180deg,transparent,rgba(238,228,212,.5),transparent);}
+  .kicker{font-size:11.5px; letter-spacing:.28em; text-transform:uppercase; color:var(--clay); font-weight:700; margin-bottom:18px;}
+  h2.head{font-family:var(--serif); font-weight:340; font-size:clamp(30px,5.4vw,52px); line-height:1.04;
+    letter-spacing:-.015em; margin:0 0 8px; color:var(--ink);}
+  h3.sub{font-family:var(--serif); font-weight:500; font-size:clamp(21px,3vw,28px); line-height:1.18;
+    margin:42px 0 14px; color:var(--ink); letter-spacing:-.01em;}
+  p.lead{font-size:clamp(18px,2.5vw,21px); line-height:1.6; color:var(--ink-soft); max-width:66ch;}
+  p{max-width:68ch;}
+  .prose p{margin:0 0 18px;}
+  strong{font-weight:700; color:var(--ink);}
+
+  /* chapter opener */
+  .chap{display:grid; grid-template-columns:auto 1fr; gap:clamp(20px,4vw,46px); align-items:start; margin-bottom:14px;}
+  .chap .num{font-family:var(--serif); font-weight:300; font-size:clamp(64px,13vw,150px); line-height:.8;
+    color:transparent; -webkit-text-stroke:1.4px var(--clay); letter-spacing:-.04em; font-variant-numeric:tabular-nums;}
+  .chap .ch-label{font-size:11.5px; letter-spacing:.28em; text-transform:uppercase; color:var(--ink-faint); font-weight:700; margin-bottom:10px;}
+  .chap h2{font-family:var(--serif); font-weight:340; font-size:clamp(28px,5.2vw,50px); line-height:1.03;
+    letter-spacing:-.015em; margin:0; color:var(--ink);}
+  .chap-intro{max-width:64ch; margin:22px 0 8px; font-size:clamp(17px,2.2vw,19.5px); color:var(--ink-soft); line-height:1.6;}
+
+  .rule{height:1px; background:var(--line); margin:46px 0; border:0;}
+  .rule.short{width:64px; height:2px; background:var(--clay); margin:30px 0;}
+
+  ul.clean{list-style:none; padding:0; margin:20px 0; max-width:64ch;}
+  ul.clean li{position:relative; padding:11px 0 11px 30px; border-bottom:1px solid var(--line-soft); font-size:16.5px; color:var(--ink-soft);}
+  ul.clean li::before{content:""; position:absolute; left:4px; top:19px; width:7px; height:7px; border-radius:50%; background:var(--clay);}
+  ul.clean li strong{color:var(--ink);}
+
+  /* check list */
+  ul.check{list-style:none; padding:0; margin:22px 0; max-width:64ch; display:grid; gap:10px;}
+  ul.check li{position:relative; padding:13px 16px 13px 46px; background:var(--paper-2); border:1px solid var(--line-soft);
+    border-radius:13px; font-size:16px; color:var(--ink-soft);}
+  ul.check li::before{content:""; position:absolute; left:16px; top:50%; transform:translateY(-50%);
+    width:18px; height:18px; border-radius:6px; background:var(--sage-tint); border:1.5px solid var(--forest-soft);}
+  ul.check li::after{content:""; position:absolute; left:22px; top:calc(50% - 4px); width:5px; height:9px;
+    border-right:2px solid var(--forest); border-bottom:2px solid var(--forest); transform:rotate(42deg);}
+
+  /* ===== callout card ===== */
+  .callout{position:relative; background:var(--paper-2); border:1px solid var(--line); border-radius:20px;
+    padding:30px clamp(22px,4vw,38px); margin:34px 0; box-shadow:var(--shadow); overflow:hidden;}
+  .callout::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--clay);}
+  .callout.insight::before{background:var(--ochre);}
+  .callout.note::before{background:var(--plum);}
+  .callout.practice::before{background:var(--forest);}
+  .callout .clabel{display:inline-flex; align-items:center; gap:9px; font-size:11px; letter-spacing:.22em;
+    text-transform:uppercase; font-weight:800; color:var(--clay); margin-bottom:14px;}
+  .callout.insight .clabel{color:var(--gold);}
+  .callout.note .clabel{color:var(--plum);}
+  .callout.practice .clabel{color:var(--forest);}
+  .callout .clabel svg{width:15px; height:15px;}
+  .callout p{margin:0 0 12px; color:var(--ink-soft); font-size:16.5px;}
+  .callout p:last-child{margin-bottom:0;}
+  .callout .q{display:grid; gap:9px; margin:6px 0 0;}
+  .callout .q li{list-style:none; padding-left:24px; position:relative; color:var(--ink-soft); font-size:16px;}
+  .callout .q li::before{content:""; position:absolute; left:2px; top:9px; width:8px; height:8px; border-radius:50%;
+    border:2px solid var(--forest);}
+
+  /* ===== comparison ===== */
+  .compare{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:34px 0;}
+  .ccol{border-radius:20px; padding:26px clamp(18px,3vw,28px); border:1px solid var(--line);}
+  .ccol.good{background:linear-gradient(180deg,var(--sage-tint),var(--paper-2)); border-color:#CBD6C6;}
+  .ccol.bad{background:linear-gradient(180deg,var(--clay-tint),var(--paper-2)); border-color:#E6CDBF;}
+  .ccol h5{font-family:var(--sans); font-weight:800; font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+    margin:0 0 16px; display:flex; align-items:center; gap:10px;}
+  .ccol.good h5{color:var(--forest);}
+  .ccol.bad h5{color:var(--clay);}
+  .ccol h5 .dot{width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; flex:none;}
+  .ccol.good .dot{background:var(--forest); color:#fff;}
+  .ccol.bad .dot{background:var(--clay); color:#fff;}
+  .ccol .dot svg{width:12px; height:12px;}
+  .ccol ul{list-style:none; padding:0; margin:0; display:grid; gap:11px;}
+  .ccol li{font-size:15.5px; color:var(--ink-soft); line-height:1.45; padding-left:18px; position:relative;}
+  .ccol li::before{content:""; position:absolute; left:0; top:9px; width:5px; height:5px; border-radius:50%;}
+  .ccol.good li::before{background:var(--forest-soft);}
+  .ccol.bad li::before{background:var(--clay-soft);}
+
+  /* ===== hormone cards ===== */
+  .hgrid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin:34px 0;}
+  .hcard{background:var(--paper-2); border:1px solid var(--line); border-radius:18px; padding:24px; box-shadow:var(--shadow); position:relative; overflow:hidden;}
+  .hcard .htop{display:flex; align-items:center; gap:12px; margin-bottom:14px;}
+  .hcard .ic{width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex:none; color:#fff;}
+  .hcard .ic svg{width:21px; height:21px;}
+  .hcard h5{margin:0; font-family:var(--serif); font-weight:600; font-size:19px; color:var(--ink);}
+  .hcard .role{font-size:12.5px; color:var(--ink-faint); font-weight:600; letter-spacing:.02em;}
+  .hcard dl{margin:0; display:grid; gap:9px;}
+  .hcard dt{font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); font-weight:700; margin-bottom:1px;}
+  .hcard dd{margin:0 0 4px; font-size:14.5px; color:var(--ink-soft); line-height:1.4;}
+  .hcard .pcos dd{color:var(--ink);}
+  .c-ghrelin{background:var(--clay);} .c-leptin{background:var(--forest);} .c-insulin{background:var(--ochre);} .c-cortisol{background:var(--plum);}
+
+  /* ===== glycemic chart ===== */
+  .chartcard{background:var(--paper-2); border:1px solid var(--line); border-radius:20px; padding:26px clamp(18px,3vw,30px); margin:34px 0; box-shadow:var(--shadow);}
+  .chartcard .ct{font-family:var(--serif); font-weight:600; font-size:18px; margin:0 0 4px;}
+  .chartcard .cs{font-size:13.5px; color:var(--ink-faint); margin:0 0 16px;}
+  .legend{display:flex; gap:22px; flex-wrap:wrap; margin-top:14px;}
+  .legend span{display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-soft); font-weight:600;}
+  .legend i{width:16px; height:3px; border-radius:2px;}
+
+  /* ===== five pillars ===== */
+  .pillars{display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin:34px 0;}
+  .pcard{background:var(--paper-2); border:1px solid var(--line); border-radius:16px; padding:20px 16px; text-align:center; box-shadow:var(--shadow);}
+  .pcard .pn{font-family:var(--serif); font-size:13px; color:var(--clay); font-weight:700; letter-spacing:.1em;}
+  .pcard .pic{width:38px; height:38px; margin:8px auto 12px; color:var(--forest);}
+  .pcard h5{margin:0 0 6px; font-family:var(--serif); font-weight:600; font-size:16px; color:var(--ink);}
+  .pcard p{font-size:12.5px; color:var(--ink-faint); margin:0; line-height:1.4; max-width:none;}
+
+  /* ===== hunger scale ===== */
+  .scalecard{background:var(--paper-2); border:1px solid var(--line); border-radius:22px; padding:30px clamp(18px,3vw,34px); margin:34px 0; box-shadow:var(--shadow);}
+  .scalebar{position:relative; height:54px; border-radius:14px; margin:30px 0 14px;
+    background:linear-gradient(90deg,#B0432E 0%, #C97A3D 22%, #7E9A6E 36%, #5E7264 50%, #7E9A6E 64%, #C97A3D 78%, #B0432E 100%);
+    box-shadow:inset 0 1px 3px rgba(0,0,0,.18);}
+  .scalebar .zone{position:absolute; top:-7px; bottom:-7px; left:22%; width:50%; border:2px dashed rgba(255,255,255,.85); border-radius:14px;}
+  .scalebar .ticks{position:absolute; inset:0; display:flex;}
+  .scalebar .ticks span{flex:1; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.92);
+    font-weight:700; font-size:13px; border-right:1px solid rgba(255,255,255,.16);}
+  .scalebar .ticks span:last-child{border:0;}
+  .scalemark{display:flex; justify-content:space-between; font-size:12px; color:var(--ink-faint); font-weight:600; padding:0 2px;}
+  .scaleflags{display:flex; justify-content:space-between; margin-top:18px; gap:12px;}
+  .flag{flex:1; border-radius:13px; padding:14px 16px; font-size:13.5px;}
+  .flag.start{background:var(--sage-tint); border:1px solid #CBD6C6;}
+  .flag.stop{background:var(--sage-tint); border:1px solid #CBD6C6;}
+  .flag b{display:block; font-family:var(--serif); font-size:15px; color:var(--forest); margin-bottom:3px;}
+  .scale-anno{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:18px;}
+  .scale-anno div{font-size:13px; color:var(--ink-soft); padding:11px 13px; background:var(--paper); border:1px solid var(--line-soft); border-radius:11px;}
+  .scale-anno b{color:var(--ink);}
+
+  /* ===== types of hunger ===== */
+  .types{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin:30px 0;}
+  .tcard{background:var(--paper-2); border:1px solid var(--line); border-radius:16px; padding:20px; display:flex; gap:14px; box-shadow:var(--shadow);}
+  .tcard .tic{width:40px; height:40px; border-radius:11px; flex:none; display:flex; align-items:center; justify-content:center; color:#fff;}
+  .tcard .tic svg{width:20px;height:20px;}
+  .tcard h5{margin:0 0 4px; font-family:var(--serif); font-weight:600; font-size:17px;}
+  .tcard p{margin:0; font-size:14px; color:var(--ink-soft); line-height:1.4; max-width:none;}
+
+  /* ===== cycle ===== */
+  .cycle{margin:34px 0; display:grid; gap:0; counter-reset:cy;}
+  .cstep{display:grid; grid-template-columns:auto 1fr; gap:20px; align-items:start; position:relative; padding-bottom:26px;}
+  .cstep:last-child{padding-bottom:0;}
+  .cstep .cn{width:44px; height:44px; border-radius:50%; background:var(--plum-tint); border:2px solid var(--plum);
+    color:var(--plum); font-family:var(--serif); font-weight:700; font-size:18px; display:flex; align-items:center; justify-content:center; flex:none; z-index:2; position:relative;}
+  .cstep:not(:last-child)::before{content:""; position:absolute; left:21px; top:44px; bottom:-2px; width:2px; background:var(--line); z-index:1;}
+  .cstep .ctxt{padding-top:9px;}
+  .cstep .ctxt h5{margin:0 0 3px; font-weight:700; font-size:16px; color:var(--ink);}
+  .cstep .ctxt p{margin:0; font-size:14.5px; color:var(--ink-soft); max-width:58ch;}
+
+  /* ===== toolkit / two-col soft ===== */
+  .toolkit{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:32px 0;}
+  .tk{border-radius:20px; padding:24px; border:1px solid var(--line);}
+  .tk.fast{background:linear-gradient(180deg,var(--clay-tint),var(--paper-2));}
+  .tk.slow{background:linear-gradient(180deg,var(--plum-tint),var(--paper-2));}
+  .tk h5{margin:0 0 14px; font-family:var(--sans); font-weight:800; font-size:12px; letter-spacing:.12em; text-transform:uppercase; display:flex; align-items:center; gap:9px;}
+  .tk.fast h5{color:var(--clay);} .tk.slow h5{color:var(--plum);}
+  .tk ul{list-style:none; padding:0; margin:0; display:grid; gap:10px;}
+  .tk li{font-size:15px; color:var(--ink-soft); padding-left:20px; position:relative;}
+  .tk li::before{content:""; position:absolute; left:2px; top:8px; width:6px; height:6px; border-radius:50%;}
+  .tk.fast li::before{background:var(--clay-soft);} .tk.slow li::before{background:var(--plum);}
+
+  /* ===== day flow ===== */
+  .dayflow{display:grid; gap:16px; margin:32px 0;}
+  .dseg{background:var(--paper-2); border:1px solid var(--line); border-radius:18px; padding:24px clamp(18px,3vw,28px); box-shadow:var(--shadow); position:relative;}
+  .dseg .dhead{display:flex; align-items:center; gap:13px; margin-bottom:14px;}
+  .dseg .dtime{width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center; flex:none; color:#fff;}
+  .dseg .dtime svg{width:23px; height:23px;}
+  .dseg h5{margin:0; font-family:var(--serif); font-weight:600; font-size:20px;}
+  .dseg .dsmall{font-size:12.5px; color:var(--ink-faint); font-weight:600; letter-spacing:.02em;}
+  .d-morning .dtime{background:var(--ochre);} .d-during .dtime{background:var(--clay);} .d-after .dtime{background:var(--forest);}
+
+  /* ===== journal card ===== */
+  .journal{background:linear-gradient(180deg,var(--ochre-tint),var(--paper-2)); border:1px solid #E6D3AC; border-radius:22px; padding:30px clamp(20px,3.5vw,38px); margin:34px 0; box-shadow:var(--shadow);}
+  .journal .jlabel{font-size:11px; letter-spacing:.22em; text-transform:uppercase; font-weight:800; color:var(--gold); margin-bottom:8px;}
+  .journal h4{font-family:var(--serif); font-weight:600; font-size:23px; margin:0 0 6px;}
+  .journal .jrows{display:grid; gap:0; margin:20px 0 8px;}
+  .jrow{display:grid; grid-template-columns:200px 1fr; gap:16px; padding:13px 0; border-bottom:1px dashed #E0CCA4; align-items:center;}
+  .jrow .jk{font-weight:700; font-size:14.5px; color:var(--ink);}
+  .jrow .jv{height:1px;} /* writing line look via border on row */
+  .jrow .jv.pill{display:flex; gap:8px;}
+  .jrow .jv.pill span{font-size:11px; padding:3px 10px; border:1px solid var(--line); border-radius:100px; color:var(--ink-faint); background:var(--paper-2);}
+  .journal .jnote{font-size:14.5px; color:var(--ink-soft); margin:12px 0 0;}
+
+  /* ===== food compass ===== */
+  .foodcard{border-radius:22px; padding:28px clamp(20px,3.5vw,34px); margin:30px 0; border:1px solid var(--line); box-shadow:var(--shadow);}
+  .foodcard.pro{background:linear-gradient(180deg,var(--sage-tint),var(--paper-2)); border-color:#CBD6C6;}
+  .foodcard.mod{background:linear-gradient(180deg,var(--clay-tint),var(--paper-2)); border-color:#E6CDBF;}
+  .foodcard h4{font-family:var(--serif); font-weight:600; font-size:22px; margin:0 0 18px; display:flex; align-items:center; gap:12px;}
+  .foodcard.pro h4{color:var(--forest);} .foodcard.mod h4{color:var(--clay);}
+  .foodcard h4 .badge{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;flex:none;}
+  .foodcard.pro .badge{background:var(--forest);} .foodcard.mod .badge{background:var(--clay);}
+  .frow{display:grid; grid-template-columns:160px 1fr; gap:16px; padding:12px 0; border-top:1px solid rgba(0,0,0,.06); align-items:baseline;}
+  .frow:first-of-type{border-top:0;}
+  .frow .fk{font-weight:800; font-size:12.5px; letter-spacing:.04em; text-transform:uppercase;}
+  .foodcard.pro .fk{color:var(--forest);} .foodcard.mod .fk{color:var(--clay);}
+  .frow .fv{font-size:15px; color:var(--ink-soft); line-height:1.45;}
+  .frow .fv em{font-style:normal; color:var(--ink-faint); font-size:13.5px;}
+
+  /* plate */
+  .platewrap{display:grid; grid-template-columns:280px 1fr; gap:34px; align-items:center; margin:34px 0;
+    background:var(--paper-2); border:1px solid var(--line); border-radius:22px; padding:30px clamp(20px,3.5vw,36px); box-shadow:var(--shadow);}
+  .plate{width:240px; height:240px; border-radius:50%; justify-self:center; position:relative;
+    background:conic-gradient(var(--forest-soft) 0 50%, var(--ochre) 50% 75%, var(--clay-soft) 75% 100%);
+    box-shadow:0 14px 36px -14px rgba(38,33,27,.4), inset 0 0 0 10px var(--paper-2);}
+  .plate::after{content:"PCOS\APlate"; white-space:pre; position:absolute; inset:0; margin:auto; width:108px; height:108px; border-radius:50%;
+    background:var(--paper-2); display:flex; align-items:center; justify-content:center; text-align:center;
+    font-family:var(--serif); font-weight:600; font-size:17px; color:var(--ink); line-height:1.1; box-shadow:inset 0 0 0 1px var(--line);}
+  .platelegend{display:grid; gap:14px;}
+  .pl-item{display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:start;}
+  .pl-item .sw{width:18px; height:18px; border-radius:6px; margin-top:3px; flex:none;}
+  .pl-item h5{margin:0 0 2px; font-weight:700; font-size:15.5px; color:var(--ink);}
+  .pl-item p{margin:0; font-size:13.5px; color:var(--ink-soft); max-width:none;}
+  .pl-item .frac{font-family:var(--serif); font-weight:700; color:var(--ink); margin-right:6px;}
+
+  /* add cards */
+  .adds{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:30px 0;}
+  .acard{background:var(--paper-2); border:1px solid var(--line); border-radius:18px; padding:24px 22px; box-shadow:var(--shadow); text-align:center;}
+  .acard .aic{width:52px; height:52px; margin:0 auto 14px; border-radius:14px; background:var(--sage-tint); display:flex; align-items:center; justify-content:center; color:var(--forest);}
+  .acard .aic svg{width:26px;height:26px;}
+  .acard h5{margin:0 0 6px; font-family:var(--serif); font-weight:600; font-size:19px;}
+  .acard .dose{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--clay); font-weight:700; margin-bottom:8px;}
+  .acard p{font-size:14px; color:var(--ink-soft); margin:0; max-width:none; line-height:1.45;}
+
+  /* ===== quote band ===== */
+  .qband{padding:clamp(64px,11vw,120px) 0; margin:0; position:relative; overflow:hidden;}
+  .qband.clay{background:var(--clay); color:var(--paper-2);}
+  .qband.forest{background:var(--forest); color:var(--paper-2);}
+  .qband.plum{background:var(--plum); color:var(--paper-2);}
+  .qband.ink{background:var(--ink); color:var(--paper-2);}
+  .qband .mark{font-family:var(--serif); font-size:120px; line-height:.5; opacity:.22; display:block; margin-bottom:-10px;}
+  .qband blockquote{font-family:var(--serif); font-weight:300; font-style:italic; font-size:clamp(24px,4.4vw,42px);
+    line-height:1.22; letter-spacing:-.01em; margin:0; max-width:22ch;}
+  .qband cite{display:block; font-style:normal; font-family:var(--sans); font-weight:700; font-size:12px;
+    letter-spacing:.26em; text-transform:uppercase; margin-top:26px; opacity:.8;}
+
+  /* ===== bundle ===== */
+  .bundle-card{background:var(--ink); color:var(--paper); border-radius:26px; padding:clamp(30px,5vw,52px); margin:40px 0; position:relative; overflow:hidden;}
+  .bundle-card .blabel{font-size:11px; letter-spacing:.26em; text-transform:uppercase; color:var(--ochre); font-weight:800; margin-bottom:18px;}
+  .bundle-card h3{font-family:var(--serif); font-weight:400; font-size:clamp(24px,4vw,34px); margin:0 0 22px; color:var(--paper-2);}
+  .bundle-card .blist{display:grid; gap:0;}
+  .bitem{display:grid; grid-template-columns:auto 1fr; gap:18px; padding:16px 0; border-bottom:1px solid rgba(247,241,232,.14); align-items:baseline;}
+  .bitem:last-child{border-bottom:0;}
+  .bitem .bnum{font-family:var(--serif); color:var(--ochre); font-weight:600; font-size:15px; width:24px;}
+  .bitem .btext b{font-family:var(--serif); font-weight:600; font-size:18px; color:var(--paper-2); display:block; margin-bottom:2px;}
+  .bitem .btext span{font-size:14px; color:rgba(247,241,232,.66);}
+  .bitem.done .btext b{color:var(--forest-soft);}
+  .bitem .tag{font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink); background:var(--ochre); padding:3px 9px; border-radius:100px; font-weight:800; margin-left:8px; white-space:nowrap;}
+  .bundle-card .bfoot{margin:24px 0 0; font-size:14px; color:rgba(247,241,232,.7);}
+  .bundle-card .bfoot b{color:var(--paper-2);}
+
+  /* note / letter */
+  .letter{max-width:62ch;}
+  .letter .sig{font-family:var(--serif); font-style:italic; font-size:19px; color:var(--ink); margin-top:10px;}
+  .letter .sig b{display:block; font-style:normal; font-weight:600; font-size:15px; letter-spacing:.02em; color:var(--ink-soft); margin-top:2px;}
+
+  /* TOC visual */
+  .toc{display:grid; gap:2px; margin:36px 0; max-width:760px;}
+  .toc a{display:grid; grid-template-columns:auto 1fr auto; gap:20px; align-items:baseline; text-decoration:none;
+    padding:18px 4px; border-bottom:1px solid var(--line); color:var(--ink); transition:.2s;}
+  .toc a:hover{padding-left:10px; color:var(--clay);}
+  .toc a .tn{font-family:var(--serif); font-weight:300; font-size:30px; color:transparent; -webkit-text-stroke:1px var(--clay-soft); width:54px; font-variant-numeric:tabular-nums;}
+  .toc a:hover .tn{-webkit-text-stroke-color:var(--clay);}
+  .toc a .tt{font-family:var(--serif); font-weight:500; font-size:clamp(18px,2.6vw,23px); line-height:1.2;}
+  .toc a .td{font-size:13px; color:var(--ink-faint); font-weight:600;}
+  .toc a.lead .tt{font-style:italic;}
+
+  /* colophon */
+  .colophon{background:var(--ink); color:var(--paper); padding:clamp(60px,9vw,110px) 0;}
+  .colophon .cwm{font-weight:800; letter-spacing:.5em; font-size:15px; color:var(--paper-2);}
+  .colophon .ctag{font-family:var(--serif); font-style:italic; font-size:clamp(20px,3.4vw,28px); color:var(--ochre); margin:14px 0 40px;}
+  .colophon .meta{display:flex; flex-wrap:wrap; gap:30px 50px; margin-bottom:40px;}
+  .colophon .meta div{min-width:150px;}
+  .colophon .meta h6{font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--ochre); margin:0 0 8px; font-weight:800;}
+  .colophon .meta p{font-size:14.5px; color:rgba(247,241,232,.78); margin:0; line-height:1.5; max-width:34ch;}
+  .colophon .disc{font-size:12.5px; color:rgba(247,241,232,.5); border-top:1px solid rgba(247,241,232,.16); padding-top:24px; max-width:70ch; line-height:1.6;}
+
+  /* responsive */
+  @media (max-width:820px){
+    body{font-size:16px;}
+    .compare,.toolkit,.types,.platewrap{grid-template-columns:1fr;}
+    .hgrid{grid-template-columns:1fr;}
+    .pillars{grid-template-columns:repeat(2,1fr);}
+    .adds{grid-template-columns:1fr;}
+    .scaleflags{flex-direction:column;}
+    .scale-anno{grid-template-columns:1fr;}
+    .chap{grid-template-columns:1fr; gap:6px;}
+    .chap .num{font-size:84px;}
+    .jrow,.frow{grid-template-columns:1fr;}
+    .jrow .jv:not(.pill){display:none;}
+    .plate{width:220px;height:220px;}
+    .toc a{grid-template-columns:auto 1fr; gap:14px;}
+    .toc a .td{display:none;}
+    .nav .wm{font-size:10px; letter-spacing:.22em;}
+  }
+  @media (max-width:480px){ .pillars{grid-template-columns:1fr;} }
+  @media (prefers-reduced-motion:reduce){ *{animation:none!important; transition:none!important;} .reveal{opacity:1; transform:none;} }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="nav" id="nav">
+  <div class="wm">Z E N <span>·</span> P L A T O</div>
+  <button class="menu-btn" id="menuBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    Contents
+  </button>
+</nav>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer">
+  <button class="close" id="closeDrawer">×</button>
+  <h4>The Mindful Eating Handbook</h4>
+  <a href="#note" class="lead"><span class="n">—</span><span class="t">A Note Before You Begin</span></a>
+  <a href="#contents"><span class="n">·</span><span class="t">What's Inside</span></a>
+  <a href="#c1"><span class="n">1</span><span class="t">Understanding Your PCOS Body</span></a>
+  <a href="#c2"><span class="n">2</span><span class="t">The Hunger–Hormone Connection</span></a>
+  <a href="#c3"><span class="n">3</span><span class="t">What Mindful Eating Actually Means</span></a>
+  <a href="#c4"><span class="n">4</span><span class="t">Recognizing Your Hunger &amp; Fullness</span></a>
+  <a href="#c5"><span class="n">5</span><span class="t">Emotional Eating &amp; PCOS</span></a>
+  <a href="#c6"><span class="n">6</span><span class="t">Building a Calmer Relationship with Food</span></a>
+  <a href="#c7"><span class="n">7</span><span class="t">Daily Mindful Eating Practices</span></a>
+  <a href="#c8"><span class="n">8</span><span class="t">Your Hormone-Friendly Food Compass</span></a>
+  <a href="#closing" class="lead"><span class="n">—</span><span class="t">Your Reset Starts Here</span></a>
+</aside>
+
+<!-- ============ COVER ============ -->
+<section class="cover" id="top">
+  <svg class="botanical" viewBox="0 0 400 600" fill="none" stroke="currentColor" stroke-width="1.4">
+    <path d="M200 580 C200 420 200 300 200 120" />
+    <path d="M200 200 C150 180 120 140 110 90 C160 100 195 140 200 200Z" fill="currentColor" fill-opacity=".05"/>
+    <path d="M200 260 C250 240 280 200 290 150 C240 160 205 200 200 260Z" fill="currentColor" fill-opacity=".05"/>
+    <path d="M200 330 C155 314 128 280 120 238 C166 248 196 282 200 330Z" fill="currentColor" fill-opacity=".05"/>
+    <path d="M200 400 C245 384 272 350 280 308 C234 318 204 352 200 400Z" fill="currentColor" fill-opacity=".05"/>
+    <circle cx="200" cy="90" r="9" fill="currentColor" fill-opacity=".12"/>
+  </svg>
+  <div class="cover-wm">Z E N P L A T O</div>
+  <div class="cover-inner">
+    <span class="eyebrow">A Gentle Guide for Women with PCOS</span>
+    <h1>The Mindful<br>Eating <em>Handbook</em></h1>
+    <p class="sub">Nourish your hormones. Calm your body.<br>Trust your hunger.</p>
+    <div class="promises">
+      <span><i></i> Understand your hunger signals</span>
+      <span><i></i> Recognize emotional patterns</span>
+      <span><i></i> Eat to support your hormones</span>
+    </div>
+    <p class="bundle">Part of the <b>Zenplato Reset Bundle</b></p>
+  </div>
+  <div class="scrollcue"><div class="line"></div>Begin</div>
+</section>
+
+<!-- ============ A NOTE ============ -->
+<section class="page" id="note">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="kicker">A Note Before You Begin</div>
+      <h2 class="head">For the woman who has<br>tried everything.</h2>
+    </div>
+    <div class="letter prose reveal" style="margin-top:34px;">
+      <p>This handbook was written for you — the woman who has tried every diet, followed every rule, and still felt like her body was working against her.</p>
+      <p>Living with PCOS means your hormones, your hunger, and your metabolism don't always follow the standard playbook. What works for your friend may not work for you. And the constant pressure to eat "perfectly" can make food feel like the enemy.</p>
+      <p>This book is not another set of rules. It's an invitation to slow down, get curious, and rebuild a relationship with food that is rooted in <strong>self-awareness, not self-punishment</strong>.</p>
+      <p>By the end of this handbook, you will understand your hunger signals, recognize emotional eating patterns, know which foods support your hormones, and feel calmer about your food choices — even on difficult days.</p>
+      <p>Read slowly. Come back often. This is a reference, a companion, and a reset.</p>
+      <p class="sig">With warmth,<b>The Zenplato Team</b></p>
+    </div>
+  </div>
+</section>
+
+<section class="qband ink reveal">
+  <div class="wrap">
+    <span class="mark">“</span>
+    <blockquote>Healing is not linear. And it never starts with restriction. It starts with understanding.</blockquote>
+    <cite>— Zenplato</cite>
+  </div>
+</section>
+
+<!-- ============ CONTENTS ============ -->
+<section class="page tint-sand" id="contents">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="kicker">What's Inside</div>
+      <h2 class="head">Eight chapters, one reset.</h2>
+    </div>
+    <nav class="toc reveal">
+      <a href="#c1"><span class="tn">01</span><span class="tt">Understanding Your PCOS Body</span><span class="td">The biology beneath the symptoms</span></a>
+      <a href="#c2"><span class="tn">02</span><span class="tt">The Hunger–Hormone Connection</span><span class="td">Why your appetite feels unpredictable</span></a>
+      <a href="#c3"><span class="tn">03</span><span class="tt">What Mindful Eating Actually Means</span><span class="td">Beyond the wellness clichés</span></a>
+      <a href="#c4"><span class="tn">04</span><span class="tt">Recognizing Your Hunger &amp; Fullness</span><span class="td">Relearning the signals</span></a>
+      <a href="#c5"><span class="tn">05</span><span class="tt">Emotional Eating &amp; PCOS</span><span class="td">Breaking the cycle without shame</span></a>
+      <a href="#c6"><span class="tn">06</span><span class="tt">Building a Calmer Relationship with Food</span><span class="td">From rules to principles</span></a>
+      <a href="#c7"><span class="tn">07</span><span class="tt">Daily Mindful Eating Practices</span><span class="td">Small, repeatable rituals</span></a>
+      <a href="#c8"><span class="tn">08</span><span class="tt">Your Hormone-Friendly Food Compass</span><span class="td">Direction, not restriction</span></a>
+      <a href="#closing" class="lead"><span class="tn">—</span><span class="tt">Your Reset Starts Here</span><span class="td">Next steps</span></a>
+    </nav>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 1 ============ -->
+<section class="page" id="c1">
+  <div class="wrap">
+    <div class="chap reveal">
+      <div class="num">01</div>
+      <div>
+        <div class="ch-label">Chapter One</div>
+        <h2>Understanding Your<br>PCOS Body</h2>
+      </div>
+    </div>
+    <p class="chap-intro reveal">Before you can change the way you eat, it helps to understand why your body behaves the way it does. PCOS — Polycystic Ovary Syndrome — is a hormonal condition that affects millions of women worldwide, yet it is still widely misunderstood.</p>
+
+    <div class="reveal prose">
+      <h3 class="sub">What Is PCOS, Really?</h3>
+      <p>PCOS is not just a reproductive issue. It is a full-body hormonal and metabolic condition that affects your energy, mood, digestion, skin, hair, weight, and relationship with food. At its core, PCOS involves:</p>
+      <ul class="clean">
+        <li><strong>Higher-than-normal androgen</strong> (male hormone) levels</li>
+        <li><strong>Irregular or absent ovulation</strong></li>
+        <li><strong>Insulin resistance</strong> in the majority of cases</li>
+        <li><strong>Chronic low-grade inflammation</strong></li>
+      </ul>
+    </div>
+
+    <div class="callout insight reveal">
+      <span class="clabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2Z"/></svg>Key Insight</span>
+      <p>Up to <strong>70–80% of women with PCOS</strong> have some degree of insulin resistance — even those who are at a healthy weight. This means your body has difficulty using insulin efficiently, which affects blood sugar, energy, cravings, and fat storage.</p>
+    </div>
+
+    <div class="reveal prose">
+      <h3 class="sub">Why Standard Diets Often Fail Women with PCOS</h3>
+      <p>Most diet advice is designed for the average metabolic profile. Women with PCOS have a different internal environment:</p>
+      <ul class="clean">
+        <li>Blood sugar spikes and crashes faster and more intensely</li>
+        <li>Hunger hormones like ghrelin are often dysregulated</li>
+        <li>Cortisol is more reactive, worsening insulin resistance</li>
+        <li>Inflammation amplifies cravings, especially for sugar and refined carbs</li>
+      </ul>
+      <p>This is why a low-calorie diet or intense restriction often backfires. The body reads restriction as a stress signal, elevates cortisol, increases cravings, and makes fat storage more likely — <strong>not less</strong>.</p>
+    </div>
+
+    <div class="reveal prose">
+      <h3 class="sub">The PCOS–Food Relationship</h3>
+      <p>Your food choices directly influence every aspect of PCOS. Diet is one of the most powerful levers you have. But it works best when it's approached with awareness and consistency, not with perfection.</p>
+    </div>
+
+    <div class="compare reveal">
+      <div class="ccol good">
+        <h5><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>Supportive eating creates</h5>
+        <ul>
+          <li>Blood sugar stability</li>
+          <li>Reduced inflammation</li>
+          <li>Hormone balance support</li>
+          <li>Better sleep &amp; mood</li>
+          <li>Sustained energy</li>
+        </ul>
+      </div>
+      <div class="ccol bad">
+        <h5><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></span>Reactive eating creates</h5>
+        <ul>
+          <li>Blood sugar spikes</li>
+          <li>Increased inflammation</li>
+          <li>Androgen elevation</li>
+          <li>Cravings and fatigue</li>
+          <li>Weight fluctuation</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="qband forest reveal">
+  <div class="wrap">
+    <span class="mark">“</span>
+    <blockquote>You are not broken. Your body is responding to signals. Change the signals, and the body follows.</blockquote>
+    <cite>— Zenplato</cite>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 2 ============ -->
+<section class="page" id="c2">
+  <div class="wrap">
+    <div class="chap reveal">
+      <div class="num">02</div>
+      <div>
+        <div class="ch-label">Chapter Two</div>
+        <h2>The Hunger–Hormone<br>Connection</h2>
+      </div>
+    </div>
+    <p class="chap-intro reveal">One of the most confusing experiences for women with PCOS is unpredictable hunger. You might feel ravenous an hour after eating, have no appetite in the morning, or experience intense cravings that feel impossible to ignore. This is not a lack of willpower. <strong>This is hormones.</strong></p>
+
+    <div class="reveal prose"><h3 class="sub">Meet Your Hunger Hormones</h3></div>
+
+    <div class="hgrid reveal">
+      <div class="hcard">
+        <div class="htop"><div class="ic c-ghrelin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M5 12H2M22 12h-3M6 6l-2-2M18 6l2-2"/><circle cx="12" cy="12" r="4"/></svg></div><div><h5>Ghrelin</h5><div class="role">The Hunger Signal</div></div></div>
+        <dl>
+          <div><dt>Source</dt><dd>Produced in the stomach. Rises before meals, drops after eating.</dd></div>
+          <div class="pcos"><dt>In PCOS</dt><dd>Ghrelin can remain elevated longer — the "fullness signal" is delayed.</dd></div>
+          <div><dt>Effect</dt><dd>You feel hungry again sooner than expected.</dd></div>
+        </dl>
+      </div>
+      <div class="hcard">
+        <div class="htop"><div class="ic c-leptin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12s2-6 7-6 7 6 7 6-2 6-7 6-7-6-7-6Z"/><circle cx="12" cy="12" r="2"/></svg></div><div><h5>Leptin</h5><div class="role">The Satiety Signal</div></div></div>
+        <dl>
+          <div><dt>Source</dt><dd>Produced by fat cells. Tells your brain you've had enough.</dd></div>
+          <div class="pcos"><dt>In PCOS</dt><dd>Leptin resistance is common — the brain doesn't receive the "full" message clearly.</dd></div>
+          <div><dt>Effect</dt><dd>You keep eating past the point of physical fullness.</dd></div>
+        </dl>
+      </div>
+      <div class="hcard">
+        <div class="htop"><div class="ic c-insulin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg></div><div><h5>Insulin</h5><div class="role">The Blood Sugar Regulator</div></div></div>
+        <dl>
+          <div><dt>Source</dt><dd>Released when you eat carbohydrates. Moves glucose into cells for energy.</dd></div>
+          <div class="pcos"><dt>In PCOS</dt><dd>Cells resist insulin's signal, so the pancreas produces more.</dd></div>
+          <div><dt>Effect</dt><dd>Blood sugar spikes and crashes, driving intense carb and sugar cravings.</dd></div>
+        </dl>
+      </div>
+      <div class="hcard">
+        <div class="htop"><div class="ic c-cortisol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg></div><div><h5>Cortisol</h5><div class="role">The Stress Hormone</div></div></div>
+        <dl>
+          <div><dt>Source</dt><dd>Produced by adrenal glands in response to stress — physical, emotional, or dietary.</dd></div>
+          <div class="pcos"><dt>In PCOS</dt><dd>Often chronically elevated, worsening insulin resistance.</dd></div>
+          <div><dt>Effect</dt><dd>Stress makes cravings stronger and blood sugar harder to manage.</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <div class="reveal prose">
+      <h3 class="sub">Why Restricting Makes Cravings Worse</h3>
+      <p>When you skip meals or eat too little, cortisol rises. High cortisol worsens insulin resistance. Blood sugar becomes unstable. Ghrelin surges. The result: a powerful craving for fast energy — usually sugar or refined carbohydrates. This is a <strong>biological survival response, not a character flaw</strong>. Understanding this cycle is the first step to breaking it.</p>
+    </div>
+
+    <div class="chartcard reveal">
+      <p class="ct">A tale of two meals</p>
+      <p class="cs">How blood sugar responds after eating — refined carbs alone vs. a balanced plate.</p>
+      <svg viewBox="0 0 680 260" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Blood sugar curves: refined carbs spike and crash sharply; balanced meals create a gentle wave.">
+        <defs>
+          <linearGradient id="spike" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BC5B38" stop-opacity=".22"/><stop offset="1" stop-color="#BC5B38" stop-opacity="0"/></linearGradient>
+          <linearGradient id="wave" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3F5247" stop-opacity=".2"/><stop offset="1" stop-color="#3F5247" stop-opacity="0"/></linearGradient>
+        </defs>
+        <!-- baseline grid -->
+        <line x1="50" y1="210" x2="660" y2="210" stroke="#DCD0BD" stroke-width="1"/>
+        <line x1="50" y1="120" x2="660" y2="120" stroke="#E7DDCC" stroke-width="1" stroke-dasharray="4 6"/>
+        <line x1="50" y1="30" x2="50" y2="210" stroke="#DCD0BD" stroke-width="1"/>
+        <text x="44" y="214" text-anchor="end" font-size="11" fill="#8C8071" font-family="Hanken Grotesk">low</text>
+        <text x="44" y="34" text-anchor="end" font-size="11" fill="#8C8071" font-family="Hanken Grotesk">high</text>
+        <text x="50" y="234" font-size="11" fill="#8C8071" font-family="Hanken Grotesk">meal</text>
+        <text x="640" y="234" text-anchor="end" font-size="11" fill="#8C8071" font-family="Hanken Grotesk">3 hrs later</text>
+        <!-- spike fill + line -->
+        <path d="M50 165 C120 165 150 40 220 40 C300 40 320 205 410 205 C470 205 520 175 660 178 L660 210 L50 210 Z" fill="url(#spike)"/>
+        <path d="M50 165 C120 165 150 40 220 40 C300 40 320 205 410 205 C470 205 520 175 660 178" fill="none" stroke="#BC5B38" stroke-width="3" stroke-linecap="round"/>
+        <!-- wave fill + line -->
+        <path d="M50 165 C140 162 180 118 260 112 C360 105 420 132 520 138 C580 141 620 150 660 150 L660 210 L50 210 Z" fill="url(#wave)"/>
+        <path d="M50 165 C140 162 180 118 260 112 C360 105 420 132 520 138 C580 141 620 150 660 150" fill="none" stroke="#3F5247" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="220" cy="40" r="4.5" fill="#BC5B38"/><circle cx="410" cy="205" r="4.5" fill="#BC5B38"/>
+      </svg>
+      <div class="legend">
+        <span><i style="background:#BC5B38"></i>Refined carbs alone — sharp spike, then a crash that triggers cravings</span>
+        <span><i style="background:#3F5247"></i>Protein + fibre + fat — a gentle wave, steady energy</span>
+      </div>
+    </div>
+
+    <div class="callout practice reveal">
+      <span class="clabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>What Stabilizes the System</span>
+      <ul class="q">
+        <li>Eat within <strong>1–2 hours of waking</strong> to stabilize morning cortisol</li>
+        <li>Include <strong>protein at every meal</strong> to slow blood sugar rise</li>
+        <li>Pair carbohydrates with <strong>fat or fibre</strong> to reduce insulin spikes</li>
+        <li>Eat consistent meals rather than large gaps</li>
+        <li>Reduce ultra-processed foods that override satiety signals</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 3 ============ -->
+<section class="page tint-sand" id="c3">
+  <div class="wrap">
+    <div class="chap reveal">
+      <div class="num">03</div>
+      <div>
+        <div class="ch-label">Chapter Three</div>
+        <h2>What Mindful Eating<br>Actually Means</h2>
+      </div>
+    </div>
+    <p class="chap-intro reveal">Mindful eating is one of the most overused and misunderstood concepts in wellness. It is not about eating slowly for the sake of it. It is not about chewing 40 times or eliminating entire food groups. It is not another form of control.</p>
+
+    <div class="reveal prose">
+      <h3 class="sub">The Real Definition</h3>
+      <p>Mindful eating is the practice of bringing full, non-judgmental awareness to the experience of eating — what you eat, why you eat, how you feel before and after, and what your body is communicating.</p>
+      <p>For women with PCOS, this matters deeply because hormonal disruption often disconnects you from your body's natural signals. <strong>Mindful eating helps rebuild that connection.</strong></p>
+    </div>
+
+    <div class="compare reveal">
+      <div class="ccol good">
+        <h5><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>Mindful Eating IS</h5>
+        <ul>
+          <li>Eating slowly with awareness</li>
+          <li>Noticing hunger before you eat</li>
+          <li>Stopping when comfortably full</li>
+          <li>Eating without phone or distraction</li>
+          <li>Being curious about food reactions</li>
+        </ul>
+      </div>
+      <div class="ccol bad">
+        <h5><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></span>Mindful Eating is NOT</h5>
+        <ul>
+          <li>Counting every calorie obsessively</li>
+          <li>Restricting entire food groups</li>
+          <li>Eating perfectly all the time</li>
+          <li>Judging yourself for cravings</li>
+          <li>Another diet in disguise</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="reveal prose"><h3 class="sub">The Five Pillars of Mindful Eating</h3></div>
+    <div class="pillars reveal">
+      <div class="pcard"><div class="pn">I</div><div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/></svg></div><h5>Awareness</h5><p>Noticing what's on your plate and how it makes you feel</p></div>
+      <div class="pcard"><div class="pn">II</div><div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div><h5>Intention</h5><p>Eating to nourish, not to punish or reward</p></div>
+      <div class="pcard"><div class="pn">III</div><div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="3"/></svg></div><h5>Attention</h5><p>Being present during meals, reducing distraction</p></div>
+      <div class="pcard"><div class="pn">IV</div><div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.5-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.5-9 9-9 9Z"/></svg></div><h5>Acceptance</h5><p>Releasing judgment about food choices</p></div>
+      <div class="pcard"><div class="pn">V</div><div class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7" cy="9" r="3"/><circle cx="17" cy="15" r="3"/><path d="M9.5 10.5l5 3"/></svg></div><h5>Connection</h5><p>Tuning into your body's actual signals</p></div>
+    </div>
+
+    <div class="callout note reveal">
+      <span class="clabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>PCOS-Specific Note</span>
+      <p>Women with PCOS often develop anxious or adversarial relationships with food due to years of conflicting advice, failed diets, and body shame. Mindful eating creates a safe, curious space to explore food without fear.</p>
+      <p>This is not soft science — research shows that stress around eating directly worsens insulin resistance. A calmer approach to food is, biochemically, <strong>a better approach</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="qband clay reveal">
+  <div class="wrap">
+    <span class="mark">“</span>
+    <blockquote>Mindful eating is not about eating less. It's about eating with intention and without guilt.</blockquote>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 4 ============ -->
+<section class="page" id="c4">
+  <div class="wrap">
+    <div class="chap reveal">
+      <div class="num">04</div>
+      <div>
+        <div class="ch-label">Chapter Four</div>
+        <h2>Recognizing Your<br>Hunger &amp; Fullness</h2>
+      </div>
+    </div>
+    <p class="chap-intro reveal">Most of us were taught to eat at scheduled times, finish our plates, and ignore our body's signals. For women with PCOS, whose hunger signals are often disrupted by hormonal imbalance, relearning these cues is foundational work.</p>
+
+    <div class="reveal prose">
+      <h3 class="sub">The Hunger Scale</h3>
+      <p>Rate your hunger on a scale of 1 to 10 before, during, and after meals. This simple practice builds body awareness faster than any meal plan.</p>
+    </div>
+
+    <div class="scalecard reveal">
+      <div class="scalebar">
+        <div class="ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+        <div class="zone"></div>
+      </div>
+      <div class="scalemark"><span>Severely hungry</span><span>Neutral</span><span>Stuffed</span></div>
+      <div class="scaleflags">
+        <div class="flag start"><b>Start around 3</b>Comfortably hungry — stomach growling, ready to eat. The ideal time to begin.</div>
+        <div class="flag stop"><b>Stop around 7</b>Comfortably full — satisfied, not stuffed. The ideal time to put the fork down.</div>
+      </div>
+      <div class="scale-anno">
+        <div><b>1–2</b> · Dizzy, shaky, irritable. Too late — overeating likely.</div>
+        <div><b>4–6</b> · Slightly hungry to lightly satisfied. Still comfortable.</div>
+        <div><b>8–10</b> · Overfull, bloated, heavy. Physical discomfort.</div>
+      </div>
+    </div>
+
+    <div class="reveal prose">
+      <h3 class="sub">Aiming for the 3–7 Zone</h3>
+      <p>The goal is to begin eating around a 3 and stop around a 7. This feels uncomfortable at first, especially if you were raised to finish everything on your plate. But with practice, your body begins to recalibrate.</p>
+      <p><strong>For PCOS:</strong> because leptin resistance delays the fullness signal, eating slowly gives your brain time to catch up. Putting your fork down between bites is not a diet trick — it is a hormonal support strategy.</p>
+    </div>
+
+    <div class="reveal prose"><h3 class="sub">Types of Hunger</h3></div>
+    <div class="types reveal">
+      <div class="tcard"><div class="tic c-ghrelin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a5 5 0 0 0-5 5c0 3 5 9 5 9s5-6 5-9a5 5 0 0 0-5-5Z"/><circle cx="12" cy="7" r="1.5"/></svg></div><div><h5>Physical hunger</h5><p>Gradual, builds over time, comes with stomach signals.</p></div></div>
+      <div class="tcard"><div class="tic c-insulin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2Z"/><path d="M9 22h6"/></svg></div><div><h5>Head hunger</h5><p>Sudden, specific, triggered by stress or boredom.</p></div></div>
+      <div class="tcard"><div class="tic c-cortisol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.5-9 9-9 9Z"/></svg></div><div><h5>Heart hunger</h5><p>An emotional need, not physical. Eating won't resolve it.</p></div></div>
+      <div class="tcard"><div class="tic c-leptin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div><h5>Habit hunger</h5><p>Eating because it's "time," not because of body signals.</p></div></div>
+    </div>
+
+    <div class="callout practice reveal">
+      <span class="clabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2 2"/></svg>Daily Practice — Pre-Meal Check-In</span>
+      <p>Before every meal, pause for 10 seconds and ask yourself:</p>
+      <ul class="q">
+        <li>Where am I on the hunger scale right now?</li>
+        <li>What kind of hunger is this — physical, emotional, or habit?</li>
+        <li>What does my body actually need?</li>
+      </ul>
+      <p style="margin-top:14px;"><strong>You do not need to act on the answers.</strong> Just notice. Awareness is the beginning.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 5 ============ -->
+<section class="page tint-sand" id="c5">
+  <div class="wrap">
+    <div class="chap reveal">
+      <div class="num">05</div>
+      <div>
+        <div class="ch-label">Chapter Five</div>
+        <h2>Emotional Eating<br>&amp; PCOS</h2>
+      </div>
+    </div>
+    <p class="chap-intro reveal">Emotional eating is not a weakness. It is a learned coping strategy. And for women with PCOS, the biological conditions for emotional eating are almost always present: fluctuating blood sugar, high cortisol, disrupted serotonin, and a brain that has learned that certain foods bring relief.</p>
+
+    <div class="reveal prose">
+      <h3 class="sub">The PCOS–Emotional Eating Loop</h3>
+      <p>Understanding this cycle removes the shame from it:</p>
+    </div>
+
+    <div class="cycle reveal">
+      <div class="cstep"><div class="cn">1</div><div class="ctxt"><h5>Hormonal fluctuation</h5><p>A mood drop, anxiety, or irritability sets in.</p></div></div>
+      <div class="cstep"><div class="cn">2</div><div class="ctxt"><h5>Blood sugar dip</h5><p>An intense craving for sugar or refined carbs appears.</p></div></div>
+      <div class="cstep"><div class="cn">3</div><div class="ctxt"><h5>Eating for relief</h5><p>A temporary improvement in mood — real, but brief.</p></div></div>
+      <div class="cstep"><div class="cn">4</div><div class="ctxt"><h5>Blood sugar spike</h5><p>Followed, inevitably, by another crash.</p></div></div>
+      <div class="cstep"><div class="cn">5</div><div class="ctxt"><h5>Guilt and shame</h5><p>A stress response kicks in; cortisol rises.</p></div></div>
+      <div class="cstep"><div class="cn">6</div><div class="ctxt"><h5>Cortisol worsens insulin resistance</h5><p>And the cycle repeats. Breaking it starts not with eating less, but with <strong>stabilizing blood sugar and reducing the stress response</strong>.</p></div></div>
+    </div>
+
+    <div class="reveal prose">
+      <h3 class="sub">Common Emotional Eating Triggers in PCOS</h3>
+      <ul class="clean">
+        <li>Fatigue from poor sleep (very common in PCOS)</li>
+        <li>PMS and hormonal phase shifts</li>
+        <li>Stress from work, relationships, or body image</li>
+        <li>Boredom or low stimulation</li>
+        <li>Social situations and food pressure</li>
+        <li>Feeling out of control with symptoms</li>
+      </ul>
+    </div>
+
+    <div class="callout reveal">
+      <span class="clabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-9 8.3 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5Z"/></svg>Three Questions Instead of Judgment</span>
+      <p>When you notice you're reaching for food emotionally, try asking:</p>
+      <ul class="q">
+        <li><strong>What am I actually feeling right now?</strong> (Name the emotion)</li>
+        <li><strong>What do I actually need?</strong> (Rest, comfort, connection, distraction?)</li>
+        <li><strong>Will food solve this need, or only delay it?</strong></li>
+      </ul>
+      <p style="margin-top:14px;">This is not about denying yourself food. It is about creating a pause between impulse and action. <strong>A five-second pause is enough to change the outcome.</strong></p>
+    </div>
+
+    <div class="reveal prose"><h3 class="sub">Building a Non-Food Comfort Toolkit</h3>
+      <p>Having alternatives ready before you need them makes a real difference:</p>
+    </div>
+    <div class="toolkit reveal">
+      <div class="tk fast">
+        <h5><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="15" height="15"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg>Quick Relief · under 5 min</h5>
+        <ul>
+          <li>5-minute walk outside</li>
+          <li>Cold water on your wrists</li>
+          <li>Deep breathing for 60 seconds</li>
+          <li>Texting a friend</li>
+          <li>Journaling one sentence</li>
+        </ul>
+      </div>
+      <div class="tk slow">
+        <h5><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="15" height="15"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Slower Reset · 5–15 min</h5>
+        <ul>
+          <li>Lying down with eyes closed</li>
+          <li>Stretching or gentle yoga</li>
+          <li>Listening to a specific song</li>
+          <li>Making a warm herbal tea</li>
+          <li>Putting your hands under warm water</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 6 ============ -->
+<section class="page" id="c6">
+  <div class="wrap">
+    <div class="chap reveal">
+      <div class="num">06</div>
+      <div>
+        <div class="ch-label">Chapter Six</div>
+        <h2>Building a Calmer<br>Relationship with Food</h2>
+      </div>
+    </div>
+    <p class="chap-intro reveal">After years of dieting, restriction, and trying to fix your body, food can feel loaded with meaning — good and bad, safe and dangerous, reward and punishment. Rebuilding a neutral, compassionate relationship with food is not optional. It is foundational to healing PCOS.</p>
+
+    <div class="reveal prose">
+      <h3 class="sub">The Problem with Food Rules</h3>
+      <p>Rigid food rules create a cycle of compliance and rebellion. When you break a rule — and everyone eventually does — guilt and shame follow. Shame triggers stress. Stress worsens PCOS. The very rules designed to help, harm.</p>
+    </div>
+
+    <div class="reveal prose"><h3 class="sub">From Rules to Guiding Principles</h3>
+      <p>Replace rigid rules with flexible principles that are easier to maintain across different days, moods, and circumstances:</p>
+    </div>
+    <div class="compare reveal">
+      <div class="ccol bad">
+        <h5><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></span>Rigid Rules · create stress</h5>
+        <ul>
+          <li>I can never eat sugar</li>
+          <li>I must exercise every day</li>
+          <li>Carbs are the enemy</li>
+          <li>I need to be in a calorie deficit</li>
+          <li>I failed if I ate junk food</li>
+        </ul>
+      </div>
+      <div class="ccol good">
+        <h5><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>Guiding Principles · create calm</h5>
+        <ul>
+          <li>I choose lower-sugar options most of the time</li>
+          <li>I move my body in ways that feel good</li>
+          <li>I pair carbs with protein and fat</li>
+          <li>I focus on nourishment, not deprivation</li>
+          <li>One meal doesn't define my health</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout insight reveal">
+      <span class="clabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>The Consistency Principle</span>
+      <p>For PCOS, consistency matters far more than perfection. A moderately healthy diet maintained consistently for <strong>90 days</strong> produces significantly better hormonal outcomes than a strict diet followed for 2 weeks.</p>
+      <p>Aim for <strong>80% nourishing, 20% flexible</strong>. This is not a cheat-day philosophy — it is sustainable biology.</p>
+    </div>
+
+    <div class="callout practice reveal">
+      <span class="clabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Reflection Exercise</span>
+      <p>Take 5 minutes to write down the food rules you currently follow. For each one, ask:</p>
+      <ul class="q">
+        <li>Does this rule make me feel <strong>calm or anxious</strong>?</li>
+        <li>Is this a rule I could follow happily for the next 5 years?</li>
+      </ul>
+      <p style="margin-top:14px;">Any rule that creates consistent anxiety is worth questioning. Rules that reduce stress and feel sustainable are worth keeping.</p>
+    </div>
+  </div>
+</section>
+
+<section class="qband plum reveal">
+  <div class="wrap">
+    <span class="mark">“</span>
+    <blockquote>You cannot shame your body into balance. You can only support it with consistency, kindness, and nourishment.</blockquote>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 7 ============ -->
+<section class="page" id="c7">
+  <div class="wrap">
+    <div class="chap reveal">
+      <div class="num">07</div>
+      <div>
+        <div class="ch-label">Chapter Seven</div>
+        <h2>Daily Mindful<br>Eating Practices</h2>
+      </div>
+    </div>
+    <p class="chap-intro reveal">Mindful eating is a practice, not a destination. It is built through small, repeatable actions that slowly become second nature. The following practices are designed to be realistic — especially on busy, difficult, or symptomatic days.</p>
+
+    <div class="dayflow reveal">
+      <div class="dseg d-morning">
+        <div class="dhead"><div class="dtime"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div><div><h5>Morning</h5><div class="dsmall">Set the tone</div></div></div>
+        <ul class="check">
+          <li>Eat within 1–2 hours of waking — don't let cortisol spike from skipping breakfast</li>
+          <li>Include protein in your first meal (eggs, yogurt, nuts, lentils)</li>
+          <li>Drink a glass of water before reaching for coffee or tea</li>
+          <li>Check in with your hunger scale before making food choices</li>
+        </ul>
+      </div>
+      <div class="dseg d-during">
+        <div class="dhead"><div class="dtime"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v7a4 4 0 0 0 8 0V3M7 3v18M21 3c-2 0-3 2-3 5s1 4 1 6-1 4-1 4"/></svg></div><div><h5>During Meals</h5><div class="dsmall">Slow down</div></div></div>
+        <ul class="check">
+          <li>Sit down to eat — no standing over the counter or eating in the car</li>
+          <li>Remove screens when possible — even one screen-free meal per day helps</li>
+          <li>Take three deep breaths before your first bite to shift your nervous system</li>
+          <li>Put your fork or spoon down between bites</li>
+          <li>Notice flavours, textures, and temperature — this slows eating naturally</li>
+        </ul>
+      </div>
+      <div class="dseg d-after">
+        <div class="dhead"><div class="dtime"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></div><div><h5>After Meals</h5><div class="dsmall">Notice without judging</div></div></div>
+        <ul class="check">
+          <li>Rate your fullness on the hunger scale</li>
+          <li>Notice your energy 30 minutes later: alert, sluggish, or bloated?</li>
+          <li>Record one observation in a food journal — not calories, feelings and energy</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="journal reveal">
+      <div class="jlabel">A Zenplato Tool</div>
+      <h4>The Food Journal Format</h4>
+      <p style="color:var(--ink-soft); margin:0; max-width:60ch;">You do not need to track calories. Instead, note how each meal actually <em>feels</em>:</p>
+      <div class="jrows">
+        <div class="jrow"><span class="jk">What I ate</span><span class="jv" style="border-bottom:1px solid #E0CCA4;"></span></div>
+        <div class="jrow"><span class="jk">Hunger before (1–10)</span><span class="jv pill"><span>1</span><span>3</span><span>5</span><span>7</span><span>9</span></span></div>
+        <div class="jrow"><span class="jk">Fullness after (1–10)</span><span class="jv pill"><span>1</span><span>3</span><span>5</span><span>7</span><span>9</span></span></div>
+        <div class="jrow"><span class="jk">Energy 30 min later</span><span class="jv pill"><span>High</span><span>Medium</span><span>Low</span></span></div>
+        <div class="jrow"><span class="jk">Mood before eating</span><span class="jv" style="border-bottom:1px solid #E0CCA4;"></span></div>
+        <div class="jrow"><span class="jk">Any symptoms</span><span class="jv pill"><span>Bloating</span><span>Cramps</span><span>Fatigue</span></span></div>
+      </div>
+      <p class="jnote">Within 2 weeks, patterns emerge. You'll discover your personal trigger foods, your best meal timings, and which combinations make you feel your best.</p>
+    </div>
+
+    <div class="callout practice reveal">
+      <span class="clabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>Weekly Reset Practice</span>
+      <ul class="q">
+        <li>Review your food journal for patterns</li>
+        <li>Celebrate one thing you did consistently</li>
+        <li>Identify one area to adjust — not punish</li>
+        <li>Plan 3–4 nourishing meals for the coming week</li>
+        <li>Check in on your stress and sleep — both affect eating</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 8 ============ -->
+<section class="page tint-sand" id="c8">
+  <div class="wrap">
+    <div class="chap reveal">
+      <div class="num">08</div>
+      <div>
+        <div class="ch-label">Chapter Eight</div>
+        <h2>Your Hormone-Friendly<br>Food Compass</h2>
+      </div>
+    </div>
+    <p class="chap-intro reveal">This chapter gives you a practical food compass — not a strict list of allowed and forbidden foods, but a clear sense of direction for making food choices that support your hormones.</p>
+
+    <div class="reveal prose">
+      <h3 class="sub">Foods That Support PCOS Hormones</h3>
+      <p>These foods consistently show benefit in research on PCOS: they reduce inflammation, support blood sugar stability, and assist hormonal metabolism.</p>
+    </div>
+
+    <div class="foodcard pro reveal">
+      <h4><span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>Prioritise These</h4>
+      <div class="frow"><span class="fk">Protein</span><span class="fv">Eggs, lentils, chickpeas, Greek yogurt, paneer, fish, chicken</span></div>
+      <div class="frow"><span class="fk">Healthy Fats</span><span class="fv">Avocado, extra-virgin olive oil, walnuts, flaxseed, chia seeds</span></div>
+      <div class="frow"><span class="fk">Low-GI Carbs</span><span class="fv">Oats, quinoa, brown rice, sweet potato, whole-wheat roti</span></div>
+      <div class="frow"><span class="fk">Leafy Greens</span><span class="fv">Spinach, kale, methi, moringa <em>— support liver detox of excess estrogen</em></span></div>
+      <div class="frow"><span class="fk">Anti-Inflammatory</span><span class="fv">Turmeric, ginger, cinnamon <em>— excellent for insulin sensitivity</em></span></div>
+      <div class="frow"><span class="fk">Fibre</span><span class="fv">Cruciferous vegetables, beans, lentils <em>— support gut health &amp; hormone clearance</em></span></div>
+      <div class="frow"><span class="fk">Magnesium-rich</span><span class="fv">Dark chocolate (70%+), pumpkin seeds, almonds <em>— support sleep &amp; cortisol</em></span></div>
+    </div>
+
+    <div class="foodcard mod reveal">
+      <h4><span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="5" y1="12" x2="19" y2="12"/></svg></span>Reduce or Moderate These</h4>
+      <div class="frow"><span class="fk">Refined Carbs</span><span class="fv">White bread, white rice, pastries <em>— spike blood sugar quickly</em></span></div>
+      <div class="frow"><span class="fk">Added Sugar</span><span class="fv">Soft drinks, sweets, packaged juices <em>— worsen insulin resistance</em></span></div>
+      <div class="frow"><span class="fk">Dairy (for some)</span><span class="fv">Conventional dairy may elevate androgens in sensitive individuals</span></div>
+      <div class="frow"><span class="fk">Processed Foods</span><span class="fv">Ultra-processed snacks contain seed oils &amp; additives that increase inflammation</span></div>
+      <div class="frow"><span class="fk">Excess Caffeine</span><span class="fv">More than 1–2 cups can elevate cortisol, especially on an empty stomach</span></div>
+      <div class="frow"><span class="fk">Alcohol</span><span class="fv">Disrupts liver function needed for hormone clearance</span></div>
+    </div>
+
+    <div class="reveal prose"><h3 class="sub">Building a Balanced PCOS Plate</h3>
+      <p>A simple visual formula for every meal — supporting blood sugar stability, sustained energy, and a calmer hormonal cycle.</p>
+    </div>
+    <div class="platewrap reveal">
+      <div class="plate" role="img" aria-label="A balanced PCOS plate: half non-starchy vegetables, a quarter protein, a quarter low-GI carbohydrate, plus a small amount of healthy fat."></div>
+      <div class="platelegend">
+        <div class="pl-item"><span class="sw" style="background:var(--forest-soft)"></span><div><h5><span class="frac">½</span> Non-starchy vegetables</h5><p>Salad, cooked greens, roasted vegetables</p></div></div>
+        <div class="pl-item"><span class="sw" style="background:var(--ochre)"></span><div><h5><span class="frac">¼</span> Quality protein</h5><p>Eggs, legumes, fish, paneer, chicken</p></div></div>
+        <div class="pl-item"><span class="sw" style="background:var(--clay-soft)"></span><div><h5><span class="frac">¼</span> Low-GI carbohydrate</h5><p>Oats, quinoa, sweet potato, whole grain</p></div></div>
+        <div class="pl-item"><span class="sw" style="background:var(--ink-faint)"></span><div><h5>+ A small amount of healthy fat</h5><p>Olive oil dressing, a handful of nuts, avocado slice</p></div></div>
+      </div>
+    </div>
+
+    <div class="reveal prose"><h3 class="sub">Three Foods to Add This Week</h3>
+      <p>Rather than removing things, start by adding:</p>
+    </div>
+    <div class="adds reveal">
+      <div class="acard"><div class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3c0 4 12 4 12 9s-12 5-12 9"/><path d="M9 3c0 4 9 4 9 9s-9 5-9 9"/></svg></div><div class="dose">add to oats / chai</div><h5>Cinnamon</h5><p>Clinically shown to improve insulin sensitivity. Stir into oats, smoothies, or chai.</p></div>
+      <div class="acard"><div class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="12" rx="4" ry="8"/><path d="M12 4v16"/></svg></div><div class="dose">1 tbsp ground daily</div><h5>Flaxseed</h5><p>Supports estrogen clearance. Add a tablespoon, ground, to yogurt or a smoothie.</p></div>
+      <div class="acard"><div class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 8h11a3 3 0 0 1 0 6h-1M5 8v6a4 4 0 0 0 4 4h2a4 4 0 0 0 4-4M8 3v2M11 2v3"/></svg></div><div class="dose">1–2 cups daily</div><h5>Spearmint tea</h5><p>Research shows a reduction in androgen levels in PCOS. A calming daily ritual.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="qband forest reveal">
+  <div class="wrap">
+    <span class="mark">“</span>
+    <blockquote>Small additions matter more than dramatic removals. Nourish first. The rest follows.</blockquote>
+  </div>
+</section>
+
+<!-- ============ CLOSING ============ -->
+<section class="page" id="closing">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="kicker">Closing</div>
+      <h2 class="head">Your reset starts here.</h2>
+    </div>
+    <div class="prose reveal" style="margin-top:28px; max-width:62ch;">
+      <p>You have just read something most diet books never tell you: that healing your relationship with food is inseparable from healing your hormones.</p>
+      <p>PCOS asks more of you than a standard diet allows. It asks for patience, consistency, and self-compassion. It asks you to work <strong>with</strong> your body instead of against it.</p>
+    </div>
+
+    <div class="callout reveal" style="margin-top:30px;">
+      <span class="clabel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>Your Next Steps</span>
+      <ul class="q">
+        <li>Start the <strong>Zenplato Food Journal</strong> today — just one day at a time</li>
+        <li>Practise the pre-meal check-in for one week</li>
+        <li>Add one hormone-supportive food to your daily routine</li>
+        <li>Build your non-food comfort toolkit</li>
+        <li>Continue with the next book in the bundle: <strong>Decode Your Plate</strong></li>
+      </ul>
+    </div>
+
+    <div class="bundle-card reveal">
+      <div class="blabel">The Zenplato Reset Bundle</div>
+      <h3>Four books. One gentle, consistent reset.</h3>
+      <div class="blist">
+        <div class="bitem done"><span class="bnum">01</span><span class="btext"><b>The Mindful Eating Handbook<span class="tag">You're here</span></b><span>Rebuild your relationship with food and hunger</span></span></div>
+        <div class="bitem"><span class="bnum">02</span><span class="btext"><b>Decode Your Plate</b><span>How to build balanced, hormone-friendly meals</span></span></div>
+        <div class="bitem"><span class="bnum">03</span><span class="btext"><b>Everyday Anti-Inflammatory Recipes</b><span>Easy, nourishing meals for daily life</span></span></div>
+        <div class="bitem"><span class="bnum">04</span><span class="btext"><b>The Zenplato Kitchen Guide</b><span>Pantry staples, meal shortcuts, and cooking basics</span></span></div>
+      </div>
+      <p class="bfoot">Available as a complete bundle or individually at <b>zenplato.com</b></p>
+    </div>
+  </div>
+</section>
+
+<section class="qband ink reveal">
+  <div class="wrap">
+    <span class="mark">“</span>
+    <blockquote>You do not need to eat perfectly. You need to eat intentionally, consistently, and without fear.</blockquote>
+    <cite>— Zenplato</cite>
+  </div>
+</section>
+
+<!-- ============ COLOPHON ============ -->
+<footer class="colophon">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="cwm">Z E N P L A T O</div>
+      <div class="ctag">Eat with intention. Heal with consistency.</div>
+      <div class="meta">
+        <div><h6>This Handbook</h6><p>The Mindful Eating Handbook — a gentle guide for women with PCOS.</p></div>
+        <div><h6>Part Of</h6><p>The Zenplato Reset Bundle, available at zenplato.com</p></div>
+        <div><h6>How to Use It</h6><p>Read slowly. Come back often. A reference, a companion, and a reset.</p></div>
+      </div>
+      <p class="disc">© 2025 Zenplato. This ebook is for informational purposes only and does not constitute medical advice. PCOS is an individual condition, and nutritional needs vary from person to person. Always consult a qualified healthcare professional for diagnosis and treatment before making significant changes to your diet, exercise, or lifestyle.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // progress bar + nav reveal
+  const progress = document.getElementById('progress');
+  const nav = document.getElementById('nav');
+  function onScroll(){
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    const pct = max>0 ? (h.scrollTop/max)*100 : 0;
+    progress.style.width = pct + '%';
+    if(h.scrollTop > window.innerHeight*0.7){ nav.classList.add('show'); } else { nav.classList.remove('show'); }
+  }
+  window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+  // drawer
+  const drawer = document.getElementById('drawer');
+  const scrim = document.getElementById('scrim');
+  function openDrawer(){ drawer.classList.add('open'); scrim.classList.add('open'); }
+  function closeDrawer(){ drawer.classList.remove('open'); scrim.classList.remove('open'); }
+  document.getElementById('menuBtn').addEventListener('click', openDrawer);
+  document.getElementById('closeDrawer').addEventListener('click', closeDrawer);
+  scrim.addEventListener('click', closeDrawer);
+  drawer.querySelectorAll('a').forEach(a=>a.addEventListener('click', closeDrawer));
+
+  // reveal on scroll
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.12, rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

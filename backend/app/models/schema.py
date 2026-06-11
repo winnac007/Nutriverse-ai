@@ -87,6 +87,12 @@ class LifestyleLog(BaseModel):
     workout_minutes: Optional[int] = None
     notes: Optional[str] = None
 
+class PremiumEbookRequest(BaseModel):
+    aspiration: str
+    flavor: str
+    time: str
+    why: Optional[str] = None
+
 class OnboardingPlanRequest(BaseModel):
     conditions: List[str]
     condition_answers: Dict[str, Any]

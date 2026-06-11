@@ -1,11 +1,107 @@
 from fastapi import APIRouter, HTTPException, Depends
+from typing import List, Optional, Dict, Any
+import json
+from datetime import datetime, timezone
 from app.core.database import db
 from app.core.security import get_current_user, calc_tdee
 from app.data.healthcare_data import CONDITIONS
 
+from app.models.schema import PremiumEbookRequest
+
 router = APIRouter(prefix="/ebook", tags=["ebook"])
 
 VALID_CONDITIONS = ["pcos", "diabetes", "thyroid", "gut-health", "anti-inflammatory", "menopause"]
+
+@router.post("/craft")
+async def generate_premium_ebook(answers: Dict[str, Any], user=Depends(get_current_user)):
+    """Generate a hyper-personalised AI ebook on-demand."""
+    from app.services.ai_service import call_ai, user_profile_text, extract_json
+    
+    primary = _resolve_primary_condition(user)
+    condition_label = "General Wellness"
+    if primary:
+        rec = _condition_record(primary)
+        condition_label = rec["label"] if rec else primary.replace("-", " ").title()
+
+    profile = user_profile_text(user)
+    
+    system_prompt = f"""You are a master clinical nutritionist and wellness alchemist. 
+    You create hyper-personalised, high-end nutritional blueprints.
+    Your tone is sophisticated, empathetic, and scientifically rigorous yet accessible.
+    
+    OUTPUT FORMAT: Return a JSON object with:
+    {{
+      "condition_id": "premium",
+      "condition_label": "Personalised Blueprint",
+      "is_premium": true,
+      "summary": {{
+        "greeting": "...",
+        "condition_blurb": "...",
+        "focus_points": ["...", "...", "..."],
+        "stats": [{{ "label": "...", "value": "..." }}]
+      }},
+      "chapters": [
+        {{ "id": 1, "title": "Your Biological North Star", "html_content": "..." }},
+        {{ "id": 2, "title": "The Alchemist's Kitchen", "html_content": "..." }},
+        {{ "id": 3, "title": "90-Day Transformation Protocol", "html_content": "..." }},
+        {{ "id": 4, "title": "Signature Recipes for {answers.get('aspiration', 'wellness')}", "html_content": "..." }},
+        {{ "id": 5, "title": "The Daily Rituals", "html_content": "..." }}
+      ]
+    }}
+    
+    STYLING RULES:
+    - Use <div class="callout insight">, <div class="compare">, <div class="pillars"> as defined in our design system.
+    - Each chapter should be 500+ words of rich, specific advice.
+    - Focus heavily on the user's aspiration: {answers.get('aspiration', 'wellness')}
+    - Respect their flavor palette: {answers.get('flavor', 'balanced')}
+    - Keep cooking times under: {answers.get('time', '30m')}
+    """
+
+    user_prompt = f"""User Profile:
+    {profile}
+    
+    Premium Questionnaire Answers:
+    {json.dumps(answers)}
+    
+    Primary Condition to address: {condition_label}
+    
+    Generate a 5-chapter masterpiece tailored ONLY to this person. 
+    Make them feel like this was written specifically for their soul and body.
+    Include a chapter on recipes that fit their flavor palette and time constraints.
+    """
+
+    try:
+        raw_response = await call_ai(system_prompt, user_prompt, max_tokens=8192)
+        ebook_data = extract_json(raw_response)
+        
+        if not ebook_data:
+            raise HTTPException(500, "Failed to parse AI response.")
+            
+        ebook_data["user_id"] = user["id"]
+        ebook_data["generated_at"] = datetime.now(timezone.utc).isoformat()
+        
+        # Merge stats from general summary if missing
+        general_summary = _build_summary(user, {"condition_label": condition_label}, primary)
+        if "summary" not in ebook_data: ebook_data["summary"] = {}
+        if "stats" not in ebook_data["summary"] or not ebook_data["summary"]["stats"]:
+            ebook_data["summary"]["stats"] = general_summary["stats"]
+        
+        # Add other missing fields for frontend compatibility
+        ebook_data["summary"]["all_conditions"] = general_summary["all_conditions"]
+        ebook_data["summary"]["goal_30day"] = user.get("goal_30day")
+        ebook_data["summary"]["diet"] = general_summary["diet"]
+        
+        await db.premium_ebooks.update_one(
+            {"user_id": user["id"]},
+            {"$set": ebook_data},
+            upsert=True
+        )
+        
+        return ebook_data
+    except Exception as e:
+        import logging
+        logging.exception("Premium ebook generation failed")
+        raise HTTPException(500, f"Generation failed: {str(e)}")
 
 # Default book used when a user has no condition, or their condition maps to nothing.
 DEFAULT_EBOOK = "anti-inflammatory"
@@ -192,9 +288,15 @@ def _build_summary(user, ebook_doc, primary_cid):
 
 
 @router.get("/me")
-async def get_my_ebook(user=Depends(get_current_user)):
-    """The single ebook for the logged-in user, auto-resolved from their
-    onboarding condition, plus a profile-based personalised summary."""
+async def get_my_ebook(type: Optional[str] = None, user=Depends(get_current_user)):
+    """The single ebook for the logged-in user. 
+    If type='premium', fetches their personalised AI guide."""
+    if type == "premium":
+        doc = await db.premium_ebooks.find_one({"user_id": user["id"]})
+        if not doc:
+            raise HTTPException(404, "No premium guide found.")
+        return doc
+
     primary = _resolve_primary_condition(user)
     slug = CONDITION_TO_EBOOK.get(primary, DEFAULT_EBOOK) if primary else DEFAULT_EBOOK
 

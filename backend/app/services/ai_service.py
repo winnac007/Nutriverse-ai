@@ -12,7 +12,7 @@ gemini_client = None
 if settings.GEMINI_API_KEY:
     gemini_client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
-async def call_ai(system_prompt: str, user_prompt: str, max_tokens: int = 2048, model_gemini: str = "gemini-2.0-flash", model_anthropic: str = "claude-3-5-sonnet-20240620", response_mime_type: str = None):
+async def call_ai(system_prompt: str, user_prompt: str, max_tokens: int = 2048, model_gemini: str = "gemini-2.5-flash", model_anthropic: str = "claude-3-5-sonnet-20240620", response_mime_type: str = None):
     """
     Tries Gemini first, falls back to Anthropic.
     """

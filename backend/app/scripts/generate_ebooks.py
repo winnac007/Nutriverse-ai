@@ -110,7 +110,7 @@ def _call_gemini(client: Any, prompt: str, retries: int = 3) -> str:
     for attempt in range(retries):
         try:
             response = client.models.generate_content(
-                model="gemini-2.5-flash-lite",
+                model="gemini-2.5-flash",
                 contents=prompt,
                 config=gtypes.GenerateContentConfig(
                     temperature=0.4,
@@ -181,18 +181,23 @@ CONDITION CONTEXT (from our app's clinical database — your content MUST be con
 TASK: Generate rich, evidence-based HTML content for these chapters:
 {chapter_defs}
 
-OUTPUT FORMAT: Return a JSON object where each key is the chapter number (as string) and the value is a string of clean HTML content. Use proper HTML tags: <h3>, <h4>, <p>, <ul>, <li>, <ol>, <strong>, <em>, <table>, <tr>, <td>, <th>. No markdown. No code fences. No outer wrapper div.
+OUTPUT FORMAT: Return a JSON object where each key is the chapter number (as string) and the value is a string of clean HTML content. Use proper HTML tags: <h3>, <h4>, <p>, <ul>, <li>, <ol>, <strong>, <em>, <table>, <tr>, <td>, <th>.
 
-Example format:
-{{"5": "<h3>Protein</h3><p>...</p>", "6": "<h3>Best Foods</h3><p>...</p>"}}
+PREMIUM STYLING (Use these CSS classes for a high-end editorial feel):
+1. CALLOUT CARDS: Use <div class="callout [insight|note|practice]"> followed by <span class="clabel">Label</span> and <p>content</p>.
+2. COMPARISONS: Use <div class="compare"><div class="ccol good"><h5>Heading</h5><ul><li>...</li></ul></div><div class="ccol bad"><h5>Heading</h5><ul><li>...</li></ul></div></div>.
+3. HORMONE CARDS (for endocrine chapters): Use <div class="hgrid"><div class="hcard"><div class="htop"><div class="ic c-[ghrelin|leptin|insulin|cortisol]">...</div><div><h5>Hormone Name</h5><div class="role">Role</div></div></div><dl><dt>Source</dt><dd>...</dd><dt>Effect</dt><dd>...</dd></dl></div></div>.
+4. PILLAR CARDS: Use <div class="pillars"><div class="pcard"><div class="pn">I</div><h5>Pillar Title</h5><p>Description</p></div></div>.
+5. HUNGER SCALE: For Chapter 4, use <div class="scalecard"><div class="scalebar"><div class="zone"></div><div class="ticks"><span>1</span>...<span>10</span></div></div><div class="scalemark"><span>Hungry</span>...<span>Full</span></div></div>.
+6. LISTS: Use <ul class="clean"> for standard bullet lists with nice spacing.
 
 IMPORTANT:
 - Write at least 400 words per chapter, 600+ for chapters with many sections
 - Be specific to {slug.replace('-', ' ').title()} — not generic nutrition advice
-- Include practical, actionable tips
+- Include practical, actionable tips using the .callout.practice class
 - For tracker chapters, create proper HTML tables
-- For meal plan chapter, write actual complete meals (not "chicken dish" — write "Grilled lemon herb chicken with roasted sweet potato and spinach salad")
-- Do NOT make up specific research citations or study authors — reference categories (WHO, NIH, Harvard) only
+- For meal plan chapter, write actual complete meals
+- Do NOT make up specific research citations — reference categories (WHO, NIH, Harvard) only
 - Return ONLY the JSON object, no prose before or after
 """
     raw = _call_gemini(client, prompt)

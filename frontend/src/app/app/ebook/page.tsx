@@ -1,7 +1,20 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import api from "@/lib/api";
+import { motion, AnimatePresence } from "framer-motion";
+import { ZENPLATO_CSS } from "./styles";
+import { 
+  Sparkles, 
+  BookOpen, 
+  ArrowRight, 
+  Check, 
+  Clock, 
+  Target, 
+  Flame, 
+  Heart,
+  ChevronLeft
+} from "lucide-react";
 
 /* ─── Types ─────────────────────────────────────────────────────────────── */
 interface Chapter {
@@ -28,598 +41,479 @@ interface Ebook {
   generated_at: string;
   chapters: Chapter[];
   summary: Summary;
+  is_premium?: boolean;
 }
 
 /* ─── Constants ──────────────────────────────────────────────────────────── */
-const CONDITION_ICONS: Record<string, string> = {
-  pcos: "🌸",
-  diabetes: "🩸",
-  thyroid: "⚡",
-  "gut-health": "🌿",
-  "anti-inflammatory": "🔥",
-  menopause: "🌙",
+const CONDITION_COLORS: Record<string, { clay: string; forest: string; accent: string }> = {
+  pcos: { clay: "#BC5B38", forest: "#3F5247", accent: "#A85B86" },
+  diabetes: { clay: "#BC5B38", forest: "#3F5247", accent: "#3F6E9E" },
+  thyroid: { clay: "#BC5B38", forest: "#3F5247", accent: "#3E8F76" },
+  "gut-health": { clay: "#BC5B38", forest: "#3F5247", accent: "#5E7D3C" },
+  "anti-inflammatory": { clay: "#BC5B38", forest: "#3F5247", accent: "#C07248" },
+  menopause: { clay: "#BC5B38", forest: "#3F5247", accent: "#8A5CA0" },
 };
 
-/* Soft parchment-tinted gradients (light theme) for the cover & header */
-const CONDITION_GRADIENT: Record<string, string> = {
-  pcos: "linear-gradient(135deg, #F3E6EE 0%, #FBF6F0 100%)",
-  diabetes: "linear-gradient(135deg, #E4ECF5 0%, #F8F4EC 100%)",
-  thyroid: "linear-gradient(135deg, #E2F0E9 0%, #F7F3EA 100%)",
-  "gut-health": "linear-gradient(135deg, #ECF1E2 0%, #F8F4EC 100%)",
-  "anti-inflammatory": "linear-gradient(135deg, #F6E8DE 0%, #FBF5EE 100%)",
-  menopause: "linear-gradient(135deg, #EFE6F2 0%, #F8F4EF 100%)",
-};
-
-/* Muted, deep accents that stay legible on cream parchment */
-const CONDITION_ACCENT: Record<string, string> = {
-  pcos: "#A85B86",
-  diabetes: "#3F6E9E",
-  thyroid: "#3E8F76",
-  "gut-health": "#5E7D3C",
-  "anti-inflammatory": "#C07248",
-  menopause: "#8A5CA0",
-};
-
-/* ─── Injected CSS for ebook HTML content ────────────────────────────────── */
-const EBOOK_CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap');
-
-  .ebook-content { font-family: 'DM Sans', system-ui, sans-serif; font-size: 1rem; }
-  .ebook-content h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 600; margin: 2.5rem 0 0.85rem; color: var(--accent, #3D5C3E); letter-spacing: -0.01em; border-bottom: 1px solid #EAE3D2; padding-bottom: 0.5rem; }
-  .ebook-content h4 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 600; margin: 1.75rem 0 0.6rem; color: #2D4530; }
-  .ebook-content h5 { font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 700; margin: 1.2rem 0 0.4rem; color: #8D9E8D; text-transform: uppercase; letter-spacing: 0.1em; }
-  .ebook-content p { line-height: 1.85; margin: 0.85rem 0; color: #4A4036; font-size: 1rem; }
-  .ebook-content ul, .ebook-content ol { padding-left: 1.6rem; margin: 0.85rem 0; }
-  .ebook-content li { line-height: 1.75; margin: 0.4rem 0; color: #54493D; }
-  .ebook-content strong { color: #2D4530; font-weight: 600; }
-  .ebook-content em { color: #6F7E6F; }
-  .ebook-content table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; background: #FFFFFF; border: 1px solid #EAE3D2; border-radius: 12px; overflow: hidden; }
-  .ebook-content th { background: rgba(61,92,62,0.06); padding: 0.7rem 1rem; text-align: left; color: #3D5C3E; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; font-size: 0.72rem; border-bottom: 1px solid #EAE3D2; }
-  .ebook-content td { border-bottom: 1px solid #F0EADE; padding: 0.65rem 1rem; color: #54493D; vertical-align: top; }
-  .ebook-content tr:hover td { background: rgba(61,92,62,0.025); }
-  .ebook-content .recipe-card { background: #FFFFFF; border: 1px solid #E5DDD0; border-radius: 16px; padding: 0; margin: 1.5rem 0; overflow: hidden; box-shadow: 0 2px 16px rgba(61,92,62,0.06); transition: box-shadow 0.2s, transform 0.2s; }
-  .ebook-content .recipe-card:hover { box-shadow: 0 8px 28px rgba(61,92,62,0.12); transform: translateY(-2px); }
-  .ebook-content .recipe-img { width: 100%; height: 200px; object-fit: cover; display: block; background: #EFE9DD; }
-  .ebook-content .recipe-body { padding: 1.35rem 1.6rem; border-top: 3px solid var(--accent, #C4974A); }
-  .ebook-content .recipe-card h4 { margin-top: 0; font-size: 1.2rem; color: #2D4530; }
-  .ebook-content .recipe-meta { font-family: 'DM Sans', sans-serif; font-size: 0.8rem; color: #8D9E8D; margin: 0.25rem 0 1rem; font-style: normal; }
-  .ebook-content .disclaimer-banner { background: rgba(61,92,62,0.05); border: 1px solid rgba(61,92,62,0.18); border-radius: 12px; padding: 0.85rem 1.1rem; margin: 1.25rem 0; font-size: 0.88rem; color: #3D5C3E; font-family: 'DM Sans', sans-serif; line-height: 1.6; }
-  .ebook-content .disclaimer { font-size: 0.8rem; color: #9A8F7E; font-style: italic; margin-top: 1.25rem; line-height: 1.6; font-family: 'DM Sans', sans-serif; }
-`;
+/* ─── Injected CSS ────────────────────────────────────────────────────────── */
 
 /* ─── Sub-components ─────────────────────────────────────────────────────── */
-function BookIcon() {
+function Reveal({ children, delay = 0, y = 22 }: { children: React.ReactNode; delay?: number; y?: number }) {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+    <motion.div
+      initial={{ opacity: 0, y }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function BotanicalSVG() {
+  return (
+    <svg className="absolute right-[-60px] top-1/2 -translate-y-1/2 w-[min(620px,70vw)] opacity-[0.16] pointer-events-none text-[var(--forest)]" viewBox="0 0 400 600" fill="none" stroke="currentColor" strokeWidth="1.4">
+      <path d="M200 580 C200 420 200 300 200 120" />
+      <path d="M200 200 C150 180 120 140 110 90 C160 100 195 140 200 200Z" fill="currentColor" fillOpacity=".05"/>
+      <path d="M200 260 C250 240 280 200 290 150 C240 160 205 200 200 260Z" fill="currentColor" fillOpacity=".05"/>
+      <circle cx="200" cy="90" r="9" fill="currentColor" fillOpacity=".12"/>
     </svg>
-  );
-}
-
-function PrintIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="6 9 6 2 18 2 18 9"/>
-      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-      <rect x="6" y="14" width="12" height="8"/>
-    </svg>
-  );
-}
-
-function SkeletonBlock({ height = 16, width = "100%" }: { height?: number; width?: string }) {
-  return (
-    <div style={{
-      height, width,
-      background: "linear-gradient(90deg, rgba(61,92,62,0.05) 25%, rgba(61,92,62,0.10) 50%, rgba(61,92,62,0.05) 75%)",
-      backgroundSize: "200% 100%",
-      animation: "shimmer 1.5s infinite",
-      borderRadius: 6,
-      marginBottom: 10,
-    }} />
-  );
-}
-
-function EbookSkeleton() {
-  return (
-    <div style={{ padding: "3rem 4rem" }}>
-      <SkeletonBlock height={12} width="30%" />
-      <SkeletonBlock height={36} width="60%" />
-      <SkeletonBlock height={12} width="40%" />
-      <div style={{ height: 32 }} />
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} style={{ marginBottom: 12 }}>
-          <SkeletonBlock height={14} width={`${70 + Math.random() * 25}%`} />
-        </div>
-      ))}
-      <div style={{ height: 24 }} />
-      {Array.from({ length: 4 }).map((_, i) => (
-        <SkeletonBlock key={i} height={13} width={`${55 + Math.random() * 35}%`} />
-      ))}
-    </div>
-  );
-}
-
-/* ─── Personalised summary cover ─────────────────────────────────────────── */
-function SummaryCover({ ebook, accent }: { ebook: Ebook; accent: string }) {
-  const s = ebook.summary;
-  const rgb = hexToRgb(accent);
-  return (
-    <div style={{
-      background: CONDITION_GRADIENT[ebook.condition_id] ?? "linear-gradient(135deg, #F2EEE2 0%, #FBF7EF 100%)",
-      borderBottom: "1px solid #E5DDD0",
-      padding: "3rem 4rem 2.75rem",
-    }}>
-      <div style={{ maxWidth: 760 }}>
-        {/* Eyebrow */}
-        <div style={{
-          display: "inline-flex", alignItems: "center", gap: 8,
-          background: `rgba(${rgb}, 0.1)`,
-          border: `1px solid rgba(${rgb}, 0.25)`,
-          borderRadius: 20, padding: "0.35rem 0.9rem", marginBottom: "1.25rem",
-        }}>
-          <span style={{ fontSize: "1rem", lineHeight: 1 }}>{CONDITION_ICONS[ebook.condition_id] ?? "📖"}</span>
-          <span style={{ fontSize: "0.7rem", color: accent, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
-            Your Personalised Library
-          </span>
-        </div>
-
-        {/* Greeting + headline */}
-        <h1 style={{
-          fontSize: "2.6rem", fontWeight: 500, color: "#1F2E1F", margin: "0 0 0.5rem",
-          fontFamily: "'Playfair Display', serif", lineHeight: 1.12, letterSpacing: "-0.02em",
-        }}>
-          {s.greeting}.<br />
-          <span style={{ color: accent, fontStyle: "italic" }}>{s.headline}</span>
-        </h1>
-        <p style={{ color: "#5E6B5E", fontSize: "1.02rem", lineHeight: 1.7, margin: "0 0 1.75rem", maxWidth: 560 }}>
-          {s.condition_blurb}
-        </p>
-
-        {/* Stat row — label/value pairs, echoing the reference cover meta-row */}
-        {s.stats.length > 0 && (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 14, marginBottom: "1.5rem" }}>
-            {s.stats.map((st) => (
-              <div key={st.label} style={{
-                background: "rgba(255,255,255,0.6)",
-                border: "1px solid #E5DDD0",
-                borderRadius: 12, padding: "0.7rem 1.1rem", minWidth: 110,
-              }}>
-                <div style={{ fontSize: "0.64rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8D9E8D", fontWeight: 600, marginBottom: 4 }}>
-                  {st.label}
-                </div>
-                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.15rem", color: "#1F2E1F", fontWeight: 500 }}>
-                  {st.value}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Personalised detail panel */}
-        <div style={{
-          background: "rgba(255,255,255,0.55)",
-          border: "1px solid #E5DDD0",
-          borderRadius: 16,
-          padding: "1.5rem 1.75rem",
-          display: "grid",
-          gap: "1.25rem",
-        }}>
-          {/* Conditions */}
-          {s.all_conditions.length > 0 && (
-            <div>
-              <div style={{ fontSize: "0.64rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8D9E8D", fontWeight: 600, marginBottom: "0.55rem" }}>
-                Tailored for
-              </div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                {s.all_conditions.map((c) => (
-                  <span key={c} style={{
-                    fontSize: "0.8rem", fontWeight: 600, color: accent,
-                    background: `rgba(${rgb}, 0.1)`,
-                    border: `1px solid rgba(${rgb}, 0.22)`,
-                    borderRadius: 999, padding: "0.3rem 0.85rem",
-                  }}>{c}</span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* 30-day goal */}
-          {s.goal_30day && (
-            <div>
-              <div style={{ fontSize: "0.64rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8D9E8D", fontWeight: 600, marginBottom: "0.4rem" }}>
-                Your 30-day goal
-              </div>
-              <p style={{ margin: 0, color: "#4A4036", fontSize: "0.95rem", lineHeight: 1.6, fontStyle: "italic" }}>
-                “{s.goal_30day}”
-              </p>
-            </div>
-          )}
-
-          {/* Focus points */}
-          {s.focus_points.length > 0 && (
-            <div>
-              <div style={{ fontSize: "0.64rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8D9E8D", fontWeight: 600, marginBottom: "0.55rem" }}>
-                What this guide focuses on
-              </div>
-              <ul style={{ margin: 0, paddingLeft: 0, listStyle: "none", display: "grid", gap: 8 }}>
-                {s.focus_points.map((f, i) => (
-                  <li key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", color: "#54493D", fontSize: "0.92rem", lineHeight: 1.55 }}>
-                    <span style={{ color: accent, marginTop: 1, flexShrink: 0 }}>✦</span>
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Diet + allergies */}
-          {(s.diet.type || s.diet.allergies.length > 0) && (
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "1.75rem" }}>
-              {s.diet.type && (
-                <div>
-                  <div style={{ fontSize: "0.64rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8D9E8D", fontWeight: 600, marginBottom: "0.35rem" }}>
-                    Diet
-                  </div>
-                  <div style={{ color: "#4A4036", fontSize: "0.9rem", fontWeight: 500 }}>{s.diet.type}</div>
-                </div>
-              )}
-              {s.diet.allergies.length > 0 && (
-                <div>
-                  <div style={{ fontSize: "0.64rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8D9E8D", fontWeight: 600, marginBottom: "0.35rem" }}>
-                    Avoiding
-                  </div>
-                  <div style={{ color: "#4A4036", fontSize: "0.9rem", fontWeight: 500 }}>
-                    {s.diet.allergies.join(", ")}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
   );
 }
 
 /* ─── Main Page ──────────────────────────────────────────────────────────── */
 export default function EbookPage() {
+  const [view, setView] = useState<'loading' | 'choice' | 'questionnaire' | 'generating' | 'reader'>('loading');
   const [ebook, setEbook] = useState<Ebook | null>(null);
-  const [activeChapter, setActiveChapter] = useState<number>(0); // 0 = summary cover
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [preparing, setPreparing] = useState(false);
+  const [isNavVisible, setIsNavVisible] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Questionnaire state
+  const [premiumAnswers, setPremiumAnswers] = useState({
+    aspiration: "",
+    flavor: "",
+    time: "",
+    why: ""
+  });
+
   const chapterRefs = useRef<Record<number, HTMLDivElement | null>>({});
-  const contentRef = useRef<HTMLDivElement>(null);
 
-  const accent = ebook ? (CONDITION_ACCENT[ebook.condition_id] ?? "#3D5C3E") : "#3D5C3E";
-
-  /* fetch the user's single ebook */
   useEffect(() => {
+    fetchEbook();
+  }, []);
+
+  const fetchEbook = async () => {
     setLoading(true);
-    api.get("/ebook/me")
-      .then(r => { setEbook(r.data); })
-      .catch(e => {
-        const status = e?.response?.status;
-        if (status === 202) {
-          setPreparing(true);
+    try {
+      // Check if user has a premium ebook already
+      const premiumRes = await api.get("/ebook/me?type=premium").catch(() => null);
+      if (premiumRes?.data) {
+        setEbook(premiumRes.data);
+        setView('reader');
+      } else {
+        // Otherwise check general
+        const generalRes = await api.get("/ebook/me").catch(() => null);
+        if (generalRes?.data) {
+          setEbook(generalRes.data);
+          setView('choice'); // Show choice even if general exists
         } else {
-          setError(e?.response?.data?.detail ?? "Your guide isn't available yet.");
-        }
-      })
-      .finally(() => setLoading(false));
-  }, []);
-
-  /* scroll to chapter (id 0 = summary cover / top) */
-  const scrollToChapter = useCallback((id: number) => {
-    setActiveChapter(id);
-    if (id === 0) {
-      contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
-    const el = chapterRefs.current[id];
-    if (el && contentRef.current) {
-      contentRef.current.scrollTo({ top: el.offsetTop - 80, behavior: "smooth" });
-    }
-  }, []);
-
-  /* track active chapter on scroll */
-  useEffect(() => {
-    const el = contentRef.current;
-    if (!el) return;
-    const handler = () => {
-      if (el.scrollTop < 120) { setActiveChapter(0); return; }
-      const ids = Object.keys(chapterRefs.current).map(Number).sort((a, b) => a - b);
-      for (let i = ids.length - 1; i >= 0; i--) {
-        const ref = chapterRefs.current[ids[i]];
-        if (ref && ref.offsetTop - 120 <= el.scrollTop) {
-          setActiveChapter(ids[i]);
-          break;
+          setView('choice');
         }
       }
+    } catch (e: any) {
+      setError("Unable to load your guide.");
+      setView('choice');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* Scroll effects */
+  useEffect(() => {
+    if (view !== 'reader') return;
+    const handleScroll = () => {
+      const h = document.documentElement;
+      const st = window.pageYOffset || h.scrollTop;
+      const sh = h.scrollHeight || document.body.scrollHeight;
+      const ch = h.clientHeight;
+      setScrollProgress((st / (sh - ch)) * 100);
+      setIsNavVisible(st > window.innerHeight * 0.7);
     };
-    el.addEventListener("scroll", handler, { passive: true });
-    return () => el.removeEventListener("scroll", handler);
-  }, [ebook]);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [view]);
 
-  return (
-    <>
-      <style>{EBOOK_CSS}</style>
-      <style>{`
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        :root { --accent: ${accent}; }
-        * { box-sizing: border-box; }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(61,92,62,0.18); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(61,92,62,0.32); }
+  const handlePremiumGenerate = async () => {
+    setView('generating');
+    try {
+      const res = await api.post("/ebook/craft", premiumAnswers);
+      setEbook(res.data);
+      setView('reader');
+    } catch (e) {
+      setError("AI generation failed. Please try again.");
+      setView('questionnaire');
+    }
+  };
 
-        /* ── Print: unlock the scroll container so every chapter flows onto paper ── */
-        @media print {
-          @page { margin: 16mm; }
-          /* hide app chrome — sidebar, bottom nav, the print button itself */
-          .ebook-sidebar, .ebook-print-bar { display: none !important; }
-          .fixed.bottom-0 { display: none !important; }
-          /* break the fixed-height / overflow:hidden cage that was clipping to one screen */
-          .ebook-shell {
-            display: block !important;
-            height: auto !important;
-            overflow: visible !important;
-            background: #FFFFFF !important;
-          }
-          .ebook-main {
-            display: block !important;
-            height: auto !important;
-            overflow: visible !important;
-          }
-          html, body { background: #FFFFFF !important; height: auto !important; overflow: visible !important; }
-          /* preserve the cream/gradient styling on paper */
-          .ebook-shell, .ebook-content, .ebook-content * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-          /* each chapter starts a fresh page; keep tables & recipe cards intact */
-          .ebook-chapter { break-before: page; page-break-before: always; padding-top: 0 !important; }
-          .ebook-content table, .ebook-content .recipe-card { break-inside: avoid; page-break-inside: avoid; }
-        }
-      `}</style>
+  if (view === 'loading') {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#F7F1E8]">
+        <motion.div 
+          animate={{ rotateY: [0, 180, 360], scale: [1, 1.1, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="text-6xl"
+        >
+          📖
+        </motion.div>
+      </div>
+    );
+  }
 
-      <div className="ebook-shell" style={{
-        display: "flex",
-        height: "calc(100vh - 4.5rem)", /* account for fixed BottomNav */
-        background: "#F5EFE2",
-        color: "#4A4036",
-        fontFamily: "'DM Sans', system-ui, sans-serif",
-        overflow: "hidden",
-        marginBottom: 0,
-      }}>
+  /* ─── Choice View ─────────────────────────────────────────────────────── */
+  if (view === 'choice') {
+    return (
+      <div className="min-h-screen bg-[#F7F1E8] p-6 flex flex-col items-center justify-center relative overflow-hidden">
+        <style>{ZENPLATO_CSS}</style>
+        <BotanicalSVG />
+        
+        <Reveal y={-20}>
+          <div className="text-center mb-12">
+            <h2 className="font-serif text-5xl text-[#26211B] mb-4">Choose Your Path</h2>
+            <p className="text-[#5E5447] text-lg max-w-md mx-auto">Select the guide that matches your commitment level today.</p>
+          </div>
+        </Reveal>
 
-        {/* ── Sidebar ─────────────────────────────────────────────────── */}
-        <aside className="ebook-sidebar" style={{
-          width: 272,
-          minWidth: 272,
-          background: "#FBF7EF",
-          borderRight: "1px solid #E5DDD0",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-        }}>
-          {/* Sidebar header */}
-          <div style={{ padding: "1.5rem 1.25rem 1rem", borderBottom: "1px solid #E5DDD0" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, color: accent, marginBottom: 6 }}>
-              <BookIcon />
-              <span style={{ fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" }}>
-                Your Guide
-              </span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl w-full">
+          {/* General Card */}
+          <motion.div 
+            whileHover={{ y: -10, rotateY: -5 }}
+            className="bg-white/60 backdrop-blur rounded-[40px] p-10 border border-[#DCD0BD] shadow-xl flex flex-col cursor-pointer group"
+            onClick={() => setView('reader')}
+          >
+            <div className="w-16 h-16 bg-[#F7F1E8] rounded-2xl flex items-center justify-center mb-6">
+              <BookOpen className="text-[#8C8071]" />
             </div>
-            {ebook ? (
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: "1.25rem", lineHeight: 1 }}>{CONDITION_ICONS[ebook.condition_id] ?? "📖"}</span>
-                <span style={{ fontSize: "0.95rem", fontWeight: 600, color: "#2D4530" }}>{ebook.condition_label}</span>
-              </div>
-            ) : (
-              <p style={{ fontSize: "0.78rem", color: "#8D9E8D", margin: 0, lineHeight: 1.5 }}>
-                Your personalised nutrition guide
-              </p>
-            )}
+            <h3 className="font-serif text-3xl mb-4">The Essential Handbook</h3>
+            <p className="text-[#5E5447] mb-8 flex-grow">A comprehensive, evidence-based guide tailored to your primary condition.</p>
+            <ul className="space-y-3 mb-10">
+              {["16 Chapters", "Standard Nutrition", "Lifestyle Tips"].map(f => (
+                <li key={f} className="flex items-center gap-2 text-sm text-[#8C8071]">
+                  <Check size={14} className="text-[#3F5247]" /> {f}
+                </li>
+              ))}
+            </ul>
+            <button className="w-full py-4 bg-transparent border border-[#DCD0BD] rounded-full font-bold text-[#26211B] group-hover:bg-[#26211B] group-hover:text-white transition-all flex items-center justify-center gap-2">
+              Open General <ArrowRight size={18} />
+            </button>
+          </motion.div>
+
+          {/* Premium Card */}
+          <motion.div 
+            whileHover={{ y: -10, rotateY: 5 }}
+            className="bg-[#26211B] rounded-[40px] p-10 shadow-2xl flex flex-col relative overflow-hidden group cursor-pointer"
+            onClick={() => setView('questionnaire')}
+          >
+            <div className="absolute top-0 right-0 p-8 opacity-20">
+              <Sparkles size={120} className="text-[#BC5B38]" />
+            </div>
+            <div className="w-16 h-16 bg-[#BC5B38]/20 rounded-2xl flex items-center justify-center mb-6">
+              <Sparkles className="text-[#BC5B38]" />
+            </div>
+            <h3 className="font-serif text-3xl text-[#F7F1E8] mb-4">The AI Alchemist Guide</h3>
+            <p className="text-[#8C8071] mb-8 flex-grow">A hyper-personalised, AI-crafted masterpiece that evolves with your unique goals.</p>
+            <ul className="space-y-3 mb-10">
+              {["100% Personalised", "Goal-Specific AI Content", "Deep Biological Insights"].map(f => (
+                <li key={f} className="flex items-center gap-2 text-sm text-[#F7F1E8]/60">
+                  <Check size={14} className="text-[#BC5B38]" /> {f}
+                </li>
+              ))}
+            </ul>
+            <button className="w-full py-4 bg-[#BC5B38] text-white rounded-full font-bold shadow-lg shadow-[#BC5B38]/30 group-hover:scale-105 transition-all flex items-center justify-center gap-2">
+              Start Premium <ArrowRight size={18} />
+            </button>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ─── Questionnaire View ──────────────────────────────────────────────── */
+  if (view === 'questionnaire') {
+    return (
+      <div className="min-h-screen bg-[#F7F1E8] p-6 flex items-center justify-center">
+        <style>{ZENPLATO_CSS}</style>
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-xl w-full bg-white/80 backdrop-blur-md rounded-[48px] p-12 border border-[#DCD0BD] shadow-2xl"
+        >
+          <button onClick={() => setView('choice')} className="flex items-center gap-2 text-[#8C8071] mb-8 hover:text-[#26211B] transition-colors">
+            <ChevronLeft size={18} /> Back
+          </button>
+          
+          <div className="mb-10">
+            <span className="text-[#BC5B38] font-bold text-xs uppercase tracking-[0.2em] block mb-2">Personalisation Phase</span>
+            <h2 className="font-serif text-4xl text-[#26211B]">Fine-tuning your AI.</h2>
           </div>
 
-          {/* Chapter list */}
-          {ebook && (
-            <div style={{ flex: 1, overflowY: "auto", padding: "1rem 1rem 1rem" }}>
-              {/* Summary cover link */}
-              <button
-                onClick={() => scrollToChapter(0)}
-                style={{
-                  width: "100%", display: "flex", alignItems: "center", gap: 8,
-                  padding: "0.5rem 0.75rem", marginBottom: 8, borderRadius: 8, border: "none",
-                  background: activeChapter === 0 ? `rgba(${hexToRgb(accent)}, 0.1)` : "transparent",
-                  color: activeChapter === 0 ? accent : "#6F7E6F",
-                  cursor: "pointer", textAlign: "left", fontSize: "0.82rem", fontWeight: 600,
-                  transition: "all 0.12s",
-                }}
+          <div className="space-y-8">
+            <div>
+              <label className="block text-sm font-bold text-[#26211B] mb-3 flex items-center gap-2">
+                <Target size={16} className="text-[#BC5B38]" /> What's your primary aspiration?
+              </label>
+              <select 
+                value={premiumAnswers.aspiration}
+                onChange={e => setPremiumAnswers({...premiumAnswers, aspiration: e.target.value})}
+                className="w-full bg-[#F7F1E8] border border-[#DCD0BD] rounded-2xl p-4 text-[#26211B] focus:ring-2 focus:ring-[#BC5B38] outline-none"
               >
-                ✦ Personalised summary
-              </button>
-
-              <p style={{ fontSize: "0.7rem", fontWeight: 600, color: "#8D9E8D", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.6rem", paddingLeft: "0.25rem" }}>
-                Chapters
-              </p>
-              {ebook.chapters.map(ch => (
-                <button
-                  key={ch.id}
-                  onClick={() => scrollToChapter(ch.id)}
-                  style={{
-                    width: "100%", display: "flex", alignItems: "flex-start", gap: 8,
-                    padding: "0.45rem 0.75rem", marginBottom: 2, borderRadius: 8, border: "none",
-                    background: activeChapter === ch.id ? `rgba(${hexToRgb(accent)}, 0.1)` : "transparent",
-                    color: activeChapter === ch.id ? accent : "#6F7E6F",
-                    cursor: "pointer", textAlign: "left", transition: "all 0.12s", fontSize: "0.8rem",
-                  }}
-                >
-                  <span style={{ fontSize: "0.7rem", fontWeight: 700, minWidth: 18, color: activeChapter === ch.id ? accent : "#B6AD9C", marginTop: 1 }}>{ch.id}</span>
-                  <span style={{ lineHeight: 1.4, fontWeight: activeChapter === ch.id ? 500 : 400 }}>{ch.title}</span>
-                </button>
-              ))}
+                <option value="">Select an aspiration...</option>
+                <option value="boundless-energy">Boundless Energy</option>
+                <option value="zero-bloating">Zero Bloating & Gut Comfort</option>
+                <option value="mental-clarity">Peak Mental Clarity</option>
+                <option value="weight-freedom">Sustainable Weight Freedom</option>
+                <option value="hormonal-peace">Balanced Hormones & Calm</option>
+              </select>
             </div>
-          )}
-        </aside>
 
-        {/* ── Main content ─────────────────────────────────────────────── */}
-        <main ref={contentRef} className="ebook-main" style={{ flex: 1, overflowY: "auto", position: "relative" }}>
-          {/* Loading skeleton */}
-          {loading && <EbookSkeleton />}
-
-          {/* "Being prepared" state (202) */}
-          {preparing && !loading && (
-            <div style={{ padding: "3rem 3.5rem", animation: "fadeIn 0.3s ease" }}>
-              <div style={{ background: "rgba(61,92,62,0.05)", border: "1px solid rgba(61,92,62,0.18)", borderRadius: 16, padding: "2rem", maxWidth: 480 }}>
-                <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>📖</div>
-                <h3 style={{ color: "#3D5C3E", margin: "0 0 0.5rem", fontWeight: 600, fontFamily: "'Playfair Display', serif" }}>Your guide is being prepared</h3>
-                <p style={{ color: "#7B8A7B", fontSize: "0.9rem", lineHeight: 1.6, margin: 0 }}>
-                  We&apos;re assembling your personalised nutrition guide. Please check back in a moment.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Error */}
-          {error && !loading && (
-            <div style={{ padding: "3rem 3.5rem", animation: "fadeIn 0.3s ease" }}>
-              <div style={{ background: "rgba(196,151,74,0.08)", border: "1px solid rgba(196,151,74,0.25)", borderRadius: 16, padding: "2rem", maxWidth: 480 }}>
-                <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>📖</div>
-                <h3 style={{ color: "#9A7228", margin: "0 0 0.5rem", fontWeight: 600, fontFamily: "'Playfair Display', serif" }}>Guide unavailable</h3>
-                <p style={{ color: "#7B8A7B", fontSize: "0.9rem", lineHeight: 1.6, margin: 0 }}>{error}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Ebook content */}
-          {ebook && !loading && (
-            <div style={{ animation: "fadeUp 0.35s ease" }}>
-              {/* Print button bar — sticky so it stays reachable while reading */}
-              <div className="ebook-print-bar" style={{
-                display: "flex", justifyContent: "flex-end",
-                padding: "1rem 4rem 0",
-                position: "sticky", top: 0, zIndex: 20,
-                pointerEvents: "none",
-              }}>
-                <button
-                  onClick={() => window.print()}
-                  style={{
-                    display: "flex", alignItems: "center", gap: 6,
-                    padding: "0.5rem 0.9rem", borderRadius: 999, border: "1px solid #E0D8CC",
-                    background: "#FFFFFF", color: "#3D5C3E", cursor: "pointer",
-                    fontSize: "0.8rem", fontWeight: 600, transition: "all 0.15s",
-                    pointerEvents: "auto",
-                  }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLButtonElement).style.background = "rgba(61,92,62,0.06)";
-                    (e.currentTarget as HTMLButtonElement).style.borderColor = "#3D5C3E";
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLButtonElement).style.background = "#FFFFFF";
-                    (e.currentTarget as HTMLButtonElement).style.borderColor = "#E0D8CC";
-                  }}
-                >
-                  <PrintIcon />
-                  Print
-                </button>
-              </div>
-
-              {/* Personalised summary cover */}
-              <SummaryCover ebook={ebook} accent={accent} />
-
-              {/* Disclaimer strip */}
-              <div style={{ padding: "1.25rem 4rem 0" }}>
-                <div style={{
-                  padding: "0.55rem 0.9rem", background: "rgba(61,92,62,0.05)",
-                  border: "1px solid rgba(61,92,62,0.18)", borderRadius: 10,
-                  fontSize: "0.78rem", color: "#3D5C3E", lineHeight: 1.5,
-                }}>
-                  ⚕️ This guide is for educational purposes only and does not replace professional medical advice.
-                  Always consult your healthcare provider before making significant dietary changes.
-                </div>
-              </div>
-
-              {/* Chapters */}
-              <div style={{ padding: "0 4rem 4rem" }}>
-                {ebook.chapters.map((ch, idx) => (
-                  <div
-                    key={ch.id}
-                    className="ebook-chapter"
-                    ref={el => { chapterRefs.current[ch.id] = el; }}
-                    style={{ paddingTop: "3rem" }}
+            <div>
+              <label className="block text-sm font-bold text-[#26211B] mb-3 flex items-center gap-2">
+                <Heart size={16} className="text-[#BC5B38]" /> Which flavor palette speaks to you?
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                {['Mediterranean', 'Spiced & Warm', 'Fresh & Green', 'Bold & Umami'].map(p => (
+                  <button 
+                    key={p}
+                    onClick={() => setPremiumAnswers({...premiumAnswers, flavor: p})}
+                    className={`py-3 px-4 rounded-xl border text-sm transition-all ${premiumAnswers.flavor === p ? 'bg-[#BC5B38] text-white border-[#BC5B38]' : 'bg-[#F7F1E8] text-[#5E5447] border-[#DCD0BD]'}`}
                   >
-                    {/* Chapter header */}
-                    <div style={{
-                      display: "flex", alignItems: "center", gap: 14,
-                      marginBottom: "1.5rem", paddingBottom: "1rem",
-                      borderBottom: `2px solid rgba(${hexToRgb(accent)}, 0.15)`,
-                    }}>
-                      <div style={{
-                        width: 40, height: 40, borderRadius: 10,
-                        background: `rgba(${hexToRgb(accent)}, 0.12)`,
-                        border: `1px solid rgba(${hexToRgb(accent)}, 0.25)`,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: "0.8rem", fontWeight: 700, color: accent,
-                        fontFamily: "'DM Sans', sans-serif", flexShrink: 0,
-                      }}>
-                        {ch.id}
-                      </div>
-                      <div>
-                        <p style={{ margin: 0, fontSize: "0.7rem", color: "#A89F8E", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                          Chapter {ch.id}
-                        </p>
-                        <h2 style={{
-                          margin: 0, fontSize: "1.65rem", fontWeight: 500, color: "#1F2E1F",
-                          fontFamily: "'Playfair Display', serif", letterSpacing: "-0.015em", lineHeight: 1.2,
-                        }}>
-                          {ch.title}
-                        </h2>
-                      </div>
-                    </div>
-
-                    {/* Chapter content */}
-                    {ch.html_content ? (
-                      <div
-                        className="ebook-content"
-                        style={{ "--accent": accent } as React.CSSProperties}
-                        dangerouslySetInnerHTML={{ __html: ch.html_content }}
-                      />
-                    ) : (
-                      <div style={{
-                        padding: "2rem", background: "rgba(61,92,62,0.03)", borderRadius: 12,
-                        color: "#A89F8E", fontSize: "0.9rem", textAlign: "center",
-                      }}>
-                        Content being prepared…
-                      </div>
-                    )}
-
-                    {/* Chapter divider (not after last) */}
-                    {idx < ebook.chapters.length - 1 && (
-                      <div style={{
-                        marginTop: "3rem", height: 1,
-                        background: "linear-gradient(90deg, transparent, rgba(61,92,62,0.14) 20%, rgba(61,92,62,0.14) 80%, transparent)",
-                      }} />
-                    )}
-                  </div>
+                    {p}
+                  </button>
                 ))}
               </div>
             </div>
-          )}
-        </main>
-      </div>
-    </>
-  );
-}
 
-/* ─── Utility ────────────────────────────────────────────────────────────── */
-function hexToRgb(hex: string): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `${r},${g},${b}`;
+            <div>
+              <label className="block text-sm font-bold text-[#26211B] mb-3 flex items-center gap-2">
+                <Clock size={16} className="text-[#BC5B38]" /> Cooking time on busy days?
+              </label>
+              <div className="flex gap-3">
+                {['5m', '15m', '30m+'].map(t => (
+                  <button 
+                    key={t}
+                    onClick={() => setPremiumAnswers({...premiumAnswers, time: t})}
+                    className={`flex-1 py-3 rounded-xl border text-sm transition-all ${premiumAnswers.time === t ? 'bg-[#BC5B38] text-white border-[#BC5B38]' : 'bg-[#F7F1E8] text-[#5E5447] border-[#DCD0BD]'}`}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button 
+              disabled={!premiumAnswers.aspiration || !premiumAnswers.flavor || !premiumAnswers.time}
+              onClick={handlePremiumGenerate}
+              className="w-full py-5 bg-[#26211B] text-white rounded-full font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#3F5247] transition-all flex items-center justify-center gap-3"
+            >
+              Craft My Premium Guide <Sparkles size={20} />
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  /* ─── Generating View ─────────────────────────────────────────────────── */
+  if (view === 'generating') {
+    return (
+      <div className="min-h-screen bg-[#26211B] flex flex-col items-center justify-center p-8 text-center">
+        <style>{ZENPLATO_CSS}</style>
+        
+        {/* 3D Animated Elements */}
+        <div className="relative w-64 h-64 mb-12">
+          <motion.div 
+            animate={{ rotateY: 360, rotateZ: [0, 10, -10, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+            style={{ transformStyle: "preserve-3d" }}
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            <div className="w-48 h-64 bg-[#BC5B38] rounded-r-2xl border-2 border-[#DCD0BD]/20 shadow-2xl relative">
+              <div className="absolute left-0 top-0 bottom-0 w-4 bg-[#8C3D21] rounded-r-sm shadow-inner" />
+              <div className="absolute inset-4 border border-white/10 rounded-lg flex flex-col justify-center items-center text-white">
+                <Sparkles size={48} className="mb-4 opacity-50" />
+                <div className="text-[8px] tracking-[0.4em] font-bold opacity-30">ALCHEMIST</div>
+              </div>
+            </div>
+          </motion.div>
+          
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              animate={{ 
+                y: [-20, 20], 
+                x: [-20, 20],
+                opacity: [0, 1, 0],
+                scale: [0.5, 1.5, 0.5]
+              }}
+              transition={{ 
+                duration: 2 + i, 
+                repeat: Infinity, 
+                delay: i * 0.4 
+              }}
+              className="absolute text-[#BC5B38] opacity-0"
+              style={{ 
+                left: `${Math.random() * 100}%`, 
+                top: `${Math.random() * 100}%` 
+              }}
+            >
+              <Sparkles size={16} />
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="max-w-md"
+        >
+          <h2 className="font-serif text-3xl text-[#F7F1E8] mb-4">AI Alchemist at work...</h2>
+          <p className="text-[#8C8071] leading-relaxed">
+            We're synthesising biological data, culinary preferences, and health goals into your unique nutritional blueprint. This takes about 30 seconds.
+          </p>
+          
+          <div className="mt-12 flex justify-center gap-2">
+            {[0, 1, 2].map(i => (
+              <motion.div 
+                key={i}
+                animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }}
+                transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+                className="w-2 h-2 rounded-full bg-[#BC5B38]"
+              />
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  /* ─── Reader View ─────────────────────────────────────────────────────── */
+  if (!ebook) return null;
+  const colors = CONDITION_COLORS[ebook.condition_id] || CONDITION_COLORS["anti-inflammatory"];
+
+  return (
+    <div className="zen-wrapper" style={{ 
+      "--clay": colors.clay,
+      "--forest": colors.forest,
+      "--accent": colors.accent
+    } as React.CSSProperties}>
+      <style>{ZENPLATO_CSS}</style>
+
+      {/* Progress bar */}
+      <div className="progress" style={{ width: `${scrollProgress}%` }} />
+
+      {/* Navigation */}
+      <nav className={`nav ${isNavVisible ? "show" : ""}`}>
+        <div className="flex items-center gap-4">
+          <div className="font-bold tracking-[0.3em] text-xs">ZEN <span>·</span> PLATO</div>
+          <button 
+            onClick={() => setView('choice')}
+            className="text-[10px] font-bold uppercase tracking-widest text-[#8C8071] hover:text-[#26211B] transition-colors"
+          >
+            Switch Guide
+          </button>
+        </div>
+        <button className="text-xs font-bold uppercase tracking-widest bg-[#26211B] text-white px-6 py-2 rounded-full" onClick={() => setIsDrawerOpen(true)}>
+          Contents
+        </button>
+      </nav>
+
+      {/* Drawer */}
+      <aside className={`drawer ${isDrawerOpen ? "open" : ""}`}>
+        <button className="absolute top-8 right-8 text-2xl" onClick={() => setIsDrawerOpen(false)}>×</button>
+        <h4 className="text-[10px] tracking-[0.3em] uppercase text-[#8C8071] mb-12">Navigation</h4>
+        <div className="space-y-6">
+          <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({top:0, behavior:'smooth'}); setIsDrawerOpen(false); }} className="block font-serif text-2xl hover:text-[#BC5B38] transition-colors">Cover</a>
+          {ebook.chapters.map(ch => (
+            <a key={ch.id} href={`#c${ch.id}`} onClick={(e) => { e.preventDefault(); const el = chapterRefs.current[ch.id]; if(el) window.scrollTo({top: el.offsetTop - 80, behavior:'smooth'}); setIsDrawerOpen(false); }} className="flex items-baseline gap-4 group">
+              <span className="text-xs font-serif italic text-[#BC5B38]">{ch.id.toString().padStart(2, '0')}</span>
+              <span className="text-lg font-medium group-hover:pl-2 transition-all">{ch.title}</span>
+            </a>
+          ))}
+        </div>
+      </aside>
+
+      {/* COVER */}
+      <section className="cover bg-white" id="top">
+        <BotanicalSVG />
+        <div className="max-w-4xl mx-auto w-full">
+          <Reveal delay={0.2}>
+            <span className="inline-block px-4 py-1 rounded-full border border-[#DCD0BD] text-[10px] font-bold uppercase tracking-[0.2em] text-[#8C8071] mb-8">
+              {ebook.is_premium ? "✨ Premium AI Blueprint" : "Essential Condition Guide"}
+            </span>
+          </Reveal>
+          <Reveal delay={0.4}>
+            <h1 className="text-[#26211B]">Your {ebook.condition_label}<br /><em>Handbook</em></h1>
+          </Reveal>
+          <Reveal delay={0.6}>
+            <p className="text-2xl font-serif italic text-[#5E5447] mt-8 max-w-2xl">{ebook.summary.greeting}. {ebook.summary.condition_blurb}</p>
+          </Reveal>
+          
+          <Reveal delay={0.8}>
+            <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4">
+              {ebook.summary.stats.map(s => (
+                <div key={s.label} className="bg-[#F7F1E8] p-6 rounded-3xl border border-[#DCD0BD]/50">
+                  <span className="block text-[10px] font-bold uppercase tracking-widest text-[#8C8071] mb-1">{s.label}</span>
+                  <span className="text-lg font-serif">{s.value}</span>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+        </div>
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-30">
+          <div className="w-[1px] h-20 bg-gradient-to-b from-[#26211B] to-transparent" />
+          <span className="text-[10px] tracking-[0.4em] uppercase">Begin Reading</span>
+        </div>
+      </section>
+
+      {/* CHAPTERS */}
+      {ebook.chapters.map(ch => (
+        <section 
+          key={ch.id} 
+          className="py-24 max-w-4xl mx-auto px-6" 
+          id={`c${ch.id}`}
+          ref={el => { chapterRefs.current[ch.id] = el; }}
+        >
+          <Reveal delay={0.1}>
+            <div className="flex items-center gap-6 mb-12">
+              <span className="text-6xl font-serif text-transparent stroke-1" style={{ WebkitTextStroke: "1px var(--clay)" }}>{ch.id.toString().padStart(2, '0')}</span>
+              <div className="h-[1px] flex-grow bg-[#DCD0BD]" />
+              <h2 className="font-serif text-4xl">{ch.title}</h2>
+            </div>
+          </Reveal>
+          
+          <Reveal delay={0.3}>
+            <div 
+              className="ebook-content leading-relaxed text-[#26211B]/80"
+              dangerouslySetInnerHTML={{ __html: ch.html_content }}
+            />
+          </Reveal>
+        </section>
+      ))}
+
+      {/* FOOTER */}
+      <footer className="bg-[#26211B] text-[#F7F1E8] py-32">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <div className="text-2xl font-bold tracking-[0.5em] mb-8">ZEN · PLATO</div>
+          <p className="text-sm text-[#8C8071] max-w-xl mx-auto leading-loose italic">
+            "Your body is the vessel for your spirit. Treat it with the reverence it deserves."
+          </p>
+          <div className="mt-20 pt-8 border-t border-white/5 text-[10px] text-[#5E5447] tracking-widest uppercase">
+            © 2026 NutriVerse AI · Personalised Wellness
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
 }
