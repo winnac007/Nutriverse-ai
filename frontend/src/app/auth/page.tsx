@@ -25,6 +25,11 @@ function AuthContent() {
   const [busy, setBusy] = useState(false);
   const { login, register } = useAuth();
 
+  const getSafeNext = () => {
+    const next = searchParams.get("next");
+    return next?.startsWith("/") && !next.startsWith("//") ? next : null;
+  };
+
   useEffect(() => {
     const m = searchParams.get("mode") === "register" ? "register" : "login";
     setMode(m);
@@ -37,11 +42,11 @@ function AuthContent() {
       if (mode === "register") {
         const u = await register(email, password, name);
         toast.success("Welcome to Zenplate");
-        router.push(u.onboarded ? "/app" : "/onboarding");
+        router.push(getSafeNext() || (u.onboarded ? "/app" : "/onboarding"));
       } else {
         const u = await login(email, password);
         toast.success("Welcome back");
-        router.push(u.onboarded ? "/app" : "/onboarding");
+        router.push(getSafeNext() || (u.onboarded ? "/app" : "/onboarding"));
       }
     } catch (err: any) {
       toast.error(err?.response?.data?.detail || "Something went wrong");

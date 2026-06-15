@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import api from "@/lib/api";
-import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/lib/auth";
+import { motion } from "framer-motion";
 import { ZENPLATO_CSS } from "./styles";
 import { 
   Sparkles, 
@@ -11,7 +12,6 @@ import {
   Check, 
   Clock, 
   Target, 
-  Flame, 
   Heart,
   ChevronLeft
 } from "lucide-react";
@@ -83,10 +83,9 @@ function BotanicalSVG() {
 
 /* ─── Main Page ──────────────────────────────────────────────────────────── */
 export default function EbookPage() {
-  const [view, setView] = useState<'loading' | 'choice' | 'questionnaire' | 'generating' | 'reader'>('loading');
+  const { user } = useAuth();
+  const [view, setView] = useState<'loading' | 'summary' | 'choice' | 'questionnaire' | 'generating' | 'reader'>('loading');
   const [ebook, setEbook] = useState<Ebook | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [isNavVisible, setIsNavVisible] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -99,14 +98,13 @@ export default function EbookPage() {
     why: ""
   });
 
-  const chapterRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const chapterRefs = useRef<Record<number, HTMLElement | null>>({});
 
   useEffect(() => {
     fetchEbook();
   }, []);
 
   const fetchEbook = async () => {
-    setLoading(true);
     try {
       // Check if user has a premium ebook already
       const premiumRes = await api.get("/ebook/me?type=premium").catch(() => null);
@@ -118,16 +116,13 @@ export default function EbookPage() {
         const generalRes = await api.get("/ebook/me").catch(() => null);
         if (generalRes?.data) {
           setEbook(generalRes.data);
-          setView('choice'); // Show choice even if general exists
+          setView('summary');
         } else {
           setView('choice');
         }
       }
-    } catch (e: any) {
-      setError("Unable to load your guide.");
+    } catch {
       setView('choice');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -152,11 +147,34 @@ export default function EbookPage() {
       const res = await api.post("/ebook/craft", premiumAnswers);
       setEbook(res.data);
       setView('reader');
-    } catch (e) {
-      setError("AI generation failed. Please try again.");
+    } catch {
       setView('questionnaire');
     }
   };
+
+  const plan = user?.health_plan || {};
+  const summaryInsights = ebook ? [
+    {
+      label: "Key findings",
+      value: ebook.summary.goal_30day || plan.summary || "Your habits, food preferences and health goals are ready for a guided starting plan.",
+    },
+    {
+      label: "Nutrition insights",
+      value: ebook.summary.focus_points?.[0] || plan.analysis || "Your profile benefits from steady meals, whole-food anchors and simple repeatable routines.",
+    },
+    {
+      label: "Foods to prioritize",
+      value: (plan.foods_to_eat || ebook.summary.focus_points || ["Balanced proteins", "Fiber-rich plants", "Hydrating meals"]).slice(0, 4).join(", "),
+    },
+    {
+      label: "Foods to limit",
+      value: (plan.foods_to_avoid || ebook.summary.diet?.allergies || ["Refined sugar", "Ultra-processed snacks"]).slice(0, 4).join(", "),
+    },
+    {
+      label: "Starter action plan",
+      value: Array.isArray(plan.food_rules) && plan.food_rules.length ? plan.food_rules.slice(0, 2).join(" ") : "Start with regular meal timing, a protein source at each meal, and one planned grocery list.",
+    },
+  ] : [];
 
   if (view === 'loading') {
     return (
@@ -168,6 +186,82 @@ export default function EbookPage() {
         >
           📖
         </motion.div>
+      </div>
+    );
+  }
+
+  /* ─── Personalised Summary View ───────────────────────────────────────── */
+  if (view === 'summary' && ebook) {
+    return (
+      <div className="min-h-screen bg-[#F7F1E8] p-5 md:p-8 flex items-center justify-center relative overflow-hidden">
+        <style>{ZENPLATO_CSS}</style>
+        <BotanicalSVG />
+
+        <div className="relative z-10 w-full max-w-5xl">
+          <Reveal y={-16}>
+            <div className="mb-8 md:mb-10">
+              <span className="inline-flex rounded-full border border-[#DCD0BD] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#8C8071]">
+                Your ZenPlato report preview
+              </span>
+              <h1 className="mt-5 max-w-3xl font-serif text-4xl md:text-6xl leading-[1.04] text-[#26211B]">
+                {ebook.summary.greeting}. Your {ebook.summary.condition_label || ebook.condition_label} plan is ready.
+              </h1>
+              <p className="mt-5 max-w-2xl text-[#5E5447] text-base md:text-lg leading-relaxed">
+                {ebook.summary.condition_blurb}
+              </p>
+            </div>
+          </Reveal>
+
+          <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-5 md:gap-6">
+            <Reveal delay={0.1}>
+              <div className="bg-white/78 border border-[#DCD0BD] rounded-[28px] p-5 md:p-8 shadow-xl shadow-[#26211B]/5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {summaryInsights.map((item) => (
+                    <div key={item.label} className="rounded-2xl bg-[#F7F1E8] border border-[#DCD0BD]/70 p-5">
+                      <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#BC5B38]">{item.label}</p>
+                      <p className="m-0 text-sm leading-relaxed text-[#26211B]/78">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => setView('reader')}
+                  className="mt-6 inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#26211B] px-7 py-4 text-sm font-bold text-white transition hover:bg-[#3F5247]"
+                >
+                  Open My Free Handbook <BookOpen size={18} />
+                </button>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.2}>
+              <div className="bg-[#26211B] rounded-[28px] p-6 md:p-8 shadow-2xl relative overflow-hidden">
+                <Sparkles className="absolute right-6 top-6 text-[#BC5B38]/25" size={92} />
+                <p className="relative text-[10px] font-bold uppercase tracking-[0.2em] text-[#BC5B38] mb-4">
+                  There is more beneath the surface
+                </p>
+                <h2 className="relative font-serif text-3xl md:text-4xl leading-tight text-[#F7F1E8] mb-4">
+                  Unlock your personalised premium blueprint.
+                </h2>
+                <p className="relative text-sm leading-relaxed text-[#F7F1E8]/62 mb-6">
+                  The premium ebook reveals deeper condition guidance, personalised recipes, grocery lists, food swaps, nutrition strategies, lifestyle recommendations and practical steps to follow.
+                </p>
+                <ul className="relative space-y-3 mb-8">
+                  {["Foods to prioritize", "Foods to be mindful of", "Personalized recipes", "Grocery lists", "Lifestyle recommendations"].map((item) => (
+                    <li key={item} className="flex items-center gap-3 text-sm text-[#F7F1E8]/72">
+                      <Check size={15} className="text-[#BC5B38]" /> {item}
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => setView('questionnaire')}
+                  className="relative inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#BC5B38] px-7 py-4 text-sm font-bold text-white transition hover:bg-[#A94F31]"
+                >
+                  Unlock Premium Personalisation <ArrowRight size={18} />
+                </button>
+              </div>
+            </Reveal>
+          </div>
+        </div>
       </div>
     );
   }

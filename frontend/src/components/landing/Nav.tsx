@@ -12,12 +12,6 @@ export function Nav() {
       </div>
       <div className="flex items-center gap-3">
         <a
-          href="/auth"
-          className="px-5 py-2.5 rounded-full border border-espresso/20 text-espresso text-sm hover:bg-espresso/5 transition"
-        >
-          Sign in
-        </a>
-        <a
           href="#early-access"
           className="px-5 py-2.5 rounded-full bg-olive text-ivory text-sm hover:bg-[var(--olive-deep)] transition"
         >

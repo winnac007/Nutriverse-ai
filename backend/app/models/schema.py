@@ -101,6 +101,10 @@ class OnboardingPlanRequest(BaseModel):
     cooking_ability: str
     budget: str
     goal_30day: str
+    category: Optional[str] = None
+    location: Optional[str] = None
+    country: Optional[str] = None
+    preferences: Optional[Dict[str, Any]] = None
     age: Optional[int] = None
     gender: Optional[str] = None
     weight_kg: Optional[float] = None

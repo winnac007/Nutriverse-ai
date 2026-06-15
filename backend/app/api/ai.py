@@ -68,7 +68,15 @@ async def coach_history(user=Depends(get_current_user)):
 @router.post("/onboarding/generate-plan")
 async def generate_onboarding_plan(body: OnboardingPlanRequest, user=Depends(get_current_user)):
     pool = []
-    mock_user = {"id": user["id"], "conditions": body.conditions, "dietary_type": body.dietary_type, "allergies": body.allergies, "cooking_ability": body.cooking_ability, "location": user.get("location"), "preferences": user.get("preferences", {})}
+    mock_user = {
+        "id": user["id"],
+        "conditions": body.conditions,
+        "dietary_type": body.dietary_type,
+        "allergies": body.allergies,
+        "cooking_ability": body.cooking_ability,
+        "location": body.location or body.country or user.get("location"),
+        "preferences": body.preferences or user.get("preferences", {}),
+    }
     raw_pool = await fetch_personalized_recipes(mock_user, db)
     if raw_pool:
         safe_pool = filter_for_conditions(raw_pool, body.conditions)
@@ -81,7 +89,7 @@ async def generate_onboarding_plan(body: OnboardingPlanRequest, user=Depends(get
     if not pool:
         pool = []  # No seed data; AI will generate plan without a pool
     pool_summary = [{"id": r["id"], "title": r["title"], "conditions": r.get("conditions", [])} for r in pool]
-    user_text = f"conditions: {body.conditions}\ncondition_answers: {json.dumps(body.condition_answers)}\ndietary_type: {body.dietary_type} | allergies: {body.allergies}\ncooking_ability: {body.cooking_ability} | budget: {body.budget}\ngoal_30day: {body.goal_30day}\nage: {body.age} | gender: {body.gender} | weight_kg: {body.weight_kg} | height_cm: {body.height_cm}\nactivity_level: {body.activity_level}\nrecipes_pool: {json.dumps(pool_summary)}"
+    user_text = f"category: {body.category}\nlocation: {body.location or body.country}\nconditions: {body.conditions}\ncondition_answers: {json.dumps(body.condition_answers)}\ndietary_type: {body.dietary_type} | allergies: {body.allergies}\ncooking_ability: {body.cooking_ability} | budget: {body.budget}\ngoal_30day: {body.goal_30day}\nage: {body.age} | gender: {body.gender} | weight_kg: {body.weight_kg} | height_cm: {body.height_cm}\nactivity_level: {body.activity_level}\npreferences: {json.dumps(body.preferences or {})}\nrecipes_pool: {json.dumps(pool_summary)}"
     try:
         raw = await call_ai(system_prompt=load_prompt("onboarding_plan"), user_prompt=user_text, max_tokens=1024, response_mime_type="application/json")
         plan = extract_json(raw)
@@ -99,6 +107,11 @@ async def generate_onboarding_plan(body: OnboardingPlanRequest, user=Depends(get
         "dietary_type": body.dietary_type, "allergies": body.allergies,
         "cooking_ability": body.cooking_ability, "budget": body.budget, "goal_30day": body.goal_30day,
     }
+    if body.category: update_fields["category"] = body.category
+    if body.preferences: update_fields["preferences"] = body.preferences
+    if body.location or body.country:
+        update_fields["location"] = body.location or body.country
+        update_fields["country"] = body.country or body.location
     if body.age: update_fields["age"] = body.age
     if body.gender: update_fields["gender"] = body.gender
     if body.weight_kg: update_fields["weight_kg"] = body.weight_kg
