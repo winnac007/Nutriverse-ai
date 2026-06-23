@@ -43,58 +43,95 @@ const DOTS = [
   { country: "Peru", x: "30%", y: "70%" },
 ];
 
+// Featured "medallion" countries — match the reference (food bowl + label)
+const MEDALLIONS = [
+  { country: "Mexico",   word: "Vibrant.",   x: "20%", y: "52%", img: "https://images.unsplash.com/photo-1552332386-f8dd00dc2f85?w=400&q=80", side: "right" },
+  { country: "Italy",    word: "Fresh.",     x: "52%", y: "30%", img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80", side: "right", label: "Mediterranean" },
+  { country: "India",    word: "Flavorful.", x: "70%", y: "55%", img: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&q=80", side: "left" },
+  { country: "Japan",    word: "Simple.",    x: "88%", y: "42%", img: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&q=80", side: "left" },
+  { country: "Korea",    word: "Balanced.",  x: "83%", y: "70%", img: "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&q=80", side: "left" },
+];
+
+const WORLD_MAP_BG = "https://customer-assets.emergentagent.com/job_nutriverse-preview/artifacts/3483sgg6_6ACC1EC3-0E85-4696-A48A-B2DC92FA1A5E.png";
+
 function WorldMapHero({ countries, onPick }) {
   return (
     <div className="relative rounded-3xl overflow-hidden zp-card-dark nv-shadow">
-      <div className="relative p-6 sm:p-10">
+      <div className="relative p-6 sm:p-8">
         <p className="font-overline" style={{ color: "#d9c189" }}>Chapter 03 · Discover</p>
         <h2 className="font-display text-3xl sm:text-5xl mt-2" style={{ color: "#f4f1e8" }}>Travel the Plate</h2>
         <p className="text-sm mt-3 max-w-md" style={{ color: "#d4cab8" }}>
-          Forty cuisines. One quiet way to eat. Tap any pin to step into a country.
+          Forty cuisines. One quiet way to eat. Tap any bowl to step into a country.
         </p>
 
-        <div className="relative mt-6 aspect-[16/9] rounded-2xl overflow-hidden" style={{ background: "linear-gradient(135deg, #1c1916 0%, #2e2a26 100%)" }}>
-          {/* Stylised dotted world silhouette */}
-          <svg viewBox="0 0 1000 500" className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
-            <defs>
-              <pattern id="dot" x="0" y="0" width="14" height="14" patternUnits="userSpaceOnUse">
-                <circle cx="7" cy="7" r="1.3" fill="#d9c189" opacity="0.55" />
-              </pattern>
-            </defs>
-            {/* North America */}
-            <path d="M120 130 Q180 100 240 120 Q280 130 290 170 Q260 210 220 230 Q170 240 130 220 Q100 190 120 130 Z" fill="url(#dot)" />
-            {/* South America */}
-            <path d="M250 270 Q280 260 300 290 Q320 340 300 400 Q280 440 260 430 Q240 400 240 350 Q240 300 250 270 Z" fill="url(#dot)" />
-            {/* Europe */}
-            <path d="M460 130 Q500 110 540 130 Q560 160 540 190 Q500 200 470 180 Q450 160 460 130 Z" fill="url(#dot)" />
-            {/* Africa */}
-            <path d="M470 220 Q510 210 540 240 Q560 290 540 350 Q510 390 480 380 Q450 340 450 280 Q450 240 470 220 Z" fill="url(#dot)" />
-            {/* Middle East */}
-            <path d="M555 200 Q585 195 600 220 Q605 245 585 250 Q565 245 555 220 Z" fill="url(#dot)" />
-            {/* Asia */}
-            <path d="M580 140 Q680 110 780 140 Q830 170 820 220 Q780 250 700 240 Q620 230 590 200 Q570 170 580 140 Z" fill="url(#dot)" />
-            {/* South-East Asia */}
-            <path d="M730 260 Q780 250 810 280 Q800 310 760 310 Q720 300 720 280 Z" fill="url(#dot)" />
-            {/* Australia */}
-            <path d="M820 340 Q870 330 900 360 Q890 390 850 395 Q810 385 810 360 Z" fill="url(#dot)" />
+        {/* The real world map background with food medallions */}
+        <div className="relative mt-6 aspect-[3/2] rounded-2xl overflow-hidden" style={{ background: "#0f0d0b" }}>
+          {/* Base map */}
+          <img src={WORLD_MAP_BG} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          {/* Subtle wash to lift the contrast */}
+          <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, rgba(0,0,0,0) 30%, rgba(15,13,11,0.55) 90%)" }} />
+
+          {/* Connection lines between medallions */}
+          <svg viewBox="0 0 100 67" className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
+            <g fill="none" stroke="#d9c189" strokeWidth="0.18" strokeDasharray="0.6 0.8" opacity="0.65">
+              <path d="M20 52 Q35 30 52 30" />
+              <path d="M52 30 Q60 40 70 55" />
+              <path d="M70 55 Q80 50 88 42" />
+              <path d="M88 42 Q85 56 83 70" />
+            </g>
           </svg>
 
-          {/* Dots */}
-          {DOTS.filter((d) => countries.includes(d.country)).map((d) => (
+          {/* Food medallions */}
+          {MEDALLIONS.map((m, i) => (
+            <button
+              key={m.country}
+              onClick={() => onPick(m.country)}
+              data-testid={`map-medallion-${m.country}`}
+              className="absolute -translate-x-1/2 -translate-y-1/2 group"
+              style={{ left: m.x, top: m.y }}
+            >
+              <div className="relative">
+                <div
+                  className="size-14 sm:size-16 rounded-full overflow-hidden ring-2"
+                  style={{ ringColor: "#d9c189", boxShadow: "0 6px 20px rgba(0,0,0,0.55), 0 0 0 2px rgba(217,193,137,0.4)" }}
+                >
+                  <img src={m.img} alt={m.country} className="w-full h-full object-cover" />
+                </div>
+                {/* Label tether */}
+                <div
+                  className={`absolute top-1/2 ${m.side === "right" ? "left-full ml-3" : "right-full mr-3"} -translate-y-1/2 whitespace-nowrap text-left`}
+                >
+                  <div className="flex items-center gap-1.5">
+                    {m.side === "left" && <span className="size-1.5 rounded-full" style={{ background: "#d9c189" }} />}
+                    <div>
+                      <div className="text-xs sm:text-sm font-semibold tracking-wide" style={{ color: "#f4f1e8", fontFamily: "Playfair Display, serif", textShadow: "0 1px 4px rgba(0,0,0,0.9)" }}>
+                        {m.label || m.country}
+                      </div>
+                      <div className="text-[10px] sm:text-xs" style={{ color: "#d4cab8", textShadow: "0 1px 4px rgba(0,0,0,0.9)" }}>{m.word}</div>
+                    </div>
+                    {m.side === "right" && <span className="size-1.5 rounded-full" style={{ background: "#d9c189" }} />}
+                  </div>
+                </div>
+              </div>
+            </button>
+          ))}
+
+          {/* Smaller secondary pins for other countries */}
+          {DOTS.filter((d) => countries.includes(d.country) && !MEDALLIONS.some(m => m.country === d.country)).map((d) => (
             <button
               key={d.country}
               onClick={() => onPick(d.country)}
               data-testid={`map-pin-${d.country}`}
               className="absolute -translate-x-1/2 -translate-y-1/2 group"
               style={{ left: d.x, top: d.y }}
+              aria-label={d.country}
             >
-              <span className="block size-3 rounded-full ring-2 ring-[#d9c189]" style={{ background: "#d9c189", boxShadow: "0 0 12px rgba(217,193,137,0.7)" }} />
-              <span className="absolute left-1/2 -translate-x-1/2 mt-1.5 text-[10px] font-medium uppercase tracking-widest opacity-100 whitespace-nowrap" style={{ color: "#f4f1e8", textShadow: "0 1px 4px rgba(0,0,0,0.9)" }}>{d.country}</span>
+              <span className="block size-2 rounded-full" style={{ background: "#d9c189", boxShadow: "0 0 8px rgba(217,193,137,0.85)" }} />
             </button>
           ))}
         </div>
 
-        <p className="text-xs italic mt-4 text-center" style={{ color: "#9b9080" }}>
+        <p className="text-xs italic mt-5 text-center" style={{ color: "#9b9080" }}>
           Slow food, gently mapped.
         </p>
       </div>
