@@ -774,6 +774,14 @@ function isNutritionInfluenceChapter(chapter: Chapter) {
   return /what nutrition can influence|nutrition can influence|food is more than fuel|energy|cravings|hormonal balance|long-term health/i.test(chapter.title);
 }
 
+function isCommonPcosChallengesChapter(chapter: Chapter) {
+  return /common pcos challenges|pcos challenges|weight management|irregular cycles/i.test(chapter.title);
+}
+
+function isZenplatoFrameworkChapter(chapter: Chapter) {
+  return /zenplato framework|protein.*fibre.*movement.*recovery/i.test(chapter.title);
+}
+
 function isFoodNutritionGuideChapter(chapter: Chapter) {
   return /your food\s*(?:&|and)\s*nutrition guide|section\s*3.*nutrition|food\s*&\s*nutrition guide/i.test(chapter.title);
 }
@@ -2947,104 +2955,21 @@ function GlanceBranch() {
   );
 }
 
-function OpportunityGrowthIllustration() {
-  const contourLines = [
-    "M11 356C74 302 159 311 229 338C322 374 397 366 470 312C523 273 570 230 631 216",
-    "M7 369C73 318 157 322 227 349C319 384 401 381 479 323C531 285 579 241 639 229",
-    "M4 383C73 334 154 333 226 360C317 396 405 396 488 336C539 298 588 255 648 243",
-    "M3 397C72 350 152 344 225 371C316 409 409 412 497 349C549 312 596 268 657 257",
-    "M5 411C75 365 154 357 226 384C315 422 414 427 507 363C559 326 605 282 667 272",
-    "M11 425C82 380 159 370 230 397C315 434 420 442 517 378C570 342 615 298 678 288",
-    "M23 440C94 396 169 386 238 412C322 447 430 458 529 394C581 361 626 315 690 306",
-    "M38 456C108 414 181 403 250 428C332 461 443 474 543 412C595 379 638 333 704 324",
-    "M55 473C125 433 196 421 264 445C345 476 456 491 558 430C611 399 652 352 718 344",
-  ];
-
-  const leaves = [
-    { d: "M0 34C23 0 65-4 92 7C79 42 36 58 0 34Z", transform: "translate(272 220) rotate(26)" },
-    { d: "M0 21C17-5 49-6 69 4C57 28 25 39 0 21Z", transform: "translate(373 139) rotate(-39)" },
-    { d: "M0 28C19-3 55-6 80 5C67 36 29 49 0 28Z", transform: "translate(428 84) rotate(-69)" },
-    { d: "M0 24C18-3 51-4 71 7C58 32 26 43 0 24Z", transform: "translate(454 229) rotate(22)" },
-    { d: "M0 21C15-3 43-4 61 5C50 29 23 38 0 21Z", transform: "translate(315 411) rotate(31)" },
-  ];
-
-  const roots = [
-    "M377 497C360 524 333 540 297 548",
-    "M377 497C397 525 423 541 462 550",
-    "M377 497C371 533 363 563 345 596",
-    "M377 497C387 532 397 565 418 599",
-    "M377 497C350 532 324 570 303 618",
-    "M377 497C410 531 442 568 471 616",
-    "M377 497C377 535 377 574 377 624",
-    "M377 497C339 516 306 525 266 527",
-    "M377 497C417 516 452 525 495 530",
-  ];
-
-  return (
-    <svg className="opportunity-growth" viewBox="0 0 720 780" fill="none" aria-hidden="true">
-      <circle className="opportunity-growth-halo" cx="381" cy="318" r="226" />
-      <path className="opportunity-growth-orbit" d="M162 303C178 170 287 80 421 77C542 74 655 144 705 252" />
-      <circle className="opportunity-growth-dot opportunity-growth-dot-top" cx="421" cy="77" r="11" />
-      <circle className="opportunity-growth-dot opportunity-growth-dot-root" cx="377" cy="497" r="7" />
-
-      <g className="opportunity-growth-contours">
-        {contourLines.map((line) => (
-          <path key={line} d={line} />
-        ))}
-      </g>
-
-      <line className="opportunity-growth-soil-line" x1="150" y1="497" x2="680" y2="497" />
-      <path className="opportunity-growth-soil" d="M150 548H680C663 646 554 717 415 720C275 723 167 650 150 548Z" />
-
-      <g className="opportunity-growth-roots">
-        {roots.map((root) => (
-          <path key={root} d={root} />
-        ))}
-        <path d="M339 518C321 528 303 545 289 570" />
-        <path d="M325 535C306 540 288 551 274 566" />
-        <path d="M418 519C438 531 454 548 466 571" />
-        <path d="M430 535C451 542 468 554 484 571" />
-        <path d="M363 555C350 566 339 582 331 604" />
-        <path d="M391 555C404 568 414 586 423 608" />
-      </g>
-
-      <path className="opportunity-growth-stem" d="M377 497C376 440 376 381 377 318C379 235 397 170 442 105" />
-      <path className="opportunity-growth-stem" d="M377 329C355 281 321 249 279 225" />
-      <path className="opportunity-growth-stem" d="M382 250C408 220 436 198 471 185" />
-      <path className="opportunity-growth-stem" d="M377 407C403 363 443 331 500 308" />
-      <path className="opportunity-growth-stem" d="M377 430C357 407 335 391 310 381" />
-
-      <g className="opportunity-growth-leaves">
-        {leaves.map((leaf) => (
-          <path key={leaf.transform} d={leaf.d} transform={leaf.transform} />
-        ))}
-      </g>
-
-      <g className="opportunity-growth-veins">
-        <path d="M295 240C324 247 348 259 370 282" />
-        <path d="M391 221C421 208 448 196 486 191" />
-        <path d="M443 126C460 108 475 96 497 86" />
-        <path d="M476 333C503 322 532 317 568 318" />
-        <path d="M326 422C345 427 361 437 375 453" />
-      </g>
-
-      <path className="opportunity-growth-side-lines" d="M689 224C644 276 609 342 584 419C551 523 550 617 591 716" />
-      <circle className="opportunity-growth-small-dot clay" cx="334" cy="717" r="4" />
-      <circle className="opportunity-growth-small-dot sage" cx="650" cy="653" r="4" />
-      <circle className="opportunity-growth-small-dot sage-light" cx="515" cy="705" r="3.5" />
-    </svg>
-  );
-}
-
 function OpportunityPage({ ebook }: { ebook: Ebook }) {
   const opportunity = getBiggestOpportunities(ebook)[0];
 
   return (
     <section className="cover ebook-opportunity-page" id="biggest-opportunities" aria-label="Your biggest opportunities">
       <div className="ebook-opportunity-sheet">
+        <Image
+          src="/ebook/opportunity-botanical.png"
+          alt=""
+          fill
+          sizes="(max-width: 820px) 100vw, min(1086px, 75vw)"
+          className="opportunity-artwork"
+          aria-hidden="true"
+        />
         <div className="opportunity-topline">ZenPlato <span>|</span> 01 Your Story</div>
-        <div className="opportunity-top-rule" aria-hidden="true" />
-        <FocusSprig className="opportunity-top-sprig" />
 
         <article className="opportunity-copy">
           <div className="opportunity-kicker">Your Biggest Opportunities</div>
@@ -3065,7 +2990,14 @@ function OpportunityPage({ ebook }: { ebook: Ebook }) {
         </article>
 
         <div className="opportunity-visual">
-          <OpportunityGrowthIllustration />
+          <Image
+            src="/ebook/opportunity-botanical.png"
+            alt=""
+            width={1086}
+            height={1448}
+            className="opportunity-mobile-artwork"
+            aria-hidden="true"
+          />
         </div>
 
         <div className="opportunity-brand" aria-hidden="true">
@@ -3399,6 +3331,120 @@ function NutritionInfluencePage({ ebook }: { ebook: Ebook }) {
         </article>
 
         <div className="nutrition-influence-page-number" aria-hidden="true">16</div>
+      </div>
+    </section>
+  );
+}
+
+const commonPcosChallenges = [
+  {
+    title: "Cravings",
+    body: "Hormonal fluctuations and blood sugar imbalances can trigger intense cravings, making it hard to stick to healthy choices.",
+  },
+  {
+    title: "Fatigue",
+    body: "Low energy, constant tiredness, and brain fog are common with PCOS due to insulin resistance, poor sleep, and hormonal imbalances.",
+  },
+  {
+    title: "Weight Management",
+    body: "PCOS can make it harder to lose weight or maintain it, especially around the belly, due to insulin resistance and hormonal factors.",
+  },
+  {
+    title: "Irregular Cycles",
+    body: "Irregular or missed periods are a hallmark of PCOS, caused by hormonal imbalances that affect ovulation.",
+  },
+];
+
+function CommonPcosChallengesPage() {
+  return (
+    <section className="cover ebook-common-challenges-page" id="common-pcos-challenges" aria-label="Common PCOS challenges">
+      <div className="ebook-common-challenges-sheet">
+        <Image
+          src="/ebook/common-pcos-challenges-bg.png"
+          alt=""
+          fill
+          sizes="(max-width: 820px) 100vw, min(1086px, 75vw)"
+          className="common-challenges-artwork"
+          aria-hidden="true"
+        />
+
+        <div className="common-challenges-topline">ZenPlato <span>|</span> 02 Hormonal Rhythms</div>
+        <article className="common-challenges-content">
+          <h2 className="common-challenges-heading">Common<br />PCOS Challenges</h2>
+          <p className="common-challenges-intro">
+            PCOS shows up differently for everyone. These are some of the most common challenges, and you are not alone.
+          </p>
+
+          <div className="common-challenges-list">
+            {commonPcosChallenges.map((challenge) => (
+              <section className="common-challenge-copy" key={challenge.title}>
+                <h3>{challenge.title}</h3>
+                <p>{challenge.body}</p>
+              </section>
+            ))}
+          </div>
+        </article>
+
+        <div className="common-challenges-page-number" aria-hidden="true">19</div>
+      </div>
+    </section>
+  );
+}
+
+const zenplatoFrameworkItems = [
+  {
+    title: "Protein",
+    body: "Supports stable blood sugar, reduces cravings, and helps build and repair lean muscle.",
+  },
+  {
+    title: "Fibre",
+    body: "Feeds your gut, supports hormone balance, and keeps you feeling full and satisfied longer.",
+  },
+  {
+    title: "Movement",
+    body: "Improves insulin sensitivity, lifts your mood, and helps your body function at its best.",
+  },
+  {
+    title: "Recovery",
+    body: "Rest, sleep, and stress management are essential for hormone balance and long-term wellbeing.",
+  },
+];
+
+function ZenplatoFrameworkPage() {
+  return (
+    <section className="cover ebook-zenplato-framework-page" id="zenplato-framework" aria-label="The ZenPlato framework">
+      <div className="ebook-zenplato-framework-sheet">
+        <Image
+          src="/ebook/zenplato-framework-bg.png"
+          alt=""
+          fill
+          sizes="(max-width: 820px) 100vw, min(1086px, 75vw)"
+          className="zenplato-framework-artwork"
+          aria-hidden="true"
+        />
+
+        <div className="zenplato-framework-topline">ZenPlato <span>|</span> 02 Hormonal Rhythms</div>
+        <article className="zenplato-framework-content">
+          <h2>The ZenPlato<br />Framework</h2>
+          <p className="zenplato-framework-intro">
+            A simple, sustainable framework to nourish your body, balance your hormones, and support your PCOS journey, every day.
+          </p>
+
+          <div className="zenplato-framework-list">
+            {zenplatoFrameworkItems.map((item) => (
+              <section className="zenplato-framework-item" key={item.title}>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </section>
+            ))}
+          </div>
+
+          <blockquote className="zenplato-framework-quote">
+            Balance isn&rsquo;t about perfection, it&rsquo;s about supporting your body with what it truly needs.
+          </blockquote>
+        </article>
+
+        <div className="zenplato-framework-page-number" aria-hidden="true">20</div>
       </div>
     </section>
   );
@@ -6828,7 +6874,7 @@ export default function EbookPage() {
   const colors = CONDITION_COLORS[ebook.condition_id] || CONDITION_COLORS["anti-inflammatory"];
   const coverCondition = resolveCoverCondition(ebook, user);
   const coverPersonalization = getCoverPersonalization(user, ebook, plan);
-  const visibleChapters = ebook.chapters.filter((chapter) => !isOpeningNoteChapter(chapter) && !isHealthSnapshotChapter(chapter) && !isKeyFindingsChapter(chapter) && !isFocusAreasChapter(chapter) && !isPersonalizedInsightsChapter(chapter) && !isAtAGlanceChapter(chapter) && !isOpportunityChapter(chapter) && !isUnderstandingJourneyChapter(chapter) && !isWhySymptomsChapter(chapter) && !isNutritionInfluenceChapter(chapter) && !isFoodNutritionGuideChapter(chapter) && !isFoodsToPrioritizeChapter(chapter) && !isFoodsToBeMindfulChapter(chapter) && !isBalancedPlateChapter(chapter) && !isHydrationChapter(chapter) && !isMealTimingChapter(chapter) && !isSmartFoodSwapsChapter(chapter) && !isLifestyleFoundationChapter(chapter) && !isSleepRecoveryChapter(chapter) && !isStressWellbeingChapter(chapter) && !isDailyWellnessChapter(chapter) && !isConsistencyChapter(chapter) && !isRecipeCollectionChapter(chapter) && !isBreakfastRecipeChapter(chapter) && !isSnackBeverageGroceryChapter(chapter) && !isActionPlanChapter(chapter) && !isNextChapterChapter(chapter));
+  const visibleChapters = ebook.chapters.filter((chapter) => !isOpeningNoteChapter(chapter) && !isHealthSnapshotChapter(chapter) && !isKeyFindingsChapter(chapter) && !isFocusAreasChapter(chapter) && !isPersonalizedInsightsChapter(chapter) && !isAtAGlanceChapter(chapter) && !isOpportunityChapter(chapter) && !isUnderstandingJourneyChapter(chapter) && !isWhySymptomsChapter(chapter) && !isNutritionInfluenceChapter(chapter) && !isCommonPcosChallengesChapter(chapter) && !isZenplatoFrameworkChapter(chapter) && !isFoodNutritionGuideChapter(chapter) && !isFoodsToPrioritizeChapter(chapter) && !isFoodsToBeMindfulChapter(chapter) && !isBalancedPlateChapter(chapter) && !isHydrationChapter(chapter) && !isMealTimingChapter(chapter) && !isSmartFoodSwapsChapter(chapter) && !isLifestyleFoundationChapter(chapter) && !isSleepRecoveryChapter(chapter) && !isStressWellbeingChapter(chapter) && !isDailyWellnessChapter(chapter) && !isConsistencyChapter(chapter) && !isRecipeCollectionChapter(chapter) && !isBreakfastRecipeChapter(chapter) && !isSnackBeverageGroceryChapter(chapter) && !isActionPlanChapter(chapter) && !isNextChapterChapter(chapter));
   const firstContentHref = "#food-nutrition-guide";
 
   return (
@@ -6907,6 +6953,14 @@ export default function EbookPage() {
           <a href="#nutrition-influence" onClick={(e) => { e.preventDefault(); const el = document.getElementById('nutrition-influence'); if(el) window.scrollTo({top: el.offsetTop - 80, behavior:'smooth'}); setIsDrawerOpen(false); }} className="flex items-baseline gap-4 group">
             <span className="text-xs font-serif italic text-[#BC5B38]">16</span>
             <span className="text-lg font-medium group-hover:pl-2 transition-all">Nutrition Influence</span>
+          </a>
+          <a href="#common-pcos-challenges" onClick={(e) => { e.preventDefault(); const el = document.getElementById('common-pcos-challenges'); if(el) window.scrollTo({top: el.offsetTop - 80, behavior:'smooth'}); setIsDrawerOpen(false); }} className="flex items-baseline gap-4 group">
+            <span className="text-xs font-serif italic text-[#BC5B38]">19</span>
+            <span className="text-lg font-medium group-hover:pl-2 transition-all">Common PCOS Challenges</span>
+          </a>
+          <a href="#zenplato-framework" onClick={(e) => { e.preventDefault(); const el = document.getElementById('zenplato-framework'); if(el) window.scrollTo({top: el.offsetTop - 80, behavior:'smooth'}); setIsDrawerOpen(false); }} className="flex items-baseline gap-4 group">
+            <span className="text-xs font-serif italic text-[#BC5B38]">20</span>
+            <span className="text-lg font-medium group-hover:pl-2 transition-all">The ZenPlato Framework</span>
           </a>
           <a href="#food-nutrition-guide" onClick={(e) => { e.preventDefault(); const el = document.getElementById('food-nutrition-guide'); if(el) window.scrollTo({top: el.offsetTop - 80, behavior:'smooth'}); setIsDrawerOpen(false); }} className="flex items-baseline gap-4 group">
             <span className="text-xs font-serif italic text-[#BC5B38]">21</span>
@@ -7111,6 +7165,12 @@ export default function EbookPage() {
 
       {/* WHAT NUTRITION CAN INFLUENCE */}
       <NutritionInfluencePage ebook={ebook} />
+
+      {/* COMMON PCOS CHALLENGES */}
+      <CommonPcosChallengesPage />
+
+      {/* THE ZENPLATO FRAMEWORK */}
+      <ZenplatoFrameworkPage />
 
       {/* SECTION 3 FOOD & NUTRITION GUIDE */}
       <FoodNutritionGuidePage />

@@ -37,6 +37,7 @@ export const ZENPLATO_CSS = `
     -webkit-font-smoothing: antialiased;
     position: relative;
     min-height: 100vh;
+    touch-action: pan-x pan-y pinch-zoom;
   }
 
   /* film grain */
@@ -2165,11 +2166,19 @@ export const ZENPLATO_CSS = `
     content: "";
     position: absolute;
     inset: 0;
-    z-index: 0;
+    z-index: 1;
     pointer-events: none;
     opacity: .13;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.62' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.2'/%3E%3C/svg%3E");
     mix-blend-mode: multiply;
+  }
+
+  .opportunity-artwork {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    object-fit: cover;
+    object-position: center;
   }
 
   .opportunity-topline {
@@ -2223,7 +2232,7 @@ export const ZENPLATO_CSS = `
 
   .opportunity-kicker {
     font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: 2.08cqw;
+    font-size: 2.3cqw;
     font-style: italic;
     font-weight: 500;
     line-height: 1.15;
@@ -2260,7 +2269,7 @@ export const ZENPLATO_CSS = `
     margin: 3.2cqw 0 0;
     max-width: 36cqw;
     font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: clamp(2.3cqw, 3.9cqw, 4.35cqw);
+    font-size: 4.4cqw;
     font-weight: 500;
     line-height: .98;
     letter-spacing: 0;
@@ -2286,7 +2295,7 @@ export const ZENPLATO_CSS = `
     margin: 0;
     max-width: 31.8cqw;
     font-family: var(--sans);
-    font-size: 1.22cqw;
+    font-size: 1.4cqw;
     font-weight: 500;
     line-height: 1.9;
     letter-spacing: .01em;
@@ -2294,6 +2303,7 @@ export const ZENPLATO_CSS = `
   }
 
   .opportunity-visual {
+    display: none;
     position: absolute;
     right: -2.1cqw;
     top: 15.9cqw;
@@ -2301,86 +2311,6 @@ export const ZENPLATO_CSS = `
     width: 67.2cqw;
     height: 73.2cqw;
     color: #596247;
-  }
-
-  .opportunity-growth {
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-  }
-
-  .opportunity-growth-halo {
-    fill: rgba(210, 205, 190, .28);
-    stroke: rgba(181, 174, 151, .12);
-  }
-
-  .opportunity-growth-orbit {
-    stroke: #C47C43;
-    stroke-width: 1.15;
-    stroke-dasharray: 420 17 2 11;
-    stroke-linecap: round;
-    opacity: .65;
-  }
-
-  .opportunity-growth-dot {
-    fill: #BB7548;
-  }
-
-  .opportunity-growth-contours path,
-  .opportunity-growth-side-lines {
-    stroke: rgba(111, 123, 91, .28);
-    stroke-width: 1;
-    fill: none;
-  }
-
-  .opportunity-growth-soil-line {
-    stroke: rgba(188, 119, 75, .36);
-    stroke-width: 1.15;
-  }
-
-  .opportunity-growth-soil {
-    fill: rgba(150, 158, 123, .24);
-    stroke: rgba(86, 98, 68, .2);
-    stroke-width: 1;
-  }
-
-  .opportunity-growth-roots path {
-    stroke: rgba(82, 87, 67, .5);
-    stroke-width: .95;
-    stroke-linecap: round;
-    fill: none;
-  }
-
-  .opportunity-growth-stem {
-    stroke: rgba(72, 84, 55, .86);
-    stroke-width: 2.35;
-    stroke-linecap: round;
-    fill: none;
-  }
-
-  .opportunity-growth-leaves path {
-    fill: rgba(120, 130, 94, .44);
-    stroke: rgba(69, 82, 56, .55);
-    stroke-width: 1;
-  }
-
-  .opportunity-growth-veins path {
-    stroke: rgba(241, 238, 226, .6);
-    stroke-width: .9;
-    stroke-linecap: round;
-    fill: none;
-  }
-
-  .opportunity-growth-small-dot.clay {
-    fill: #BB7548;
-  }
-
-  .opportunity-growth-small-dot.sage {
-    fill: #6B744E;
-  }
-
-  .opportunity-growth-small-dot.sage-light {
-    fill: #A3A68C;
   }
 
   .opportunity-brand {
@@ -2454,6 +2384,416 @@ export const ZENPLATO_CSS = `
       min-height: 0;
       aspect-ratio: 543 / 724;
       box-shadow: 0 24px 70px rgba(38, 33, 27, .18);
+    }
+  }
+
+  .ebook-common-challenges-page,
+  .ebook-zenplato-framework-page {
+    isolation: isolate;
+    display: grid;
+    place-items: stretch;
+    background: #E9E1D3;
+    color: #172514;
+  }
+
+  .ebook-common-challenges-sheet,
+  .ebook-zenplato-framework-sheet {
+    container-type: inline-size;
+    position: relative;
+    width: 100%;
+    min-height: 100svh;
+    overflow: hidden;
+    isolation: isolate;
+    background: #F7F3EC;
+  }
+
+  .common-challenges-artwork,
+  .zenplato-framework-artwork {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .common-challenges-topline,
+  .zenplato-framework-topline {
+    position: absolute;
+    z-index: 3;
+    font-family: var(--sans);
+    font-size: 1.16cqw;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: .48em;
+    text-transform: uppercase;
+    color: #192314;
+    white-space: nowrap;
+  }
+
+  .common-challenges-topline {
+    left: 10.66cqw;
+    top: 5.85cqw;
+  }
+
+  .zenplato-framework-topline {
+    left: 9.34cqw;
+    top: 5.72cqw;
+  }
+
+  .common-challenges-topline span,
+  .zenplato-framework-topline span {
+    display: inline-block;
+    margin: 0 1.55cqw;
+  }
+
+  .common-challenges-content,
+  .zenplato-framework-content {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+  }
+
+  .common-challenges-heading {
+    position: absolute;
+    left: 5.95cqw;
+    top: 14.55cqw;
+    margin: 0;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 7.15cqw;
+    font-weight: 500;
+    line-height: 1.08;
+    color: #102A12;
+    opacity: 0;
+  }
+
+  .common-challenges-intro {
+    position: absolute;
+    left: 6.05cqw;
+    top: 33.7cqw;
+    width: 39cqw;
+    margin: 0;
+    font-family: var(--sans);
+    font-size: 1.68cqw;
+    font-weight: 500;
+    line-height: 1.62;
+    color: rgba(31, 33, 30, .88);
+  }
+
+  .common-challenges-list {
+    position: absolute;
+    left: 17.95cqw;
+    top: 70.15cqw;
+    width: 76.1cqw;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 30.7cqw));
+    column-gap: 14.7cqw;
+    row-gap: 27.25cqw;
+  }
+
+  .common-challenge-copy h3 {
+    margin: 0;
+    font-family: var(--sans);
+    font-size: 1.38cqw;
+    font-weight: 800;
+    line-height: 1.35;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: #172514;
+  }
+
+  .common-challenge-copy p {
+    margin: 1.45cqw 0 0;
+    font-family: var(--sans);
+    font-size: 1.43cqw;
+    font-weight: 500;
+    line-height: 1.48;
+    color: rgba(31, 33, 30, .88);
+  }
+
+  .common-challenges-page-number,
+  .zenplato-framework-page-number {
+    position: absolute;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .95cqw;
+    font-family: var(--sans);
+    font-size: 1.34cqw;
+    font-weight: 600;
+    line-height: 1;
+    color: rgba(20, 38, 14, .82);
+  }
+
+  .common-challenges-page-number {
+    right: 6.05cqw;
+    bottom: 2.85cqw;
+  }
+
+  .zenplato-framework-page-number {
+    right: 5.55cqw;
+    bottom: 2.65cqw;
+  }
+
+  .common-challenges-page-number::after,
+  .zenplato-framework-page-number::after {
+    content: "";
+    width: 3.6cqw;
+    height: 1px;
+    background: rgba(20, 38, 14, .72);
+  }
+
+  .zenplato-framework-content h2 {
+    position: absolute;
+    left: 6.9cqw;
+    top: 16.2cqw;
+    margin: 0;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 7.2cqw;
+    font-weight: 500;
+    line-height: 1.02;
+    color: #102A12;
+  }
+
+  .zenplato-framework-intro {
+    position: absolute;
+    left: 6.95cqw;
+    top: 36.55cqw;
+    width: 38.2cqw;
+    margin: 0;
+    font-family: var(--sans);
+    font-size: 1.68cqw;
+    font-weight: 500;
+    line-height: 1.62;
+    color: rgba(31, 33, 30, .88);
+  }
+
+  .zenplato-framework-list {
+    position: absolute;
+    left: 19.35cqw;
+    top: 49.35cqw;
+    width: 25.8cqw;
+    display: grid;
+    grid-auto-rows: 16.45cqw;
+  }
+
+  .zenplato-framework-item h3 {
+    margin: 0;
+    font-family: var(--sans);
+    font-size: 1.38cqw;
+    font-weight: 800;
+    line-height: 1.35;
+    letter-spacing: .34em;
+    text-transform: uppercase;
+    color: #17371A;
+  }
+
+  .zenplato-framework-item p {
+    margin: 2.5cqw 0 0;
+    font-family: var(--sans);
+    font-size: 1.4cqw;
+    font-weight: 500;
+    line-height: 1.55;
+    color: rgba(31, 33, 30, .88);
+  }
+
+  .zenplato-framework-quote {
+    position: absolute;
+    left: 16.45cqw;
+    top: 116.45cqw;
+    width: 29.6cqw;
+    margin: 0;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 2.05cqw;
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1.27;
+    color: #18381B;
+  }
+
+  @media (min-width: 821px) {
+    .ebook-common-challenges-page,
+    .ebook-zenplato-framework-page {
+      --hormonal-stage-x: clamp(48px, 7vw, 120px);
+      --hormonal-stage-y: clamp(18px, 3svh, 34px);
+      min-height: 100svh;
+      padding: var(--hormonal-stage-y) var(--hormonal-stage-x);
+      place-items: center;
+    }
+
+    .ebook-common-challenges-sheet,
+    .ebook-zenplato-framework-sheet {
+      width: min(
+        calc(100vw - (var(--hormonal-stage-x) * 2)),
+        calc((100svh - (var(--hormonal-stage-y) * 2)) * .75),
+        1086px
+      );
+      min-height: 0;
+      aspect-ratio: 543 / 724;
+      box-shadow: 0 24px 70px rgba(38, 33, 27, .18);
+    }
+
+    .food-gallery-divider,
+    .food-gallery-dynamic-branch,
+    .hydration-top-mark,
+    .hydration-top-rule,
+    .hydration-divider,
+    .hydration-step-icon,
+    .hydration-step:not(:last-child)::after,
+    .hydration-tip svg,
+    .hydration-quote-branch {
+      visibility: hidden;
+    }
+  }
+
+  @media (max-width: 820px) {
+    .opportunity-artwork {
+      display: none;
+    }
+
+    .opportunity-visual {
+      display: block;
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      margin-top: 32px;
+      overflow: hidden;
+      transform: none;
+    }
+
+    .opportunity-mobile-artwork {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 74% 48%;
+    }
+
+    .ebook-common-challenges-sheet,
+    .ebook-zenplato-framework-sheet {
+      min-height: 100svh;
+      padding: 30px 26px 72px;
+    }
+
+    .common-challenges-artwork,
+    .zenplato-framework-artwork {
+      opacity: .18;
+      object-position: center top;
+    }
+
+    .common-challenges-topline,
+    .zenplato-framework-topline {
+      left: 62px;
+      top: 39px;
+      max-width: calc(100vw - 88px);
+      overflow: hidden;
+      font-size: 10px;
+      letter-spacing: .28em;
+    }
+
+    .common-challenges-topline span,
+    .zenplato-framework-topline span {
+      margin: 0 10px;
+    }
+
+    .common-challenges-content,
+    .zenplato-framework-content {
+      position: relative;
+      inset: auto;
+      margin-top: 122px;
+    }
+
+    .common-challenges-heading,
+    .common-challenges-intro,
+    .common-challenges-list,
+    .zenplato-framework-content h2,
+    .zenplato-framework-intro,
+    .zenplato-framework-list,
+    .zenplato-framework-quote,
+    .common-challenges-page-number,
+    .zenplato-framework-page-number {
+      position: relative;
+      left: auto;
+      right: auto;
+      top: auto;
+      bottom: auto;
+      width: auto;
+    }
+
+    .common-challenges-heading,
+    .zenplato-framework-content h2 {
+      font-size: clamp(50px, 13.5vw, 72px);
+      line-height: 1.04;
+      opacity: 1;
+    }
+
+    .common-challenges-intro,
+    .zenplato-framework-intro {
+      max-width: 340px;
+      margin-top: 28px;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .common-challenges-list,
+    .zenplato-framework-list {
+      margin-top: 36px;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-auto-rows: auto;
+      gap: 14px;
+    }
+
+    .common-challenge-copy,
+    .zenplato-framework-item {
+      border: 1px solid rgba(220, 208, 189, .78);
+      border-radius: 14px;
+      background: rgba(251, 247, 239, .88);
+      padding: 22px 22px 20px;
+      box-shadow: 0 18px 42px -30px rgba(38, 33, 27, .22);
+    }
+
+    .common-challenge-copy h3,
+    .zenplato-framework-item h3 {
+      font-size: 11px;
+      line-height: 1.45;
+      letter-spacing: .3em;
+    }
+
+    .common-challenge-copy p,
+    .zenplato-framework-item p {
+      margin-top: 14px;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .zenplato-framework-quote {
+      margin-top: 28px;
+      border-radius: 12px;
+      padding: 22px 24px;
+      background: rgba(222, 218, 207, .78);
+      font-size: 22px;
+      line-height: 1.25;
+    }
+
+    .common-challenges-page-number,
+    .zenplato-framework-page-number {
+      justify-content: center;
+      margin-top: 42px;
+      flex-direction: row;
+      font-size: 14px;
+      gap: 14px;
+    }
+
+    .common-challenges-page-number::before,
+    .zenplato-framework-page-number::before,
+    .common-challenges-page-number::after,
+    .zenplato-framework-page-number::after {
+      content: "";
+      width: 16px;
+      height: 1px;
+      background: rgba(20, 38, 14, .72);
     }
   }
 
@@ -3838,7 +4178,7 @@ export const ZENPLATO_CSS = `
     margin: 3.45cqw 0 0;
     max-width: 34.7cqw;
     font-family: var(--sans);
-    font-size: 1.52cqw;
+    font-size: 1.68cqw;
     font-weight: 500;
     line-height: 1.54;
     color: rgba(31, 33, 30, .88);
@@ -3894,7 +4234,7 @@ export const ZENPLATO_CSS = `
     margin: 0;
     min-height: 2.3cqw;
     font-family: var(--sans);
-    font-size: .94cqw;
+    font-size: 1.05cqw;
     font-weight: 800;
     line-height: 1.42;
     letter-spacing: .34em;
@@ -3905,7 +4245,7 @@ export const ZENPLATO_CSS = `
   .food-gallery-card-text p {
     margin: 2.05cqw 0 0;
     font-family: var(--sans);
-    font-size: 1.22cqw;
+    font-size: 1.34cqw;
     font-weight: 500;
     line-height: 1.55;
     color: rgba(31, 33, 30, .88);
@@ -4135,7 +4475,7 @@ export const ZENPLATO_CSS = `
 
   .balanced-plate-intro {
     max-width: 29.2cqw;
-    font-size: 1.47cqw;
+    font-size: 1.62cqw;
     line-height: 1.58;
   }
 
@@ -4419,7 +4759,7 @@ export const ZENPLATO_CSS = `
   .hydration-step h3 {
     margin: .92cqw 0 0;
     font-family: var(--sans);
-    font-size: 1.05cqw;
+    font-size: 1.15cqw;
     font-weight: 800;
     line-height: 1.35;
     letter-spacing: .34em;
@@ -4430,7 +4770,7 @@ export const ZENPLATO_CSS = `
   .hydration-step p {
     margin: 1.18cqw 0 0;
     font-family: var(--sans);
-    font-size: 1.12cqw;
+    font-size: 1.24cqw;
     font-weight: 500;
     line-height: 1.48;
     color: rgba(31, 33, 30, .86);
@@ -4482,7 +4822,7 @@ export const ZENPLATO_CSS = `
   .hydration-tip p {
     margin: 0;
     font-family: var(--sans);
-    font-size: 1.12cqw;
+    font-size: 1.22cqw;
     font-weight: 500;
     line-height: 1.45;
     color: rgba(31, 33, 30, .9);
@@ -10798,14 +11138,13 @@ export const ZENPLATO_CSS = `
       line-height: 1.75;
     }
     .opportunity-visual {
+      width: 100%;
       height: auto;
+      aspect-ratio: 4 / 5;
       margin-top: 32px;
       margin-left: auto;
-      transform: translateX(22px);
-    }
-    .opportunity-growth {
-      width: min(112vw, 520px);
-      height: auto;
+      overflow: hidden;
+      transform: none;
     }
     .opportunity-brand {
       margin-top: 24px;
@@ -12941,6 +13280,647 @@ export const ZENPLATO_CSS = `
       width: 16px;
       height: 1px;
       background: rgba(20, 38, 14, .72);
+    }
+  }
+
+  /* Preserve the portrait ebook canvas on phones instead of reflowing it into cards. */
+  @media (max-width: 820px) {
+    .ebook-opportunity-page,
+    .ebook-common-challenges-page,
+    .ebook-zenplato-framework-page,
+    .ebook-food-gallery-page,
+    .ebook-hydration-page {
+      min-height: 0;
+      padding: 10px 6px;
+      place-items: center;
+      overflow: visible;
+    }
+
+    .ebook-common-challenges-sheet,
+    .ebook-zenplato-framework-sheet {
+      width: 100%;
+      min-height: 0;
+      aspect-ratio: 543 / 724;
+      padding: 0;
+      background: #F7F3EC;
+      box-shadow: 0 12px 34px rgba(38, 33, 27, .16);
+    }
+
+    .ebook-opportunity-sheet {
+      width: 100%;
+      min-height: 0;
+      aspect-ratio: 543 / 724;
+      padding: 0;
+      background: #F6F2EA;
+      box-shadow: 0 12px 34px rgba(38, 33, 27, .16);
+    }
+
+    .opportunity-artwork {
+      display: block;
+    }
+
+    .opportunity-topline {
+      position: absolute;
+      left: 5.35cqw;
+      top: 5.42cqw;
+      max-width: none;
+      overflow: visible;
+      font-size: 1.05cqw;
+      letter-spacing: .48em;
+    }
+
+    .opportunity-topline span {
+      margin: 0 1.55cqw;
+    }
+
+    .opportunity-copy {
+      position: absolute;
+      left: 5.35cqw;
+      top: 17.82cqw;
+      width: 35.5cqw;
+      margin: 0;
+    }
+
+    .opportunity-kicker {
+      font-size: 2.3cqw;
+    }
+
+    .opportunity-rule {
+      width: 3.75cqw;
+    }
+
+    .opportunity-rule-short {
+      margin-top: 3.25cqw;
+    }
+
+    .opportunity-number {
+      margin-top: 4.35cqw;
+      font-size: 17.65cqw;
+      line-height: .74;
+    }
+
+    .opportunity-rule-clay {
+      margin-top: 5.05cqw;
+    }
+
+    .opportunity-copy h2 {
+      max-width: 36cqw;
+      margin-top: 3.2cqw;
+      font-size: 4.4cqw;
+      line-height: .98;
+    }
+
+    .opportunity-rule-green {
+      margin-top: 3.7cqw;
+    }
+
+    .opportunity-body {
+      margin-top: 3.45cqw;
+      gap: 2.25cqw;
+    }
+
+    .opportunity-body p {
+      max-width: 32.5cqw;
+      font-size: 1.4cqw;
+      line-height: 1.7;
+    }
+
+    .opportunity-visual {
+      display: none;
+    }
+
+    .opportunity-brand {
+      position: absolute;
+      left: 5.05cqw;
+      right: auto;
+      top: auto;
+      bottom: 4.9cqw;
+      width: auto;
+      margin: 0;
+    }
+
+    .opportunity-brand div {
+      font-size: 6.2cqw;
+    }
+
+    .opportunity-brand span {
+      margin-top: 2.45cqw;
+      font-size: .74cqw;
+      line-height: 1;
+      letter-spacing: .36em;
+    }
+
+    .opportunity-page-number {
+      position: absolute;
+      left: 50%;
+      right: auto;
+      top: auto;
+      bottom: 3.15cqw;
+      width: auto;
+      margin: 0;
+      transform: translateX(-50%);
+      font-size: 1.48cqw;
+      gap: 1.4cqw;
+    }
+
+    .ebook-food-gallery-sheet,
+    .ebook-hydration-sheet {
+      width: 100%;
+      min-height: 0;
+      aspect-ratio: 1055 / 1491;
+      padding: 0;
+      background: #F7F3EC;
+      box-shadow: 0 12px 34px rgba(38, 33, 27, .16);
+    }
+
+    .food-gallery-photo,
+    .hydration-photo {
+      opacity: 1;
+      object-position: center;
+    }
+
+    .food-gallery-paper-wash {
+      background:
+        linear-gradient(180deg, rgba(247,243,236,.64) 0%, rgba(247,243,236,0) 21%, rgba(247,243,236,0) 100%),
+        linear-gradient(90deg, rgba(247,243,236,.42) 0%, rgba(247,243,236,0) 58%);
+    }
+
+    .food-gallery-topline {
+      position: absolute;
+      left: 9.05cqw;
+      top: 5.28cqw;
+      max-width: none;
+      overflow: visible;
+      font-size: 1.03cqw;
+      letter-spacing: .48em;
+    }
+
+    .food-gallery-topline span {
+      margin: 0 1.55cqw;
+    }
+
+    .food-gallery-title {
+      position: absolute;
+      left: 8.55cqw;
+      top: 18.55cqw;
+      width: 41.4cqw;
+      margin: 0;
+    }
+
+    .food-gallery-title h2 {
+      max-width: 45cqw;
+      font-size: 7.35cqw;
+      line-height: 1.08;
+    }
+
+    .food-gallery-divider {
+      margin-top: 3.25cqw;
+      gap: 2.1cqw;
+      visibility: hidden;
+    }
+
+    .food-gallery-divider i {
+      width: 12.2cqw;
+    }
+
+    .food-gallery-divider .section-divider-leaf {
+      width: 3.25cqw;
+      height: 1.48cqw;
+    }
+
+    .food-gallery-title p {
+      max-width: 36.5cqw;
+      margin-top: 3.1cqw;
+      font-size: 1.68cqw;
+      line-height: 1.48;
+    }
+
+    .food-gallery-dynamic {
+      width: 35.4cqw;
+      height: 4.45cqw;
+      min-height: 0;
+      margin-top: 3.1cqw;
+      gap: 1.58cqw;
+      border-radius: .74cqw;
+      padding: 0 1.7cqw;
+    }
+
+    .food-gallery-dynamic-branch {
+      width: 1.42cqw;
+      height: 2.4cqw;
+      visibility: hidden;
+    }
+
+    .food-gallery-dynamic span {
+      font-size: 1.02cqw;
+      line-height: 1;
+      letter-spacing: .34em;
+    }
+
+    .food-gallery-card-copy {
+      position: absolute;
+      left: 6.6cqw;
+      top: 79.2cqw;
+      width: 86.05cqw;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      column-gap: 1.72cqw;
+      row-gap: 22.15cqw;
+    }
+
+    .food-gallery-card-text {
+      min-height: 12.8cqw;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      padding: 1.2cqw 1.25cqw 0 5.55cqw;
+      box-shadow: none;
+    }
+
+    .food-gallery-card-text h3 {
+      min-height: 2.3cqw;
+      font-size: 1.05cqw;
+      line-height: 1.35;
+      letter-spacing: .3em;
+    }
+
+    .food-gallery-card-text p {
+      margin-top: 1.7cqw;
+      font-size: 1.34cqw;
+      line-height: 1.45;
+    }
+
+    .food-gallery-quote {
+      position: absolute;
+      left: 14.55cqw;
+      right: auto;
+      top: auto;
+      bottom: 7.35cqw;
+      width: 34cqw;
+      margin: 0;
+      border-radius: 0;
+      background: transparent;
+      padding: 0;
+    }
+
+    .food-gallery-quote p {
+      font-size: 1.78cqw;
+      line-height: 1.22;
+    }
+
+    .food-gallery-page-number,
+    .hydration-page-number {
+      position: absolute;
+      margin: 0;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: .95cqw;
+      font-size: 1.34cqw;
+    }
+
+    .food-gallery-page-number {
+      right: 7.45cqw;
+      bottom: 4.85cqw;
+    }
+
+    .food-gallery-page-number::before,
+    .hydration-page-number::before {
+      display: none;
+    }
+
+    .food-gallery-page-number::after,
+    .hydration-page-number::after {
+      width: 3.6cqw;
+    }
+
+    .hydration-paper-wash {
+      background:
+        linear-gradient(90deg, rgba(247,243,236,.82) 0%, rgba(247,243,236,.58) 38%, rgba(247,243,236,.08) 66%, rgba(247,243,236,0) 100%),
+        linear-gradient(180deg, rgba(247,243,236,.52) 0%, rgba(247,243,236,0) 35%);
+    }
+
+    .hydration-top-mark,
+    .hydration-top-rule,
+    .hydration-divider,
+    .hydration-step-icon,
+    .hydration-step:not(:last-child)::after,
+    .hydration-tip svg,
+    .hydration-quote-branch {
+      visibility: hidden;
+    }
+
+    .hydration-topline {
+      position: absolute;
+      left: 8.82cqw;
+      top: 5.16cqw;
+      max-width: none;
+      overflow: visible;
+      font-size: 1.03cqw;
+      letter-spacing: .46em;
+    }
+
+    .hydration-topline span {
+      margin: 0 1.55cqw;
+    }
+
+    .hydration-copy {
+      position: absolute;
+      left: 7.2cqw;
+      top: 16.45cqw;
+      width: 43.8cqw;
+      margin: 0;
+    }
+
+    .hydration-copy h2 {
+      font-size: 6.8cqw;
+      line-height: 1.05;
+    }
+
+    .hydration-divider {
+      margin-top: 4cqw;
+      gap: 2.08cqw;
+    }
+
+    .hydration-intro {
+      max-width: 40.5cqw;
+      margin-top: 3.3cqw;
+      font-size: 1.62cqw;
+      line-height: 1.48;
+    }
+
+    .hydration-framework-label {
+      margin-top: 3.5cqw;
+      font-size: 1.16cqw;
+      line-height: 1;
+      letter-spacing: .43em;
+    }
+
+    .hydration-steps {
+      position: absolute;
+      left: 7.22cqw;
+      top: 53.42cqw;
+      width: 40.2cqw;
+      margin: 0;
+      display: grid;
+      gap: 3.55cqw;
+    }
+
+    .hydration-step {
+      min-height: 10.1cqw;
+      grid-template-columns: 7.72cqw 1fr;
+      column-gap: 3.02cqw;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      padding: 0;
+      box-shadow: none;
+    }
+
+    .hydration-step-icon {
+      width: 7.72cqw;
+      height: 7.72cqw;
+    }
+
+    .hydration-step h3 {
+      margin-top: .8cqw;
+      font-size: 1.15cqw;
+      line-height: 1.3;
+      letter-spacing: .31em;
+    }
+
+    .hydration-step p {
+      margin-top: 1.05cqw;
+      font-size: 1.24cqw;
+      line-height: 1.42;
+    }
+
+    .hydration-tips {
+      position: absolute;
+      left: 55.2cqw;
+      top: 100.9cqw;
+      width: 37.6cqw;
+      margin: 0;
+      border-radius: 1.18cqw;
+      padding: 2.72cqw 3.62cqw 2.4cqw;
+    }
+
+    .hydration-tips h3 {
+      margin-bottom: 1.82cqw;
+      font-size: 1.08cqw;
+      line-height: 1;
+      letter-spacing: .42em;
+    }
+
+    .hydration-tip {
+      grid-template-columns: 3.45cqw 1fr;
+      column-gap: 2.18cqw;
+      min-height: 5.9cqw;
+      padding: 1.18cqw 0;
+    }
+
+    .hydration-tip p {
+      font-size: 1.22cqw;
+      line-height: 1.42;
+    }
+
+    .hydration-quote {
+      position: absolute;
+      left: 7.18cqw;
+      right: auto;
+      top: auto;
+      bottom: 8.65cqw;
+      width: 36.9cqw;
+      min-height: 10.55cqw;
+      margin: 0;
+      grid-template-columns: 5.85cqw 1fr;
+      column-gap: 2.28cqw;
+      border-radius: 1cqw;
+      padding: 1.68cqw 2.8cqw 1.62cqw 2.2cqw;
+    }
+
+    .hydration-quote p {
+      font-size: 1.82cqw;
+      line-height: 1.2;
+    }
+
+    .hydration-page-number {
+      right: 7.58cqw;
+      bottom: 4.2cqw;
+    }
+
+    .common-challenges-artwork,
+    .zenplato-framework-artwork {
+      opacity: 1;
+      object-position: center;
+    }
+
+    .common-challenges-topline,
+    .zenplato-framework-topline {
+      position: absolute;
+      max-width: none;
+      overflow: visible;
+      font-size: 1.16cqw;
+      letter-spacing: .48em;
+    }
+
+    .common-challenges-topline {
+      left: 10.66cqw;
+      top: 5.85cqw;
+    }
+
+    .zenplato-framework-topline {
+      left: 9.34cqw;
+      top: 5.72cqw;
+    }
+
+    .common-challenges-topline span,
+    .zenplato-framework-topline span {
+      margin: 0 1.55cqw;
+    }
+
+    .common-challenges-content,
+    .zenplato-framework-content {
+      position: absolute;
+      inset: 0;
+      margin: 0;
+    }
+
+    .common-challenges-heading {
+      position: absolute;
+      left: 5.95cqw;
+      top: 14.55cqw;
+      width: auto;
+      font-size: 7.15cqw;
+      line-height: 1.08;
+      opacity: 0;
+    }
+
+    .common-challenges-intro {
+      position: absolute;
+      left: 6.05cqw;
+      top: 33.7cqw;
+      width: 42cqw;
+      max-width: none;
+      margin: 0;
+      font-size: 1.68cqw;
+      line-height: 1.5;
+    }
+
+    .common-challenges-list {
+      position: absolute;
+      left: 17.95cqw;
+      top: 70.15cqw;
+      width: 76.1cqw;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 30.7cqw));
+      grid-auto-rows: auto;
+      column-gap: 14.7cqw;
+      row-gap: 27.25cqw;
+    }
+
+    .common-challenge-copy,
+    .zenplato-framework-item {
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      padding: 0;
+      box-shadow: none;
+    }
+
+    .common-challenge-copy h3,
+    .zenplato-framework-item h3 {
+      font-size: 1.38cqw;
+      line-height: 1.35;
+      letter-spacing: .3em;
+    }
+
+    .common-challenge-copy p {
+      margin-top: 1.35cqw;
+      font-size: 1.43cqw;
+      line-height: 1.42;
+    }
+
+    .zenplato-framework-content h2 {
+      position: absolute;
+      left: 6.9cqw;
+      top: 16.2cqw;
+      width: auto;
+      font-size: 7.2cqw;
+      line-height: 1.02;
+    }
+
+    .zenplato-framework-intro {
+      position: absolute;
+      left: 6.95cqw;
+      top: 36.55cqw;
+      width: 39cqw;
+      max-width: none;
+      margin: 0;
+      font-size: 1.68cqw;
+      line-height: 1.5;
+    }
+
+    .zenplato-framework-list {
+      position: absolute;
+      left: 19.35cqw;
+      top: 49.35cqw;
+      width: 27cqw;
+      margin: 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-auto-rows: 16.45cqw;
+      gap: 0;
+    }
+
+    .zenplato-framework-item p {
+      margin-top: 2.2cqw;
+      font-size: 1.4cqw;
+      line-height: 1.48;
+    }
+
+    .zenplato-framework-quote {
+      position: absolute;
+      left: 16.45cqw;
+      top: 116.45cqw;
+      width: 30.5cqw;
+      margin: 0;
+      border-radius: 0;
+      padding: 0;
+      background: transparent;
+      font-size: 2.05cqw;
+      line-height: 1.22;
+    }
+
+    .common-challenges-page-number,
+    .zenplato-framework-page-number {
+      position: absolute;
+      margin: 0;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: .95cqw;
+      font-size: 1.34cqw;
+    }
+
+    .common-challenges-page-number {
+      right: 6.05cqw;
+      bottom: 2.85cqw;
+    }
+
+    .zenplato-framework-page-number {
+      right: 5.55cqw;
+      bottom: 2.65cqw;
+    }
+
+    .common-challenges-page-number::before,
+    .zenplato-framework-page-number::before {
+      display: none;
+    }
+
+    .common-challenges-page-number::after,
+    .zenplato-framework-page-number::after {
+      width: 3.6cqw;
     }
   }
 `;
