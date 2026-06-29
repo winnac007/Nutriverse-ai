@@ -2646,7 +2646,7 @@ export const ZENPLATO_CSS = `
     }
   }
 
-  @media (max-width: 820px) {
+  @media (max-width: 0px) {
     .opportunity-artwork {
       display: none;
     }
@@ -9352,7 +9352,7 @@ export const ZENPLATO_CSS = `
     }
   }
 
-  @media (max-width: 820px) {
+  @media (max-width: 0px) {
     .ebook-action-plan-sheet {
       min-height: 100svh;
       padding: 30px 26px 78px;
@@ -9764,7 +9764,7 @@ export const ZENPLATO_CSS = `
     }
   }
 
-  @media (max-width: 820px) {
+  @media (max-width: 0px) {
     .ebook-content .compare { grid-template-columns: 1fr; }
     .ebook-content .pillars { grid-template-columns: 1fr; }
     .ebook-smart-snacks-ingredients-sheet,
@@ -13283,8 +13283,8 @@ export const ZENPLATO_CSS = `
     }
   }
 
-  /* Preserve the portrait ebook canvas on phones instead of reflowing it into cards. */
-  @media (max-width: 820px) {
+  /* Mobile-specific ebook overrides disabled to keep one fixed layout. */
+  @media (max-width: 0px) {
     .ebook-opportunity-page,
     .ebook-common-challenges-page,
     .ebook-zenplato-framework-page,
