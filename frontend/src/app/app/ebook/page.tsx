@@ -2955,11 +2955,12 @@ function GlanceBranch() {
   );
 }
 
-function OpportunityPage({ ebook }: { ebook: Ebook }) {
-  const opportunity = getBiggestOpportunities(ebook)[0];
+function OpportunityPage({ ebook, opportunityIndex = 0, phonePanel = false }: { ebook: Ebook; opportunityIndex?: number; phonePanel?: boolean }) {
+  const opportunities = getBiggestOpportunities(ebook);
+  const opportunity = opportunities[Math.min(opportunityIndex, opportunities.length - 1)] || opportunities[0];
 
   return (
-    <section className="cover ebook-opportunity-page" id="biggest-opportunities" aria-label="Your biggest opportunities">
+    <section className={`cover ebook-opportunity-page${phonePanel ? " phone-opportunity-panel" : ""}`} id={phonePanel ? `phone-opportunity-${opportunityIndex + 1}` : "biggest-opportunities"} aria-label="Your biggest opportunities">
       <div className="ebook-opportunity-sheet">
         <Image
           src="/ebook/opportunity-botanical.png"
@@ -6152,12 +6153,12 @@ function HealthSnapshotPage({ ebook, user }: { ebook: Ebook; user: User | null }
   );
 }
 
-function KeyFindingsPage({ ebook, user }: { ebook: Ebook; user: User | null }) {
+function KeyFindingsPage({ ebook, user, phonePanel }: { ebook: Ebook; user: User | null; phonePanel?: "intro" | "details" }) {
   const findings = getKeyFindings(user, ebook);
   const takeaway = getCoreTakeaway(ebook);
 
   return (
-    <section className="cover ebook-findings-page" id="key-findings" aria-label="Your key findings">
+    <section className={`cover ebook-findings-page${phonePanel ? ` phone-findings-${phonePanel}` : ""}`} id={phonePanel ? `phone-findings-${phonePanel}` : "key-findings"} aria-label="Your key findings">
       <div className="ebook-findings-sheet">
         <Image
           src="/ebook/findings-bg.png"
@@ -6398,6 +6399,229 @@ const getApiStatus = (error: unknown) => {
 };
 
 const PREMIUM_EBOOK_TEST_MODE = true;
+
+const PHONE_EBOOK_CSS = `
+  .phone-ebook-shell {
+    position: relative;
+    width: 100vw;
+    height: 100dvh;
+    overflow: hidden;
+    background: #F7F1E8;
+  }
+
+  .phone-ebook-track {
+    display: flex;
+    width: 100vw;
+    height: 100dvh;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x pinch-zoom;
+  }
+
+  .phone-ebook-track::-webkit-scrollbar { display: none; }
+
+  .phone-ebook-track > .cover {
+    flex: 0 0 100vw;
+    width: 100vw;
+    min-width: 100vw;
+    height: 100dvh;
+    min-height: 100dvh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .phone-ebook-track > .cover > div:first-child {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+  }
+
+  .phone-ebook-track > .phone-findings-intro .findings-card-stack { display: none; }
+  .phone-ebook-track > .phone-findings-intro .findings-left { width: 72cqw; }
+  .phone-ebook-track > .phone-findings-details .findings-left { display: none; }
+  .phone-ebook-track > .phone-findings-details .findings-card-stack {
+    left: 8cqw;
+    right: 8cqw;
+    width: auto;
+  }
+
+  .phone-ebook-controls {
+    position: fixed;
+    z-index: 120;
+    left: 50%;
+    bottom: max(12px, 2.2dvh);
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    transform: translateX(-50%);
+  }
+
+  .phone-ebook-controls button {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, .75);
+    border-radius: 999px;
+    background: rgba(250, 247, 239, .88);
+    box-shadow: 0 5px 20px rgba(41, 35, 26, .1);
+    color: #3F5247;
+    font: 400 30px/1 Georgia, serif;
+    backdrop-filter: blur(8px);
+  }
+
+  .phone-ebook-controls button:disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .phone-ebook-controls button:focus-visible {
+    outline: 2px solid #3F5247;
+    outline-offset: 2px;
+  }
+
+  .phone-ebook-controls span {
+    min-width: 58px;
+    color: #26331F;
+    font: 600 12px/1 var(--sans);
+    letter-spacing: .12em;
+    text-align: center;
+  }
+
+  .phone-ebook-live {
+    position: fixed;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .phone-ebook-track { scroll-behavior: auto; }
+  }
+`;
+
+/**
+ * Phone reader for the supplied portrait page set. Page text and simple line
+ * art remain real DOM/SVG; the existing /public/ebook artwork files are kept
+ * as images because they contain the complex photography and compositions.
+ */
+export function PhoneEbookReader() {
+  const { user } = useAuth();
+  const readerRef = useRef<HTMLDivElement>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const ebook = buildFallbackEbook(user);
+  const plan = user?.health_plan || {};
+  const colors = CONDITION_COLORS[ebook.condition_id] || CONDITION_COLORS["anti-inflammatory"];
+  const pages = [
+    <section className="cover ebook-cover-page" id="phone-cover" aria-label="Personalized ebook cover" key="cover">
+      <div className="ebook-cover-sheet">
+        <Image src="/ebook/cover-hero.png" alt="" fill priority sizes="100vw" className="ebook-cover-photo" aria-hidden="true" />
+        <div className="ebook-cover-wash" aria-hidden="true" />
+        <div className="ebook-cover-content">
+          <div className="cover-section-label"><CoverLeafMark /><span>Section 01 - Your Personalized {resolveCoverCondition(ebook, user)} Blueprint</span></div>
+          <h1 className="cover-title">Your<span>Personalized</span><span>{resolveCoverCondition(ebook, user)}</span><span>Blueprint</span></h1>
+          <div className="cover-kicker">Eat with intention. Heal with food.</div>
+          <div className="cover-rule" aria-hidden="true" />
+          <p className="cover-personalization">{getCoverPersonalization(user, ebook, plan)}</p>
+          <div className="cover-brand"><div className="cover-brand-name">Zen</div><div className="cover-brand-subtitle">Your food intelligence companionship</div></div>
+          <blockquote className="cover-quote">&ldquo;I&rsquo;m not here to guide your meals. I&rsquo;m here to understand you, support you, and grow with you.&rdquo;</blockquote>
+        </div>
+        <div className="cover-page-number" aria-hidden="true">01</div>
+      </div>
+    </section>,
+    <NoteForYouPage ebook={ebook} user={user} plan={plan} key="note" />,
+    <HealthSnapshotPage ebook={ebook} user={user} key="snapshot" />,
+    <KeyFindingsPage ebook={ebook} user={user} phonePanel="intro" key="findings-intro" />,
+    <KeyFindingsPage ebook={ebook} user={user} phonePanel="details" key="findings-details" />,
+    <KeyHealthFocusAreasPage ebook={ebook} key="focus" />,
+    <PersonalizedInsightsPage ebook={ebook} user={user} plan={plan} key="insights" />,
+    <AtAGlancePage ebook={ebook} nextHref="#phone-food-guide" key="glance" />,
+    <OpportunityPage ebook={ebook} opportunityIndex={2} phonePanel key="opportunity-three" />,
+    <OpportunityPage ebook={ebook} opportunityIndex={0} phonePanel key="opportunity-one" />,
+    <GroceryEssentialsPage ebook={ebook} key="grocery" />,
+    <UnderstandingJourneyPage ebook={ebook} user={user} key="understanding-journey" />,
+    <UnderstandingDetailPage ebook={ebook} user={user} key="understanding-detail" />,
+    <WhySymptomsHappenPage ebook={ebook} key="symptoms" />,
+    <NutritionInfluencePage ebook={ebook} key="nutrition-influence" />,
+    <CommonPcosChallengesPage key="challenges" />,
+    <ZenplatoFrameworkPage key="framework" />,
+    <FoodNutritionGuidePage key="food-guide" />,
+    <FoodsToBeMindfulPage ebook={ebook} plan={plan} key="mindful" />,
+    <FoodsToPrioritizePage ebook={ebook} plan={plan} key="prioritize" />,
+    <BalancedPlatePage key="plate" />,
+    <HydrationRecommendationsPage ebook={ebook} key="hydration" />,
+    <MealTimingGuidancePage ebook={ebook} key="meal-timing" />,
+    <SustainableRhythmPage ebook={ebook} key="rhythm" />,
+    <SmartFoodSwapsPage ebook={ebook} key="swaps" />,
+    <SmartSwapsContinuedPage ebook={ebook} key="swaps-continued" />,
+    <LifestyleFoundationPage key="lifestyle" />,
+    <SleepRecoveryPage key="sleep" />,
+    <StressWellbeingPage ebook={ebook} key="stress" />,
+    <DailyWellnessHabitsPage ebook={ebook} key="wellness" />,
+    <PerfectionConsistencyPage key="consistency" />,
+    <RecipeCollectionSectionPage key="recipe-section" />,
+    <RecipeCollectionIntroPage ebook={ebook} key="recipe-intro" />,
+    <BreakfastsPage ebook={ebook} key="breakfasts" />,
+    <BreakfastNutritionPage ebook={ebook} key="breakfast-nutrition" />,
+    <BreakfastBenefitsPage ebook={ebook} key="breakfast-benefits" />,
+    <BreakfastIngredientsMethodPage ebook={ebook} key="breakfast-ingredients" />,
+    <BreakfastMethodCookingPage ebook={ebook} key="breakfast-method" />,
+    <SmartSnacksIngredientsPage ebook={ebook} key="snack-ingredients" />,
+    <SmartSnacksCardsPage ebook={ebook} key="snacks" />,
+    <NourishingBeveragesPage ebook={ebook} key="beverages" />,
+    <FruitCatalogPage ebook={ebook} key="fruits" />,
+    <VegetableCatalogPage ebook={ebook} key="vegetables" />,
+    <ActionPlan30DayPage ebook={ebook} key="action-plan" />,
+  ];
+
+  const goToPage = useCallback((page: number) => {
+    const nextPage = Math.max(0, Math.min(pages.length - 1, page));
+    const reader = readerRef.current;
+    if (reader) reader.scrollTo({ left: reader.clientWidth * nextPage, behavior: "smooth" });
+    setCurrentPage(nextPage);
+  }, [pages.length]);
+
+  useEffect(() => {
+    const reader = readerRef.current;
+    if (!reader) return;
+    const updatePage = () => setCurrentPage(Math.max(0, Math.min(pages.length - 1, Math.round(reader.scrollLeft / Math.max(reader.clientWidth, 1)))));
+    reader.addEventListener("scroll", updatePage, { passive: true });
+    window.addEventListener("resize", updatePage);
+    return () => {
+      reader.removeEventListener("scroll", updatePage);
+      window.removeEventListener("resize", updatePage);
+    };
+  }, [pages.length]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft") goToPage(currentPage - 1);
+      if (event.key === "ArrowRight") goToPage(currentPage + 1);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [currentPage, goToPage]);
+
+  return (
+    <main className="phone-ebook-shell zen-wrapper" style={{ "--clay": colors.clay, "--forest": colors.forest, "--accent": colors.accent } as React.CSSProperties} aria-label="ZenPlato phone ebook">
+      <style>{ZENPLATO_CSS}</style>
+      <style>{PHONE_EBOOK_CSS}</style>
+      <div ref={readerRef} className="phone-ebook-track">{pages}</div>
+      <nav className="phone-ebook-controls" aria-label="Ebook page navigation">
+        <button type="button" onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 0} aria-label="Previous page">‹</button>
+        <span>{String(currentPage + 1).padStart(2, "0")} / {String(pages.length).padStart(2, "0")}</span>
+        <button type="button" onClick={() => goToPage(currentPage + 1)} disabled={currentPage === pages.length - 1} aria-label="Next page">›</button>
+      </nav>
+      <div className="phone-ebook-live" aria-live="polite">Page {currentPage + 1} of {pages.length}</div>
+    </main>
+  );
+}
 
 /* ─── Main Page ──────────────────────────────────────────────────────────── */
 export default function EbookPage() {

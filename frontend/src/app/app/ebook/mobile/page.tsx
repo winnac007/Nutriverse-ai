@@ -1,0 +1,2283 @@
+"use client";
+
+import Image from "next/image";
+import opportunityThreeReference from "../../../../../../phone-ebook/8. Opportunity/file_00000000a60c71fab441ee6ae4830c4e.png";
+import styles from "./mobile-ebook.module.css";
+
+function CoverLeaf() {
+  return (
+    <svg className={styles.leaf} viewBox="0 0 28 58" fill="none" aria-hidden="true">
+      <path d="M13.8 55.5V5.2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      <path d="M13.8 16.2C8.8 14.8 5.8 11.2 5.2 6.3c5.1.8 8.1 4.1 8.6 9.9Z" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M13.9 23.8c5.1-1.3 8.4-4.7 9.3-9.8-5.3.5-8.5 3.8-9.3 9.8Z" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M13.8 32.2c-5.7-1.3-9.1-4.9-9.8-10.5 5.8.7 9.2 4.2 9.8 10.5Z" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M13.9 40.4c5.6-1.4 9.2-5 10.2-10.5-5.8.6-9.3 4.1-10.2 10.5Z" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M13.8 48.8c-5.4-1.3-8.8-4.7-9.6-9.9 5.6.6 8.9 4 9.6 9.9Z" stroke="currentColor" strokeWidth="1.4" />
+    </svg>
+  );
+}
+
+function CoverPage() {
+  return (
+    <article className={`${styles.page} ${styles.coverPage}`} aria-label="Page 1: Your Personalized PCOS Blueprint">
+        <Image
+          src="/ebook/cover-hero.png"
+          alt="A nourishing grain bowl with avocado, greens and roasted vegetables"
+          fill
+          priority
+          sizes="(max-aspect-ratio: 841/1870) 100vw, 45dvh"
+          className={styles.photo}
+        />
+        <div className={styles.paperWash} aria-hidden="true" />
+
+        <header className={styles.sectionLabel}>
+          <CoverLeaf />
+          <span>Section 01 — Your Personalized<br />PCOS Blueprint</span>
+        </header>
+
+        <h1 className={styles.title}>
+          <span>Your</span>
+          <span>Personalized</span>
+          <span>PCOS</span>
+          <span>Blueprint</span>
+        </h1>
+
+        <p className={styles.kicker}>Eat with intention. Heal with food.</p>
+        <div className={styles.rule} aria-hidden="true" />
+        <p className={styles.personalization}>Personalized for your unique<br />hormonal health journey.</p>
+
+        <div className={styles.brand}>
+          <div>Zen</div>
+          <p>Your food intelligence<br />companionship</p>
+        </div>
+
+        <blockquote className={styles.quote}>
+          <span aria-hidden="true">“</span>
+          <p>I&rsquo;m not here to<br />guide your meals.<br />I&rsquo;m here to understand<br />you, support you, and<br />grow with you.”</p>
+        </blockquote>
+
+        <div className={styles.pageNumber} aria-hidden="true">01</div>
+    </article>
+  );
+}
+
+function BeginningPage() {
+  return (
+    <article className={`${styles.page} ${styles.beginningPage}`} aria-label="Page 2: Your Journey to Balance Starts Here">
+      <div className={styles.beginningPhoto}>
+        <Image
+          src="/ebook/note-hero.png"
+          alt="Hands holding a warm cup beside soft linen and flowers"
+          fill
+          priority
+          sizes="14dvh"
+          className={styles.beginningPhotoImage}
+        />
+      </div>
+      <div className={styles.beginningPaper} aria-hidden="true" />
+      <div className={styles.welcomeWord} aria-hidden="true">WELCOME</div>
+      <header className={styles.beginningTopline}>ZenPlato <span>|</span> The Beginning</header>
+
+      <section className={styles.beginningCopy}>
+        <div className={styles.chapterNumber}>01</div>
+        <p className={styles.chapterLabel}>Chapter One</p>
+        <div className={styles.chapterRule} aria-hidden="true" />
+        <h2>Your Journey<br />to Balance<br />Starts Here.</h2>
+
+        <p className={styles.dropcap}>Your body is not a problem to<br />fix—it&rsquo;s a system to understand.</p>
+        <p>This blueprint is designed to<br />help you reconnect with your body&rsquo;s<br />wisdom, support your hormones, and<br />build sustainable habits that fit your<br />life. You are not alone on this journey,<br />and you don&rsquo;t have to figure it all out<br />by yourself.</p>
+
+        <div className={styles.bodyRule} aria-hidden="true" />
+        <p>Inside these pages, you&rsquo;ll find more<br />than just a plan—you&rsquo;ll find clarity,<br />compassion, and a partnership<br />rooted in food intelligence.</p>
+        <p className={styles.beginTogether}>Let&rsquo;s begin—together.</p>
+      </section>
+
+      <div className={styles.beginningPageNumber} aria-hidden="true">02</div>
+    </article>
+  );
+}
+
+type SnapshotIconName = "hormone" | "insulin" | "inflammation" | "sleep";
+
+function SnapshotIcon({ name }: { name: SnapshotIconName }) {
+  return (
+    <svg viewBox="0 0 56 56" fill="none" aria-hidden="true">
+      {name === "hormone" && <><circle cx="28" cy="28" r="9"/><circle cx="20" cy="28" r="9"/><circle cx="36" cy="28" r="9"/><circle cx="28" cy="20" r="9"/><circle cx="28" cy="36" r="9"/></>}
+      {name === "insulin" && <><path d="M28 8C18 19 15 27 15 35c0 8 5.5 14 13 14s13-6 13-14c0-8-3-16-13-27Z"/><circle cx="28" cy="36" r="6"/></>}
+      {name === "inflammation" && <><circle cx="28" cy="28" r="10"/><circle cx="28" cy="7" r="1.4" fill="currentColor"/><circle cx="42.8" cy="13.2" r="1.4" fill="currentColor"/><circle cx="49" cy="28" r="1.4" fill="currentColor"/><circle cx="42.8" cy="42.8" r="1.4" fill="currentColor"/><circle cx="28" cy="49" r="1.4" fill="currentColor"/><circle cx="13.2" cy="42.8" r="1.4" fill="currentColor"/><circle cx="7" cy="28" r="1.4" fill="currentColor"/><circle cx="13.2" cy="13.2" r="1.4" fill="currentColor"/></>}
+      {name === "sleep" && <><path d="M37 41c-10 1-18-6-18-16 0-6 3-12 8-15-1 4-1 8 1 12 3 7 10 11 18 9-1 5-4 8-9 10Z"/><path d="m39 13 1.5 3 3 1.5-3 1.5-1.5 3-1.5-3-3-1.5 3-1.5 1.5-3Z"/></>}
+    </svg>
+  );
+}
+
+const snapshotConcerns: Array<{ name: SnapshotIconName; title: string; role: string; copy: React.ReactNode }> = [
+  { name: "hormone", title: "PCOS", role: "Primary Focus", copy: <>Affects hormonal<br />balance, metabolism,<br />and overall<br />well-being.</> },
+  { name: "insulin", title: "Insulin Resistance", role: "Associated Concern", copy: <>May impact energy,<br />weight management,<br />and hormonal<br />balance.</> },
+  { name: "inflammation", title: "Inflammation", role: "Associated Concern", copy: <>Can contribute to<br />fatigue, bloating, and<br />hormone imbalances.</> },
+  { name: "sleep", title: "Sleep Quality", role: "Additional Concern", copy: <>Affects recovery,<br />hormones, mood, and<br />daily energy levels.</> },
+];
+
+function SnapshotPage() {
+  return (
+    <article className={`${styles.page} ${styles.snapshotPage}`} aria-label="Page 3: Your Health Snapshot">
+      <Image src="/ebook/snapshot-bg.png" alt="" fill sizes="45dvh" className={styles.snapshotBackground} aria-hidden="true" />
+      <header className={styles.snapshotTopline}>ZenPlato <span>|</span> 02 Health Snapshot</header>
+
+      <section className={styles.snapshotLeft}>
+        <h2>Your<br />Health<br />Snapshot</h2>
+        <div className={styles.snapshotTitleRule} aria-hidden="true" />
+        <p className={styles.snapshotSideLabel}>Your Selected<br />Conditions &amp; Concerns</p>
+        <div className={styles.snapshotConcernList}>
+          {snapshotConcerns.map((concern) => (
+            <article className={styles.snapshotConcern} key={concern.title}>
+              <div className={styles.snapshotIcon}><SnapshotIcon name={concern.name} /></div>
+              <div className={styles.snapshotConcernCopy}>
+                <h3>{concern.title}</h3>
+                <strong>{concern.role}</strong>
+                <p>{concern.copy}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className={styles.snapshotBrand}>
+          <div>Zen</div>
+          <span>Your food intelligence companionship</span>
+        </div>
+      </section>
+
+      <div className={styles.snapshotSpine} aria-hidden="true"><i /></div>
+
+      <section className={styles.snapshotRight}>
+        <p className={styles.snapshotSummaryLabel}>The Personalized Summary</p>
+        <div className={styles.snapshotSummaryRule} aria-hidden="true" />
+        <blockquote><span aria-hidden="true">“</span>Your body is always<br />communicating.<br />This snapshot helps us<br />listen with clarity.</blockquote>
+        <div className={styles.snapshotOrnament} aria-hidden="true"><i /><CoverLeaf /><i /></div>
+        <div className={styles.snapshotParagraphs}>
+          <p>Based on your responses, your body<br />is asking for support in key areas that<br />are closely connected.</p>
+          <p>Your hormonal balance, insulin<br />response, inflammation levels, and<br />sleep quality are the foundational<br />pillars that influence your energy,<br />mood, metabolism, and long-term<br />health.</p>
+          <p>The good news is—small, consistent<br />shifts in the right direction can create<br />powerful, lasting change.</p>
+          <p>This blueprint is designed around your<br />unique biology, lifestyle, and goals to<br />help you feel more balanced, energized,<br />and in control.</p>
+        </div>
+      </section>
+
+      <div className={styles.snapshotPageNumber} aria-hidden="true">03</div>
+    </article>
+  );
+}
+
+function FindingsDiagram() {
+  return (
+    <div className={styles.findingsDiagram} aria-label="Thoughts, hormones, lifestyle and nutrition wellbeing diagram">
+      <svg viewBox="0 0 600 620" fill="none" aria-hidden="true">
+        <circle cx="300" cy="296" r="196" stroke="#8b806d" strokeWidth="1.2" strokeDasharray="3 6" />
+        <circle cx="300" cy="296" r="156" fill="rgba(200,205,177,.28)" stroke="#c7b99f" strokeWidth="1.2" />
+        <circle cx="300" cy="296" r="128" fill="rgba(217,220,198,.35)" />
+        <path d="M300 205c-21 0-34 17-34 39 0 17 8 29 19 36-12 9-20 23-23 43l-9 66m47-184c21 0 34 17 34 39 0 17-8 29-19 36 12 9 20 23 23 43l9 66m-77-69c18 17 42 17 60 0" stroke="#87916e" strokeWidth="2" opacity=".7" />
+        <path d="M300 84v74M300 434v82M96 296h86M418 296h86" stroke="#a77852" strokeWidth="1.2" />
+        <circle cx="300" cy="84" r="46" fill="#f6f1e8" stroke="#b58b69" />
+        <circle cx="96" cy="296" r="46" fill="#f6f1e8" stroke="#b58b69" />
+        <circle cx="504" cy="296" r="46" fill="#f6f1e8" stroke="#b58b69" />
+        <circle cx="300" cy="516" r="46" fill="#f6f1e8" stroke="#b58b69" />
+        <path d="M269 407C336 346 383 256 426 151" stroke="#697958" strokeWidth="2" />
+        <path d="M365 302c34-25 67-30 99-16-25 31-58 39-99 16Zm31-69c26-26 52-35 79-27-16 30-42 40-79 27Zm-78 133c-28-20-53-22-77-8 21 24 46 27 77 8Z" fill="rgba(111,128,83,.42)" stroke="#71805d" />
+        <circle cx="300" cy="158" r="4" fill="#82906d"/><circle cx="300" cy="434" r="4" fill="#a87851"/><circle cx="182" cy="296" r="4" fill="#82906d"/><circle cx="418" cy="296" r="4" fill="#82906d"/>
+      </svg>
+      <span className={styles.diagramThoughts}>Thoughts<br />&amp; Mind</span>
+      <span className={styles.diagramHormones}>Biochemistry<br />&amp; Hormones</span>
+      <span className={styles.diagramLifestyle}>Lifestyle<br />&amp; Habits</span>
+      <span className={styles.diagramDigestion}>Digestion<br />&amp; Nutrition</span>
+    </div>
+  );
+}
+
+function FindingsIntroPage() {
+  return (
+    <article className={`${styles.page} ${styles.findingsIntroPage}`} aria-label="Page 4A: Your Key Findings overview">
+      <header className={styles.findingsTopline}>ZenPlato <span>|</span> 01 Your Story</header>
+      <div className={styles.findingsTopRule} aria-hidden="true" />
+      <CoverLeaf />
+      <h2>Your<br /><span>Key Findings</span></h2>
+      <div className={styles.findingsTitleRule} aria-hidden="true" />
+      <div className={styles.findingsIntroCopy}>
+        <p>Your responses paint a clear picture—one<br />of a body that&rsquo;s doing its best, with a few<br />patterns asking for your attention.</p>
+        <p>These insights are not just observations.<br />They are clues—hints from your biology,<br />lifestyle, and daily rhythms—guiding us<br />toward what your body truly needs<br />to feel balanced and thrive.</p>
+        <p>Understanding these key patterns is<br />the first step. With awareness comes<br />choice, and with the right support,<br />lasting change becomes possible.</p>
+      </div>
+      <FindingsDiagram />
+      <blockquote className={styles.findingsQuote}>
+        <span aria-hidden="true">“</span>
+        <p>The patterns we uncover today<br />become the roadmap<br />for the balance<br />you create tomorrow.</p>
+      </blockquote>
+      <div className={styles.findingsBrand}><div>Zen</div><span>Your food intelligence companionship</span></div>
+      <div className={styles.findingsPageNumber} aria-hidden="true"><i />06<i /></div>
+    </article>
+  );
+}
+
+type FindingIconName = "drop" | "target" | "hormone" | "gut";
+
+function FindingIcon({ name }: { name: FindingIconName }) {
+  return (
+    <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      {name === "drop" && <><path d="M32 8C20 24 16 34 16 43c0 9 7 15 16 15s16-6 16-15c0-9-4-19-16-35Z"/><path d="M32 25c-6 8-8 13-8 18 0 5 3 8 8 8s8-3 8-8c0-5-2-10-8-18Z"/><circle cx="32" cy="5" r="1.5" fill="currentColor"/><circle cx="51" cy="30" r="1.5" fill="currentColor"/><circle cx="13" cy="30" r="1.5" fill="currentColor"/></>}
+      {name === "target" && <><circle cx="32" cy="32" r="22"/><circle cx="32" cy="32" r="15"/><circle cx="32" cy="32" r="7"/></>}
+      {name === "hormone" && <><circle cx="32" cy="32" r="10"/><circle cx="23" cy="32" r="10"/><circle cx="41" cy="32" r="10"/><circle cx="32" cy="23" r="10"/><circle cx="32" cy="41" r="10"/></>}
+      {name === "gut" && <path d="M23 12v13c0 4 3 7 7 7h4c4 0 7 3 7 7v7c0 5-4 9-9 9h-5c-5 0-9-4-9-9v-5m23-29v12c0 5-4 9-9 9h-3c-4 0-7 3-7 7v11"/>}
+    </svg>
+  );
+}
+
+function BotanicalBranch({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 150 90" fill="none" aria-hidden="true">
+      <path d="M8 80C45 63 81 41 139 8" stroke="currentColor" strokeWidth="1.2" />
+      <path d="M33 66C20 63 13 56 10 45c13 2 21 9 23 21Zm15-9c-3-13 1-23 12-31 3 13-1 24-12 31Zm20-11c-13-1-22-7-27-18 13 0 22 6 27 18Zm15-10c-2-13 3-23 14-30 2 13-3 23-14 30Zm19-11c-12-2-20-8-24-18 12 1 20 7 24 18Zm16-10c0-8 4-13 12-16 0 8-4 13-12 16Z" fill="rgba(124,136,91,.18)" stroke="currentColor" strokeWidth="1" />
+    </svg>
+  );
+}
+
+const findingCards: Array<{ icon: FindingIconName; priority: string; title: string; copy: React.ReactNode; accent: string }> = [
+  { icon: "drop", priority: "Highest Priority", title: "Insulin Resistance Pattern", copy: <>Your responses suggest signs of insulin resistance,<br />which may be affecting your energy levels, weight<br />management, and hormonal balance.</>, accent: "clay" },
+  { icon: "target", priority: "High Impact", title: "Inflammation & Stress Load", copy: <>Chronic inflammation and elevated stress markers<br />may be contributing to fatigue, poor recovery,<br />and hormonal imbalances.</>, accent: "green" },
+  { icon: "hormone", priority: "Moderate Impact", title: "Hormonal Imbalance", copy: <>Your hormonal responses indicate potential<br />imbalances that could be influencing mood<br />swings, cravings, and cycle regularity.</>, accent: "green" },
+  { icon: "gut", priority: "Foundational Area", title: "Digestive & Gut Health", copy: <>Your digestive health shows room for improvement,<br />which can impact nutrient absorption, immunity,<br />and overall wellbeing.</>, accent: "green" },
+];
+
+function FindingsCardsPage() {
+  return (
+    <article className={`${styles.page} ${styles.findingsCardsPage}`} aria-label="Page 4B: Your Key Findings details">
+      <header className={styles.findingsCardsTopline}>ZenPlato <span>|</span> 01 Your Story</header>
+      <div className={styles.findingsCardsTopRule} aria-hidden="true" />
+      <BotanicalBranch className={styles.findingsCardsTopBranch} />
+      <h2>Your<br />Key<br />Findings</h2>
+      <div className={styles.findingsCardsTitleRule} aria-hidden="true" />
+      <p className={styles.findingsCardsKicker}>The Top Patterns We<br />Identified In Your Profile.</p>
+      <BotanicalBranch className={styles.findingsCardsMiddleBranch} />
+
+      <div className={styles.findingCardStack}>
+        {findingCards.map((finding) => (
+          <article className={styles.findingCard} key={finding.title}>
+            <div className={`${styles.findingCardIcon} ${styles[finding.accent]}`}><FindingIcon name={finding.icon} /></div>
+            <div className={`${styles.findingCardSpine} ${styles[finding.accent]}`} aria-hidden="true"><i /></div>
+            <div className={styles.findingCardCopy}>
+              <strong className={styles[finding.accent]}>{finding.priority}</strong>
+              <h3>{finding.title}</h3>
+              <p>{finding.copy}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <section className={styles.findingsTakeaway}>
+        <p>The Core Takeaway</p>
+        <h3>These patterns help us understand what your<br />body needs most right now.</h3>
+        <i aria-hidden="true" />
+        <span>By addressing these key areas with the right nutrition,<br />lifestyle, and support, you can create meaningful shifts in<br />energy, hormonal balance, and long-term wellbeing.</span>
+      </section>
+      <BotanicalBranch className={styles.findingsCardsBottomBranch} />
+      <div className={styles.findingsCardsBrand}><div>Zen</div><span>Your food intelligence companionship</span></div>
+      <div className={styles.findingsCardsPageNumber} aria-hidden="true">04<i /></div>
+    </article>
+  );
+}
+
+type FocusIconName = "balance" | "insulin" | "gut" | "stress" | "sleep" | "leaf";
+
+function FocusIcon({ name }: { name: FocusIconName }) {
+  if (name === "insulin") return <SnapshotIcon name="insulin" />;
+  if (name === "sleep") return <SnapshotIcon name="sleep" />;
+  return (
+    <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      {name === "balance" && <><path d="M32 11v37M19 19h26M20 19l-9 18h18L20 19Zm24 0-9 18h18L44 19ZM23 51h18M27 47h10"/><circle cx="32" cy="11" r="2"/></>}
+      {name === "gut" && <><path d="M29 10c-5 0-8 3-8 8 0 4 3 7 8 7h9c4 0 7 3 7 7s-3 7-7 7H23c-4 0-7 3-7 7s3 7 7 7h13c3 0 5 2 5 5M34 10c5 0 8 3 8 8 0 4-3 7-8 7H21M26 32h18M27 46h18"/></>}
+      {name === "stress" && <><path d="M37 54h-9c0-5-3-8-6-11-3-3-6-7-6-13 0-10 8-18 18-18 9 0 15 6 15 14 0 5-2 9-6 11-2 2-5 2-8 2"/><path d="M35 22c-4 1-6 4-6 8 4 0 7-3 8-7 3 2 4 6 3 9-5 0-8-3-11-7"/></>}
+      {name === "leaf" && <><path d="M32 55V11"/><path d="M32 25c-7-1-12-6-14-13 7 1 12 6 14 13Zm0 10c7-1 12-6 14-13-7 1-12 6-14 13Zm0 10c-8-1-13-6-15-13 8 1 13 6 15 13Zm0 8c6-1 11-4 13-10-6 1-11 4-13 10Z"/></>}
+    </svg>
+  );
+}
+
+const focusAreas: Array<{ number: string; title: string; icon: FocusIconName; status: string; progress: string; copy: React.ReactNode }> = [
+  { number: "01", title: "Hormonal Balance", icon: "balance", status: "Needs Attention", progress: "48%", copy: <>Your hormones may benefit from<br />more consistent support through<br />nutrition, stress management, and<br />quality sleep.</> },
+  { number: "02", title: "Insulin Sensitivity", icon: "insulin", status: "Needs Attention", progress: "49%", copy: <>Improving insulin response can<br />help support steady energy,<br />balanced mood, and long-term<br />metabolic health.</> },
+  { number: "03", title: "Digestive Health", icon: "gut", status: "Moderate", progress: "68%", copy: <>Your gut health shows room for<br />improvement to support better<br />absorption and reduce bloating.</> },
+  { number: "04", title: "Stress & Recovery", icon: "stress", status: "Needs Attention", progress: "40%", copy: <>Your body may benefit from<br />deeper recovery to improve<br />resilience and hormonal harmony.</> },
+  { number: "05", title: "Sleep Quality", icon: "sleep", status: "Needs Attention", progress: "49%", copy: <>Better sleep consistency can<br />positively impact hormones,<br />energy levels, and overall<br />well-being.</> },
+  { number: "06", title: "Inflammation Level", icon: "leaf", status: "Moderate", progress: "63%", copy: <>Moderate inflammation detected.<br />Anti-inflammatory foods and<br />lifestyle habits can make a<br />meaningful difference.</> },
+];
+
+function FocusAreasPage() {
+  return (
+    <article className={`${styles.page} ${styles.focusAreasPage}`} aria-label="Page 5: Key Health Focus Areas">
+      <header className={styles.focusTopline}>ZenPlato <span>|</span> 02 Health Snapshot</header>
+      <div className={styles.focusTopRule} aria-hidden="true" />
+      <BotanicalBranch className={styles.focusTopBranch} />
+      <h2>Key Health<br />Focus Areas</h2>
+      <div className={styles.focusTitleRule} aria-hidden="true" />
+      <p className={styles.focusKicker}>Six Pillars.<br />One Balanced You.</p>
+      <p className={styles.focusIntro}>These six areas represent the<br />core systems influencing your<br />health and wellbeing. Each tile<br />reflects your current status<br />based on your responses and<br />where your body may benefit<br />most from support.</p>
+
+      <div className={styles.focusGrid}>
+        {focusAreas.map((area) => (
+          <article className={styles.focusCard} key={area.number}>
+            <div className={styles.focusEyebrow}>{area.number}<span>|</span>{area.title}</div>
+            <div className={styles.focusCardHeading}>
+              <div className={styles.focusIcon}><FocusIcon name={area.icon} /></div>
+              <h3>{area.title}</h3>
+            </div>
+            <strong>{area.status}</strong>
+            <div className={styles.focusProgress} aria-hidden="true"><i style={{ width: area.progress }} /></div>
+            <p>{area.copy}</p>
+          </article>
+        ))}
+      </div>
+
+      <div className={styles.focusRemember}>
+        <div className={styles.focusSpark} aria-hidden="true">✦</div>
+        <div><strong>Remember</strong><p>Small, consistent actions across<br />these areas create powerful,<br />long-lasting transformation.</p></div>
+        <BotanicalBranch />
+      </div>
+      <div className={styles.focusPageNumber} aria-hidden="true">03</div>
+    </article>
+  );
+}
+
+type ProfileIconName = "age" | "gender" | "height" | "weight";
+
+function ProfileIcon({ name }: { name: ProfileIconName }) {
+  return (
+    <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+      {name === "age" && <><circle cx="22" cy="14" r="6"/><path d="M11 34c2-8 6-12 11-12s9 4 11 12"/></>}
+      {name === "gender" && <><circle cx="22" cy="17" r="8"/><path d="M22 25v12M17 32h10"/></>}
+      {name === "height" && <><rect x="8" y="14" width="28" height="16" rx="5"/><path d="M13 14v5M18 14v3M23 14v5M28 14v3M33 14v5"/></>}
+      {name === "weight" && <><path d="M9 14h26l2 22H7l2-22Z"/><path d="M15 14c1-6 3-9 7-9s6 3 7 9M18 22l4 4 4-4"/></>}
+    </svg>
+  );
+}
+
+const profileRows: Array<{ icon: ProfileIconName; label: string; value: string }> = [
+  { icon: "age", label: "Age", value: "29 Years" },
+  { icon: "gender", label: "Gender", value: "Female" },
+  { icon: "height", label: "Height", value: "163 cm" },
+  { icon: "weight", label: "Weight", value: "62 kg" },
+];
+
+const selectedConditions = ["PCOS", "Insulin Resistance", "Hormonal Acne", "Fatigue & Low Energy", "Bloating & Digestive Issues", "Stress & Anxiety"];
+
+function PersonalizedSummaryPage() {
+  return (
+    <article className={`${styles.page} ${styles.personalizedPage}`} aria-label="Page 6: Personalized health summary">
+      <header className={styles.personalizedTopline}>ZenPlato <span>|</span> 01 Your Story</header>
+      <div className={styles.personalizedTopRule} aria-hidden="true" />
+      <BotanicalBranch className={styles.personalizedTopBranch} />
+
+      <aside className={styles.personalizedSidebar}>
+        <h2>Your<br />Health<br />Snapshot</h2>
+        <i className={styles.personalizedTitleRule} aria-hidden="true" />
+        <p className={styles.personalizedKicker}>A Personalized View<br />Of Your Wellbeing<br />Journey.</p>
+
+        <h3>Selected Profile</h3>
+        <div className={styles.profileCard}>
+          {profileRows.map((row) => (
+            <div className={styles.profileRow} key={row.label}>
+              <div className={styles.profileIcon}><ProfileIcon name={row.icon} /></div>
+              <div><strong>{row.label}</strong><span>{row.value}</span></div>
+            </div>
+          ))}
+        </div>
+
+        <h3 className={styles.conditionsLabel}>Selected Conditions<br />&amp; Concerns</h3>
+        <div className={styles.conditionList}>
+          {selectedConditions.map((condition) => <div key={condition}><i />{condition}</div>)}
+        </div>
+        <BotanicalBranch className={styles.personalizedBottomBranch} />
+      </aside>
+
+      <section className={styles.narrativePanel}>
+        <p className={styles.narrativeLabel}>Personalized Narrative Analysis</p>
+        <i className={styles.narrativeRule} aria-hidden="true" />
+        <h2>Here&rsquo;s what your<br />body is <em>telling us.</em></h2>
+        <p className={styles.narrativeLead}>Your responses reveal a body that is working<br />hard to maintain balance, but several key<br />systems are asking for additional support.</p>
+        <div className={styles.narrativeQuote} aria-hidden="true">“</div>
+        <div className={styles.narrativeBody}>
+          <p>Your hormonal health appears to be the core<br />area influencing many of your current<br />symptoms. Imbalances related to PCOS and<br />insulin resistance may be contributing to<br />fluctuations in energy, mood, skin health,<br />and digestion.</p>
+          <p>Your body shows signs of inflammation and<br />stress load, which can impact hormone<br />communication, sleep quality, and metabolic<br />efficiency.</p>
+          <p>The good news is—small, consistent shifts<br />in nutrition, lifestyle, and stress management<br />can create powerful improvements in how<br />you feel each day.</p>
+        </div>
+        <div className={styles.pathForward}>
+          <div className={styles.pathIcon}><CoverLeaf /></div>
+          <div><strong>Your Path Forward</strong><p>This snapshot is the first step toward<br />understanding your unique patterns and<br />creating a plan that truly fits you.</p></div>
+        </div>
+      </section>
+
+      <div className={styles.personalizedPageNumber} aria-hidden="true"><i />01<i /></div>
+    </article>
+  );
+}
+
+type GlanceIconName = "search" | "star" | "trend" | "heart";
+
+function GlanceIcon({ name }: { name: GlanceIconName }) {
+  return (
+    <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      {name === "search" && <><circle cx="28" cy="28" r="14"/><path d="m39 39 12 12"/></>}
+      {name === "star" && <path d="m32 10 6 14 15 1-11 10 3 15-13-8-13 8 3-15-11-10 15-1 6-14Z"/>}
+      {name === "trend" && <><path d="m12 46 15-15 10 9 16-18"/><path d="M43 22h10v10"/></>}
+      {name === "heart" && <path d="M32 51S14 40 14 25c0-7 5-11 11-11 4 0 6 2 7 5 1-3 4-5 8-5 6 0 10 4 10 11 0 15-18 26-18 26Z"/>}
+    </svg>
+  );
+}
+
+const glanceMetrics: Array<{ icon: GlanceIconName; value: string; label: React.ReactNode; copy: React.ReactNode; accent?: boolean }> = [
+  { icon: "search", value: "6", label: <>Focus Areas<br />Analyzed</>, copy: <>Key areas of your health<br />have been assessed based<br />on your responses.</> },
+  { icon: "star", value: "3", label: <>Priority Needs</>, copy: <>Areas that need your<br />immediate attention and<br />consistent support.</>, accent: true },
+  { icon: "trend", value: "2", label: <>Moderate<br />Status</>, copy: <>Areas showing moderate<br />balance with room for<br />improvement.</> },
+  { icon: "heart", value: "1", label: <>Strong<br />Areas</>, copy: <>Areas where your body<br />is functioning well and<br />showing good resilience.</> },
+];
+
+function AtGlancePage() {
+  return (
+    <article className={`${styles.page} ${styles.glancePage}`} aria-label="Page 7: At a Glance">
+      <header className={styles.glanceTopline}>ZenPlato <span>|</span> 02 Health Snapshot</header>
+      <div className={styles.glanceTopRule} aria-hidden="true" />
+      <BotanicalBranch className={styles.glanceTopBranch} />
+      <h2>At a Glance</h2>
+      <div className={styles.glanceTitleRule} aria-hidden="true" />
+      <p className={styles.glanceKicker}>A Quick Overview Of Your<br />Current Health Insights.</p>
+
+      <div className={styles.glanceGrid}>
+        {glanceMetrics.map((metric) => (
+          <article className={styles.glanceCard} key={metric.value}>
+            <div className={`${styles.glanceIcon} ${metric.accent ? styles.glanceAccent : ""}`}><GlanceIcon name={metric.icon} /></div>
+            <div className={`${styles.glanceValue} ${metric.accent ? styles.glanceAccent : ""}`}>{metric.value}</div>
+            <i className={styles.glanceCardRule} aria-hidden="true" />
+            <h3 className={metric.accent ? styles.glanceAccent : ""}>{metric.label}</h3>
+            <p>{metric.copy}</p>
+          </article>
+        ))}
+      </div>
+
+      <div className={styles.glanceLowerRule} aria-hidden="true" />
+      <section className={styles.glanceNext}>
+        <p>Your Next Best Step</p>
+        <i aria-hidden="true" />
+        <h3>Personalized.<br />Practical. Powerful.</h3>
+        <span>Your personalized plan is designed<br />around your unique biology, lifestyle,<br />and goals—helping you take the right<br />actions for lasting change.</span>
+        <button type="button">View Your Plan <b aria-hidden="true">→</b></button>
+      </section>
+      <BotanicalBranch className={styles.glanceBottomBranch} />
+      <div className={styles.glancePageNumber} aria-hidden="true">03<i /></div>
+    </article>
+  );
+}
+
+function OpportunityThreePage() {
+  return (
+    <article className={`${styles.page} ${styles.opportunityThreePage}`} aria-label="Page 8: Your third biggest opportunity">
+      <Image
+        src={opportunityThreeReference}
+        alt="A woman walking along a coastal path overlooking calm water and mountains"
+        fill
+        sizes="45dvh"
+        className={styles.opportunityScenicPhoto}
+      />
+      <div className={styles.opportunityHeaderMask} aria-hidden="true" />
+      <header className={styles.opportunityTopline}>ZenPlato <span>|</span> 01 Your Story</header>
+      <div className={styles.opportunityTopRule} aria-hidden="true" />
+      <BotanicalBranch className={styles.opportunityTopBranch} />
+
+      <section className={styles.opportunityPanel}>
+        <BotanicalBranch className={styles.opportunityPanelBranch} />
+        <p className={styles.opportunityKicker}>Your Biggest Opportunities</p>
+        <i className={styles.opportunityShortRule} aria-hidden="true" />
+        <div className={styles.opportunityNumber}>03</div>
+        <i className={styles.opportunityClayRule} aria-hidden="true" />
+        <h2>{`{{Opportunity_3}}`}</h2>
+        <i className={styles.opportunityGreenRule} aria-hidden="true" />
+        <div className={styles.opportunityText}>
+          <p>This opportunity is about creating<br />deeper harmony between your mind,<br />body, and daily life.</p>
+          <p>Your responses suggest this area plays<br />a key role in your overall wellbeing and<br />long-term vitality.</p>
+          <p>Strengthening it can support emotional<br />balance, resilience, and a greater sense<br />of clarity and purpose.</p>
+          <p>When you prioritize this area, you build<br />the foundation for a healthier, more<br />fulfilling life in every dimension.</p>
+        </div>
+        <div className={styles.opportunityPanelFooter} aria-hidden="true"><i /><b /><i /></div>
+      </section>
+    </article>
+  );
+}
+
+function OpportunityOnePage() {
+  return (
+    <article className={`${styles.page} ${styles.opportunityOnePage}`} aria-label="Page 9: Your first biggest opportunity">
+      <Image src="/ebook/opportunity-botanical.png" alt="A young plant with visible roots" fill sizes="45dvh" className={styles.opportunityBotanical} />
+      <header className={styles.opportunityOneTopline}>ZenPlato <span>|</span> 01 Your Story</header>
+      <section className={styles.opportunityOneCopy}>
+        <p className={styles.opportunityOneKicker}>Your Biggest Opportunities</p>
+        <i className={styles.opportunityOneShortRule} aria-hidden="true" />
+        <div className={styles.opportunityOneNumber}>01</div>
+        <i className={styles.opportunityOneClayRule} aria-hidden="true" />
+        <h2>{`{{opportunity_1}}`}</h2>
+        <i className={styles.opportunityOneGreenRule} aria-hidden="true" />
+        <div className={styles.opportunityOneBody}>
+          <p>This is the area with the greatest<br />potential to create meaningful<br />change for your energy, balance,<br />and long-term wellbeing.</p>
+          <p>Your responses indicate this<br />opportunity is closely connected<br />to how your body is functioning<br />and adapting each day.</p>
+          <p>When we nurture this area with<br />the right support and consistent<br />small steps, you may experience<br />improvements that ripple across<br />your overall health.</p>
+          <p>This is your starting point—where<br />awareness becomes action, and<br />action creates lasting<br />transformation.</p>
+        </div>
+      </section>
+      <div className={styles.opportunityOneBrand}><div>Zen</div><span>Your food intelligence companionship</span></div>
+      <div className={styles.opportunityOnePageNumber} aria-hidden="true"><i />08<i /></div>
+    </article>
+  );
+}
+
+const groceryColumns = [
+  {
+    title: "Protein Sources",
+    items: [
+      ["Chicken Breast", <>Lean, high in<br />protein and<br />essential nutrients.</>],
+      ["Eggs", <>Versatile and<br />packed with<br />high-quality protein.</>],
+      ["Fish (Salmon, Tuna)", <>Rich in omega-3<br />fatty acids for heart<br />and brain health.</>],
+      ["Tofu", <>Great plant-based<br />protein for muscle<br />and bone health.</>],
+      ["Lentils & Pulses", <>High in protein, fiber<br />and iron.</>],
+      ["Greek Yogurt", <>Probiotic-rich and<br />supports gut health.</>],
+    ],
+    summary: <>Builds and repairs<br />tissues, supports<br />muscle health.</>,
+  },
+  {
+    title: "Vegetables",
+    items: [
+      ["Spinach", <>Rich in iron,<br />calcium and<br />antioxidants.</>],
+      ["Broccoli", <>High in fiber,<br />vitamin C and<br />supports immunity.</>],
+      ["Bell Peppers", <>Loaded with<br />vitamin C and<br />antioxidants.</>],
+      ["Carrots", <>Great source of<br />beta-carotene<br />and eye health.</>],
+      ["Zucchini", <>Low in calories,<br />high in water<br />and fiber.</>],
+      ["Cherry Tomatoes", <>Rich in lycopene<br />and heart-healthy<br />nutrients.</>],
+    ],
+    summary: <>Rich in vitamins, minerals<br />and fiber. Keep you<br />energized.</>,
+  },
+  {
+    title: "Fruits",
+    items: [
+      ["Bananas", <>Great source of<br />potassium and<br />natural energy.</>],
+      [<>Berries<br />(Blueberries,<br />Strawberries)</>, <>High in antioxidants<br />and vitamin C.</>],
+      ["Apples", <>High in fiber and<br />supports digestion.</>],
+      ["Oranges", <>Boosts immunity<br />with vitamin C.</>],
+      ["Avocado", <>Rich in healthy fats,<br />vitamins and fiber.</>],
+      ["Grapes", <>Hydrating and<br />packed with<br />antioxidants.</>],
+    ],
+    summary: <>Natural sweetness<br />packed with antioxidants<br />and nutrients.</>,
+  },
+] as const;
+
+const groceryBenefits = [
+  ["Nutrient Dense", <>Essential nutrients for<br />optimal health.</>],
+  ["Supports Immunity", <>Strengthens your body<br />naturally.</>],
+  ["Aids Digestion", <>High fiber for a<br />happy gut.</>],
+  ["Heart Healthy", <>Supports heart and<br />brain function.</>],
+  ["Weight Friendly", <>Wholesome choices<br />for healthy weight.</>],
+] as const;
+
+function GroceryEssentialsPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.groceryPage}`} aria-label="Page 10: Grocery Essentials">
+      <Image src="/ebook/grocery-essentials-bg.png" alt="Fresh groceries arranged by proteins, vegetables and fruits" fill sizes="45dvh" className={styles.groceryArtwork} />
+      <header className={styles.groceryTopline}>ZenPlato <span>|</span> 08 <span>|</span> Your Personalized Recipe Collection</header>
+      <h2>Grocery<br />Essentials</h2>
+      <p className={styles.groceryIntro}>Wholesome ingredients for<br />everyday meals and better living.</p>
+      <div className={styles.groceryBadge}>Real Food.<br />Real Good.</div>
+      <div className={styles.groceryPageLabel}>Page 1 of 3</div>
+
+      <div className={styles.groceryColumns}>
+        {groceryColumns.map((column) => (
+          <section className={styles.groceryColumn} key={column.title}>
+            <h3>{column.title}</h3>
+            <div className={styles.groceryItems}>
+              {column.items.map(([name, copy], index) => (
+                <article key={index}><strong>{name}</strong><p>{copy}</p></article>
+              ))}
+            </div>
+            <p className={styles.grocerySummary}>{column.summary}</p>
+          </section>
+        ))}
+      </div>
+
+      <section className={styles.groceryBenefits}>
+        <div className={styles.groceryBenefitLead}><strong>Good Food.<br />Better You.</strong><p>Choose whole foods<br />for a healthier, happier<br />life every day.</p></div>
+        <div className={styles.groceryBenefitGrid}>
+          {groceryBenefits.map(([title, copy]) => <article key={title}><strong>{title}</strong><p>{copy}</p></article>)}
+        </div>
+      </section>
+      <div className={styles.groceryBottomNote}>Good ingredients. Real results.</div>
+    </article>
+  );
+}
+
+function UnderstandingJourneyPage() {
+  return (
+    <article className={`${styles.page} ${styles.understandingJourneyPage}`} aria-label="Page 11A: Understanding Your PCOS Journey">
+      <Image src="/ebook/understanding-pcos-journey.png" alt="A woman standing in a meadow overlooking mountains and a lake" fill sizes="45dvh" className={styles.understandingJourneyPhoto} />
+      <div className={styles.understandingJourneyWash} aria-hidden="true" />
+      <header className={styles.understandingJourneyTopline}>ZenPlato <span>|</span> 02 Hormonal Rhythms</header>
+      <div className={styles.understandingJourneyTopRule} aria-hidden="true" />
+      <BotanicalBranch className={styles.understandingJourneyTopBranch} />
+      <section className={styles.understandingJourneyTitle}>
+        <p>Section 02</p>
+        <h2>Understanding<br />Your PCOS<br />Journey</h2>
+        <div aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+      </section>
+      <div className={styles.understandingJourneyPageNumber} aria-hidden="true"><i />11<i /></div>
+    </article>
+  );
+}
+
+type UnderstandingIconName = "leaf" | "balance" | "sunrise";
+
+function UnderstandingIcon({ name }: { name: UnderstandingIconName }) {
+  if (name === "leaf") return <FocusIcon name="leaf" />;
+  if (name === "balance") return <FocusIcon name="balance" />;
+  return (
+    <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <path d="M10 41h44M17 49h30M24 56h16M19 36c2-10 7-15 13-15s11 5 13 15M32 8v7M12 22l5 4M52 22l-5 4M20 12l4 6M44 12l-4 6" />
+    </svg>
+  );
+}
+
+const understandingRows: Array<{ icon: UnderstandingIconName; title: string; copy: React.ReactNode }> = [
+  { icon: "leaf", title: "What It Means", copy: <>PCOS (Polycystic Ovary Syndrome) is<br />a hormonal condition that affects how<br />your ovaries and hormones function.<br />It can influence ovulation, hormone<br />balance, and metabolism in unique<br />and complex ways.</> },
+  { icon: "balance", title: "Why It Matters", copy: <>Understanding PCOS helps you identify<br />the underlying imbalances rather than<br />just managing symptoms. With the right<br />knowledge and support, your body can<br />heal, recalibrate, and thrive.</> },
+  { icon: "sunrise", title: <>How It May Affect<br />Daily Life</>, copy: <>PCOS can show up as irregular cycles,<br />fatigue, mood shifts, skin changes,<br />weight fluctuations, or fertility challenges.<br />Recognizing these patterns is the first<br />step toward creating lasting positive<br />change.</> },
+];
+
+function UnderstandingDetailPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.understandingDetailPage}`} aria-label="Page 11B: Understanding PCOS">
+      <header className={styles.understandingDetailTopline}>ZenPlato <span>|</span> 02 Hormonal Rhythms</header>
+      <div className={styles.understandingDetailTopRule} aria-hidden="true" />
+      <BotanicalBranch className={styles.understandingDetailTopBranch} />
+      <div className={styles.understandingDetailPhoto}>
+        <Image src="/ebook/understanding-pcos-detail.png" alt="A woman resting in a meadow overlooking a lake and mountains" fill sizes="45dvh" />
+      </div>
+
+      <section className={styles.understandingDetailContent}>
+        <h2>Understanding<br />PCOS</h2>
+        <div className={styles.understandingDetailDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <div className={styles.understandingDetailRows}>
+          {understandingRows.map((row) => (
+            <article className={styles.understandingDetailRow} key={String(row.title)}>
+              <div className={styles.understandingDetailIcon}><UnderstandingIcon name={row.icon} /></div>
+              <div className={styles.understandingDetailDot} aria-hidden="true" />
+              <div><h3>{row.title}</h3><p>{row.copy}</p></div>
+            </article>
+          ))}
+        </div>
+      </section>
+      <div className={styles.understandingDetailPageNumber} aria-hidden="true"><i />13<i /></div>
+    </article>
+  );
+}
+
+type SymptomIconName = "hormones" | "bloodSugar" | "cravings" | "daily";
+
+function SymptomIcon({ name }: { name: SymptomIconName }) {
+  if (name === "hormones") return (
+    <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <circle cx="18" cy="22" r="6" /><circle cx="43" cy="17" r="5" /><circle cx="45" cy="43" r="7" /><circle cx="18" cy="45" r="4" />
+      <path d="m23 20 15-2M21 27l20 12M22 44l16-1" />
+    </svg>
+  );
+  if (name === "bloodSugar") return (
+    <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <path d="M20 11c0 0-10 13-10 21a10 10 0 0 0 20 0c0-8-10-21-10-21Z" />
+      <path d="m35 28 10-6 10 6v13l-10 6-10-6V28Zm0 0 10 6 10-6M45 34v13" />
+    </svg>
+  );
+  if (name === "cravings") return (
+    <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <path d="M17 29h26l-3 21H20l-3-21Z" /><path d="M20 29c0-6 4-10 9-10 2-5 10-5 12 1 5 0 8 4 8 9H20ZM25 35l2 10M34 35v10" />
+      <path d="M13 18c-4-2-5-7-2-10M18 16c-1-4 1-7 4-9" />
+    </svg>
+  );
+  return (
+    <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <circle cx="25" cy="18" r="7" /><path d="M13 51c1-12 5-20 12-20s11 8 12 20M18 37l-7 9M32 37l8 9" />
+      <path d="M39 13c1-5 5-8 10-8 6 0 10 4 10 9s-4 9-10 9h-3l-6 5 2-7c-3-2-4-5-3-8Z" />
+    </svg>
+  );
+}
+
+const symptomSteps: Array<{ icon: SymptomIconName; title: string; copy: string }> = [
+  { icon: "hormones", title: "Hormonal Changes", copy: "Hormonal imbalances—especially elevated androgens and insulin resistance—disrupt normal ovulation and throw your body’s systems off balance." },
+  { icon: "bloodSugar", title: "Blood Sugar Fluctuations", copy: "These hormonal shifts affect how your body processes glucose, leading to spikes and crashes in blood sugar throughout the day." },
+  { icon: "cravings", title: "Cravings & Energy Dips", copy: "Blood sugar ups and downs trigger intense cravings, irritability, and fatigue as your body struggles to find steady fuel and balance." },
+  { icon: "daily", title: "Daily Challenges", copy: "The cycle shows up in real life—through mood swings, low energy, poor sleep, skin flare-ups, weight changes, and fertility struggles." },
+];
+
+function WhySymptomsPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.symptomPage}`} aria-label="Page 12: Why Symptoms Happen">
+      <header className={styles.symptomTopline}>ZenPlato <span>|</span> 02 Hormonal Rhythms</header>
+      <div className={styles.symptomTopRule} aria-hidden="true" />
+      <BotanicalBranch className={styles.symptomTopBranch} />
+      <div className={styles.symptomPhoto}>
+        <Image src="/ebook/why-symptoms-happen.png" alt="A journal, warm drink and flowers arranged on a quiet table" fill sizes="45dvh" />
+      </div>
+      <section className={styles.symptomContent}>
+        <h2>Why Symptoms<br />Happen</h2>
+        <div className={styles.symptomDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <div className={styles.symptomSteps}>
+          {symptomSteps.map((step, index) => (
+            <article className={styles.symptomStep} key={step.title}>
+              <div className={styles.symptomIcon}><SymptomIcon name={step.icon} /></div>
+              {index < symptomSteps.length - 1 && <div className={styles.symptomConnector} aria-hidden="true">↓</div>}
+              <div className={styles.symptomIndex}>{String(index + 1).padStart(2, "0")}.</div>
+              <div><h3>{step.title}</h3><p>{step.copy}</p></div>
+            </article>
+          ))}
+        </div>
+      </section>
+      <blockquote className={styles.symptomTakeaway}>
+        <BotanicalBranch />
+        <p>Understanding the why behind your symptoms<br />is the first step toward lasting balance and healing.</p>
+      </blockquote>
+      <div className={styles.symptomPageNumber} aria-hidden="true"><i />14<i /></div>
+    </article>
+  );
+}
+
+type NutritionIconName = "energy" | "cravings" | "balance" | "health";
+
+function NutritionIcon({ name }: { name: NutritionIconName }) {
+  if (name === "energy") return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="m35 7-15 27h12l-4 23 17-30H33l2-20Z" /><path d="M13 17l5 4M9 34h7M13 51l5-4M51 17l-5 4M55 34h-7M51 51l-5-4" /></svg>;
+  if (name === "cravings") return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M31 49V35c-6 0-12-4-12-11 0-8 7-13 14-10 5-6 16-2 16 6 6 2 8 10 4 15-3 4-8 5-13 5M31 35c5 0 8-2 10-6M39 48c0-9-2-13-8-13M27 22c4 0 7 3 7 7" /></svg>;
+  if (name === "balance") return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M32 8v40M22 53h20M15 17h34M32 11l-17 6M32 11l17 6M15 17 7 18h14l-7-18ZM49 17l-7 18h14l-7-18ZM9 35c2 5 12 5 14 0M42 35c2 5 12 5 14 0" /></svg>;
+  return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M32 56V17M32 46c-9 0-15-6-16-15 9 0 15 6 16 15ZM32 36c9 0 15-6 16-15-9 0-15 6-16 15ZM32 25c-6 0-10-4-11-10 6 0 10 4 11 10ZM32 19c5 0 9-4 10-10-6 0-10 4-10 10Z" /></svg>;
+}
+
+const nutritionInfluences: Array<{ icon: NutritionIconName; title: string; copy: string }> = [
+  { icon: "energy", title: "Energy", copy: "The right nutrients help stabilize blood sugar and support steady energy throughout the day—so you can feel more awake, focused, and resilient." },
+  { icon: "cravings", title: "Cravings", copy: "Balanced meals and blood sugar stability can reduce intense cravings and help you feel more satisfied and in control." },
+  { icon: "balance", title: "Hormonal Balance", copy: "Nutrition plays a powerful role in regulating hormones like insulin, estrogen, and testosterone—supporting ovulation, mood, and cycle regularity." },
+  { icon: "health", title: "Long-Term Health", copy: "Nourishing your body today supports your future—reducing the risk of metabolic issues, inflammation, and chronic disease down the road." },
+];
+
+function NutritionInfluencePhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.nutritionInfluencePage}`} aria-label="Page 13: What Nutrition Can Influence">
+      <header className={styles.nutritionInfluenceTopline}>ZenPlato <span>|</span> 02 Hormonal Rhythms</header>
+      <div className={styles.nutritionInfluenceTopRule} aria-hidden="true" />
+      <BotanicalBranch className={styles.nutritionInfluenceTopBranch} />
+      <div className={styles.nutritionInfluencePhoto}>
+        <Image src="/ebook/nutrition-influence.png" alt="A balanced grain bowl beside a journal and water" fill sizes="45dvh" />
+      </div>
+      <section className={styles.nutritionInfluenceContent}>
+        <h2>What Nutrition<br />Can Influence</h2>
+        <div className={styles.nutritionInfluenceDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <div className={styles.nutritionInfluenceSteps}>
+          {nutritionInfluences.map((item, index) => (
+            <article className={styles.nutritionInfluenceStep} key={item.title}>
+              <div className={styles.nutritionInfluenceIcon}><NutritionIcon name={item.icon} /></div>
+              {index < nutritionInfluences.length - 1 && <div className={styles.nutritionInfluenceConnector} aria-hidden="true"><i /><b /></div>}
+              <div className={styles.nutritionInfluenceIndex}>{String(index + 1).padStart(2, "0")}.</div>
+              <div><h3>{item.title}</h3><p>{item.copy}</p></div>
+            </article>
+          ))}
+        </div>
+      </section>
+      <blockquote className={styles.nutritionInfluenceTakeaway}>
+        <BotanicalBranch />
+        <p>Food is more than fuel—it&rsquo;s information.<br />The right nutrition helps your body<br />function, heal, and thrive.</p>
+      </blockquote>
+      <div className={styles.nutritionInfluencePageNumber} aria-hidden="true"><i />16<i /></div>
+    </article>
+  );
+}
+
+type ChallengeIconName = "cravings" | "fatigue" | "weight" | "cycles";
+
+function ChallengeIcon({ name }: { name: ChallengeIconName }) {
+  if (name === "cravings") return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M17 29h30l-4 24H21l-4-24ZM21 29c0-5 4-9 9-9 1-6 10-8 14-3 5 0 9 5 8 10M25 35l2 12M34 35v12M43 35l-2 12" /></svg>;
+  if (name === "fatigue") return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><rect x="10" y="20" width="39" height="25" rx="2" /><path d="M49 27h5v11h-5M44 24v17" /></svg>;
+  if (name === "weight") return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><rect x="10" y="13" width="44" height="40" rx="4" /><circle cx="32" cy="23" r="9" /><path d="m32 23 5-4M16 17h8M40 17h8" /></svg>;
+  return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><rect x="10" y="14" width="44" height="40" rx="3" /><path d="M10 25h44M20 9v10M44 9v10M20 33h1M31 33h1M42 33h1M20 42h1M31 42h1M42 42h1" /></svg>;
+}
+
+const pcosChallenges: Array<{ icon: ChallengeIconName; image: string; title: React.ReactNode; copy: string }> = [
+  { icon: "cravings", image: "/ebook/pcos-challenge-cravings.png", title: "Cravings", copy: "Hormonal fluctuations and blood sugar imbalances can trigger intense cravings, making it hard to stick to healthy choices." },
+  { icon: "fatigue", image: "/ebook/pcos-challenge-fatigue.png", title: "Fatigue", copy: "Low energy, constant tiredness, and brain fog are common with PCOS due to insulin resistance, poor sleep, and hormonal imbalances." },
+  { icon: "weight", image: "/ebook/pcos-challenge-weight.png", title: <>Weight<br />Management</>, copy: "PCOS can make it harder to lose weight or maintain it, especially around the belly, due to insulin resistance and hormonal factors." },
+  { icon: "cycles", image: "/ebook/pcos-challenge-cycles.png", title: <>Irregular<br />Cycles</>, copy: "Irregular or missed periods are a hallmark of PCOS, caused by hormonal imbalances that affect ovulation." },
+];
+
+function CommonChallengesPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.commonChallengesPage}`} aria-label="Page 14: Common PCOS Challenges">
+      <BotanicalBranch className={styles.commonChallengesTopBranch} />
+      <header className={styles.commonChallengesTopline}>ZenPlato <span>|</span> 02 Hormonal Rhythms</header>
+      <div className={styles.commonChallengesTopRule} aria-hidden="true" />
+      <section className={styles.commonChallengesIntro}>
+        <h2>Common<br />PCOS Challenges</h2>
+        <div className={styles.commonChallengesDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <p>PCOS shows up differently for everyone.<br />These are some of the most common<br />challenges—and you are not alone.</p>
+      </section>
+      <section className={styles.commonChallengeCards}>
+        {pcosChallenges.map((challenge, index) => (
+          <article className={styles.commonChallengeCard} key={challenge.image}>
+            <div className={styles.commonChallengePhoto}>
+              <Image src={challenge.image} alt="" fill sizes="20dvh" />
+              <b>{String(index + 1).padStart(2, "0")}</b>
+            </div>
+            <div className={styles.commonChallengeCopy}>
+              <div className={styles.commonChallengeIcon}><ChallengeIcon name={challenge.icon} /></div>
+              <div><h3>{challenge.title}</h3><i /><p>{challenge.copy}</p></div>
+            </div>
+          </article>
+        ))}
+      </section>
+      <div className={styles.commonChallengesPageNumber} aria-hidden="true"><i />19<i /></div>
+    </article>
+  );
+}
+
+type FrameworkIconName = "protein" | "fibre" | "movement" | "recovery";
+
+function FrameworkIcon({ name }: { name: FrameworkIconName }) {
+  if (name === "protein") return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M32 54V20M32 35c-8 0-14-5-14-13 8 0 14 5 14 13ZM32 42c8 0 14-5 14-13-8 0-14 5-14 13ZM32 25c6-3 8-9 4-15-6 3-8 9-4 15Z" /><path d="M13 13h2M49 14h2M50 47h2" /></svg>;
+  if (name === "fibre") return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M12 51c13-8 25-20 38-38M24 40c-8 0-12-4-13-10 8 0 12 4 13 10ZM34 31c-7-1-10-5-10-11 7 1 11 5 10 11ZM40 24c0-7 4-11 10-13 0 7-4 11-10 13ZM30 44c6 0 10 3 12 9-7 0-11-3-12-9Z" /><path d="M12 16h2M51 45h2" /></svg>;
+  if (name === "movement") return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="31" cy="13" r="4" /><path d="M31 17v16l-9 10M31 25l10 7M18 51h31M23 43v8M40 32v19M31 20l-8 7" /></svg>;
+  return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M43 10A24 24 0 1 0 53 43 20 20 0 0 1 43 10Z" /><path d="M45 20h5M47.5 17.5v5M52 30h4M54 28v4" /></svg>;
+}
+
+const frameworkItems: Array<{ icon: FrameworkIconName; title: string; copy: string }> = [
+  { icon: "protein", title: "Protein", copy: "Supports stable blood sugar, reduces cravings, and helps build and repair lean muscle." },
+  { icon: "fibre", title: "Fibre", copy: "Feeds your gut, supports hormone balance, and keeps you feeling full and satisfied longer." },
+  { icon: "movement", title: "Movement", copy: "Improves insulin sensitivity, lifts your mood, and helps your body function at its best." },
+  { icon: "recovery", title: "Recovery", copy: "Rest, sleep, and stress management are essential for hormone balance and long-term wellbeing." },
+];
+
+function ZenPlatoFrameworkPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.frameworkPage}`} aria-label="Page 15: The ZenPlato Framework">
+      <BotanicalBranch className={styles.frameworkTopBranch} />
+      <header className={styles.frameworkTopline}>ZenPlato <span>|</span> 02 Hormonal Rhythms</header>
+      <div className={styles.frameworkTopRule} aria-hidden="true" />
+      <section className={styles.frameworkIntro}>
+        <h2>The ZenPlato<br />Framework</h2>
+        <div className={styles.frameworkDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <p>A simple, sustainable framework to nourish<br />your body, balance your hormones, and<br />support your PCOS journey—every day.</p>
+      </section>
+      <section className={styles.frameworkItems}>
+        {frameworkItems.map((item, index) => (
+          <article className={styles.frameworkItem} key={item.title}>
+            <div className={styles.frameworkIcon}><FrameworkIcon name={item.icon} /></div>
+            <div className={styles.frameworkIndex}>{String(index + 1).padStart(2, "0")}.</div>
+            <div><h3>{item.title}</h3><i /><p>{item.copy}</p></div>
+          </article>
+        ))}
+      </section>
+      <blockquote className={styles.frameworkTakeaway}><BotanicalBranch /><p>Balance isn&rsquo;t about perfection—<br />it&rsquo;s about supporting your body<br />with what it truly needs.</p></blockquote>
+      <div className={styles.frameworkPhoto}><Image src="/ebook/zenplato-framework-photo.png" alt="A balance journal, warm cup and leafy stems" fill sizes="45dvh" /></div>
+    </article>
+  );
+}
+
+function FoodNutritionGuidePhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.foodGuidePage}`} aria-label="Page 16: Your Food and Nutrition Guide">
+      <Image src="/ebook/food-nutrition-guide-bg.png" alt="A nourishing chickpea and avocado bowl beside water and leafy branches" fill sizes="45dvh" className={styles.foodGuideBackground} />
+      <header className={styles.foodGuideTopline}>ZenPlato <span>|</span> 03 Your Food &amp; Nutrition Guide</header>
+      <section className={styles.foodGuideContent}>
+        <p className={styles.foodGuideSection}>Section 3</p>
+        <h2>Your Food &amp;<br />Nutrition Guide</h2>
+        <div className={styles.foodGuideDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <div className={styles.foodGuidePages}>6 Pages</div>
+        <div className={styles.foodGuidePurpose}>
+          <h3>Purpose</h3>
+          <p>Translate insights into practical<br />nutrition strategies.</p>
+        </div>
+      </section>
+    </article>
+  );
+}
+
+const mindfulFoods = [
+  { image: "/ebook/mindful-refined-sugars.png", title: <>Refined<br />Sugars</>, copy: "Can cause blood sugar spikes and crashes, leading to increased cravings and energy dips." },
+  { image: "/ebook/mindful-refined-carbs.png", title: <>Refined<br />Carbs</>, copy: "Such as white bread, pastries, and white pasta may impact blood sugar balance and satiety." },
+  { image: "/ebook/mindful-fast-foods.png", title: <>Fried &<br />Fast Foods</>, copy: "Often high in unhealthy fats and additives that may increase inflammation and hormonal imbalance." },
+  { image: "/ebook/mindful-processed-meats.png", title: <>Processed<br />Meats</>, copy: "May contain additives and preservatives that could affect inflammation and hormone health." },
+  { image: "/ebook/mindful-yogurts.png", title: <>Flavored<br />Yogurts</>, copy: "Often high in added sugars and artificial ingredients that can impact gut and metabolic health." },
+  { image: "/ebook/mindful-sugary-drinks.png", title: <>Sugary<br />Drinks</>, copy: "Linked to insulin resistance and increased risk of weight gain and energy fluctuations." },
+  { image: "/ebook/mindful-alcohol.png", title: "Alcohol", copy: "Can disrupt sleep, stress hormones, and blood sugar balance—especially in excess." },
+  { image: "/ebook/mindful-snacks.png", title: <>Highly<br />Processed<br />Snacks</>, copy: "Often low in nutrients and high in additives, which may contribute to inflammation and cravings." },
+];
+
+function MindfulFoodIcon({ index }: { index: number }) {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      {index === 0 && <><circle cx="16" cy="16" r="6" /><circle cx="10" cy="16" r="4" /><circle cx="22" cy="16" r="4" /></>}
+      {index === 1 && <><path d="M9 10h14v14H9zM12 10c0-3 8-3 8 0" /></>}
+      {index === 2 && <><path d="M8 11h16l-2 14H10L8 11ZM12 7l2 5M18 7l-1 5M22 7l-2 5" /></>}
+      {index === 3 && <><ellipse cx="16" cy="16" rx="10" ry="6" /><path d="M9 16c3-5 11-5 14 0-3 5-11 5-14 0Z" /></>}
+      {index === 4 && <><path d="M10 10h12l-2 15h-8l-2-15ZM9 10h14M13 7h6" /><path d="M14 17c2-3 4-3 6 0" /></>}
+      {index === 5 && <><path d="M10 9h12l-2 16h-8L10 9ZM9 9h14M14 6h5M18 6l3 3" /><path d="M14 15h4" /></>}
+      {index === 6 && <><path d="M10 7h12c0 8-2 11-6 11s-6-3-6-11ZM16 18v7M11 25h10" /></>}
+      {index === 7 && <><path d="M10 7h12l2 18H8l2-18ZM12 11h8M13 16c3-3 6 0 5 3-1 3-6 2-5-3Z" /></>}
+    </svg>
+  );
+}
+
+function MindfulFoodsPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.mindfulPage}`} aria-label="Page 17: Foods To Be More Mindful Of">
+      <BotanicalBranch className={styles.mindfulTopBranch} />
+      <header className={styles.mindfulTopline}>ZenPlato <span>|</span> 03 Your Food &amp; Nutrition Guide</header>
+      <div className={styles.mindfulTopRule} aria-hidden="true" />
+      <div className={styles.mindfulDecor} aria-hidden="true" />
+      <section className={styles.mindfulIntro}>
+        <h2>Foods To Be<br />More Mindful Of</h2>
+        <div className={styles.mindfulDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <p>These foods aren&rsquo;t “bad”, but they may impact<br />hormone balance, energy, and cravings when<br />consumed too often or in excess.</p>
+        <div className={styles.mindfulDynamic}><BotanicalBranch />Dynamic: &#123;&#123;foods_to_be_mindful_of&#125;&#125;</div>
+      </section>
+      <section className={styles.mindfulGrid}>
+        {mindfulFoods.map((food, index) => (
+          <article className={styles.mindfulCard} key={food.image}>
+            <div className={styles.mindfulPhoto}><Image src={food.image} alt="" fill sizes="10dvh" /></div>
+            <div className={styles.mindfulCardHeading}><span><MindfulFoodIcon index={index} /></span><h3>{food.title}</h3></div>
+            <p>{food.copy}</p>
+          </article>
+        ))}
+      </section>
+      <blockquote className={styles.mindfulTakeaway}><BotanicalBranch /><p>Mindfulness is about balance, not restriction.<br />Enjoy these foods occasionally and<br />choose what supports your body most<br />of the time.</p></blockquote>
+      <div className={styles.mindfulPageNumber} aria-hidden="true"><i />23<i /></div>
+    </article>
+  );
+}
+
+const priorityFoods = [
+  { image: "/ebook/prioritize-greens.png", title: <>Leafy<br />Greens</>, copy: "Rich in fiber, folate, and magnesium to support hormones and detoxification." },
+  { image: "/ebook/prioritize-berries.png", title: "Berries", copy: "Low in sugar, high in antioxidants to reduce inflammation and support insulin sensitivity." },
+  { image: "/ebook/prioritize-proteins.png", title: <>Lean<br />Proteins</>, copy: "Support stable blood sugar, muscle repair, and long-lasting satiety." },
+  { image: "/ebook/prioritize-grains.png", title: <>Whole<br />Grains</>, copy: "Provide complex carbohydrates and fiber for steady energy and balanced blood sugar." },
+  { image: "/ebook/prioritize-fats.png", title: <>Healthy<br />Fats</>, copy: "Support hormone production and keep you feeling full and satisfied." },
+  { image: "/ebook/prioritize-nuts.png", title: <>Nuts &<br />Seeds</>, copy: "Packed with healthy fats, zinc, and selenium to support hormone balance." },
+  { image: "/ebook/prioritize-legumes.png", title: "Legumes", copy: "High in fiber and plant protein to support gut health and stable energy." },
+  { image: "/ebook/prioritize-fermented.png", title: <>Fermented<br />Foods</>, copy: "Support gut health, reduce bloating, and improve nutrient absorption." },
+];
+
+function PriorityFoodsPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.priorityPage}`} aria-label="Page 18: Foods To Prioritize">
+      <BotanicalBranch className={styles.priorityTopBranch} />
+      <header className={styles.priorityTopline}>ZenPlato <span>|</span> 03 Your Food &amp; Nutrition Guide</header>
+      <div className={styles.priorityTopRule} aria-hidden="true" />
+      <div className={styles.priorityDecor} aria-hidden="true" />
+      <section className={styles.priorityIntro}>
+        <h2>Foods To<br />Prioritize</h2>
+        <div className={styles.priorityDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <p>Nourish your body with whole, nutrient-<br />dense foods that support hormonal<br />balance, steady energy, and long-term<br />wellness.</p>
+        <div className={styles.priorityDynamic}><BotanicalBranch />Dynamic: &#123;&#123;foods_to_prioritize&#125;&#125;</div>
+      </section>
+      <section className={styles.priorityGrid}>
+        {priorityFoods.map((food) => (
+          <article className={styles.priorityCard} key={food.image}>
+            <div className={styles.priorityPhoto}><Image src={food.image} alt="" fill sizes="10dvh" /></div>
+            <div className={styles.priorityCardHeading}><span><FrameworkIcon name="protein" /></span><h3>{food.title}</h3></div>
+            <p>{food.copy}</p>
+          </article>
+        ))}
+      </section>
+      <blockquote className={styles.priorityTakeaway}><BotanicalBranch /><p>Focus on real, whole foods most of the time.<br />Small, consistent choices create<br />lasting change.</p></blockquote>
+      <div className={styles.priorityPageNumber} aria-hidden="true">22<i /></div>
+    </article>
+  );
+}
+
+function PlateIcon({ name }: { name: "vegetables" | "protein" | "carbs" }) {
+  if (name === "vegetables") return <FrameworkIcon name="protein" />;
+  if (name === "protein") return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M10 33c9-14 25-16 38-6l7-6v22l-7-6c-13 10-29 8-38-6Z" /><circle cx="39" cy="29" r="1.5" /><path d="M19 30h5M18 38c4-4 7-4 11 0" /></svg>;
+  return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M32 55V10M32 18l-8-6M32 26l8-7M32 34l-8-7M32 42l8-7M32 50l-8-7" /></svg>;
+}
+
+const plateSections = [
+  { icon: "vegetables" as const, amount: "50%", title: "Vegetables", copy: <>Fill half your plate with<br />non-starchy vegetables<br />for fiber, vitamins,<br />minerals, and<br />antioxidants.</> },
+  { icon: "protein" as const, amount: "25%", title: "Protein", copy: <>Include quality protein<br />to support muscle<br />repair, hormones,<br />and lasting fullness.</> },
+  { icon: "carbs" as const, amount: "25%", title: <>Smart<br />Carbohydrates</>, copy: <>Choose whole, fiber-rich<br />carbs to fuel your body,<br />balance blood sugar,<br />and support mood.</> },
+];
+
+function BalancedPlatePhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.balancedPlatePage}`} aria-label="Page 19: The Balanced Plate">
+      <BotanicalBranch className={styles.balancedPlateTopBranch} />
+      <header className={styles.balancedPlateTopline}>ZenPlato <span>|</span> 03 Your Food &amp; Nutrition Guide</header>
+      <div className={styles.balancedPlateTopRule} aria-hidden="true" />
+      <div className={styles.balancedPlateHeaderDecor} aria-hidden="true" />
+      <section className={styles.balancedPlateIntro}>
+        <h2>The<br />Balanced<br />Plate</h2>
+        <div className={styles.balancedPlateDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <p>A simple visual guide to help you<br />build balanced, nourishing meals<br />that support hormone balance,<br />steady energy, and long-term<br />wellness.</p>
+      </section>
+      <div className={styles.balancedPlateBowl}><Image src="/ebook/balanced-plate-bowl.png" alt="A balanced plate divided into vegetables, protein and smart carbohydrates" fill sizes="38dvh" /></div>
+      <section className={styles.balancedPlateSections}>
+        {plateSections.map((section) => (
+          <article className={styles.balancedPlateSection} key={section.amount + String(section.title)}>
+            <div className={styles.balancedPlateIcon}><PlateIcon name={section.icon} /></div>
+            <div className={styles.balancedPlateMetric}><strong>{section.amount}</strong><h3>{section.title}</h3></div>
+            <div className={styles.balancedPlateConnector} aria-hidden="true"><i /></div>
+            <p>{section.copy}</p>
+          </article>
+        ))}
+      </section>
+      <blockquote className={styles.balancedPlateTakeaway}><BotanicalBranch /><p>Balance is not about perfection—<br />it&rsquo;s about consistency. Small, mindful<br />choices create lasting changes.</p></blockquote>
+      <div className={styles.balancedPlatePageNumber} aria-hidden="true"><i />24<i /></div>
+    </article>
+  );
+}
+
+type HydrationIconName = "glass" | "clock" | "drop" | "leaf" | "body";
+
+function HydrationIcon({ name }: { name: HydrationIconName }) {
+  if (name === "clock") return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="32" r="22" /><path d="M32 17v16l10 6M32 10v4M32 50v4M10 32h4M50 32h4" /></svg>;
+  if (name === "drop") return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M32 8S15 29 15 40a17 17 0 0 0 34 0C49 29 32 8 32 8Z" /></svg>;
+  if (name === "leaf") return <FrameworkIcon name="fibre" />;
+  if (name === "body") return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="13" r="6" /><path d="M32 19v19M20 30l12-8 12 8M32 38l-10 13M32 38l10 13M14 53c5-7 13-8 18-2 5-6 13-5 18 2" /></svg>;
+  return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M17 14h30l-4 37H21l-4-37ZM21 35c7-5 15 5 22 0" /></svg>;
+}
+
+const hydrationSteps: Array<{ icon: HydrationIconName; title: string; copy: React.ReactNode }> = [
+  { icon: "glass", title: "1. Daily Goal", copy: <>Aim for &#123;&#123;hydration_guidance.daily_goal&#125;&#125;<br />(about 8–10 glasses) spread<br />throughout the day.</> },
+  { icon: "clock", title: "2. Sip Consistently", copy: <>Drink a glass of water every 1–2<br />hours. Consistent sips keep your<br />body hydrated and your energy<br />steady.</> },
+  { icon: "drop", title: "3. Start & End Your Day", copy: <>Begin your morning with<br />&#123;&#123;hydration_guidance.morning_ritual&#125;&#125;<br />and unwind at night with<br />&#123;&#123;hydration_guidance.evening_ritual&#125;&#125;.</> },
+  { icon: "leaf", title: "4. Enhance Naturally", copy: <>Add hydrating, nutrient-rich<br />ingredients like lemon, cucumber,<br />mint, or berries to make water<br />more refreshing.</> },
+  { icon: "body", title: "5. Listen To Your Body", copy: <>Thirst, dry skin, fatigue, or<br />headaches can be signs you need<br />more fluids. Check in and rehydrate.</> },
+];
+
+function HydrationPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.hydrationPage}`} aria-label="Page 20: Hydration Recommendations">
+      <BotanicalBranch className={styles.hydrationTopBranch} />
+      <header className={styles.hydrationTopline}>ZenPlato <span>|</span> 03 Your Food &amp; Nutrition Guide</header>
+      <div className={styles.hydrationTopRule} aria-hidden="true" />
+      <div className={styles.hydrationScene}><Image src="/ebook/hydration-scene.png" alt="A glass pitcher infused with lemon and mint beside a water glass" fill sizes="35dvh" /></div>
+      <section className={styles.hydrationIntro}>
+        <h2>Hydration<br />Recommendations</h2>
+        <div className={styles.hydrationDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <p>Proper hydration supports hormone balance,<br />energy levels, digestion, and glowing skin.<br />Small, consistent habits make a big<br />difference.</p>
+        <h3>Your Hydration Framework</h3>
+      </section>
+      <section className={styles.hydrationSteps}>
+        {hydrationSteps.map((step, index) => (
+          <article className={styles.hydrationStep} key={step.title}>
+            <div className={styles.hydrationIcon}><HydrationIcon name={step.icon} /></div>
+            {index < hydrationSteps.length - 1 && <i className={styles.hydrationConnector} aria-hidden="true" />}
+            <div><h4>{step.title}</h4><p>{step.copy}</p></div>
+          </article>
+        ))}
+      </section>
+      <section className={styles.hydrationTips}>
+        <h3>Additional Tips</h3>
+        <p>♙ <span>Keep a water bottle with you to stay on track.</span></p>
+        <p>♨ <span>Herbal teas and infused water count towards your intake.</span></p>
+        <p>⌁ <span>Include electrolytes if you sweat heavily or feel low energy.</span></p>
+        <p>▣ <span>Use reminders or hydration apps to build the habit.</span></p>
+      </section>
+      <blockquote className={styles.hydrationTakeaway}><BotanicalBranch /><p>Hydration is self-care.<br />Nourish your body with water,<br />and it will nourish you in return.</p></blockquote>
+      <div className={styles.hydrationPageNumber} aria-hidden="true"><i />25<i /></div>
+    </article>
+  );
+}
+
+const mealTimingRows = [
+  {
+    time: "7:00 – 8:30 AM",
+    title: "Breakfast",
+    copy: <>Start your day with a<br />balanced meal rich in<br />protein, healthy fats,<br />and fiber to support<br />stable energy and<br />hormone balance.</>,
+  },
+  {
+    time: "10:30 – 11:00 AM",
+    title: "Mid-Morning Snack",
+    copy: <>A small, nutrient-dense<br />snack can help curb<br />cravings and keep<br />energy levels steady<br />until lunch.</>,
+  },
+  {
+    time: "12:30 – 1:30 PM",
+    title: "Lunch",
+    copy: <>Aim for a balanced<br />plate with protein,<br />vegetables, and smart<br />carbohydrates to<br />support focus and<br />sustained energy.</>,
+  },
+  {
+    time: "4:00 – 4:30 PM",
+    title: "Evening Snack",
+    copy: <>Choose a protein-<br />or fiber-rich snack<br />to stabilize blood<br />sugar and prevent<br />overeating later.</>,
+  },
+  {
+    time: "6:30 – 7:30 PM",
+    title: "Dinner",
+    copy: <>Keep dinner light yet<br />satisfying with protein<br />and vegetables to<br />support digestion<br />and restful sleep.</>,
+  },
+];
+
+function MealTimingPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.mealTimingPage}`} aria-label="Page 21: Meal Timing Guidance">
+      <BotanicalBranch className={styles.mealTimingTopBranch} />
+      <header className={styles.mealTimingTopline}>ZenPlato <span>|</span> 03 Your Food &amp; Nautrition Guide</header>
+      <div className={styles.mealTimingTopRule} aria-hidden="true" />
+
+      <section className={styles.mealTimingIntro}>
+        <h2>Meal Timing<br />Guidance</h2>
+        <p>When you eat is just as important as what<br />you eat. Consistent meal timing helps<br />stabilize blood sugar, balance hormones,<br />and support steady energy throughout<br />the day.</p>
+      </section>
+
+      <section className={styles.mealTimingTimeline}>
+        <h3>Daily Nutrition Timeline</h3>
+        {mealTimingRows.map((row) => (
+          <article className={styles.mealTimingRow} key={row.title}>
+            <h4>{row.time}</h4>
+            <h5>{row.title}</h5>
+            <p>{row.copy}</p>
+          </article>
+        ))}
+      </section>
+
+      <section className={styles.mealTimingKey}>
+        <h3>Consistency Is Key</h3>
+        <p>Try to eat at regular times each day.<br />This helps regulate hunger, balance<br />hormones, and support overall<br />well-being.</p>
+      </section>
+
+      <div className={styles.mealTimingPageNumber} aria-hidden="true"><i />26<i /></div>
+    </article>
+  );
+}
+
+function SustainableRhythmPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.sustainableRhythmPage}`} aria-label="Page 22: Building a Sustainable Rhythm">
+      <header className={styles.sustainableRhythmTopline}>ZenPlato <span>|</span> 03 Your Food &amp; Nutrition Guide</header>
+
+      <section className={styles.sustainableRhythmIntro}>
+        <h2>Building a<br />Sustainable<br />Rhythm</h2>
+        <p>Your body thrives on rhythm and routine.<br />When you nourish yourself consistently,<br />you create a foundation for balance,<br />energy, and long-term wellness.</p>
+      </section>
+
+      <section className={styles.sustainableRhythmMeals}>
+        <article>
+          <h3>4:00 – 4:30 PM</h3>
+          <h4>Evening Snack</h4>
+          <p>Choose a protein- or fiber-rich<br />snack to stabilize blood sugar<br />and prevent overeating later.</p>
+        </article>
+        <article>
+          <h3>6:30 – 7:30 PM</h3>
+          <h4>Dinner</h4>
+          <p>Keep dinner light yet<br />satisfying with protein<br />and vegetables to support<br />digestion and restful sleep.</p>
+        </article>
+      </section>
+
+      <section className={styles.sustainableRhythmKey}>
+        <h3>Consistency Is Key</h3>
+        <p>Try to eat at regular times<br />each day. This helps regulate<br />hunger, balance hormones,<br />and support overall well-being.</p>
+      </section>
+
+      <p className={styles.sustainableRhythmQuote}>Small, consistent habits create<br />meaningful long-term change.</p>
+      <div className={styles.sustainableRhythmPageNumber} aria-hidden="true"><i />27<i /></div>
+    </article>
+  );
+}
+
+function SmartFoodSwapsPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.smartFoodSwapsPage}`} aria-label="Page 23: Smart Food Swaps">
+      <header className={styles.smartFoodSwapsTopline}>ZenPlato <span>|</span> 03 Your Food &amp; Nutrition Guide</header>
+
+      <section className={styles.smartFoodSwapsIntro}>
+        <h2>Smart<br />Food<br />Swaps</h2>
+        <p>Small swaps can make<br />a big difference.<br />Choose foods that<br />nourish your body,<br />balance hormones,<br />and support<br />long-term well-being.</p>
+        <div className={styles.smartFoodSwapsDynamic}><span>Dynamic:</span><strong>&#123;&#123;food_swaps&#125;&#125;</strong></div>
+      </section>
+
+      <section className={`${styles.smartFoodSwapCard} ${styles.smartFoodSwapCardOne}`}>
+        <div className={styles.smartFoodSwapNumber}>01</div>
+        <div className={styles.smartFoodSwapBefore}>
+          <h3>Before</h3>
+          <h4>Sugary<br />Cereals</h4>
+          <p>High in refined<br />sugar and low in<br />fiber, can cause<br />energy crashes.</p>
+        </div>
+        <div className={styles.smartFoodSwapAfter}>
+          <h3>After</h3>
+          <h4>Oats with<br />Seeds &amp;<br />Berries</h4>
+          <p>High in fiber and<br />healthy fats to<br />keep you full and<br />energized.</p>
+        </div>
+      </section>
+
+      <section className={`${styles.smartFoodSwapCard} ${styles.smartFoodSwapCardTwo}`}>
+        <div className={styles.smartFoodSwapNumber}>02</div>
+        <div className={styles.smartFoodSwapBefore}>
+          <h3>Before</h3>
+          <h4>White<br />Bread</h4>
+          <p>Refined carbs that<br />spike blood sugar<br />and increase<br />cravings.</p>
+        </div>
+        <div className={styles.smartFoodSwapAfter}>
+          <h3>After</h3>
+          <h4>Whole Grain<br />Sourdough</h4>
+          <p>Rich in fiber and<br />nutrients, supports<br />steady energy and<br />gut health.</p>
+        </div>
+      </section>
+
+      <div className={styles.smartFoodSwapsPageNumber} aria-hidden="true"><i />28<i /></div>
+    </article>
+  );
+}
+
+function SmartSwapsContinuedPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.smartSwapsContinuedPage}`} aria-label="Page 24: Smart Swaps Continued">
+      <header className={styles.smartSwapsContinuedTopline}>ZenPlato <span>|</span> 03 Your Food &amp; Nutrition Guide</header>
+
+      <section className={`${styles.smartSwapsContinuedCard} ${styles.smartSwapsContinuedCardThree}`}>
+        <div className={styles.smartSwapsContinuedNumber}>03</div>
+        <div className={styles.smartSwapsContinuedBefore}>
+          <h3>Before</h3>
+          <h4>Sweetened<br />Yogurt</h4>
+          <p>Often high in added<br />sugar and artificial<br />ingredients.</p>
+        </div>
+        <div className={styles.smartSwapsContinuedAfter}>
+          <h3>After</h3>
+          <h4>Plain Greek Yogurt<br />with Fruits &amp; Nuts</h4>
+          <p>High in protein and<br />healthy fats to support<br />hormone balance.</p>
+        </div>
+      </section>
+
+      <section className={`${styles.smartSwapsContinuedCard} ${styles.smartSwapsContinuedCardFour}`}>
+        <div className={styles.smartSwapsContinuedNumber}>04</div>
+        <div className={styles.smartSwapsContinuedBefore}>
+          <h3>Before</h3>
+          <h4>Sugary Drinks</h4>
+          <p>Empty calories that<br />lead to energy crashes<br />and sugar spikes.</p>
+        </div>
+        <div className={styles.smartSwapsContinuedAfter}>
+          <h3>After</h3>
+          <h4>Infused Water<br />or Herbal Tea</h4>
+          <p>Hydrating, refreshing,<br />and supports overall<br />well-being.</p>
+        </div>
+      </section>
+
+      <p className={styles.smartSwapsContinuedQuote}>Small choices<br />repeated consistently<br />become powerful<br />habits.</p>
+      <div className={styles.smartSwapsContinuedPageNumber} aria-hidden="true"><i />29<i /></div>
+    </article>
+  );
+}
+
+function LifestyleFoundationPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.lifestyleFoundationPage}`} aria-label="Page 25: Your Lifestyle Foundation">
+      <BotanicalBranch className={styles.lifestyleFoundationTopBranch} />
+      <header className={styles.lifestyleFoundationTopline}>ZenPlato <span>|</span> 03 Your Food &amp; Nutrition Guide</header>
+      <div className={styles.lifestyleFoundationTopRule} aria-hidden="true" />
+
+      <section className={styles.lifestyleFoundationIntro}>
+        <p className={styles.lifestyleFoundationSectionLabel}>Section</p>
+        <div className={styles.lifestyleFoundationNumber}>04</div>
+        <div className={styles.lifestyleFoundationDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <h2>Your<br />Lifestyle<br />Foundation</h2>
+        <i className={styles.lifestyleFoundationShortRule} aria-hidden="true" />
+        <p className={styles.lifestyleFoundationCopy}>True healing happens when<br />daily choices support your<br />body, mind, and hormones.<br />This section is about building<br />a lifestyle that feels good,<br />is sustainable, and helps<br />you thrive—inside and out.</p>
+      </section>
+
+      <aside className={styles.lifestyleFoundationTakeaway}>
+        <span aria-hidden="true"><BotanicalBranch /></span>
+        <p>Balance is built,<br />not found.<br />One choice at a time.</p>
+      </aside>
+
+      <div className={styles.lifestyleFoundationPageNumber} aria-hidden="true"><i />30<i /></div>
+    </article>
+  );
+}
+
+function SleepRecoveryPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.sleepRecoveryPage}`} aria-label="Page 26: Sleep and Recovery">
+      <BotanicalBranch className={styles.sleepRecoveryTopBranch} />
+      <header className={styles.sleepRecoveryTopline}>ZenPlato <span>|</span> 04 Your Lifestyle Foundation</header>
+      <div className={styles.sleepRecoveryTopRule} aria-hidden="true" />
+
+      <section className={styles.sleepRecoveryIntro}>
+        <h2>Sleep &amp;<br />Recovery</h2>
+        <p>Rest is productive.<br />Quality sleep and intentional<br />recovery help regulate hormones,<br />stabilize mood, and support<br />long-term healing.</p>
+      </section>
+
+      <section className={styles.sleepRecoveryRows}>
+        <article>
+          <h3>Sleep And Energy</h3>
+          <p>Good sleep restores your body<br />and balance your hormones,<br />helping you wake up refreshed<br />and stay energized all day.</p>
+        </article>
+        <article>
+          <h3>Sleep And Cravings</h3>
+          <p>Poor sleep increases hunger<br />hormones and cravings,<br />especially for sugar and carbs.<br />Better sleep helps you<br />make better choices.</p>
+        </article>
+        <article>
+          <h3>Recovery Habits</h3>
+          <p>Gentle movement, stretching,<br />breathwork, and downtime<br />support your nervous system<br />and reduce stress, helping<br />your body heal and reset.</p>
+        </article>
+      </section>
+
+      <aside className={styles.sleepRecoveryTakeaway}>
+        <p>Rest isn&rsquo;t lazy.<br />It&rsquo;s part of your healing.</p>
+      </aside>
+
+      <div className={styles.sleepRecoveryPageNumber} aria-hidden="true"><i />32<i /></div>
+    </article>
+  );
+}
+
+const stressCycleRows = [
+  { title: "Stress ↑", copy: <>Triggers cortisol and<br />throws hormones<br />off balance.</> },
+  { title: "Food Choices ↓", copy: <>Leads to more cravings,<br />emotional eating, and<br />poor food choices.</> },
+  { title: "Energy ↓", copy: <>Causes fatigue, mood<br />swings, and low<br />motivation.</> },
+  { title: "Consistency ↓", copy: <>Makes it harder to stick<br />to healthy habits and<br />create lasting change.</> },
+];
+
+function StressWellbeingPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.stressWellbeingPage}`} aria-label="Page 27: Stress and Wellbeing">
+      <BotanicalBranch className={styles.stressWellbeingTopBranch} />
+      <header className={styles.stressWellbeingTopline}>ZenPlato <span>|</span> 04 Your Lifestyle Foundation</header>
+      <div className={styles.stressWellbeingTopRule} aria-hidden="true" />
+
+      <section className={styles.stressWellbeingIntro}>
+        <h2>Stress &amp;<br />Wellbeing</h2>
+        <p>Stress doesn&rsquo;t just affect<br />your mood—it impacts your<br />hormones, cravings, energy,<br />and ability to stay consistent.</p>
+        <h3>The Stress Impact Cycle</h3>
+      </section>
+
+      <section className={styles.stressWellbeingCycle}>
+        {stressCycleRows.map((row) => (
+          <article key={row.title}>
+            <h4>{row.title}</h4>
+            <p>{row.copy}</p>
+          </article>
+        ))}
+      </section>
+
+      <aside className={styles.stressWellbeingInsight}>Insight: &#123;&#123;stress_insight&#125;&#125;</aside>
+      <p className={styles.stressWellbeingQuote}>When you manage stress,<br />you protect your energy,<br />your choices, and<br />your future.</p>
+      <div className={styles.stressWellbeingPageNumber} aria-hidden="true">33<i /></div>
+    </article>
+  );
+}
+
+type WellnessIconName = "bottle" | "bowl" | "shoe" | "lotus";
+
+function WellnessIcon({ name }: { name: WellnessIconName }) {
+  if (name === "bowl") return <PlateIcon name="vegetables" />;
+  if (name === "shoe") return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M12 40c10 3 22 3 40 0 3 2 5 5 5 9H13c-4 0-7-2-7-6 0-5 3-9 7-15l7 8c4 2 11 3 18 0" /><path d="M18 36l7-10M26 38l7-10M33 39l7-9" /></svg>;
+  if (name === "lotus") return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M32 47c-11-8-13-19 0-31 13 12 11 23 0 31Z" /><path d="M28 46c-13 1-21-6-22-20 15 1 22 8 22 20ZM36 46c13 1 21-6 22-20-15 1-22 8-22 20ZM16 50h32" /></svg>;
+  return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M24 14h16M26 14v8h12v-8M22 22h20v30H22V22Z" /><path d="M48 34c4 5 6 9 6 13a6 6 0 0 1-12 0c0-4 2-8 6-13Z" /></svg>;
+}
+
+const dailyWellnessHabits: Array<{ icon: WellnessIconName; number: string; title: React.ReactNode; copy: React.ReactNode }> = [
+  { icon: "bottle", number: "01", title: <>Morning<br />Hydration</>, copy: <>Start your day with<br />water to rehydrate<br />your body, support<br />metabolism, and<br />improve focus.</> },
+  { icon: "bowl", number: "02", title: <>Balanced<br />Breakfast</>, copy: <>Fuel your body with<br />protein, healthy fats,<br />and fiber to stabilize<br />blood sugar and<br />sustain energy.</> },
+  { icon: "shoe", number: "03", title: <>Daily<br />Movement</>, copy: <>Move your body<br />every day—walk,<br />stretch, or do yoga<br />to boost mood and<br />hormone balance.</> },
+  { icon: "lotus", number: "04", title: <>Recovery<br />Habits</>, copy: <>Prioritize quality sleep,<br />stress management,<br />and downtime to<br />help your body<br />heal and reset.</> },
+];
+
+function DailyWellnessPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.dailyWellnessPage}`} aria-label="Page 28: Daily Wellness Habits">
+      <BotanicalBranch className={styles.dailyWellnessTopBranch} />
+      <header className={styles.dailyWellnessTopline}>ZenPlato <span>|</span> 04 Your Lifestyle Foundation</header>
+      <div className={styles.dailyWellnessTopRule} aria-hidden="true" />
+
+      <section className={styles.dailyWellnessIntro}>
+        <h2>Daily<br />Wellness<br />Habits</h2>
+        <div className={styles.dailyWellnessDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <p>Small daily habits create big shifts.<br />These simple, sustainable actions<br />support your hormones, boost energy,<br />and help you feel your best.</p>
+        <aside><span>Dynamic:</span> &#123;&#123;daily_habits&#125;&#125;</aside>
+      </section>
+
+      <section className={styles.dailyWellnessCards}>
+        {dailyWellnessHabits.map((habit) => (
+          <article className={styles.dailyWellnessCard} key={habit.number}>
+            <div className={styles.dailyWellnessCardHead}>
+              <span>{habit.number}</span>
+              <i aria-hidden="true" />
+              <div><WellnessIcon name={habit.icon} /></div>
+            </div>
+            <h3>{habit.title}</h3>
+            <b aria-hidden="true" />
+            <p>{habit.copy}</p>
+          </article>
+        ))}
+      </section>
+
+      <div className={styles.dailyWellnessPageNumber} aria-hidden="true"><i />34<i /></div>
+    </article>
+  );
+}
+
+function PerfectionConsistencyPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.perfectionConsistencyPage}`} aria-label="Page 29: Perfection is not required">
+      <BotanicalBranch className={styles.perfectionConsistencyTopBranch} />
+      <header className={styles.perfectionConsistencyTopline}>ZenPlato <span>|</span> 04 Your Lifestyle Foundation</header>
+      <div className={styles.perfectionConsistencyTopRule} aria-hidden="true" />
+
+      <section className={styles.perfectionConsistencyIntro}>
+        <h2>Perfection<br />Is Not<br />Required.<br /><em>Consistency<br />Is.</em></h2>
+        <div className={styles.perfectionConsistencyDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <p>It&rsquo;s the small, everyday<br />choices you keep showing up<br />for that create real change—<br />physically, mentally,<br />and emotionally.</p>
+      </section>
+
+      <aside className={styles.perfectionConsistencyTakeaway}>
+        <span aria-hidden="true"><BotanicalBranch /></span>
+        <p>Keep going.<br />You&rsquo;re building<br />something<br />powerful.</p>
+      </aside>
+
+      <div className={styles.perfectionConsistencyPageNumber} aria-hidden="true"><i />35<i /></div>
+    </article>
+  );
+}
+
+function RecipeCollectionSectionPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.recipeCollectionSectionPage}`} aria-label="Page 30: Your Personalized Recipe Collection">
+      <BotanicalBranch className={styles.recipeCollectionSectionTopBranch} />
+      <header className={styles.recipeCollectionSectionTopline}>ZenPlato <span>|</span> 05 Your Personalized Recipe Collection</header>
+      <div className={styles.recipeCollectionSectionTopRule} aria-hidden="true" />
+
+      <section className={styles.recipeCollectionSectionIntro}>
+        <p className={styles.recipeCollectionSectionLabel}>Section</p>
+        <div className={styles.recipeCollectionSectionNumber}>05</div>
+        <div className={styles.recipeCollectionSectionDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <h2>Your<br />Personalized<br />Recipe<br />Collection</h2>
+        <i className={styles.recipeCollectionSectionShortRule} aria-hidden="true" />
+        <p className={styles.recipeCollectionSectionCopy}>Good food should feel nourishing,<br />satisfying, and simple to prepare.<br />These recipes are designed to<br />support your hormones, energy,<br />and overall wellbeing—without<br />sacrifice or restriction.</p>
+      </section>
+
+      <aside className={styles.recipeCollectionSectionTakeaway}>
+        <span aria-hidden="true"><BotanicalBranch /></span>
+        <p>Real ingredients.<br />Real nourishment. Real you.</p>
+      </aside>
+
+      <div className={styles.recipeCollectionSectionPageNumber} aria-hidden="true"><i />69<i /></div>
+    </article>
+  );
+}
+
+function RecipeCollectionIntroPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.recipeCollectionIntroPage}`} aria-label="Page 31: Welcome to your personalized recipe collection">
+      <BotanicalBranch className={styles.recipeCollectionIntroTopBranch} />
+      <header className={styles.recipeCollectionIntroTopline}>ZenPlato <span>|</span> 05 Your Personalized Recipe Collection</header>
+      <div className={styles.recipeCollectionIntroTopRule} aria-hidden="true" />
+
+      <section className={styles.recipeCollectionIntroCopy}>
+        <p className={styles.recipeCollectionIntroKicker}>Welcome To</p>
+        <h2>Your<br />Personalized<br />Recipe<br />Collection</h2>
+        <div className={styles.recipeCollectionIntroDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <p>Every recipe in this collection is<br />crafted with your unique PCOS<br />needs in mind—balancing hormones,<br />supporting energy, and making<br />healthy eating simple and enjoyable.</p>
+        <p>These meals focus on whole<br />ingredients, balanced nutrients,<br />and delicious flavors to help you<br />feel your best every day.</p>
+      </section>
+
+      <aside className={styles.recipeCollectionIntroInsight}>
+        <span aria-hidden="true"><BotanicalBranch /></span>
+        <p><strong>Dynamic Insight</strong><br />&#123;&#123;recipe_collection_intro&#125;&#125;</p>
+      </aside>
+
+      <section className={styles.recipeCollectionIntroPillars}>
+        <article><FrameworkIcon name="fibre" /><p>Whole<br />Ingredients</p></article>
+        <article><span>♎</span><p>Hormone<br />Balancing</p></article>
+        <article><span>ϟ</span><p>Sustained<br />Energy</p></article>
+        <article><span>♡</span><p>Nourishing<br />&amp; Delicious</p></article>
+      </section>
+
+      <aside className={styles.recipeCollectionIntroTakeaway}>
+        <BotanicalBranch />
+        <p>Nourish your body. Support your hormones. Enjoy the journey.</p>
+      </aside>
+
+      <div className={styles.recipeCollectionIntroPageNumber} aria-hidden="true"><i />70<i /></div>
+    </article>
+  );
+}
+
+const breakfastIngredients = [
+  "1 cup rolled oats (gluten-free)",
+  "1 cup unsweetened almond milk",
+  "½ cup plain Greek yogurt (dairy-free or regular)",
+  "½ cup mixed berries (fresh or frozen)",
+  "1 tbsp ground flaxseeds",
+  "1 tbsp chia seeds",
+  "1 tsp maple syrup (optional)",
+  "1 tbsp almond butter",
+  "¼ tsp vanilla extract",
+  "Pinch of cinnamon",
+];
+
+const breakfastMethod = [
+  "In a jar or bowl, combine oats, ground flaxseeds, chia seeds, almond milk, Greek yogurt, maple syrup, vanilla extract, and cinnamon.",
+  "Stir well until everything is combined.",
+  "Fold in the mixed berries and almond butter.",
+  "Cover and refrigerate overnight (or at least 4 hours).",
+  "In the morning, give it a good stir and enjoy chilled. Top with extra berries, seeds, or nuts if desired.",
+];
+
+const breakfastHighlights = [
+  ["High In Fiber", "Supports digestion and keeps you full longer."],
+  ["Hormone Balancing", "Flaxseeds and oats help support healthy estrogen metabolism."],
+  ["Steady Energy", "Complex carbs and healthy fats provide long-lasting energy without spikes."],
+  ["Rich In Antioxidants", "Berries help reduce inflammation and support overall wellness."],
+];
+
+function BreakfastsPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.breakfastsPage}`} aria-label="Page 32: Building Better Breakfasts">
+      <BotanicalBranch className={styles.breakfastsTopBranch} />
+      <header className={styles.breakfastsTopline}>ZenPlato <span>|</span> 05 Your Personalized Recipe Collection</header>
+      <div className={styles.breakfastsTopRule} aria-hidden="true" />
+
+      <section className={styles.breakfastsIntro}>
+        <p>Building Better</p>
+        <h2>Breakfasts</h2>
+        <div className={styles.breakfastsDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <em>Start your day with balance.</em>
+        <p className={styles.breakfastsCopy}>These breakfasts are designed to nourish<br />your body, balance hormones, and keep<br />you energized and satisfied for hours.</p>
+      </section>
+
+      <section className={styles.breakfastsMeta}>
+        <article><WellnessIcon name="bottle" /><h3>Preparation Time</h3><p>10 mins</p></article>
+        <article><span>♆</span><h3>Servings</h3><p>2</p></article>
+        <article><FrameworkIcon name="fibre" /><h3>Difficulty</h3><p>Easy</p></article>
+      </section>
+
+      <div className={styles.breakfastsHero}><Image src="/ebook/breakfasts-hero.png" alt="A bowl of oats topped with berries, seeds and nut butter" fill sizes="40dvh" /></div>
+
+      <section className={styles.breakfastsIngredients}>
+        <h3>Ingredients</h3>
+        <ul>{breakfastIngredients.map((item) => <li key={item}>{item}</li>)}</ul>
+      </section>
+
+      <section className={styles.breakfastsMethod}>
+        <h3>Method</h3>
+        <ol>{breakfastMethod.map((item) => <li key={item}>{item}</li>)}</ol>
+        <aside><BotanicalBranch /><p><strong>Make It Yours</strong><br />Add a scoop of protein powder or swap berries for<br />diced apple and cinnamon for extra satisfaction.</p></aside>
+      </section>
+
+      <section className={styles.breakfastsHighlights}>
+        <h3>Nutrition Highlights</h3>
+        {breakfastHighlights.map(([title, copy]) => (
+          <article key={title}>
+            <span>{title === "Hormone Balancing" ? "♎" : title === "Steady Energy" ? "ϟ" : title === "Rich In Antioxidants" ? "♡" : <FrameworkIcon name="fibre" />}</span>
+            <div><h4>{title}</h4><p>{copy}</p></div>
+          </article>
+        ))}
+      </section>
+    </article>
+  );
+}
+
+const matchaProteinRows = [
+  ["Chia Seeds", "5 g"],
+  ["Pumpkin Seeds", "3 g"],
+  ["Hemp Seeds", "2 g"],
+  ["Coconut Flakes", "1 g"],
+  ["Blueberries", "1 g"],
+];
+
+function MatchaChiaNutritionPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.matchaNutritionPage}`} aria-label="Page 33: Matcha Chia Pudding Bowl nutrition highlights">
+      <header className={styles.matchaNutritionTopline}>ZenPlato <span>|</span> 05 Your Personalized Recipe Collection</header>
+
+      <section className={styles.matchaNutritionIntro}>
+        <p>Building Better</p>
+        <h2>Matcha<br />Chia Pudding<br />Bowl</h2>
+        <p className={styles.matchaNutritionCopy}>A refreshing, antioxidant-rich<br />breakfast that supports balanced<br />energy and hormone health.</p>
+      </section>
+
+      <section className={styles.matchaNutritionMeta}>
+        <article><h3>Preparation Time</h3><p>10 mins</p></article>
+        <article><h3>Servings</h3><p>2</p></article>
+        <article><h3>Difficulty</h3><p>Easy</p></article>
+      </section>
+
+      <h3 className={styles.matchaNutritionHeading}>Nutrition Highlights</h3>
+      <section className={styles.matchaProteinCard}>
+        <h4>Protein</h4>
+        <p>A balanced blend of<br />plant-based proteins<br />to keep you full,<br />support muscle<br />health and balance<br />hormones.</p>
+      </section>
+
+      <section className={styles.matchaProteinTable}>
+        <header><span>Ingredient (Protein Source)</span><span>Amount Per Serving</span></header>
+        {matchaProteinRows.map(([ingredient, amount]) => (
+          <article key={ingredient}><span>{ingredient}</span><strong>{amount}</strong></article>
+        ))}
+        <footer><span>Total Protein</span><strong>12 g</strong></footer>
+      </section>
+    </article>
+  );
+}
+
+const matchaBenefitCards = [
+  ["♎", "Hormone Balance", <>Supports estrogen balance<br />and helps regulate<br />hormonal fluctuations<br />naturally.</>],
+  ["⌁", "Gut Health", <>High in fiber and prebiotics<br />to nourish good bacteria<br />and support smooth<br />digestion.</>],
+  ["♢", "Immune Support", <>Packed with antioxidants,<br />vitamins, and minerals to<br />strengthen immunity<br />and resilience.</>],
+  ["☺", "Mood & Stress", <>L-theanine in matcha<br />promotes calm focus<br />and helps reduce<br />daily stress.</>],
+  ["ϟ", "Sustained Energy", <>A balanced blend of<br />protein, healthy fats,<br />and complex carbs for<br />long-lasting energy.</>],
+  ["♙", "Skin Glow", <>Antioxidants and omega-3s<br />help fight inflammation<br />and promote clear,<br />radiant skin.</>],
+];
+
+function MatchaChiaBenefitsPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.matchaBenefitsPage}`} aria-label="Page 34: What this bowl does for you">
+      <BotanicalBranch className={styles.matchaBenefitsTopBranch} />
+      <header className={styles.matchaBenefitsTopline}>ZenPlato <span>|</span> 05 Your Personalized Recipe Collection</header>
+      <div className={styles.matchaBenefitsTopRule} aria-hidden="true" />
+      <div className={styles.matchaBenefitsHero}><Image src="/ebook/matcha-benefits-hero.png" alt="Matcha chia pudding bowl with kiwi, blueberries, coconut and seeds" fill sizes="31dvh" /></div>
+
+      <section className={styles.matchaBenefitsIntro}>
+        <p>Beyond Nutrition</p>
+        <div className={styles.matchaBenefitsMiniDivider} aria-hidden="true"><BotanicalBranch /><i /></div>
+        <h2>What This Bowl<br />Does For You</h2>
+        <p className={styles.matchaBenefitsCopy}>More than just a meal — this<br />bowl nourishes your body, balances<br />your hormones, and supports your<br />everyday well-being.</p>
+      </section>
+
+      <section className={styles.matchaBenefitsGrid}>
+        {matchaBenefitCards.map(([icon, title, copy]) => (
+          <article key={String(title)}>
+            <span>{icon}</span>
+            <h3>{title}</h3>
+            <p>{copy}</p>
+            <i aria-hidden="true" />
+          </article>
+        ))}
+      </section>
+
+      <aside className={styles.matchaBenefitsTakeaway}>
+        <strong>Nourish. Balance. Thrive.</strong>
+        <p>Small choices today, lasting changes tomorrow.</p>
+      </aside>
+    </article>
+  );
+}
+
+const matchaIngredients = [
+  ["½ Cup", "Chia Seeds"],
+  ["2 Cups", "Unsweetened Almond Milk"],
+  ["1 Tsp", "Matcha Powder"],
+  ["1 Tbsp", "Maple Syrup"],
+  ["½ Tsp", "Vanilla Extract"],
+  ["Toppings", "Kiwi, Blueberries"],
+  ["Toppings", "Coconut Flakes"],
+  ["Toppings", "Pumpkin Seeds"],
+];
+
+function MatchaIngredientsPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.matchaIngredientsPage}`} aria-label="Page 35: Matcha Chia Pudding Bowl ingredients">
+      <header className={styles.matchaIngredientsTopline}>ZenPlato <span>|</span> 05 Your Personalized Recipe Collection</header>
+      <section className={styles.matchaIngredientsIntro}>
+        <p>Matcha Chia Pudding Bowl</p>
+        <h2>Ingredients</h2>
+      </section>
+      <section className={styles.matchaIngredientsLabels}>
+        {matchaIngredients.map(([amount, name]) => (
+          <article key={`${amount}-${name}`}>
+            <strong>{amount}</strong>
+            <span>{name}</span>
+          </article>
+        ))}
+      </section>
+      <aside className={styles.matchaIngredientsTip}>
+        <h3>Tip</h3>
+        <p>Feel free to customize<br />your toppings with<br />seasonal fruits or<br />your favorites.</p>
+      </aside>
+      <div className={styles.matchaIngredientsPageNumber} aria-hidden="true">75<i /></div>
+    </article>
+  );
+}
+
+const matchaMethodSteps = [
+  <>In a bowl or jar,<br />whisk together<br />chia seeds, almond<br />milk, matcha<br />powder, maple<br />syrup, and<br />vanilla extract.</>,
+  <>Stir well until<br />everything is<br />well combined.</>,
+  <>Cover and<br />refrigerate<br />overnight<br />(or at least<br />4 hours).</>,
+  <>In the morning,<br />give it a good stir<br />and top with your<br />favorite fruits<br />and seeds.</>,
+];
+
+function MatchaMethodPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.matchaMethodPage}`} aria-label="Page 36: Matcha Chia Pudding Bowl method">
+      <header className={styles.matchaMethodTopline}>ZenPlato <span>|</span> 05 Your Personalized Recipe Collection</header>
+      <section className={styles.matchaMethodIntro}>
+        <p>Matcha Chia Pudding Bowl</p>
+        <h2>Method</h2>
+      </section>
+      <section className={styles.matchaMethodSteps}>
+        {matchaMethodSteps.map((step, index) => (
+          <article key={index}>
+            <p>{step}</p>
+          </article>
+        ))}
+      </section>
+      <aside className={styles.matchaMethodMakeYours}>
+        <h3>Make It Yours</h3>
+        <p>Add a spoon of nut<br />butter or a sprinkle of<br />hemp seeds for extra<br />protein and healthy fats.</p>
+      </aside>
+      <div className={styles.matchaMethodPageNumber} aria-hidden="true">76<i /></div>
+    </article>
+  );
+}
+
+const matchaCookingRows = [
+  ["01", "Prepare Matcha", "In a small bowl, whisk matcha powder with a splash of warm water until smooth and lump-free."],
+  ["02", "Make Pudding", "In a jar or bowl, combine chia seeds, milk, maple syrup, vanilla, and the whisked matcha. Stir well."],
+  ["03", "Chill", "Cover and refrigerate for at least 4 hours or overnight, until thick and pudding-like."],
+  ["04", "Prepare Toppings", "Slice kiwi and gather your toppings like blueberries, pumpkin seeds, and coconut flakes."],
+  ["05", "Assemble", "Spoon the chilled matcha chia pudding into a bowl."],
+  ["06", "Top & Enjoy", "Top with kiwi, blueberries, pumpkin seeds, coconut flakes, and any other favorites. Enjoy!"],
+];
+
+function MatchaCookingMethodPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.matchaCookingPage}`} aria-label="Page 37: Matcha Chia Pudding Bowl method of cooking">
+      <BotanicalBranch className={styles.matchaCookingTopBranch} />
+      <header className={styles.matchaCookingTopline}>ZenPlato <span>|</span> 05 Your Personalized Recipe Collection</header>
+      <div className={styles.matchaCookingTopRule} aria-hidden="true" />
+      <section className={styles.matchaCookingIntro}>
+        <p>Building Better</p>
+        <div className={styles.matchaCookingMiniDivider} aria-hidden="true"><BotanicalBranch /><i /></div>
+        <h2>Matcha<br />Chia Pudding<br />Bowl</h2>
+      </section>
+      <h3 className={styles.matchaCookingHeading}>Method</h3>
+      <section className={styles.matchaCookingRows}>
+        {matchaCookingRows.map(([number, title, copy]) => (
+          <article key={number}>
+            <div><strong>{number}</strong><h4>{title}</h4></div>
+            <p>{copy}</p>
+          </article>
+        ))}
+      </section>
+      <aside className={styles.matchaCookingTip}>
+        <h3>Tip</h3>
+        <p>For a creamier texture, use full-fat coconut milk.<br />Adjust sweetness to your preference.</p>
+      </aside>
+    </article>
+  );
+}
+
+const smartSnackColumns = [
+  {
+    title: <>Overnight Chia<br />Protein Pudding</>,
+    ingredients: ["Chia seeds", "Almond milk", "Vanilla protein powder", "Maple syrup", "Blueberries & almonds"],
+  },
+  {
+    title: <>No-Bake<br />Energy Bites</>,
+    ingredients: ["Oats", "Peanut butter", "Honey", "Flaxseeds", "Dark chocolate chips"],
+  },
+  {
+    title: <>Spiced Roasted<br />Chickpeas</>,
+    ingredients: ["Chickpeas", "Olive oil", "Paprika", "Cumin powder", "Sea salt"],
+  },
+];
+
+function SmartSnacksIngredientsPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.smartSnacksIngredientsPage}`} aria-label="Page 38: Smart Snacks ingredients">
+      <header className={styles.smartSnacksIngredientsTopline}>ZenPlato <span>|</span> 06 <span>|</span> Your Personalized Recipe Collection</header>
+      <section className={styles.smartSnacksIngredientsIntro}>
+        <h2>Smart Snacks</h2>
+        <p>Wholesome ingredients. Smarter choices.</p>
+      </section>
+      <section className={styles.smartSnacksIngredientColumns}>
+        {smartSnackColumns.map((column) => (
+          <article key={String(column.ingredients[0])}>
+            <h3>{column.title}</h3>
+            <h4>Ingredients</h4>
+            <ul>
+              {column.ingredients.map((ingredient) => (
+                <li key={ingredient}>{ingredient}</li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </section>
+      <aside className={styles.smartSnacksBenefits}>
+        <div>
+          <h3>Real Ingredients.<br />Real Benefits.</h3>
+          <i aria-hidden="true" />
+          <p>Simple, wholesome<br />ingredients to fuel your<br />body and mind.</p>
+        </div>
+        <p>Naturally<br />Nourishing</p>
+        <p>Clean &amp;<br />Wholesome</p>
+        <p>No Artificial<br />Additives</p>
+      </aside>
+      <p className={styles.smartSnacksClosing}>Small bites. Big impact.</p>
+    </article>
+  );
+}
+
+const smartSnackFeatureRows = [
+  { title: "Nutrient Dense", copy: <>Packed with essential<br />nutrients</> },
+  { title: "Energy Boost", copy: <>Keeps you energized<br />and focused</> },
+  { title: "Satisfying", copy: <>Keeps cravings in<br />check longer</> },
+  { title: "Good For You", copy: <>Clean ingredients,<br />real benefits</> },
+];
+
+const smartSnackCards = [
+  {
+    title: <>Overnight Chia<br />Protein Pudding</>,
+    copy: <>Creamy, filling &amp; perfect<br />make-ahead snack.</>,
+    ingredients: ["Chia seeds", "Almond milk", "Vanilla protein powder", "Maple syrup", "Blueberries & almonds"],
+    meta: [["Prep Time", "5 mins"], ["Chill Time", "Overnight"], ["Serves", "1"]],
+  },
+  {
+    title: <>No-Bake<br />Energy Bites</>,
+    copy: <>Quick, no-bake bites for<br />sustained energy.</>,
+    ingredients: ["Oats", "Peanut butter", "Honey", "Flaxseeds", "Dark chocolate chips"],
+    meta: [["Prep Time", "10 mins"], ["Serves", "2"], ["Store In", "Fridge"]],
+  },
+  {
+    title: <>Spiced Roasted<br />Chickpeas</>,
+    copy: <>Crunchy, savory &amp; perfect<br />on-the-go.</>,
+    ingredients: ["Chickpeas", "Olive oil", "Paprika", "Cumin powder", "Sea salt"],
+    meta: [["Prep Time", "5 mins"], ["Bake Time", "25 mins"], ["Serves", "2"]],
+  },
+];
+
+const smartSnackingBenefits = [
+  <>Stabilizes<br />blood sugar</>,
+  <>Improves focus<br />&amp; productivity</>,
+  <>Supports healthy<br />digestion</>,
+  <>Strengthens<br />immunity</>,
+  <>Helps manage<br />weight</>,
+  <>Keeps you full<br />&amp; satisfied</>,
+];
+
+function SmartSnacksCardsPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.smartSnacksCardsPage}`} aria-label="Page 39: Smart Snacks recipe cards">
+      <header className={styles.smartSnacksCardsTopline}>ZenPlato <span>|</span> 06 <span>|</span> Your Personalized Recipe Collection</header>
+      <section className={styles.smartSnacksCardsIntro}>
+        <h2>Smart Snacks</h2>
+        <p>Delicious choices that fuel your day,<br />satisfy cravings, and support your goals.</p>
+      </section>
+      <section className={styles.smartSnackFeatureRows}>
+        {smartSnackFeatureRows.map((feature) => (
+          <article key={feature.title}>
+            <h3>{feature.title}</h3>
+            <p>{feature.copy}</p>
+          </article>
+        ))}
+      </section>
+      <section className={styles.smartSnackCardsGrid}>
+        {smartSnackCards.map((card) => (
+          <article key={String(card.ingredients[0])}>
+            <h3>{card.title}</h3>
+            <p>{card.copy}</p>
+            <h4>Ingredients</h4>
+            <ul>
+              {card.ingredients.map((ingredient) => (
+                <li key={ingredient}>{ingredient}</li>
+              ))}
+            </ul>
+            <footer>
+              {card.meta.map(([label, value]) => (
+                <div key={label}>
+                  <strong>{label}</strong>
+                  <span>{value}</span>
+                </div>
+              ))}
+            </footer>
+          </article>
+        ))}
+      </section>
+      <section className={styles.smartSnackingBenefitPanel}>
+        <h3>Smart Snacking = Smarter You</h3>
+        <div>
+          {smartSnackingBenefits.map((benefit, index) => (
+            <p key={index}>{benefit}</p>
+          ))}
+        </div>
+      </section>
+      <p className={styles.smartSnacksCardsClosing}>Small bites. Big impact.</p>
+    </article>
+  );
+}
+
+const beverageFeatures = [
+  { title: "Nutrient Rich", copy: <>Packed with vitamins,<br />minerals &amp; antioxidants</> },
+  { title: "Energizing", copy: <>Naturally boosts energy<br />and reduces fatigue</> },
+  { title: "Immunity Support", copy: <>Strengthens immunity<br />and builds resilience</> },
+  { title: "Hydrating", copy: <>Supports hydration<br />and detoxification</> },
+];
+
+const beverageCards = [
+  {
+    accent: "berry",
+    image: "/ebook/nourishing-phone-berry.png",
+    title: <>Berry Protein<br />Smoothie</>,
+    copy: <>A creamy, protein-packed smoothie<br />to fuel your day.</>,
+    ingredients: ["Blueberries", "Chia seeds", "Banana", "Protein powder", "Greek yogurt", "Almond milk"],
+    metrics: [["Prep Time", "5 mins"], ["Blend Time", "1 min"], ["Serves", "1"]],
+  },
+  {
+    accent: "gold",
+    image: "/ebook/nourishing-phone-golden.png",
+    title: <>Golden Milk<br />(Turmeric Latte)</>,
+    copy: <>A warm, soothing drink to support<br />immunity and relaxation.</>,
+    ingredients: ["Milk (dairy or plant-based)", "Cinnamon", "Turmeric powder", "Black pepper", "Ginger powder", "Honey or maple syrup"],
+    metrics: [["Prep Time", "5 mins"], ["Cook Time", "5 mins"], ["Serves", "1"]],
+  },
+  {
+    accent: "green",
+    image: "/ebook/nourishing-phone-green.png",
+    title: <>Green Detox<br />Drink</>,
+    copy: <>A refreshing blend to detox, hydrate<br />and rejuvenate.</>,
+    ingredients: ["Cucumber", "Lemon juice", "Celery", "Ginger", "Spinach", "Mint leaves"],
+    metrics: [["Prep Time", "5 mins"], ["Blend Time", "1 min"], ["Serves", "1"]],
+  },
+];
+
+const beverageBenefits = [
+  <>Rich in<br />Antioxidants</>,
+  <>Supports<br />Digestion</>,
+  <>Promotes<br />Healthy Skin</>,
+  <>Helps Manage<br />Weight</>,
+  <>Improves Mood<br />&amp; Well-being</>,
+];
+
+function NourishingBeveragesPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.nourishingBeveragesPage}`} aria-label="Page 40: Nourishing Beverages">
+      <BotanicalBranch className={styles.nourishingTopBranch} />
+      <header className={styles.nourishingTopline}>ZenPlato <span>|</span> 07 <span>|</span> Your Personalized Recipe Collection</header>
+      <div className={styles.nourishingTopRule} aria-hidden="true" />
+      <div className={styles.nourishingHero}>
+        <Image src="/ebook/nourishing-phone-hero.png" alt="A creamy green nourishing beverage with mint and matcha" fill sizes="18dvh" />
+      </div>
+      <section className={styles.nourishingIntro}>
+        <h2>Nourishing<br />Beverages</h2>
+        <div aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <p><em>Sip well. Live well.</em></p>
+        <p>Delicious beverages crafted with<br />real ingredients for a healthier you.</p>
+      </section>
+      <section className={styles.nourishingFeatures}>
+        {beverageFeatures.map((feature) => (
+          <article key={feature.title}>
+            <h3>{feature.title}</h3>
+            <p>{feature.copy}</p>
+          </article>
+        ))}
+      </section>
+      <section className={styles.nourishingCards}>
+        {beverageCards.map((card) => (
+          <article className={styles[`nourishingCard${card.accent}`]} key={card.accent}>
+            <div className={styles.nourishingCardPhoto}>
+              <Image src={card.image} alt="" fill sizes="16dvh" aria-hidden="true" />
+            </div>
+            <div className={styles.nourishingCardCopy}>
+              <h3>{card.title}</h3>
+              <i aria-hidden="true" />
+              <p>{card.copy}</p>
+              <ul>
+                {card.ingredients.map((ingredient) => (
+                  <li key={ingredient}>{ingredient}</li>
+                ))}
+              </ul>
+            </div>
+            <footer>
+              {card.metrics.map(([label, value]) => (
+                <div key={label}><strong>{label}</strong><span>{value}</span></div>
+              ))}
+            </footer>
+          </article>
+        ))}
+      </section>
+      <section className={styles.nourishingBenefits}>
+        <div><h3>Good For You.<br />Good For Life.</h3><p>Simple ingredients.<br />Lasting impact.</p></div>
+        {beverageBenefits.map((benefit, index) => (
+          <p key={index}>{benefit}</p>
+        ))}
+      </section>
+      <p className={styles.nourishingClosing}>Good ingredients. Real results.</p>
+    </article>
+  );
+}
+
+const fruitCards = [
+  { name: "Bananas", copy: <>Great source of<br />potassium and<br />natural energy.</>, benefits: ["Energy Booster", "Heart Health", "Supports Digestion"] },
+  { name: <>Berries<br />(Blueberries,<br />Strawberries)</>, copy: <>High in antioxidants<br />and vitamin C.</>, benefits: ["Boosts Immunity", "Healthy Skin", "Rich in Antioxidants"] },
+  { name: "Apples", copy: <>High in fiber and<br />supports<br />digestion.</>, benefits: ["Heart Health", "Aids Digestion", "Supports Weight Control"] },
+  { name: "Oranges", copy: <>Boosts immunity<br />with vitamin C.</>, benefits: ["Immunity Boost", "Healthy Skin", "Antioxidant Rich"] },
+  { name: "Avocado", copy: <>Rich in healthy<br />fats, vitamins E &amp; K,<br />and fiber.</>, benefits: ["Heart Health", "Supports Brain Function", "Healthy Skin"] },
+  { name: "Grapes", copy: <>Hydrating and<br />packed with<br />antioxidants.</>, benefits: ["Heart Health", "Hydration", "Anti-aging Benefits"] },
+  { name: "Kiwi", copy: <>Rich in vitamin C,<br />fiber, and<br />potassium.</>, benefits: ["Immunity Boost", "Gut Health", "Skin Health"] },
+  { name: "Papaya", copy: <>Aids digestion and<br />rich in vitamins<br />A &amp; C.</>, benefits: ["Aids Digestion", "Boosts Immunity", "Healthy Skin"] },
+  { name: "Pomegranate", copy: <>Rich in antioxidants<br />that support<br />heart health.</>, benefits: ["Heart Health", "Anti-inflammatory", "Cell Protection"] },
+  { name: "Mango", copy: <>Rich in vitamin A<br />and supports<br />immune function.</>, benefits: ["Immunity Boost", "Healthy Eyes", "Healthy Skin"] },
+  { name: "Pineapple", copy: <>Aids digestion<br />and rich in<br />vitamin C.</>, benefits: ["Aids Digestion", "Immunity Boost", "Anti-inflammatory"] },
+  { name: "Watermelon", copy: <>Hydrating and rich<br />in vitamins A &amp; C.</>, benefits: ["Hydration", "Skin Health", "Supports Heart Health"] },
+  { name: "Pears", copy: <>High in fiber and<br />supports gut<br />health.</>, benefits: ["Aids Digestion", "Heart Health", "Supports Immunity"] },
+  { name: "Lemons", copy: <>Detoxifying and<br />rich in vitamin C.</>, benefits: ["Detoxifies Body", "Boosts Immunity", "Healthy Skin"] },
+  { name: "Dates", copy: <>Natural source of<br />energy and iron.</>, benefits: ["Energy Booster", "Improves Digestion", "Supports Bone Health"] },
+];
+
+const fruitPanelBenefits = [
+  <>Strengthens<br />Immunity</>,
+  <>Promotes<br />Healthy Skin</>,
+  <>Supports<br />Digestion</>,
+  <>Supports Heart<br />Health</>,
+  <>Aids in Weight<br />Management</>,
+];
+
+function GroceryFruitsPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.groceryFruitsPage}`} aria-label="Page 41: Fruits">
+      <header className={styles.groceryFruitsTopline}>ZenPlato <span>|</span> 08 <span>|</span> Your Personalized Recipe Collection</header>
+      <section className={styles.groceryFruitsIntro}>
+        <h2>Fruits</h2>
+        <div aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <p>Nature&rsquo;s sweetest gifts—packed<br />with vitamins, minerals, and<br />antioxidants for a healthier you.</p>
+      </section>
+      <aside className={styles.groceryFruitsSeal}>Real Fruit.<br />Real Benefits.</aside>
+      <section className={styles.groceryFruitsGrid}>
+        {fruitCards.map((fruit) => (
+          <article key={String(fruit.name)}>
+            <h3>{fruit.name}</h3>
+            <i aria-hidden="true" />
+            <p>{fruit.copy}</p>
+            <footer>
+              {fruit.benefits.map((benefit) => (
+                <span key={benefit}>{benefit}</span>
+              ))}
+            </footer>
+          </article>
+        ))}
+      </section>
+      <section className={styles.groceryFruitsBenefits}>
+        <div>
+          <h3>Eat The Rainbow</h3>
+          <p>Different colors, different<br />nutrients. Enjoy a variety<br />of fruits every day.</p>
+        </div>
+        {fruitPanelBenefits.map((benefit, index) => (
+          <p key={index}>{benefit}</p>
+        ))}
+      </section>
+      <p className={styles.groceryFruitsClosing}>Good ingredients. Real results.</p>
+    </article>
+  );
+}
+
+const vegetableCards = [
+  { name: "Spinach", copy: <>Rich in iron, calcium,<br />vitamins A, C &amp; K,<br />and antioxidants.</> },
+  { name: "Broccoli", copy: <>High in fiber, vitamin C,<br />and sulforaphane that<br />supports immunity.</> },
+  { name: "Bell Peppers", copy: <>Excellent source of<br />vitamin C and antioxidants<br />for healthy skin &amp; immunity.</> },
+  { name: "Carrots", copy: <>High in beta-carotene<br />which supports eye health<br />and immunity.</> },
+  { name: "Zucchini", copy: <>Low in calories and rich<br />in water, vitamins A &amp; C,<br />and potassium.</> },
+  { name: "Cherry Tomatoes", copy: <>Rich in lycopene and<br />vitamin C; supports heart<br />health and skin.</> },
+  { name: "Cucumber", copy: <>Hydrating and low in<br />calories; good source of<br />vitamin K.</> },
+  { name: "Kale", copy: <>Packed with vitamins A, C, K,<br />calcium, and powerful<br />antioxidants.</> },
+  { name: "Cauliflower", copy: <>High in fiber and vitamin C;<br />supports digestion and<br />detoxification.</> },
+  { name: "Green Beans", copy: <>Good source of fiber,<br />folate, and vitamins A, C, K;<br />supports heart health.</> },
+  { name: "Sweet Potato", copy: <>Rich in beta-carotene,<br />fiber, and complex<br />carbohydrates.</> },
+  { name: "Beets", copy: <>Supports blood health<br />and detoxification; rich in<br />folate and iron.</> },
+  { name: "Cabbage", copy: <>High in fiber and vitamin K;<br />supports digestion and<br />immune health.</> },
+  { name: "Brussels Sprouts", copy: <>Rich in fiber, vitamin C &amp; K,<br />and antioxidants that support<br />overall wellness.</> },
+  { name: "Asparagus", copy: <>Good source of folate,<br />vitamins A, C, E, and K;<br />supports detox.</> },
+  { name: "Mushrooms", copy: <>Low in calories, high in B<br />vitamins and selenium;<br />supports immunity.</> },
+  { name: "Onions", copy: <>Contains antioxidants and<br />compounds that support<br />heart health.</> },
+  { name: "Garlic", copy: <>Known for its immune-<br />boosting and anti-<br />inflammatory properties.</> },
+  { name: "Ginger", copy: <>Aids digestion, reduces<br />inflammation, and supports<br />overall wellness.</> },
+  { name: "Lettuce", copy: <>Hydrating and rich in<br />vitamins A &amp; K; supports<br />healthy digestion.</> },
+];
+
+const vegetablePanelBenefits = [
+  <>Boosts<br />Immunity</>,
+  <>Supports<br />Digestion</>,
+  <>Promotes<br />Healthy Skin</>,
+  <>Strengthens<br />Bones</>,
+  <>Aids Weight<br />Management</>,
+];
+
+function GroceryVegetablesPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.groceryVegetablesPage}`} aria-label="Page 42: Vegetables">
+      <header className={styles.groceryVegetablesTopline}>ZenPlato <span>|</span> 08 <span>|</span> Your Personalized Recipe Collection</header>
+      <section className={styles.groceryVegetablesIntro}>
+        <h2>Vegetables</h2>
+        <div aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <p>Nutrient-rich vegetables to add<br />color, flavor, and health to your<br />meals.</p>
+      </section>
+      <section className={styles.groceryVegetablesGrid}>
+        {vegetableCards.map((vegetable) => (
+          <article key={vegetable.name}>
+            <h3>{vegetable.name}</h3>
+            <p>{vegetable.copy}</p>
+          </article>
+        ))}
+      </section>
+      <section className={styles.groceryVegetablesBenefits}>
+        <div>
+          <h3>Eat A Rainbow</h3>
+          <p>Variety in vegetables<br />ensures a wide range<br />of nutrients for a<br />stronger, healthier you.</p>
+        </div>
+        {vegetablePanelBenefits.map((benefit, index) => (
+          <p key={index}>{benefit}</p>
+        ))}
+      </section>
+      <p className={styles.groceryVegetablesClosing}>Good ingredients. Real results.</p>
+    </article>
+  );
+}
+
+const actionPlanWeeks = [
+  { week: "Week 1", title: <>Build<br />Momentum</>, days: "Days 1–7", focus: <>Hydration, whole<br />foods &amp; movement</> },
+  { week: "Week 2", title: <>Strengthen<br />Habits</>, days: "Days 8–14", focus: <>Nutrition,<br />consistency &amp;<br />self-care</> },
+  { week: "Week 3", title: <>Elevate &amp;<br />Challenge</>, days: "Days 15–21", focus: <>Energy, variety &amp;<br />sleep</> },
+  { week: "Week 4", title: <>Sustain &amp;<br />Thrive</>, days: "Days 22–30", focus: <>Mindset, balance<br />&amp; long-term<br />well-being</> },
+];
+
+const actionPlanDays = [
+  "Start your day with warm lemon water.",
+  "Choose a balanced breakfast.",
+  "Add 1 green or nourishing beverage.",
+  "Fill half your plate with vegetables.",
+  "Move your body for 30 minutes.",
+  "Choose healthy snacks mindfully.",
+  "Reflect, journal & plan for next week.",
+  "Try a new healthy recipe.",
+  "Eat a variety of colorful fruits.",
+  "Drink at least 8 glasses of water.",
+  "Include a quality protein in your meals.",
+  "Add healthy fats (nuts, seeds, avocado).",
+  "Practice mindfulness or meditation.",
+  "Review your progress & adjust goals.",
+  "Add more fiber-rich foods.",
+  "Try a plant-based meal.",
+  "Increase your activity intensity.",
+  "Limit sugar & processed foods.",
+  "Support your gut with probiotic",
+  "Unplug & relax before bed.",
+  "Prioritize 7–8 hours of quality sleep.",
+  "Plan your meals for success.",
+  "Nourish your body intentionally.",
+  "Spend time in nature.",
+  "Choose whole, unprocessed foods.",
+  "Move, breathe & stay active.",
+  "Practice gratitude daily.",
+  "Celebrate small wins.",
+  "Stay consistent, stay kind.",
+  "You did it! Keep thriving!",
+];
+
+const actionTips = [
+  <>Plan ahead<br />and prep<br />meals.</>,
+  <>Stay hydrated<br />throughout<br />the day.</>,
+  <>Take it<br />one day<br />at a time.</>,
+  <>Celebrate<br />progress,<br />not perfection.</>,
+  <>Lean on your<br />support<br />system.</>,
+];
+
+function ActionPlanPhonePage() {
+  return (
+    <article className={`${styles.page} ${styles.actionPlanPage}`} aria-label="Page 43: Your 30-Day Action Plan">
+      <header className={styles.actionPlanTopline}>ZenPlato <span>|</span> 06 <span>|</span> Your Personalized Recipe Collection</header>
+      <section className={styles.actionPlanIntro}>
+        <p>Section 6</p>
+        <h2>Your 30-Day<br />Action Plan</h2>
+        <div aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <h3>Purpose</h3>
+        <p>Turn recommendations<br />into daily action.</p>
+      </section>
+      <div className={styles.actionPlanNotebook}><strong>30</strong><span>Days To<br />A Healthier<br />You</span></div>
+      <section className={styles.actionPlanPrinciples}>
+        <p>Small steps.<br />Consistent days.<br />Big results.</p>
+        <p>30 days to build<br />better habits<br />that last.</p>
+        <p>Focus on progress,<br />not perfection.<br />You&rsquo;ve got this!</p>
+        <p>Track daily, stay<br />accountable and<br />celebrate wins.</p>
+      </section>
+      <section className={styles.actionPlanTable}>
+        {actionPlanWeeks.map((week, weekIndex) => (
+          <div className={styles.actionPlanWeekRow} key={week.week}>
+            <aside>
+              <h3>{week.week}</h3>
+              <p>{week.title}</p>
+              <strong>{week.days}</strong>
+              <span>Focus:<br />{week.focus}</span>
+            </aside>
+            {actionPlanDays.slice(weekIndex * 7, weekIndex === 3 ? 30 : weekIndex * 7 + 7).map((copy, dayIndex) => {
+              const dayNumber = weekIndex * 7 + dayIndex + 1;
+              return (
+                <article key={dayNumber}>
+                  <h4>Day {dayNumber}</h4>
+                  <p>{copy}</p>
+                </article>
+              );
+            })}
+          </div>
+        ))}
+      </section>
+      <section className={styles.actionPlanRemember}>
+        <div>
+          <h3>Remember</h3>
+          <p>Consistency creates change.<br />Keep showing up for yourself<br />every single day.</p>
+        </div>
+        <h4>Tips For Success</h4>
+        {actionTips.map((tip, index) => (
+          <p key={index}>{tip}</p>
+        ))}
+      </section>
+      <p className={styles.actionPlanClosing}>Small steps today, a healthier you tomorrow.</p>
+    </article>
+  );
+}
+
+export default function MobileEbookPage() {
+  return (
+    <main className={styles.shell} aria-label="ZenPlato phone ebook">
+      <section className={styles.pageFrame}><CoverPage /></section>
+      <section className={styles.pageFrame}><BeginningPage /></section>
+      <section className={styles.pageFrame}><SnapshotPage /></section>
+      <section className={styles.pageFrame}><FindingsIntroPage /></section>
+      <section className={styles.pageFrame}><FindingsCardsPage /></section>
+      <section className={styles.pageFrame}><FocusAreasPage /></section>
+      <section className={styles.pageFrame}><PersonalizedSummaryPage /></section>
+      <section className={styles.pageFrame}><AtGlancePage /></section>
+      <section className={styles.pageFrame}><OpportunityThreePage /></section>
+      <section className={styles.pageFrame}><OpportunityOnePage /></section>
+      <section className={styles.pageFrame}><GroceryEssentialsPhonePage /></section>
+      <section className={styles.pageFrame}><UnderstandingJourneyPage /></section>
+      <section className={styles.pageFrame}><UnderstandingDetailPhonePage /></section>
+      <section className={styles.pageFrame}><WhySymptomsPhonePage /></section>
+      <section className={styles.pageFrame}><NutritionInfluencePhonePage /></section>
+      <section className={styles.pageFrame}><CommonChallengesPhonePage /></section>
+      <section className={styles.pageFrame}><ZenPlatoFrameworkPhonePage /></section>
+      <section className={styles.pageFrame}><FoodNutritionGuidePhonePage /></section>
+      <section className={styles.pageFrame}><MindfulFoodsPhonePage /></section>
+      <section className={styles.pageFrame}><PriorityFoodsPhonePage /></section>
+      <section className={styles.pageFrame}><BalancedPlatePhonePage /></section>
+      <section className={styles.pageFrame}><HydrationPhonePage /></section>
+      <section className={styles.pageFrame}><MealTimingPhonePage /></section>
+      <section className={styles.pageFrame}><SustainableRhythmPhonePage /></section>
+      <section className={styles.pageFrame}><SmartFoodSwapsPhonePage /></section>
+      <section className={styles.pageFrame}><SmartSwapsContinuedPhonePage /></section>
+      <section className={styles.pageFrame}><LifestyleFoundationPhonePage /></section>
+      <section className={styles.pageFrame}><SleepRecoveryPhonePage /></section>
+      <section className={styles.pageFrame}><StressWellbeingPhonePage /></section>
+      <section className={styles.pageFrame}><DailyWellnessPhonePage /></section>
+      <section className={styles.pageFrame}><PerfectionConsistencyPhonePage /></section>
+      <section className={styles.pageFrame}><RecipeCollectionSectionPhonePage /></section>
+      <section className={styles.pageFrame}><RecipeCollectionIntroPhonePage /></section>
+      <section className={styles.pageFrame}><BreakfastsPhonePage /></section>
+      <section className={styles.pageFrame}><MatchaChiaNutritionPhonePage /></section>
+      <section className={styles.pageFrame}><MatchaChiaBenefitsPhonePage /></section>
+      <section className={styles.pageFrame}><MatchaIngredientsPhonePage /></section>
+      <section className={styles.pageFrame}><MatchaMethodPhonePage /></section>
+      <section className={styles.pageFrame}><MatchaCookingMethodPhonePage /></section>
+      <section className={styles.pageFrame}><SmartSnacksIngredientsPhonePage /></section>
+      <section className={styles.pageFrame}><SmartSnacksCardsPhonePage /></section>
+      <section className={styles.pageFrame}><NourishingBeveragesPhonePage /></section>
+      <section className={styles.pageFrame}><GroceryFruitsPhonePage /></section>
+      <section className={styles.pageFrame}><GroceryVegetablesPhonePage /></section>
+      <section className={styles.pageFrame}><ActionPlanPhonePage /></section>
+    </main>
+  );
+}
