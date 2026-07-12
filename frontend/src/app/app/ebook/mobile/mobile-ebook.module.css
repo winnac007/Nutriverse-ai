@@ -1,7 +1,8 @@
 .shell {
+  --reader-rail-height: calc(4.75rem + env(safe-area-inset-bottom, 0px));
   display: flex;
   width: 100vw;
-  height: 100dvh;
+  height: calc(100dvh - var(--reader-rail-height));
   overflow-x: auto;
   overflow-y: hidden;
   scroll-behavior: smooth;
@@ -20,9 +21,10 @@
   display: grid;
   flex: 0 0 100vw;
   width: 100vw;
-  height: 100dvh;
+  height: 100%;
   place-items: center;
   overflow: hidden;
+  container-type: size;
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
@@ -30,8 +32,8 @@
 .page {
   container-type: inline-size;
   position: relative;
-  width: min(100vw, 44.973dvh);
-  aspect-ratio: 841 / 1870;
+  width: min(100cqw, var(--reference-page-width, 44.97326cqh));
+  aspect-ratio: var(--reference-page-aspect, 841 / 1870);
   overflow: hidden;
   isolation: isolate;
   background: #f6f1e8;
@@ -2199,9 +2201,23 @@
 }
 
 .groceryItems article {
+  position: relative;
   margin-left: 15.4cqw;
   padding-right: 1cqw;
 }
+
+.groceryItemImage {
+  position: absolute;
+  top: -.2cqw;
+  left: -13.3cqw;
+  width: 10.7cqw;
+  height: 10.7cqw;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #e9e3d8;
+}
+
+.groceryItemImage img { object-fit: cover; }
 
 .groceryItems strong {
   display: block;
@@ -3343,6 +3359,17 @@
 .groceryFruitsSeal { position: absolute; z-index: 3; top: 32.7cqw; right: 7.2cqw; width: 11.6cqw; color: #fff; font-family: Inter, Arial, sans-serif; font-size: 1.22cqw; font-weight: 900; letter-spacing: .13em; line-height: 1.35; text-align: center; text-transform: uppercase; }
 .groceryFruitsGrid { position: absolute; z-index: 2; top: 49.3cqw; left: 2.8cqw; display: grid; grid-template-columns: repeat(3, 31cqw); gap: 1.25cqw .75cqw; width: 94.7cqw; font-family: Inter, Arial, sans-serif; color: #101923; }
 .groceryFruitsGrid article { position: relative; height: 26.6cqw; padding: 3.3cqw 1.25cqw 0 16.9cqw; }
+.groceryFruitsGrid .catalogFoodImage {
+  position: absolute;
+  top: 2.1cqw;
+  left: 1.5cqw;
+  width: 13.4cqw;
+  height: 13.4cqw;
+  overflow: hidden;
+  border-radius: 50%;
+}
+.groceryFruitsGrid .catalogFoodImage img,
+.groceryVegetablesGrid .catalogFoodImage img { object-fit: cover; }
 .groceryFruitsGrid article:nth-child(3n+2) { padding-left: 17.1cqw; }
 .groceryFruitsGrid h3 { margin: 0; color: #111923; font-size: 2.05cqw; font-weight: 800; line-height: 1.15; letter-spacing: -.02em; text-transform: uppercase; }
 .groceryFruitsGrid article:nth-child(2) h3 { font-size: 1.62cqw; line-height: 1.28; }
@@ -3376,6 +3403,16 @@
 .groceryVegetablesIntro p { margin: 0; color: #151b24; font-family: Inter, Arial, sans-serif; font-size: 2.15cqw; font-weight: 500; line-height: 1.68; }
 .groceryVegetablesGrid { position: absolute; z-index: 2; top: 50.2cqw; left: 3.2cqw; display: grid; grid-template-columns: repeat(4, 22.8cqw); gap: 1.15cqw .9cqw; width: 94.2cqw; font-family: Inter, Arial, sans-serif; color: #101923; text-align: center; }
 .groceryVegetablesGrid article { position: relative; height: 28.25cqw; padding: 16.6cqw 1.4cqw 0; }
+.groceryVegetablesGrid .catalogFoodImage {
+  position: absolute;
+  top: 1.35cqw;
+  left: 50%;
+  width: 13.5cqw;
+  height: 13.5cqw;
+  overflow: hidden;
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
 .groceryVegetablesGrid h3 { margin: 0 0 1.6cqw; color: #17351d; font-size: 1.86cqw; font-weight: 900; line-height: 1.1; letter-spacing: .08em; text-transform: uppercase; }
 .groceryVegetablesGrid article:nth-child(6) h3,
 .groceryVegetablesGrid article:nth-child(14) h3 { font-size: 1.55cqw; }
@@ -3430,9 +3467,336 @@
 .actionPlanRemember > p:nth-of-type(5) { grid-column: 7; }
 .actionPlanClosing { position: absolute; z-index: 2; left: 30.1cqw; bottom: 4.25cqw; margin: 0; color: #071e10; font-family: Cormorant Garamond, Georgia, serif; font-size: 2.18cqw; font-style: italic; font-weight: 600; letter-spacing: -.01em; }
 
-@media (max-aspect-ratio: 841 / 1870) {
-  .page {
-    width: 100vw;
+/* Reference-measured alignment corrections. */
+.coverPage .photo { object-fit: fill; }
+.coverPage .title { top: 24.3cqw; line-height: 1.12; }
+
+.welcomeWord { font-size: 28cqw; }
+.beginningCopy h2 { font-size: 5.8cqw; white-space: nowrap; }
+
+.snapshotRight blockquote { font-size: 4.15cqw; white-space: nowrap; }
+.snapshotConcernCopy p,
+.snapshotParagraphs p { font-size: 2.1cqw; }
+.snapshotBrand { top: 185cqw; bottom: auto; }
+
+.findingsIntroCopy p { margin-bottom: 3.2cqw; font-size: 1.95cqw; }
+.findingsDiagram { top: 103cqw; left: 18cqw; width: 64cqw; height: 64cqw; }
+.findingCardCopy strong { font-size: 2cqw; }
+.findingCardCopy p { font-size: 2cqw; }
+.findingsTakeaway > span { font-size: 1.9cqw; }
+
+.focusAreasPage > h2 { width: 55cqw; font-size: 9.1cqw; }
+.focusIntro { left: 62.4cqw; }
+.focusCard > p { font-size: 1.9cqw; }
+.focusRemember p { font-size: 1.65cqw; }
+
+.profileRow strong,
+.profileRow span { font-size: 1.9cqw; }
+.narrativePanel > h2 { font-size: 5.8cqw; white-space: nowrap; }
+.narrativeLead { font-size: 2.15cqw; }
+.narrativeBody p { font-size: 2.05cqw; }
+
+.glanceCard > p { font-size: 1.9cqw; }
+.glanceNext > span { font-size: 1.9cqw; }
+
+.opportunityScenicPhoto { z-index: 0; object-fit: fill; }
+.opportunityBotanical { z-index: 0; }
+.opportunityOneTopline,
+.opportunityOneCopy,
+.opportunityOneBrand,
+.opportunityOnePageNumber { z-index: 1; }
+.opportunityOneBody p { font-size: 2.1cqw; }
+
+.groceryArtwork { transform: none; }
+.groceryItems strong { font-size: 1.72cqw; }
+.groceryItems p { font-size: 1.55cqw; }
+.grocerySummary { font-size: 1.45cqw; }
+
+.understandingJourneyWash {
+  background: linear-gradient(180deg, rgba(247,244,237,.99) 0%, rgba(247,244,237,.98) 49%, rgba(247,244,237,.8) 58%, rgba(247,244,237,.08) 69%, rgba(17,29,14,.2) 100%);
+}
+.understandingDetailPhoto img,
+.symptomPhoto img,
+.nutritionInfluencePhoto img { object-fit: fill; object-position: center; }
+.understandingDetailRow { min-height: 29.5cqw; margin-bottom: 2.2cqw; padding-bottom: 2.2cqw; }
+.understandingDetailRow h3 { font-size: 2.3cqw; }
+.understandingDetailRow p { font-size: 2.05cqw; line-height: 1.6; }
+.symptomSteps { margin-left: 16.7cqw; }
+.symptomStep { grid-template-columns: 16.2cqw 8.7cqw 1fr; }
+.symptomStep h3 { font-size: 2.2cqw; }
+.symptomStep p { font-size: 2.02cqw; }
+.symptomStep { min-height: 21cqw; }
+.nutritionInfluenceStep h3 { font-size: 2.25cqw; }
+.nutritionInfluenceStep p { font-size: 2.02cqw; }
+.nutritionInfluenceStep { min-height: 21cqw; }
+
+.commonChallengesIntro h2 { font-size: 9.5cqw; }
+.commonChallengeCopy h3 { font-size: 2.25cqw; }
+.commonChallengeCopy p { font-size: 1.95cqw; }
+.frameworkIntro h2 { font-size: 10.4cqw; }
+.frameworkItem p { width: calc(100% + 8cqw); margin-left: -8cqw; font-size: 2cqw; }
+.frameworkTakeaway p { font-size: 3.35cqw; }
+.foodGuideContent h2 { font-size: 10cqw; }
+
+.mindfulCard h3 { font-size: 1.78cqw; }
+.mindfulCard > p { font-size: 1.85cqw; }
+.mindfulTakeaway p { font-size: 3cqw; }
+.priorityCard h3 { font-size: 1.75cqw; }
+.priorityCard > p { font-size: 1.85cqw; }
+.priorityCard:nth-child(n + 5) { height: 50.4cqw; }
+.priorityTakeaway { left: 2cqw; }
+.priorityTakeaway p { font-size: 2.75cqw; }
+.priorityPageNumber { bottom: 2.2cqw; }
+
+.balancedPlateIntro h2 { font-size: 10.4cqw; }
+.balancedPlateSection:first-child .balancedPlateMetric { display: block; padding-top: 0; }
+.balancedPlateSection:first-child .balancedPlateMetric h3 { margin-top: .8cqw; }
+.balancedPlateSection:first-child .balancedPlateConnector { top: 11.6cqw; }
+.balancedPlateTakeaway { left: 4.1cqw; }
+.balancedPlateTakeaway p { font-size: 2.7cqw; }
+
+.hydrationScene { top: 9.5cqw; height: 139cqw; }
+.hydrationStep p { font-size: 1.75cqw; }
+.hydrationTips span { font-size: 1.75cqw; }
+
+.mealTimingRow { left: 61cqw; width: 21cqw; }
+.mealTimingRow p { font-size: 1.88cqw; }
+.mealTimingKey p { font-size: 1.82cqw; }
+.sustainableRhythmMeals p,
+.sustainableRhythmKey p { font-size: 2.05cqw; }
+
+.lifestyleFoundationNumber { font-size: 32cqw; }
+.lifestyleFoundationIntro h2 { font-size: 10.7cqw; }
+.lifestyleFoundationTakeaway { bottom: 18.5cqw; }
+.sleepRecoveryRows p { font-size: 1.9cqw; }
+.sleepRecoveryTakeaway { bottom: 18cqw; }
+.dailyWellnessCard { padding: 3cqw 2.8cqw 2cqw; }
+.dailyWellnessCardHead { min-height: 9cqw; }
+.dailyWellnessCard h3 { margin-top: 3.5cqw; }
+.dailyWellnessCard > b { margin: 1.2cqw 0 1.4cqw; }
+.dailyWellnessCard p { font-size: 1.65cqw; }
+
+.recipeCollectionSectionTakeaway { bottom: 35cqw; }
+
+.matchaInstructionsSpreadPage { background: #f8f5ef; }
+.matchaInstructionsSpreadImage { z-index: 0; object-fit: fill; }
+
+.actionPlanRemember {
+  left: 3.8cqw;
+  width: 92.4cqw;
+  grid-template-columns: 24cqw repeat(5, minmax(0, 1fr));
+  column-gap: 1.4cqw;
+}
+.actionPlanRemember h4 { grid-column: 2 / -1; margin-left: 0; }
+.actionPlanRemember > p { margin-top: 8.8cqw; font-size: .88cqw; }
+.actionPlanRemember > p:nth-of-type(1) { grid-column: 2; }
+.actionPlanRemember > p:nth-of-type(2) { grid-column: 3; }
+.actionPlanRemember > p:nth-of-type(3) { grid-column: 4; }
+.actionPlanRemember > p:nth-of-type(4) { grid-column: 5; }
+.actionPlanRemember > p:nth-of-type(5) { grid-column: 6; }
+
+.readerControls {
+  position: fixed;
+  z-index: 50;
+  left: 50%;
+  bottom: max(.45rem, env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: 3rem auto auto 3rem;
+  align-items: center;
+  gap: .55rem;
+  padding: .5rem;
+  border: 1px solid rgba(19, 48, 28, .16);
+  border-radius: 999px;
+  background: rgba(250, 247, 239, .88);
+  box-shadow: 0 1rem 3rem rgba(22, 28, 20, .18);
+  color: #10270d;
+  font-family: Inter, Arial, sans-serif;
+  transform: translateX(-50%);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+.readerControls button {
+  display: grid;
+  min-width: 0;
+  height: 2.7rem;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: #173a24;
+  color: #fff;
+  font: inherit;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.readerControls button:disabled {
+  cursor: not-allowed;
+  opacity: .34;
+}
+
+.readerControls .contentsButton {
+  min-width: 6.6rem;
+  padding: 0 1rem;
+  background: #f6f0e6;
+  color: #173a24;
+  border: 1px solid rgba(19, 48, 28, .18);
+  font-size: .82rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.readerControls span {
+  min-width: 3.9rem;
+  color: #173a24;
+  font-size: .84rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-align: center;
+}
+
+.contentsOverlay {
+  position: fixed;
+  z-index: 70;
+  inset: 0;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(11, 19, 12, .42);
+}
+
+.contentsPanel {
+  width: min(25rem, 88vw);
+  height: 100%;
+  padding: max(1.2rem, env(safe-area-inset-top)) 1rem max(1rem, env(safe-area-inset-bottom));
+  overflow-y: auto;
+  background: #fbf7ef;
+  color: #10270d;
+  box-shadow: -1.5rem 0 4rem rgba(11, 19, 12, .22);
+  font-family: Inter, Arial, sans-serif;
+}
+
+.contentsPanel header {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: -.2rem 0 1rem;
+  padding: .2rem 0 1rem;
+  background: linear-gradient(#fbf7ef 82%, rgba(251, 247, 239, 0));
+}
+
+.contentsPanel header p {
+  margin: 0 0 .35rem;
+  color: #b66f1b;
+  font-size: .76rem;
+  font-weight: 900;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+
+.contentsPanel h2 {
+  margin: 0;
+  color: #10270d;
+  font-family: Cormorant Garamond, Georgia, serif;
+  font-size: 2.35rem;
+  font-weight: 600;
+  letter-spacing: -.04em;
+  line-height: 1;
+}
+
+.contentsPanel header button {
+  display: grid;
+  width: 2.4rem;
+  height: 2.4rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(19, 48, 28, .16);
+  border-radius: 999px;
+  background: #f4efe5;
+  color: #173a24;
+  font-size: 1.7rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.contentsPanel ol {
+  display: grid;
+  gap: .45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contentsPanel li {
+  margin: 0;
+}
+
+.contentsPanel li button {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  align-items: center;
+  width: 100%;
+  min-height: 3.15rem;
+  padding: .55rem .8rem .55rem .55rem;
+  border: 1px solid rgba(19, 48, 28, .1);
+  border-radius: .95rem;
+  background: rgba(255, 255, 252, .72);
+  color: #1a2d1e;
+  font: inherit;
+  font-size: .92rem;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: left;
+  cursor: pointer;
+}
+
+.contentsPanel li button span {
+  color: #b66f1b;
+  font-family: Cormorant Garamond, Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.contentsPanel li button:hover,
+.contentsPanel li button:focus-visible,
+.contentsPanel li .activeContentsItem {
+  border-color: rgba(23, 58, 36, .34);
+  background: #173a24;
+  color: #fff;
+  outline: none;
+}
+
+.contentsPanel li .activeContentsItem span,
+.contentsPanel li button:hover span,
+.contentsPanel li button:focus-visible span {
+  color: #f0c071;
+}
+
+@media (max-width: 520px) {
+  .readerControls {
+    grid-template-columns: 2.75rem auto auto 2.75rem;
+    gap: .35rem;
+    padding: .42rem;
+  }
+
+  .readerControls button {
+    height: 2.75rem;
+  }
+
+  .readerControls .contentsButton {
+    min-width: 5.9rem;
+    padding: 0 .75rem;
+    font-size: .72rem;
+  }
+
+  .readerControls span {
+    min-width: 3.25rem;
+    font-size: .74rem;
   }
 }
 

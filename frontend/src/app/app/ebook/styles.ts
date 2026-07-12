@@ -4226,9 +4226,25 @@ export const ZENPLATO_CSS = `
   }
 
   .food-gallery-card-text {
+    position: relative;
     min-height: 12.8cqw;
     padding: 1.36cqw 1.4cqw 0 5.55cqw;
   }
+
+  .food-gallery-card-image {
+    position: absolute;
+    top: .25cqw;
+    left: -.35cqw;
+    width: 4.8cqw;
+    height: 4.8cqw;
+    overflow: hidden;
+    border-radius: 50%;
+  }
+
+  .food-gallery-card-image img,
+  .grocery-essentials-item-image img,
+  .fruit-catalog-item-image img,
+  .vegetable-catalog-item-image img { object-fit: cover; }
 
   .food-gallery-card-text h3 {
     margin: 0;
@@ -8396,8 +8412,19 @@ export const ZENPLATO_CSS = `
   }
 
   .grocery-essentials-item {
+    position: relative;
     min-height: 8.2cqw;
     padding-left: 12.4cqw;
+  }
+
+  .grocery-essentials-item-image {
+    position: absolute;
+    top: -.25cqw;
+    left: 1.1cqw;
+    width: 7.2cqw;
+    height: 7.2cqw;
+    overflow: hidden;
+    border-radius: 50%;
   }
 
   .grocery-essentials-item strong {
@@ -8446,6 +8473,16 @@ export const ZENPLATO_CSS = `
   .fruit-catalog-card {
     position: relative;
     padding: 2.7cqw 1.0cqw 1.1cqw 15.8cqw;
+  }
+
+  .fruit-catalog-item-image {
+    position: absolute;
+    top: 1.2cqw;
+    left: 1.25cqw;
+    width: 11.8cqw;
+    height: 11.8cqw;
+    overflow: hidden;
+    border-radius: 50%;
   }
 
   .fruit-catalog-card-copy h3 {
@@ -8517,11 +8554,23 @@ export const ZENPLATO_CSS = `
   }
 
   .vegetable-catalog-card {
+    position: relative;
     display: grid;
     align-content: end;
     justify-items: center;
     padding: 0 2.2cqw 2.2cqw;
     text-align: center;
+  }
+
+  .vegetable-catalog-item-image {
+    position: absolute;
+    top: 1.1cqw;
+    left: 50%;
+    width: 9.5cqw;
+    height: 9.5cqw;
+    overflow: hidden;
+    border-radius: 50%;
+    transform: translateX(-50%);
   }
 
   .vegetable-catalog-card h3 {

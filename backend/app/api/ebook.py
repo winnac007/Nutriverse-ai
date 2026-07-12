@@ -12,6 +12,108 @@ router = APIRouter(prefix="/ebook", tags=["ebook"])
 
 VALID_CONDITIONS = ["pcos", "diabetes", "thyroid", "gut-health", "anti-inflammatory", "menopause"]
 
+EBOOK_MEDIA_DEFAULTS = {
+    "opening_note": "/ebook/note-hero.png",
+    "health_snapshot": "/ebook/snapshot-bg.png",
+    "opportunity": "/ebook/understanding-pcos-journey.png",
+    "grocery_essentials": "/ebook/grocery-essentials-bg.png",
+    "understanding_journey": "/ebook/understanding-pcos-journey.png",
+    "understanding_detail": "/ebook/phone-understanding-detail.png",
+    "symptoms": "/ebook/phone-why-symptoms.png",
+    "nutrition_influence": "/ebook/phone-nutrition-influence.png",
+    "framework": "/ebook/zenplato-framework-photo.png",
+    "food_guide": "/ebook/food-nutrition-guide-bg.png",
+    "balanced_plate": "/ebook/balanced-plate-bowl.png",
+    "hydration": "/ebook/hydration-scene.png",
+    "breakfast": "/ebook/breakfasts-hero.png",
+    "breakfast_benefits": "/ebook/matcha-benefits-phone-hero.png",
+    "beverages": "/ebook/nourishing-phone-hero.png",
+}
+
+def _build_ebook_media(_condition_id: Optional[str]) -> Dict[str, str]:
+    """Return the stable editorial artwork used by the ebook template."""
+    return dict(EBOOK_MEDIA_DEFAULTS)
+
+
+GROCERY_IMAGE_BY_NAME = {
+    "spinach": "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=480&auto=format&fit=crop",
+    "tomato": "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=480&auto=format&fit=crop",
+    "cherry tomatoes": "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=480&auto=format&fit=crop",
+    "cucumber": "https://images.unsplash.com/photo-1604977042946-1eecc30f269e?w=480&auto=format&fit=crop",
+    "carrot": "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=480&auto=format&fit=crop",
+    "carrots": "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=480&auto=format&fit=crop",
+    "brown rice": "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=480&auto=format&fit=crop",
+    "moong dal": "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=480&auto=format&fit=crop",
+    "lentils": "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=480&auto=format&fit=crop",
+    "quinoa": "https://images.unsplash.com/photo-1622348512579-73da9531493a?w=480&auto=format&fit=crop",
+    "oats": "https://images.unsplash.com/photo-1517093728264-0d3f54a86c73?w=480&auto=format&fit=crop",
+    "banana": "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=480&auto=format&fit=crop",
+    "bananas": "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=480&auto=format&fit=crop",
+    "apple": "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=480&auto=format&fit=crop",
+    "apples": "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=480&auto=format&fit=crop",
+    "berries": "https://images.unsplash.com/photo-1498557850523-fd3d118b962e?w=480&auto=format&fit=crop",
+    "blueberries": "https://images.unsplash.com/photo-1498557850523-fd3d118b962e?w=480&auto=format&fit=crop",
+    "papaya": "https://images.unsplash.com/photo-1517282009859-f000ec3b26fe?w=480&auto=format&fit=crop",
+    "turmeric": "https://images.unsplash.com/photo-1615485291234-9d694218abbe?w=480&auto=format&fit=crop",
+    "cumin": "https://images.unsplash.com/photo-1599909533731-4aec3958da09?w=480&auto=format&fit=crop",
+    "flax seeds": "https://images.unsplash.com/photo-1598432489028-0f8e2cf52df7?w=480&auto=format&fit=crop",
+    "flaxseeds": "https://images.unsplash.com/photo-1598432489028-0f8e2cf52df7?w=480&auto=format&fit=crop",
+}
+
+FOOD_IMAGE_RULES = [
+    (("sugar", "candy", "sweet"), "/ebook/mindful-refined-sugars.png"),
+    (("white bread", "white rice", "refined carb", "pastry", "pasta"), "/ebook/mindful-refined-carbs.png"),
+    (("fried", "fast food"), "/ebook/mindful-fast-foods.png"),
+    (("processed meat", "sausage", "bacon"), "/ebook/mindful-processed-meats.png"),
+    (("yogurt", "yoghurt", "fermented"), "/ebook/prioritize-fermented.png"),
+    (("sugary drink", "soda", "juice"), "/ebook/mindful-sugary-drinks.png"),
+    (("alcohol", "wine", "beer"), "/ebook/mindful-alcohol.png"),
+    (("snack", "chips"), "/ebook/mindful-snacks.png"),
+    (("leafy", "green", "spinach", "kale", "vegetable"), "/ebook/prioritize-greens.png"),
+    (("berry", "berries", "fruit"), "/ebook/prioritize-berries.png"),
+    (("protein", "chicken", "egg", "fish", "salmon", "tuna", "tofu"), "/ebook/prioritize-proteins.png"),
+    (("grain", "oat", "quinoa", "rice", "carb"), "/ebook/prioritize-grains.png"),
+    (("avocado", "olive", "healthy fat", "omega-3"), "/ebook/prioritize-fats.png"),
+    (("nut", "seed", "almond", "walnut"), "/ebook/prioritize-nuts.png"),
+    (("legume", "lentil", "chickpea", "bean", "pulse"), "/ebook/prioritize-legumes.png"),
+]
+
+
+def _food_image_url(name: Any) -> str:
+    normalized = str(name or "").strip().lower()
+    if normalized in GROCERY_IMAGE_BY_NAME:
+        return GROCERY_IMAGE_BY_NAME[normalized]
+    for keywords, image_url in FOOD_IMAGE_RULES:
+        if any(keyword in normalized for keyword in keywords):
+            return image_url
+    return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=480&auto=format&fit=crop"
+
+
+def _enrich_ebook_food_images(ebook_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Attach safe item-level imagery to personalized foods, groceries, and recipes."""
+    summary = ebook_data.setdefault("summary", {})
+
+    for key in ("foods_to_prioritize", "foods_to_prioritise", "foods_to_be_mindful_of"):
+        for item in summary.get(key) or []:
+            if isinstance(item, dict):
+                item["image_url"] = _food_image_url(item.get("title") or item.get("name"))
+
+    grocery = summary.get("grocery_list") or {}
+    if isinstance(grocery, dict):
+        for key in ("protein_sources", "vegetables", "fruits", "fruit_catalog", "vegetable_catalog"):
+            for item in grocery.get(key) or []:
+                if isinstance(item, dict):
+                    item["image_url"] = _food_image_url(item.get("name") or item.get("title"))
+
+    for key in ("breakfast_recipes", "snack_recipes", "beverage_recipes"):
+        for recipe in summary.get(key) or []:
+            if isinstance(recipe, dict):
+                ingredients = recipe.get("ingredients") or []
+                image_hint = " ".join([str(recipe.get("name") or ""), *[str(item) for item in ingredients[:3]]])
+                recipe["image_url"] = _food_image_url(image_hint)
+
+    return ebook_data
+
 @router.post("/craft")
 async def generate_premium_ebook(answers: Dict[str, Any], user=Depends(get_current_user)):
     """Generate a hyper-personalised AI ebook on-demand."""
@@ -518,6 +620,9 @@ async def generate_premium_ebook(answers: Dict[str, Any], user=Depends(get_curre
         ebook_data["summary"]["all_conditions"] = general_summary["all_conditions"]
         ebook_data["summary"]["goal_30day"] = user.get("goal_30day")
         ebook_data["summary"]["diet"] = general_summary["diet"]
+        media_condition = CONDITION_TO_EBOOK.get(primary, DEFAULT_EBOOK) if primary else DEFAULT_EBOOK
+        ebook_data["media"] = _build_ebook_media(media_condition)
+        _enrich_ebook_food_images(ebook_data)
         
         await db.premium_ebooks.update_one(
             {"user_id": user["id"]},
@@ -700,13 +805,106 @@ def _build_summary(user, ebook_doc, primary_cid):
         ]
 
     diet_type = (user.get("dietary_type") or "").replace("_", " ").title() or None
+    condition_label = rec["label"] if rec else (all_labels[0] if all_labels else "General Wellness")
+    condition_blurb = (rec.get("blurb") if rec else None) or "A personalised nutrition guide built around your profile."
+    foods_to_eat = list((rec or {}).get("foods_to_eat") or [])
+    foods_to_avoid = list((rec or {}).get("foods_to_avoid") or [])
+    profile_goal = user.get("goal_30day") or "build steadier, sustainable daily habits"
+
+    priority_foods = [
+        {
+            "title": str(food).replace("-", " ").title(),
+            "description": f"A supportive choice for {condition_label.lower()} and your goal to {profile_goal}.",
+        }
+        for food in foods_to_eat[:8]
+    ]
+    mindful_foods = [
+        {
+            "title": str(food).replace("-", " ").title(),
+            "description": f"Worth moderating when it affects your {condition_label.lower()} symptoms, energy, or progress.",
+        }
+        for food in foods_to_avoid[:8]
+    ]
+    grocery_items = [
+        {
+            "name": str(food).replace("-", " ").title(),
+            "description": f"Selected to support your {condition_label.lower()} plan.",
+            "benefits": ["Personalized", "Nutrient Rich", "Goal Support"],
+        }
+        for food in foods_to_eat
+    ]
+
+    focus_area_names = [
+        "Nutrition Rhythm",
+        "Energy & Metabolism",
+        "Digestive Support",
+        "Stress & Recovery",
+        "Sleep Quality",
+        "Long-Term Consistency",
+    ]
+    focus_areas = [
+        {
+            "eyebrow": f"{index + 1:02d} | {title}",
+            "title": title,
+            "status": "Personalized Focus",
+            "description": focus[index % len(focus)] if focus else condition_blurb,
+            "progress": max(38, 72 - (index * 5)),
+        }
+        for index, title in enumerate(focus_area_names)
+    ]
+
+    key_findings = [
+        {
+            "priority": "Personalized Insight" if index else "Highest Priority",
+            "title": f"{condition_label} Pattern {index + 1}",
+            "description": rule,
+        }
+        for index, rule in enumerate((focus or [condition_blurb])[:4])
+    ]
 
     return {
         "greeting": f"Welcome, {first}",
         "headline": ebook_doc["condition_label"],
-        "condition_label": rec["label"] if rec else (all_labels[0] if all_labels else "General Wellness"),
-        "condition_blurb": (rec.get("blurb") if rec else None)
-        or "A personalised nutrition guide built around your profile.",
+        "condition_label": condition_label,
+        "condition_blurb": condition_blurb,
+        "personalized_welcome": (
+            f"{first}, this guide turns your profile into practical support for {condition_label.lower()}.\n\n"
+            f"It focuses on food, routine, recovery, and small repeatable actions that can help you {profile_goal}."
+        ),
+        "health_snapshot": (
+            f"Your selected concerns and onboarding responses point to {condition_label.lower()} as an important focus. "
+            f"The patterns in this guide connect nutrition, energy, digestion, sleep, stress, and recovery so your next steps stay relevant to your life."
+        ),
+        "nutrition_insights": focus[0] if focus else condition_blurb,
+        "lifestyle_insights": "Sleep, stress care, hydration, and regular movement reinforce the nutrition changes in this guide.",
+        "path_forward": f"Begin with one action you can repeat this week, then build toward your goal to {profile_goal}.",
+        "key_findings": key_findings,
+        "key_health_focus_areas": focus_areas,
+        "at_glance": [
+            {"label": "Conditions Considered", "value": str(max(1, len(all_labels))), "description": "Health priorities included from your profile."},
+            {"label": "Nutrition Priorities", "value": str(max(1, len(priority_foods))), "description": "Supportive food categories selected for you."},
+            {"label": "Mindful Choices", "value": str(max(1, len(mindful_foods))), "description": "Food categories to approach with awareness."},
+            {"label": "30-Day Goal", "value": "1", "description": profile_goal},
+        ],
+        "biggest_opportunities": [
+            {"number": f"{index + 1:02d}", "title": focus_area_names[index], "paragraphs": [rule, f"This area supports your {condition_label.lower()} plan and your goal to {profile_goal}."]}
+            for index, rule in enumerate((focus or [condition_blurb, condition_blurb, condition_blurb])[:3])
+        ],
+        "understanding_items": [
+            {"title": "What It Means", "body": condition_blurb},
+            {"title": "Why It Matters", "body": f"Understanding your {condition_label.lower()} patterns helps you choose support that fits your symptoms and routine."},
+            {"title": "How It May Affect Daily Life", "body": "Energy, appetite, digestion, sleep, mood, and recovery can interact in ways that shape how you feel each day."},
+        ],
+        "foods_to_prioritize": priority_foods,
+        "foods_to_be_mindful_of": mindful_foods,
+        "grocery_list": {
+            "intro": f"A grocery starting point selected for {condition_label.lower()} and your current goal.",
+            "protein_sources": grocery_items[:6],
+            "vegetables": grocery_items[:6],
+            "fruits": grocery_items[:6],
+            "fruit_catalog": grocery_items[:15],
+            "vegetable_catalog": grocery_items[:20],
+        },
         "all_conditions": all_labels,
         "goal_30day": user.get("goal_30day"),
         "stats": stats,
@@ -728,6 +926,10 @@ async def get_my_ebook(type: Optional[str] = None, user=Depends(get_current_user
             raise HTTPException(404, "No premium guide found.")
         doc.pop("_id", None)
         doc["is_premium"] = True
+        primary = _resolve_primary_condition(user)
+        media_condition = CONDITION_TO_EBOOK.get(primary, DEFAULT_EBOOK) if primary else DEFAULT_EBOOK
+        doc["media"] = _build_ebook_media(media_condition)
+        _enrich_ebook_food_images(doc)
         return doc
 
     primary = _resolve_primary_condition(user)
@@ -752,14 +954,16 @@ async def get_my_ebook(type: Optional[str] = None, user=Depends(get_current_user
             "html_content": doc.get("chapters", {}).get(cid, ""),
         })
 
-    return {
+    response = {
         "condition_id": doc["condition_id"],
         "condition_label": doc["condition_label"],
         "is_premium": False,
         "generated_at": doc.get("generated_at"),
         "chapters": chapters,
         "summary": _build_summary(user, doc, primary),
+        "media": _build_ebook_media(slug),
     }
+    return _enrich_ebook_food_images(response)
 
 
 @router.get("/{condition_id}")
@@ -792,4 +996,5 @@ async def get_ebook(condition_id: str):
         "condition_label": doc["condition_label"],
         "generated_at": doc.get("generated_at"),
         "chapters": chapters,
+        "media": _build_ebook_media(condition_id),
     }

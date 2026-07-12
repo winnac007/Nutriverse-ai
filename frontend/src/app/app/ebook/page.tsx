@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import type { User } from "@/lib/types";
@@ -105,6 +106,12 @@ interface Ebook {
   chapters: Chapter[];
   summary: Summary;
   is_premium?: boolean;
+  media?: Record<string, string>;
+}
+
+function getEbookMedia(ebook: Ebook, key: string, fallback: string) {
+  const value = ebook.media?.[key];
+  return typeof value === "string" && value.trim() ? value : fallback;
 }
 
 interface PremiumAnswers {
@@ -202,9 +209,10 @@ type NutritionInfluenceItemInput = string | Partial<NutritionInfluenceItem>;
 interface FoodGalleryItem {
   title: string;
   description: string;
+  imageUrl?: string;
 }
 
-type FoodGalleryItemInput = string | Partial<FoodGalleryItem>;
+type FoodGalleryItemInput = string | (Partial<FoodGalleryItem> & { image_url?: string });
 
 interface HydrationStep {
   title: string;
@@ -453,6 +461,7 @@ interface GroceryCatalogItem {
   name: string;
   description: string;
   tags: string[];
+  imageUrl?: string;
 }
 
 type GroceryCatalogItemInput = string | Partial<{
@@ -462,6 +471,8 @@ type GroceryCatalogItemInput = string | Partial<{
   body: string;
   tags: string[];
   benefits: string[];
+  image_url: string;
+  imageUrl: string;
 }>;
 
 interface GroceryCategory {
@@ -1578,7 +1589,7 @@ const MINDFUL_FOOD_DEFAULTS: FoodGalleryItem[] = [
 ];
 
 function normalizeFoodGalleryInput(input: FoodGalleryItemInput): Partial<FoodGalleryItem> {
-  if (typeof input !== "string") return input;
+  if (typeof input !== "string") return { ...input, imageUrl: input.imageUrl || input.image_url };
 
   const [possibleTitle, ...rest] = input.split(":");
   if (rest.length > 0 && possibleTitle.trim().length < 52) {
@@ -1614,6 +1625,7 @@ function mergeFoodGalleryItems(defaults: FoodGalleryItem[], explicit: FoodGaller
     return {
       title: normalized.title || fallback.title,
       description: normalized.description || fallback.description,
+      imageUrl: normalized.imageUrl || fallback.imageUrl,
     };
   });
 }
@@ -2498,6 +2510,7 @@ function normalizeGroceryCatalogItem(input: GroceryCatalogItemInput, fallback: G
       name: input.name || input.title || fallback.name,
       description: input.description || input.body || fallback.description,
       tags: input.tags?.length ? input.tags.slice(0, 3) : input.benefits?.length ? input.benefits.slice(0, 3) : fallback.tags,
+      imageUrl: input.imageUrl || input.image_url || fallback.imageUrl,
     };
   }
 
@@ -3031,7 +3044,7 @@ function UnderstandingJourneyPage({ ebook, user }: { ebook: Ebook; user: User | 
     <section className="cover ebook-understanding-page" id="understanding-journey" aria-label={`Understanding your ${conditionLabel} journey`}>
       <div className="ebook-understanding-sheet">
         <Image
-          src="/ebook/understanding-pcos-journey.png"
+          src={getEbookMedia(ebook, "understanding_journey", "/ebook/understanding-pcos-journey.png")}
           alt=""
           fill
           sizes="(max-width: 820px) 100vw, min(1086px, 72vw)"
@@ -3106,7 +3119,7 @@ function UnderstandingDetailPage({ ebook, user }: { ebook: Ebook; user: User | n
       <div className="ebook-understanding-detail-sheet">
         <div className="understanding-detail-image">
           <Image
-            src="/ebook/understanding-pcos-detail.png"
+            src={getEbookMedia(ebook, "understanding_detail", "/ebook/understanding-pcos-detail.png")}
             alt=""
             fill
             sizes="(max-width: 820px) 100vw, min(500px, 36vw)"
@@ -3202,7 +3215,7 @@ function WhySymptomsHappenPage({ ebook }: { ebook: Ebook }) {
       <div className="ebook-symptom-flow-sheet">
         <div className="symptom-flow-media-slot" aria-hidden="true">
           <Image
-            src="/ebook/why-symptoms-happen.png"
+            src={getEbookMedia(ebook, "symptoms", "/ebook/why-symptoms-happen.png")}
             alt=""
             fill
             sizes="(max-width: 820px) 100vw, min(480px, 36vw)"
@@ -3288,7 +3301,7 @@ function NutritionInfluencePage({ ebook }: { ebook: Ebook }) {
       <div className="ebook-nutrition-influence-sheet">
         <div className="nutrition-influence-media-slot" aria-hidden="true">
           <Image
-            src="/ebook/nutrition-influence.png"
+            src={getEbookMedia(ebook, "nutrition_influence", "/ebook/nutrition-influence.png")}
             alt=""
             fill
             sizes="(max-width: 820px) 100vw, min(440px, 34vw)"
@@ -3796,6 +3809,11 @@ function FoodGalleryPage({
         <div className="food-gallery-card-copy">
           {items.map((item) => (
             <article className="food-gallery-card-text" key={item.title}>
+              {item.imageUrl && (
+                <div className="food-gallery-card-image" aria-hidden="true">
+                  <Image src={item.imageUrl} alt="" fill sizes="8vw" />
+                </div>
+              )}
               <h3>{item.title}</h3>
               <p>{item.description}</p>
             </article>
@@ -5296,6 +5314,11 @@ function GroceryCategoryCard({ category, variant }: { category: GroceryCategory;
       <div className="grocery-essentials-items">
         {category.items.slice(0, 6).map((item) => (
           <div className="grocery-essentials-item" key={item.name}>
+            {item.imageUrl && (
+              <div className="grocery-essentials-item-image" aria-hidden="true">
+                <Image src={item.imageUrl} alt="" fill sizes="8vw" />
+              </div>
+            )}
             <strong>{item.name}</strong>
             <p>{item.description}</p>
           </div>
@@ -5407,6 +5430,11 @@ function FruitCatalogPage({ ebook }: { ebook: Ebook }) {
         <div className="fruit-catalog-grid">
           {grocery.fruitCatalog.slice(0, 15).map((fruit) => (
             <article className="fruit-catalog-card" key={fruit.name}>
+              {fruit.imageUrl && (
+                <div className="fruit-catalog-item-image" aria-hidden="true">
+                  <Image src={fruit.imageUrl} alt="" fill sizes="8vw" />
+                </div>
+              )}
               <div className="fruit-catalog-card-copy">
                 <h3>{fruit.name}</h3>
                 <i aria-hidden="true" />
@@ -5478,6 +5506,11 @@ function VegetableCatalogPage({ ebook }: { ebook: Ebook }) {
         <div className="vegetable-catalog-grid">
           {grocery.vegetableCatalog.slice(0, 20).map((vegetable) => (
             <article className="vegetable-catalog-card" key={vegetable.name}>
+              {vegetable.imageUrl && (
+                <div className="vegetable-catalog-item-image" aria-hidden="true">
+                  <Image src={vegetable.imageUrl} alt="" fill sizes="7vw" />
+                </div>
+              )}
               <h3>{vegetable.name}</h3>
               <p>{vegetable.description}</p>
             </article>
@@ -6070,7 +6103,7 @@ function NoteForYouPage({ ebook, user, plan }: { ebook: Ebook; user: User | null
         </div>
         <div className="note-image-panel" aria-hidden="true">
           <Image
-            src="/ebook/note-hero.png"
+            src={getEbookMedia(ebook, "opening_note", "/ebook/note-hero.png")}
             alt=""
             fill
             sizes="(max-width: 820px) 100vw, min(360px, 28vw)"
@@ -6091,7 +6124,7 @@ function HealthSnapshotPage({ ebook, user }: { ebook: Ebook; user: User | null }
     <section className="cover ebook-snapshot-page" id="health-snapshot" aria-label="Your health snapshot">
       <div className="ebook-snapshot-sheet">
         <Image
-          src="/ebook/snapshot-bg.png"
+          src={getEbookMedia(ebook, "health_snapshot", "/ebook/snapshot-bg.png")}
           alt=""
           fill
           sizes="(max-width: 820px) 100vw, min(1024px, 70vw)"
@@ -6398,8 +6431,6 @@ const getApiStatus = (error: unknown) => {
   return (error as { response?: { status?: number } }).response?.status;
 };
 
-const PREMIUM_EBOOK_TEST_MODE = true;
-
 const PHONE_EBOOK_CSS = `
   .phone-ebook-shell {
     position: relative;
@@ -6511,7 +6542,9 @@ const PHONE_EBOOK_CSS = `
  * art remain real DOM/SVG; the existing /public/ebook artwork files are kept
  * as images because they contain the complex photography and compositions.
  */
-export function PhoneEbookReader() {
+// Kept as an internal compatibility reader while /app/ebook/mobile owns the routed phone experience.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function PhoneEbookReader() {
   const { user } = useAuth();
   const readerRef = useRef<HTMLDivElement>(null);
   const [currentPage, setCurrentPage] = useState(0);
@@ -6623,6 +6656,17 @@ export function PhoneEbookReader() {
   );
 }
 
+function MobileReaderLink() {
+  return (
+    <Link
+      href="/app/ebook/mobile"
+      className="fixed right-4 top-[max(1rem,env(safe-area-inset-top))] z-[80] inline-flex items-center gap-2 rounded-full border border-[#DCD0BD] bg-[#F7F1E8]/95 px-4 py-2.5 text-xs font-bold text-[#26211B] shadow-lg shadow-[#26211B]/10 transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#BC5B38]"
+    >
+      <BookOpen size={16} aria-hidden="true" /> Open phone reader
+    </Link>
+  );
+}
+
 /* ─── Main Page ──────────────────────────────────────────────────────────── */
 export default function EbookPage() {
   const { user } = useAuth();
@@ -6631,6 +6675,7 @@ export default function EbookPage() {
   const [isNavVisible, setIsNavVisible] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [generationError, setGenerationError] = useState("");
 
   // Questionnaire state
   const [premiumAnswers, setPremiumAnswers] = useState<PremiumAnswers>({
@@ -6641,11 +6686,6 @@ export default function EbookPage() {
   });
 
   const chapterRefs = useRef<Record<number, HTMLElement | null>>({});
-
-  const openFallbackReader = useCallback((answers: Partial<PremiumAnswers> = {}) => {
-    setEbook(buildFallbackEbook(user, answers));
-    setView('reader');
-  }, [user]);
 
   const openFallbackSummary = useCallback(() => {
     setEbook({ ...buildFallbackEbook(user), is_premium: false });
@@ -6697,22 +6737,20 @@ export default function EbookPage() {
   }, [view]);
 
   const handlePremiumGenerate = async () => {
+    setGenerationError("");
     setView('generating');
-    if (PREMIUM_EBOOK_TEST_MODE) {
-      openFallbackReader(premiumAnswers);
-      return;
-    }
 
     try {
       const res = await api.post("/ebook/craft", premiumAnswers);
       setEbook(res.data);
       setView('reader');
     } catch (error) {
-      if (user?.is_premium && getApiStatus(error) !== 403) {
-        openFallbackReader(premiumAnswers);
-      } else {
-        openFallbackSummary();
-      }
+      setGenerationError(
+        getApiStatus(error) === 403
+          ? "A premium account is required to generate your personalized ebook."
+          : "We could not generate your personalized ebook. Please try again.",
+      );
+      setView('questionnaire');
     }
   };
 
@@ -6739,7 +6777,7 @@ export default function EbookPage() {
       value: Array.isArray(plan.food_rules) && plan.food_rules.length ? plan.food_rules.slice(0, 2).join(" ") : "Start with regular meal timing, a protein source at each meal, and one planned grocery list.",
     },
   ] : [];
-  const canOpenPremiumReader = PREMIUM_EBOOK_TEST_MODE || Boolean(user?.is_premium && ebook?.is_premium);
+  const canOpenPremiumReader = Boolean(user?.is_premium && ebook?.is_premium);
 
   if (view === 'loading') {
     return (
@@ -6761,6 +6799,7 @@ export default function EbookPage() {
       <div className="min-h-screen bg-[#F7F1E8] p-5 md:p-8 flex items-center justify-center relative overflow-hidden">
         <style>{ZENPLATO_CSS}</style>
         <BotanicalSVG />
+        <MobileReaderLink />
 
         <div className="relative z-10 w-full max-w-5xl">
           <Reveal y={-16}>
@@ -6790,10 +6829,10 @@ export default function EbookPage() {
                 </div>
 
                 <button
-                  onClick={() => openFallbackReader()}
+                  onClick={() => setView('questionnaire')}
                   className="mt-6 inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#26211B] px-7 py-4 text-sm font-bold text-white transition hover:bg-[#3F5247]"
                 >
-                  Open Premium Test Book <BookOpen size={18} />
+                  Create My Personalized Ebook <BookOpen size={18} />
                 </button>
               </div>
             </Reveal>
@@ -6818,10 +6857,10 @@ export default function EbookPage() {
                   ))}
                 </ul>
                 <button
-                  onClick={() => openFallbackReader()}
+                  onClick={() => setView('questionnaire')}
                   className="relative inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#BC5B38] px-7 py-4 text-sm font-bold text-white transition hover:bg-[#A94F31]"
                 >
-                  Open Premium Test Book <ArrowRight size={18} />
+                  Personalize My Premium Ebook <ArrowRight size={18} />
                 </button>
               </div>
             </Reveal>
@@ -6837,6 +6876,7 @@ export default function EbookPage() {
       <div className="min-h-screen bg-[#F7F1E8] p-6 flex flex-col items-center justify-center relative overflow-hidden">
         <style>{ZENPLATO_CSS}</style>
         <BotanicalSVG />
+        <MobileReaderLink />
         
         <Reveal y={-20}>
           <div className="text-center mb-12">
@@ -6873,7 +6913,7 @@ export default function EbookPage() {
           <motion.div 
             whileHover={{ y: -10, rotateY: 5 }}
             className="bg-[#26211B] rounded-[40px] p-10 shadow-2xl flex flex-col relative overflow-hidden group cursor-pointer"
-            onClick={() => openFallbackReader()}
+            onClick={() => setView('questionnaire')}
           >
             <div className="absolute top-0 right-0 p-8 opacity-20">
               <Sparkles size={120} className="text-[#BC5B38]" />
@@ -6891,7 +6931,7 @@ export default function EbookPage() {
               ))}
             </ul>
             <button className="w-full py-4 bg-[#BC5B38] text-white rounded-full font-bold shadow-lg shadow-[#BC5B38]/30 group-hover:scale-105 transition-all flex items-center justify-center gap-2">
-              Open Premium Test Book <ArrowRight size={18} />
+              Personalize My Premium Ebook <ArrowRight size={18} />
             </button>
           </motion.div>
         </div>
@@ -6917,6 +6957,12 @@ export default function EbookPage() {
             <span className="text-[#BC5B38] font-bold text-xs uppercase tracking-[0.2em] block mb-2">Personalisation Phase</span>
             <h2 className="font-serif text-4xl text-[#26211B]">Fine-tuning your AI.</h2>
           </div>
+
+          {generationError && (
+            <p role="alert" className="mb-6 rounded-2xl border border-[#BC5B38]/30 bg-[#BC5B38]/10 px-4 py-3 text-sm text-[#8C3D21]">
+              {generationError}
+            </p>
+          )}
 
           <div className="space-y-8">
             <div>
@@ -7063,6 +7109,7 @@ export default function EbookPage() {
       <div className="min-h-screen bg-[#F7F1E8] p-6 flex items-center justify-center relative overflow-hidden">
         <style>{ZENPLATO_CSS}</style>
         <BotanicalSVG />
+        <MobileReaderLink />
 
         <div className="relative z-10 max-w-xl w-full bg-white/80 border border-[#DCD0BD] rounded-[32px] p-8 md:p-10 shadow-xl shadow-[#26211B]/5 text-center">
           <Sparkles className="mx-auto mb-5 text-[#BC5B38]" size={42} />
@@ -7108,6 +7155,7 @@ export default function EbookPage() {
       "--accent": colors.accent
     } as React.CSSProperties}>
       <style>{ZENPLATO_CSS}</style>
+      <MobileReaderLink />
 
       {/* Progress bar */}
       <div className="progress" style={{ width: `${scrollProgress}%` }} />

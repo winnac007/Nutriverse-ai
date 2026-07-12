@@ -1,8 +1,140 @@
 "use client";
 
 import Image from "next/image";
+import type { ImageProps } from "next/image";
+import { cloneElement, createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import api from "@/lib/api";
+import { useAuth } from "@/lib/auth";
+import type { User } from "@/lib/types";
 import opportunityThreeReference from "../../../../../../phone-ebook/8. Opportunity/file_00000000a60c71fab441ee6ae4830c4e.png";
 import styles from "./mobile-ebook.module.css";
+
+type EbookSummary = Record<string, unknown>;
+
+interface MobileEbookPayload {
+  condition_id: string;
+  condition_label: string;
+  is_premium?: boolean;
+  summary: EbookSummary;
+  media?: Record<string, string>;
+}
+
+interface MobileEbookContextValue {
+  ebook: MobileEbookPayload;
+  user: User | null;
+  media: Record<string, string>;
+}
+
+const DEFAULT_MOBILE_MEDIA: Record<string, string> = {
+  opening_note: "/ebook/note-hero.png",
+  health_snapshot: "/ebook/snapshot-bg.png",
+  opportunity: "/ebook/understanding-pcos-journey.png",
+  grocery_essentials: "/ebook/grocery-essentials-bg.png",
+  understanding_journey: "/ebook/understanding-pcos-journey.png",
+  understanding_detail: "/ebook/phone-understanding-detail.png",
+  symptoms: "/ebook/phone-why-symptoms.png",
+  nutrition_influence: "/ebook/phone-nutrition-influence.png",
+  framework: "/ebook/zenplato-framework-photo.png",
+  food_guide: "/ebook/food-nutrition-guide-bg.png",
+  balanced_plate: "/ebook/balanced-plate-bowl.png",
+  hydration: "/ebook/hydration-scene.png",
+  breakfast: "/ebook/breakfasts-hero.png",
+  breakfast_benefits: "/ebook/matcha-benefits-phone-hero.png",
+  beverages: "/ebook/nourishing-phone-hero.png",
+};
+
+const MobileEbookContext = createContext<MobileEbookContextValue | null>(null);
+
+function useMobileEbook() {
+  const value = useContext(MobileEbookContext);
+  if (!value) throw new Error("Mobile ebook content must be rendered inside its provider.");
+  return value;
+}
+
+function asText(value: unknown, fallback: string) {
+  if (typeof value === "string" && value.trim()) return value.trim();
+  if (typeof value === "number" && Number.isFinite(value)) return String(value);
+  return fallback;
+}
+
+function asRecords(value: unknown) {
+  return Array.isArray(value)
+    ? value.filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === "object")
+    : [];
+}
+
+function asRecord(value: unknown) {
+  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
+}
+
+function asStrings(value: unknown) {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string" && Boolean(item.trim())) : [];
+}
+
+function paragraphs(value: unknown, fallback: string[]) {
+  const content = asText(value, "");
+  const result = content.split(/\n\s*\n|\n/).map((item) => item.trim()).filter(Boolean);
+  return result.length ? result : fallback;
+}
+
+function conditionLabel(ebook: MobileEbookPayload) {
+  return asText(ebook.summary.condition_label, ebook.condition_label || "Wellness");
+}
+
+function buildMobileFallback(user: User | null): MobileEbookPayload {
+  const condition = user?.conditions?.[0] || user?.condition || "wellness";
+  const label = condition.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+  const firstName = user?.name?.trim().split(/\s+/)[0] || "there";
+  const plan = user?.health_plan || {};
+  const conditions = user?.conditions?.length ? user.conditions.map((item) => item.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase())) : [label];
+
+  return {
+    condition_id: condition,
+    condition_label: label,
+    is_premium: false,
+    media: DEFAULT_MOBILE_MEDIA,
+    summary: {
+      greeting: `Welcome, ${firstName}`,
+      condition_label: label,
+      condition_blurb: asText(plan.summary, `A personalised nutrition guide built around your ${label.toLowerCase()} profile.`),
+      personalized_welcome: `Your body is not a problem to fix. This guide helps you understand its signals and build supportive habits that fit your life.`,
+      health_snapshot: asText(plan.analysis, `Your responses point to a few connected areas where steady nutrition, recovery, and daily rhythm can offer meaningful support.`),
+      nutrition_insights: asText(plan.analysis, "Balanced meals, steady protein, fibre-rich plants, and predictable timing can support more consistent energy."),
+      lifestyle_insights: "Sleep, stress, hydration, and gentle movement work together with nutrition to support sustainable progress.",
+      path_forward: asText(user?.goal_30day, "Start with small actions you can repeat consistently."),
+      all_conditions: conditions,
+      goal_30day: user?.goal_30day || null,
+      focus_points: Array.isArray(plan.food_rules) ? plan.food_rules : [],
+      stats: [
+        user?.age ? { label: "Age", value: String(user.age) } : null,
+        user?.activity_level ? { label: "Activity", value: user.activity_level.replace(/_/g, " ") } : null,
+      ].filter(Boolean),
+    },
+  };
+}
+
+function normalizeMobileEbook(value: unknown, user: User | null): MobileEbookPayload {
+  const fallback = buildMobileFallback(user);
+  const record = asRecord(value);
+  const summary = asRecord(record.summary);
+  const media = asRecord(record.media);
+
+  return {
+    condition_id: asText(record.condition_id, fallback.condition_id),
+    condition_label: asText(record.condition_label, fallback.condition_label),
+    is_premium: Boolean(record.is_premium),
+    summary: { ...fallback.summary, ...summary },
+    media: {
+      ...DEFAULT_MOBILE_MEDIA,
+      ...Object.fromEntries(Object.entries(media).filter((entry): entry is [string, string] => typeof entry[1] === "string" && Boolean(entry[1]))),
+    },
+  };
+}
+
+function DynamicEbookImage({ mediaKey, fallbackSrc, alt, ...props }: Omit<ImageProps, "src"> & { mediaKey: string; fallbackSrc: ImageProps["src"] }) {
+  const { media } = useMobileEbook();
+  return <Image {...props} src={media[mediaKey] || fallbackSrc} alt={alt} />;
+}
 
 function CoverLeaf() {
   return (
@@ -18,11 +150,18 @@ function CoverLeaf() {
 }
 
 function CoverPage() {
+  const { ebook, user } = useMobileEbook();
+  const label = conditionLabel(ebook);
+  const personalization = asText(
+    ebook.summary.goal_30day,
+    user?.goal_30day || `Personalized for your unique ${label.toLowerCase()} journey.`,
+  );
+
   return (
-    <article className={`${styles.page} ${styles.coverPage}`} aria-label="Page 1: Your Personalized PCOS Blueprint">
+    <article className={`${styles.page} ${styles.coverPage}`} aria-label={`Page 1: Your Personalized ${label} Blueprint`}>
         <Image
           src="/ebook/cover-hero.png"
-          alt="A nourishing grain bowl with avocado, greens and roasted vegetables"
+          alt={`Nourishing food selected for a personalized ${label} guide`}
           fill
           priority
           sizes="(max-aspect-ratio: 841/1870) 100vw, 45dvh"
@@ -32,19 +171,19 @@ function CoverPage() {
 
         <header className={styles.sectionLabel}>
           <CoverLeaf />
-          <span>Section 01 — Your Personalized<br />PCOS Blueprint</span>
+          <span>Section 01 — Your Personalized<br />{label} Blueprint</span>
         </header>
 
         <h1 className={styles.title}>
           <span>Your</span>
           <span>Personalized</span>
-          <span>PCOS</span>
+          <span>{label}</span>
           <span>Blueprint</span>
         </h1>
 
         <p className={styles.kicker}>Eat with intention. Heal with food.</p>
         <div className={styles.rule} aria-hidden="true" />
-        <p className={styles.personalization}>Personalized for your unique<br />hormonal health journey.</p>
+        <p className={styles.personalization}>{personalization}</p>
 
         <div className={styles.brand}>
           <div>Zen</div>
@@ -62,11 +201,19 @@ function CoverPage() {
 }
 
 function BeginningPage() {
+  const { ebook } = useMobileEbook();
+  const welcome = paragraphs(ebook.summary.personalized_welcome, [
+    "Your body is not a problem to fix, it is a system to understand.",
+    "This blueprint helps you reconnect with your body's signals and build sustainable habits that fit your life.",
+    "Inside these pages, you will find clarity, compassion, and practical food intelligence.",
+  ]);
+
   return (
     <article className={`${styles.page} ${styles.beginningPage}`} aria-label="Page 2: Your Journey to Balance Starts Here">
       <div className={styles.beginningPhoto}>
-        <Image
-          src="/ebook/note-hero.png"
+        <DynamicEbookImage
+          mediaKey="opening_note"
+          fallbackSrc="/ebook/note-hero.png"
           alt="Hands holding a warm cup beside soft linen and flowers"
           fill
           priority
@@ -84,11 +231,11 @@ function BeginningPage() {
         <div className={styles.chapterRule} aria-hidden="true" />
         <h2>Your Journey<br />to Balance<br />Starts Here.</h2>
 
-        <p className={styles.dropcap}>Your body is not a problem to<br />fix—it&rsquo;s a system to understand.</p>
-        <p>This blueprint is designed to<br />help you reconnect with your body&rsquo;s<br />wisdom, support your hormones, and<br />build sustainable habits that fit your<br />life. You are not alone on this journey,<br />and you don&rsquo;t have to figure it all out<br />by yourself.</p>
+        <p className={styles.dropcap}>{welcome[0]}</p>
+        <p>{welcome[1] || welcome[0]}</p>
 
         <div className={styles.bodyRule} aria-hidden="true" />
-        <p>Inside these pages, you&rsquo;ll find more<br />than just a plan—you&rsquo;ll find clarity,<br />compassion, and a partnership<br />rooted in food intelligence.</p>
+        <p>{welcome[2] || "Inside these pages, you will find a plan shaped around your needs and daily rhythm."}</p>
         <p className={styles.beginTogether}>Let&rsquo;s begin—together.</p>
       </section>
 
@@ -118,9 +265,23 @@ const snapshotConcerns: Array<{ name: SnapshotIconName; title: string; role: str
 ];
 
 function SnapshotPage() {
+  const { ebook } = useMobileEbook();
+  const dynamicConditions = asStrings(ebook.summary.all_conditions);
+  const focusPoints = asStrings(ebook.summary.focus_points);
+  const concerns = snapshotConcerns.map((concern, index) => ({
+    ...concern,
+    title: dynamicConditions[index] || concern.title,
+    copy: focusPoints[index] || concern.copy,
+  }));
+  const snapshotCopy = paragraphs(ebook.summary.health_snapshot, [
+    "Your responses show several connected areas where your body is asking for steadier support.",
+    "Nutrition, sleep, stress, movement, and recovery all influence how you feel from day to day.",
+    "Small, repeatable changes can create meaningful progress over time.",
+  ]);
+
   return (
     <article className={`${styles.page} ${styles.snapshotPage}`} aria-label="Page 3: Your Health Snapshot">
-      <Image src="/ebook/snapshot-bg.png" alt="" fill sizes="45dvh" className={styles.snapshotBackground} aria-hidden="true" />
+      <DynamicEbookImage mediaKey="health_snapshot" fallbackSrc="/ebook/snapshot-bg.png" alt="" fill sizes="45dvh" className={styles.snapshotBackground} aria-hidden="true" />
       <header className={styles.snapshotTopline}>ZenPlato <span>|</span> 02 Health Snapshot</header>
 
       <section className={styles.snapshotLeft}>
@@ -128,7 +289,7 @@ function SnapshotPage() {
         <div className={styles.snapshotTitleRule} aria-hidden="true" />
         <p className={styles.snapshotSideLabel}>Your Selected<br />Conditions &amp; Concerns</p>
         <div className={styles.snapshotConcernList}>
-          {snapshotConcerns.map((concern) => (
+          {concerns.map((concern) => (
             <article className={styles.snapshotConcern} key={concern.title}>
               <div className={styles.snapshotIcon}><SnapshotIcon name={concern.name} /></div>
               <div className={styles.snapshotConcernCopy}>
@@ -154,10 +315,7 @@ function SnapshotPage() {
         <blockquote><span aria-hidden="true">“</span>Your body is always<br />communicating.<br />This snapshot helps us<br />listen with clarity.</blockquote>
         <div className={styles.snapshotOrnament} aria-hidden="true"><i /><CoverLeaf /><i /></div>
         <div className={styles.snapshotParagraphs}>
-          <p>Based on your responses, your body<br />is asking for support in key areas that<br />are closely connected.</p>
-          <p>Your hormonal balance, insulin<br />response, inflammation levels, and<br />sleep quality are the foundational<br />pillars that influence your energy,<br />mood, metabolism, and long-term<br />health.</p>
-          <p>The good news is—small, consistent<br />shifts in the right direction can create<br />powerful, lasting change.</p>
-          <p>This blueprint is designed around your<br />unique biology, lifestyle, and goals to<br />help you feel more balanced, energized,<br />and in control.</p>
+          {snapshotCopy.slice(0, 4).map((copy) => <p key={copy}>{copy}</p>)}
         </div>
       </section>
 
@@ -192,6 +350,13 @@ function FindingsDiagram() {
 }
 
 function FindingsIntroPage() {
+  const { ebook } = useMobileEbook();
+  const intro = paragraphs(ebook.summary.condition_blurb, [
+    "Your responses reveal patterns across biology, lifestyle, and daily rhythm that deserve your attention.",
+    "These insights are clues that help us understand what your body needs to feel supported.",
+    "Awareness creates choice, and the right support makes lasting change possible.",
+  ]);
+
   return (
     <article className={`${styles.page} ${styles.findingsIntroPage}`} aria-label="Page 4A: Your Key Findings overview">
       <header className={styles.findingsTopline}>ZenPlato <span>|</span> 01 Your Story</header>
@@ -200,9 +365,7 @@ function FindingsIntroPage() {
       <h2>Your<br /><span>Key Findings</span></h2>
       <div className={styles.findingsTitleRule} aria-hidden="true" />
       <div className={styles.findingsIntroCopy}>
-        <p>Your responses paint a clear picture—one<br />of a body that&rsquo;s doing its best, with a few<br />patterns asking for your attention.</p>
-        <p>These insights are not just observations.<br />They are clues—hints from your biology,<br />lifestyle, and daily rhythms—guiding us<br />toward what your body truly needs<br />to feel balanced and thrive.</p>
-        <p>Understanding these key patterns is<br />the first step. With awareness comes<br />choice, and with the right support,<br />lasting change becomes possible.</p>
+        {intro.slice(0, 3).map((copy) => <p key={copy}>{copy}</p>)}
       </div>
       <FindingsDiagram />
       <blockquote className={styles.findingsQuote}>
@@ -245,6 +408,20 @@ const findingCards: Array<{ icon: FindingIconName; priority: string; title: stri
 ];
 
 function FindingsCardsPage() {
+  const { ebook } = useMobileEbook();
+  const supplied = asRecords(ebook.summary.key_findings);
+  const cards = findingCards.map((fallback, index) => {
+    const record = supplied[index] || {};
+    const compact = asText(ebook.summary[`finding_${index + 1}`], "");
+    const [compactTitle, ...compactBody] = compact.split(":");
+    return {
+      ...fallback,
+      priority: asText(record.priority, fallback.priority),
+      title: asText(record.title, compactTitle || fallback.title),
+      copy: asText(record.description, compactBody.join(":") || "A key pattern from your profile that deserves focused, consistent support."),
+    };
+  });
+
   return (
     <article className={`${styles.page} ${styles.findingsCardsPage}`} aria-label="Page 4B: Your Key Findings details">
       <header className={styles.findingsCardsTopline}>ZenPlato <span>|</span> 01 Your Story</header>
@@ -256,7 +433,7 @@ function FindingsCardsPage() {
       <BotanicalBranch className={styles.findingsCardsMiddleBranch} />
 
       <div className={styles.findingCardStack}>
-        {findingCards.map((finding) => (
+        {cards.map((finding) => (
           <article className={styles.findingCard} key={finding.title}>
             <div className={`${styles.findingCardIcon} ${styles[finding.accent]}`}><FindingIcon name={finding.icon} /></div>
             <div className={`${styles.findingCardSpine} ${styles[finding.accent]}`} aria-hidden="true"><i /></div>
@@ -307,6 +484,19 @@ const focusAreas: Array<{ number: string; title: string; icon: FocusIconName; st
 ];
 
 function FocusAreasPage() {
+  const { ebook } = useMobileEbook();
+  const supplied = asRecords(ebook.summary.key_health_focus_areas);
+  const areas = focusAreas.map((fallback, index) => {
+    const record = supplied[index] || {};
+    return {
+      ...fallback,
+      title: asText(record.title, fallback.title),
+      status: asText(record.status, fallback.status),
+      progress: typeof record.progress === "number" ? `${record.progress}%` : fallback.progress,
+      copy: asText(record.description, "A focused area in your personalised health plan."),
+    };
+  });
+
   return (
     <article className={`${styles.page} ${styles.focusAreasPage}`} aria-label="Page 5: Key Health Focus Areas">
       <header className={styles.focusTopline}>ZenPlato <span>|</span> 02 Health Snapshot</header>
@@ -318,7 +508,7 @@ function FocusAreasPage() {
       <p className={styles.focusIntro}>These six areas represent the<br />core systems influencing your<br />health and wellbeing. Each tile<br />reflects your current status<br />based on your responses and<br />where your body may benefit<br />most from support.</p>
 
       <div className={styles.focusGrid}>
-        {focusAreas.map((area) => (
+        {areas.map((area) => (
           <article className={styles.focusCard} key={area.number}>
             <div className={styles.focusEyebrow}>{area.number}<span>|</span>{area.title}</div>
             <div className={styles.focusCardHeading}>
@@ -365,6 +555,24 @@ const profileRows: Array<{ icon: ProfileIconName; label: string; value: string }
 const selectedConditions = ["PCOS", "Insulin Resistance", "Hormonal Acne", "Fatigue & Low Energy", "Bloating & Digestive Issues", "Stress & Anxiety"];
 
 function PersonalizedSummaryPage() {
+  const { ebook, user } = useMobileEbook();
+  const rows = profileRows.map((row) => {
+    const values: Record<string, string | undefined> = {
+      Age: user?.age ? `${user.age} Years` : undefined,
+      Gender: user?.gender ? user.gender.replace(/\b\w/g, (letter) => letter.toUpperCase()) : undefined,
+      Height: user?.height_cm ? `${user.height_cm} cm` : undefined,
+      Weight: user?.weight_kg ? `${user.weight_kg} kg` : undefined,
+    };
+    return { ...row, value: values[row.label] || row.value };
+  });
+  const conditions = asStrings(ebook.summary.all_conditions);
+  const narrative = paragraphs(ebook.summary.health_snapshot, [
+    "Your responses reveal a body working hard to maintain balance while a few connected systems ask for support.",
+    asText(ebook.summary.nutrition_insights, "Your nutrition patterns can support steadier energy, mood, digestion, and recovery."),
+    asText(ebook.summary.lifestyle_insights, "Small, consistent shifts in food, sleep, movement, and stress care can create meaningful progress."),
+  ]);
+  const pathForward = asText(ebook.summary.path_forward, "This snapshot is the first step toward a plan that fits your patterns, preferences, and goals.");
+
   return (
     <article className={`${styles.page} ${styles.personalizedPage}`} aria-label="Page 6: Personalized health summary">
       <header className={styles.personalizedTopline}>ZenPlato <span>|</span> 01 Your Story</header>
@@ -378,7 +586,7 @@ function PersonalizedSummaryPage() {
 
         <h3>Selected Profile</h3>
         <div className={styles.profileCard}>
-          {profileRows.map((row) => (
+          {rows.map((row) => (
             <div className={styles.profileRow} key={row.label}>
               <div className={styles.profileIcon}><ProfileIcon name={row.icon} /></div>
               <div><strong>{row.label}</strong><span>{row.value}</span></div>
@@ -388,7 +596,7 @@ function PersonalizedSummaryPage() {
 
         <h3 className={styles.conditionsLabel}>Selected Conditions<br />&amp; Concerns</h3>
         <div className={styles.conditionList}>
-          {selectedConditions.map((condition) => <div key={condition}><i />{condition}</div>)}
+          {(conditions.length ? conditions : selectedConditions).slice(0, 6).map((condition) => <div key={condition}><i />{condition}</div>)}
         </div>
         <BotanicalBranch className={styles.personalizedBottomBranch} />
       </aside>
@@ -397,16 +605,14 @@ function PersonalizedSummaryPage() {
         <p className={styles.narrativeLabel}>Personalized Narrative Analysis</p>
         <i className={styles.narrativeRule} aria-hidden="true" />
         <h2>Here&rsquo;s what your<br />body is <em>telling us.</em></h2>
-        <p className={styles.narrativeLead}>Your responses reveal a body that is working<br />hard to maintain balance, but several key<br />systems are asking for additional support.</p>
+        <p className={styles.narrativeLead}>{narrative[0]}</p>
         <div className={styles.narrativeQuote} aria-hidden="true">“</div>
         <div className={styles.narrativeBody}>
-          <p>Your hormonal health appears to be the core<br />area influencing many of your current<br />symptoms. Imbalances related to PCOS and<br />insulin resistance may be contributing to<br />fluctuations in energy, mood, skin health,<br />and digestion.</p>
-          <p>Your body shows signs of inflammation and<br />stress load, which can impact hormone<br />communication, sleep quality, and metabolic<br />efficiency.</p>
-          <p>The good news is—small, consistent shifts<br />in nutrition, lifestyle, and stress management<br />can create powerful improvements in how<br />you feel each day.</p>
+          {narrative.slice(1, 4).map((copy) => <p key={copy}>{copy}</p>)}
         </div>
         <div className={styles.pathForward}>
           <div className={styles.pathIcon}><CoverLeaf /></div>
-          <div><strong>Your Path Forward</strong><p>This snapshot is the first step toward<br />understanding your unique patterns and<br />creating a plan that truly fits you.</p></div>
+          <div><strong>Your Path Forward</strong><p>{pathForward}</p></div>
         </div>
       </section>
 
@@ -436,6 +642,22 @@ const glanceMetrics: Array<{ icon: GlanceIconName; value: string; label: React.R
 ];
 
 function AtGlancePage() {
+  const { ebook } = useMobileEbook();
+  const supplied = asRecords(ebook.summary.at_glance).length
+    ? asRecords(ebook.summary.at_glance)
+    : asRecords(ebook.summary.stats);
+  const metrics = glanceMetrics.map((fallback, index) => {
+    const record = supplied[index] || {};
+    return {
+      ...fallback,
+      value: asText(record.value, fallback.value),
+      label: asText(record.label, typeof fallback.label === "string" ? fallback.label : `Health insight ${index + 1}`),
+      copy: asText(record.description, "Personalized from your profile and onboarding responses."),
+    };
+  });
+  const nextHeadline = asText(ebook.summary.next_best_step_headline, "Personalized. Practical. Powerful.");
+  const nextBody = asText(ebook.summary.next_best_step_body, "Your plan is shaped around your biology, lifestyle, and goals so the next action feels realistic.");
+
   return (
     <article className={`${styles.page} ${styles.glancePage}`} aria-label="Page 7: At a Glance">
       <header className={styles.glanceTopline}>ZenPlato <span>|</span> 02 Health Snapshot</header>
@@ -446,7 +668,7 @@ function AtGlancePage() {
       <p className={styles.glanceKicker}>A Quick Overview Of Your<br />Current Health Insights.</p>
 
       <div className={styles.glanceGrid}>
-        {glanceMetrics.map((metric) => (
+        {metrics.map((metric) => (
           <article className={styles.glanceCard} key={metric.value}>
             <div className={`${styles.glanceIcon} ${metric.accent ? styles.glanceAccent : ""}`}><GlanceIcon name={metric.icon} /></div>
             <div className={`${styles.glanceValue} ${metric.accent ? styles.glanceAccent : ""}`}>{metric.value}</div>
@@ -461,8 +683,8 @@ function AtGlancePage() {
       <section className={styles.glanceNext}>
         <p>Your Next Best Step</p>
         <i aria-hidden="true" />
-        <h3>Personalized.<br />Practical. Powerful.</h3>
-        <span>Your personalized plan is designed<br />around your unique biology, lifestyle,<br />and goals—helping you take the right<br />actions for lasting change.</span>
+        <h3>{nextHeadline}</h3>
+        <span>{nextBody}</span>
         <button type="button">View Your Plan <b aria-hidden="true">→</b></button>
       </section>
       <BotanicalBranch className={styles.glanceBottomBranch} />
@@ -472,11 +694,17 @@ function AtGlancePage() {
 }
 
 function OpportunityThreePage() {
+  const { ebook } = useMobileEbook();
+  const opportunities = asRecords(ebook.summary.biggest_opportunities);
+  const opportunity = opportunities[2] || (typeof ebook.summary.opportunity_3 === "object" && ebook.summary.opportunity_3 ? ebook.summary.opportunity_3 as Record<string, unknown> : {});
+  const copy = asStrings(opportunity.paragraphs);
+
   return (
     <article className={`${styles.page} ${styles.opportunityThreePage}`} aria-label="Page 8: Your third biggest opportunity">
-      <Image
-        src={opportunityThreeReference}
-        alt="A woman walking along a coastal path overlooking calm water and mountains"
+      <DynamicEbookImage
+        mediaKey="opportunity"
+        fallbackSrc={opportunityThreeReference}
+        alt="A supportive wellness scene for your third opportunity"
         fill
         sizes="45dvh"
         className={styles.opportunityScenicPhoto}
@@ -485,20 +713,20 @@ function OpportunityThreePage() {
       <header className={styles.opportunityTopline}>ZenPlato <span>|</span> 01 Your Story</header>
       <div className={styles.opportunityTopRule} aria-hidden="true" />
       <BotanicalBranch className={styles.opportunityTopBranch} />
-
       <section className={styles.opportunityPanel}>
         <BotanicalBranch className={styles.opportunityPanelBranch} />
         <p className={styles.opportunityKicker}>Your Biggest Opportunities</p>
         <i className={styles.opportunityShortRule} aria-hidden="true" />
         <div className={styles.opportunityNumber}>03</div>
         <i className={styles.opportunityClayRule} aria-hidden="true" />
-        <h2>{`{{Opportunity_3}}`}</h2>
+        <h2>{asText(opportunity.title, "Your next area of growth")}</h2>
         <i className={styles.opportunityGreenRule} aria-hidden="true" />
         <div className={styles.opportunityText}>
-          <p>This opportunity is about creating<br />deeper harmony between your mind,<br />body, and daily life.</p>
-          <p>Your responses suggest this area plays<br />a key role in your overall wellbeing and<br />long-term vitality.</p>
-          <p>Strengthening it can support emotional<br />balance, resilience, and a greater sense<br />of clarity and purpose.</p>
-          <p>When you prioritize this area, you build<br />the foundation for a healthier, more<br />fulfilling life in every dimension.</p>
+          {(copy.length ? copy : [
+            "This opportunity supports deeper harmony between your body, mind, and daily rhythm.",
+            "Your responses suggest it can influence your wellbeing and long-term vitality.",
+            "Small, repeatable actions here can build resilience, clarity, and confidence.",
+          ]).slice(0, 4).map((item) => <p key={item}>{item}</p>)}
         </div>
         <div className={styles.opportunityPanelFooter} aria-hidden="true"><i /><b /><i /></div>
       </section>
@@ -507,22 +735,29 @@ function OpportunityThreePage() {
 }
 
 function OpportunityOnePage() {
+  const { ebook } = useMobileEbook();
+  const opportunities = asRecords(ebook.summary.biggest_opportunities);
+  const opportunity = opportunities[0] || (typeof ebook.summary.opportunity_1 === "object" && ebook.summary.opportunity_1 ? ebook.summary.opportunity_1 as Record<string, unknown> : {});
+  const copy = asStrings(opportunity.paragraphs);
+
   return (
     <article className={`${styles.page} ${styles.opportunityOnePage}`} aria-label="Page 9: Your first biggest opportunity">
-      <Image src="/ebook/opportunity-botanical.png" alt="A young plant with visible roots" fill sizes="45dvh" className={styles.opportunityBotanical} />
+      <DynamicEbookImage mediaKey="opportunity" fallbackSrc="/ebook/opportunity-botanical.png" alt="Artwork selected for your highest-impact opportunity" fill sizes="45dvh" className={styles.opportunityBotanical} />
       <header className={styles.opportunityOneTopline}>ZenPlato <span>|</span> 01 Your Story</header>
       <section className={styles.opportunityOneCopy}>
         <p className={styles.opportunityOneKicker}>Your Biggest Opportunities</p>
         <i className={styles.opportunityOneShortRule} aria-hidden="true" />
         <div className={styles.opportunityOneNumber}>01</div>
         <i className={styles.opportunityOneClayRule} aria-hidden="true" />
-        <h2>{`{{opportunity_1}}`}</h2>
+        <h2>{asText(opportunity.title, "Your highest-impact opportunity")}</h2>
         <i className={styles.opportunityOneGreenRule} aria-hidden="true" />
         <div className={styles.opportunityOneBody}>
-          <p>This is the area with the greatest<br />potential to create meaningful<br />change for your energy, balance,<br />and long-term wellbeing.</p>
-          <p>Your responses indicate this<br />opportunity is closely connected<br />to how your body is functioning<br />and adapting each day.</p>
-          <p>When we nurture this area with<br />the right support and consistent<br />small steps, you may experience<br />improvements that ripple across<br />your overall health.</p>
-          <p>This is your starting point—where<br />awareness becomes action, and<br />action creates lasting<br />transformation.</p>
+          {(copy.length ? copy : [
+            "This area has strong potential to improve your energy, balance, and long-term wellbeing.",
+            "Your responses connect this opportunity to how your body adapts each day.",
+            "Consistent small steps here can create improvements across your overall health.",
+            "This is where awareness becomes action and action becomes lasting change.",
+          ]).slice(0, 4).map((item) => <p key={item}>{item}</p>)}
         </div>
       </section>
       <div className={styles.opportunityOneBrand}><div>Zen</div><span>Your food intelligence companionship</span></div>
@@ -579,22 +814,43 @@ const groceryBenefits = [
 ] as const;
 
 function GroceryEssentialsPhonePage() {
+  const { ebook } = useMobileEbook();
+  const grocery = asRecord(ebook.summary.grocery_list);
+  const sourceKeys = ["protein_sources", "vegetables", "fruits"];
+  const columns = groceryColumns.map((fallback, columnIndex) => {
+    const supplied = asRecords(grocery[sourceKeys[columnIndex]]);
+    return {
+      ...fallback,
+      items: fallback.items.map(([fallbackName, fallbackCopy], itemIndex) => {
+        const record = supplied[itemIndex] || {};
+        return {
+          name: asText(record.name ?? record.title, typeof fallbackName === "string" ? fallbackName : `Food ${itemIndex + 1}`),
+          copy: asText(record.description, typeof fallbackCopy === "string" ? fallbackCopy : "Selected to support your personalized grocery plan."),
+          image: asText(record.image_url, ""),
+        };
+      }),
+    };
+  });
+
   return (
     <article className={`${styles.page} ${styles.groceryPage}`} aria-label="Page 10: Grocery Essentials">
-      <Image src="/ebook/grocery-essentials-bg.png" alt="Fresh groceries arranged by proteins, vegetables and fruits" fill sizes="45dvh" className={styles.groceryArtwork} />
+      <DynamicEbookImage mediaKey="grocery_essentials" fallbackSrc="/ebook/grocery-essentials-bg.png" alt="Fresh groceries arranged by proteins, vegetables and fruits" fill sizes="45dvh" className={styles.groceryArtwork} />
       <header className={styles.groceryTopline}>ZenPlato <span>|</span> 08 <span>|</span> Your Personalized Recipe Collection</header>
       <h2>Grocery<br />Essentials</h2>
-      <p className={styles.groceryIntro}>Wholesome ingredients for<br />everyday meals and better living.</p>
+      <p className={styles.groceryIntro}>{asText(grocery.intro, "Wholesome ingredients for everyday meals and better living.")}</p>
       <div className={styles.groceryBadge}>Real Food.<br />Real Good.</div>
       <div className={styles.groceryPageLabel}>Page 1 of 3</div>
 
       <div className={styles.groceryColumns}>
-        {groceryColumns.map((column) => (
+        {columns.map((column) => (
           <section className={styles.groceryColumn} key={column.title}>
             <h3>{column.title}</h3>
             <div className={styles.groceryItems}>
-              {column.items.map(([name, copy], index) => (
-                <article key={index}><strong>{name}</strong><p>{copy}</p></article>
+              {column.items.map((item, index) => (
+                <article key={`${item.name}-${index}`}>
+                  {item.image && <div className={styles.groceryItemImage}><Image src={item.image} alt="" fill sizes="6dvh" /></div>}
+                  <strong>{item.name}</strong><p>{item.copy}</p>
+                </article>
               ))}
             </div>
             <p className={styles.grocerySummary}>{column.summary}</p>
@@ -614,16 +870,19 @@ function GroceryEssentialsPhonePage() {
 }
 
 function UnderstandingJourneyPage() {
+  const { ebook } = useMobileEbook();
+  const label = conditionLabel(ebook);
+
   return (
-    <article className={`${styles.page} ${styles.understandingJourneyPage}`} aria-label="Page 11A: Understanding Your PCOS Journey">
-      <Image src="/ebook/understanding-pcos-journey.png" alt="A woman standing in a meadow overlooking mountains and a lake" fill sizes="45dvh" className={styles.understandingJourneyPhoto} />
+    <article className={`${styles.page} ${styles.understandingJourneyPage}`} aria-label={`Page 11A: Understanding Your ${label} Journey`}>
+      <DynamicEbookImage mediaKey="understanding_journey" fallbackSrc="/ebook/understanding-pcos-journey.png" alt={`A calm scene introducing your ${label} journey`} fill sizes="45dvh" className={styles.understandingJourneyPhoto} />
       <div className={styles.understandingJourneyWash} aria-hidden="true" />
       <header className={styles.understandingJourneyTopline}>ZenPlato <span>|</span> 02 Hormonal Rhythms</header>
       <div className={styles.understandingJourneyTopRule} aria-hidden="true" />
       <BotanicalBranch className={styles.understandingJourneyTopBranch} />
       <section className={styles.understandingJourneyTitle}>
         <p>Section 02</p>
-        <h2>Understanding<br />Your PCOS<br />Journey</h2>
+        <h2>Understanding<br />Your {label}<br />Journey</h2>
         <div aria-hidden="true"><i /><BotanicalBranch /><i /></div>
       </section>
       <div className={styles.understandingJourneyPageNumber} aria-hidden="true"><i />11<i /></div>
@@ -646,24 +905,36 @@ function UnderstandingIcon({ name }: { name: UnderstandingIconName }) {
 const understandingRows: Array<{ icon: UnderstandingIconName; title: string; copy: React.ReactNode }> = [
   { icon: "leaf", title: "What It Means", copy: <>PCOS (Polycystic Ovary Syndrome) is<br />a hormonal condition that affects how<br />your ovaries and hormones function.<br />It can influence ovulation, hormone<br />balance, and metabolism in unique<br />and complex ways.</> },
   { icon: "balance", title: "Why It Matters", copy: <>Understanding PCOS helps you identify<br />the underlying imbalances rather than<br />just managing symptoms. With the right<br />knowledge and support, your body can<br />heal, recalibrate, and thrive.</> },
-  { icon: "sunrise", title: <>How It May Affect<br />Daily Life</>, copy: <>PCOS can show up as irregular cycles,<br />fatigue, mood shifts, skin changes,<br />weight fluctuations, or fertility challenges.<br />Recognizing these patterns is the first<br />step toward creating lasting positive<br />change.</> },
+  { icon: "sunrise", title: "How It May Affect Daily Life", copy: <>PCOS can show up as irregular cycles,<br />fatigue, mood shifts, skin changes,<br />weight fluctuations, or fertility challenges.<br />Recognizing these patterns is the first<br />step toward creating lasting positive<br />change.</> },
 ];
 
 function UnderstandingDetailPhonePage() {
+  const { ebook } = useMobileEbook();
+  const label = conditionLabel(ebook);
+  const supplied = asRecords(ebook.summary.understanding_items);
+  const rows = understandingRows.map((fallback, index) => {
+    const record = supplied[index] || {};
+    return {
+      ...fallback,
+      title: asText(record.title, typeof fallback.title === "string" ? fallback.title : "How It May Affect Daily Life"),
+      copy: asText(record.body, `Personalized guidance about ${label.toLowerCase()} based on your profile and goals.`),
+    };
+  });
+
   return (
-    <article className={`${styles.page} ${styles.understandingDetailPage}`} aria-label="Page 11B: Understanding PCOS">
+    <article className={`${styles.page} ${styles.understandingDetailPage}`} aria-label={`Page 11B: Understanding ${label}`}>
       <header className={styles.understandingDetailTopline}>ZenPlato <span>|</span> 02 Hormonal Rhythms</header>
       <div className={styles.understandingDetailTopRule} aria-hidden="true" />
       <BotanicalBranch className={styles.understandingDetailTopBranch} />
       <div className={styles.understandingDetailPhoto}>
-        <Image src="/ebook/understanding-pcos-detail.png" alt="A woman resting in a meadow overlooking a lake and mountains" fill sizes="45dvh" />
+        <DynamicEbookImage mediaKey="understanding_detail" fallbackSrc="/ebook/phone-understanding-detail.png" alt={`A reflective wellness scene for understanding ${label}`} fill sizes="45dvh" />
       </div>
 
       <section className={styles.understandingDetailContent}>
-        <h2>Understanding<br />PCOS</h2>
+        <h2>Understanding<br />{label}</h2>
         <div className={styles.understandingDetailDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
         <div className={styles.understandingDetailRows}>
-          {understandingRows.map((row) => (
+          {rows.map((row) => (
             <article className={styles.understandingDetailRow} key={String(row.title)}>
               <div className={styles.understandingDetailIcon}><UnderstandingIcon name={row.icon} /></div>
               <div className={styles.understandingDetailDot} aria-hidden="true" />
@@ -714,22 +985,34 @@ const symptomSteps: Array<{ icon: SymptomIconName; title: string; copy: string }
 ];
 
 function WhySymptomsPhonePage() {
+  const { ebook } = useMobileEbook();
+  const supplied = asRecords(ebook.summary.symptom_flow_steps);
+  const steps = symptomSteps.map((fallback, index) => {
+    const record = supplied[index] || {};
+    return {
+      ...fallback,
+      title: asText(record.title, fallback.title),
+      copy: asText(record.body, fallback.copy),
+    };
+  });
+  const takeaway = asText(ebook.summary.symptom_flow_takeaway, "Understanding the why behind your symptoms is the first step toward lasting balance and healing.");
+
   return (
     <article className={`${styles.page} ${styles.symptomPage}`} aria-label="Page 12: Why Symptoms Happen">
       <header className={styles.symptomTopline}>ZenPlato <span>|</span> 02 Hormonal Rhythms</header>
       <div className={styles.symptomTopRule} aria-hidden="true" />
       <BotanicalBranch className={styles.symptomTopBranch} />
       <div className={styles.symptomPhoto}>
-        <Image src="/ebook/why-symptoms-happen.png" alt="A journal, warm drink and flowers arranged on a quiet table" fill sizes="45dvh" />
+        <DynamicEbookImage mediaKey="symptoms" fallbackSrc="/ebook/phone-why-symptoms.png" alt="A calm journal and wellness scene" fill sizes="45dvh" />
       </div>
       <section className={styles.symptomContent}>
         <h2>Why Symptoms<br />Happen</h2>
         <div className={styles.symptomDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
         <div className={styles.symptomSteps}>
-          {symptomSteps.map((step, index) => (
+          {steps.map((step, index) => (
             <article className={styles.symptomStep} key={step.title}>
               <div className={styles.symptomIcon}><SymptomIcon name={step.icon} /></div>
-              {index < symptomSteps.length - 1 && <div className={styles.symptomConnector} aria-hidden="true">↓</div>}
+              {index < steps.length - 1 && <div className={styles.symptomConnector} aria-hidden="true">↓</div>}
               <div className={styles.symptomIndex}>{String(index + 1).padStart(2, "0")}.</div>
               <div><h3>{step.title}</h3><p>{step.copy}</p></div>
             </article>
@@ -738,7 +1021,7 @@ function WhySymptomsPhonePage() {
       </section>
       <blockquote className={styles.symptomTakeaway}>
         <BotanicalBranch />
-        <p>Understanding the why behind your symptoms<br />is the first step toward lasting balance and healing.</p>
+        <p>{takeaway}</p>
       </blockquote>
       <div className={styles.symptomPageNumber} aria-hidden="true"><i />14<i /></div>
     </article>
@@ -762,22 +1045,34 @@ const nutritionInfluences: Array<{ icon: NutritionIconName; title: string; copy:
 ];
 
 function NutritionInfluencePhonePage() {
+  const { ebook } = useMobileEbook();
+  const supplied = asRecords(ebook.summary.nutrition_influence_items);
+  const influences = nutritionInfluences.map((fallback, index) => {
+    const record = supplied[index] || {};
+    return {
+      ...fallback,
+      title: asText(record.title, fallback.title),
+      copy: asText(record.body, fallback.copy),
+    };
+  });
+  const takeaway = asText(ebook.summary.nutrition_influence_takeaway, "Food is information. The right nutrition helps your body function, recover, and thrive.");
+
   return (
     <article className={`${styles.page} ${styles.nutritionInfluencePage}`} aria-label="Page 13: What Nutrition Can Influence">
       <header className={styles.nutritionInfluenceTopline}>ZenPlato <span>|</span> 02 Hormonal Rhythms</header>
       <div className={styles.nutritionInfluenceTopRule} aria-hidden="true" />
       <BotanicalBranch className={styles.nutritionInfluenceTopBranch} />
       <div className={styles.nutritionInfluencePhoto}>
-        <Image src="/ebook/nutrition-influence.png" alt="A balanced grain bowl beside a journal and water" fill sizes="45dvh" />
+        <DynamicEbookImage mediaKey="nutrition_influence" fallbackSrc="/ebook/phone-nutrition-influence.png" alt="A balanced meal selected for your nutrition guide" fill sizes="45dvh" />
       </div>
       <section className={styles.nutritionInfluenceContent}>
         <h2>What Nutrition<br />Can Influence</h2>
         <div className={styles.nutritionInfluenceDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
         <div className={styles.nutritionInfluenceSteps}>
-          {nutritionInfluences.map((item, index) => (
+          {influences.map((item, index) => (
             <article className={styles.nutritionInfluenceStep} key={item.title}>
               <div className={styles.nutritionInfluenceIcon}><NutritionIcon name={item.icon} /></div>
-              {index < nutritionInfluences.length - 1 && <div className={styles.nutritionInfluenceConnector} aria-hidden="true"><i /><b /></div>}
+              {index < influences.length - 1 && <div className={styles.nutritionInfluenceConnector} aria-hidden="true"><i /><b /></div>}
               <div className={styles.nutritionInfluenceIndex}>{String(index + 1).padStart(2, "0")}.</div>
               <div><h3>{item.title}</h3><p>{item.copy}</p></div>
             </article>
@@ -786,7 +1081,7 @@ function NutritionInfluencePhonePage() {
       </section>
       <blockquote className={styles.nutritionInfluenceTakeaway}>
         <BotanicalBranch />
-        <p>Food is more than fuel—it&rsquo;s information.<br />The right nutrition helps your body<br />function, heal, and thrive.</p>
+        <p>{takeaway}</p>
       </blockquote>
       <div className={styles.nutritionInfluencePageNumber} aria-hidden="true"><i />16<i /></div>
     </article>
@@ -810,21 +1105,33 @@ const pcosChallenges: Array<{ icon: ChallengeIconName; image: string; title: Rea
 ];
 
 function CommonChallengesPhonePage() {
+  const { ebook } = useMobileEbook();
+  const label = conditionLabel(ebook);
+  const findings = asRecords(ebook.summary.key_findings);
+  const challenges = pcosChallenges.map((fallback, index) => {
+    const record = findings[index] || {};
+    return {
+      ...fallback,
+      title: asText(record.title, index === 0 ? `${label} Patterns` : `Health Pattern ${index + 1}`),
+      copy: asText(record.description, `A personalized ${label.toLowerCase()} pattern identified from your profile.`),
+    };
+  });
+
   return (
-    <article className={`${styles.page} ${styles.commonChallengesPage}`} aria-label="Page 14: Common PCOS Challenges">
+    <article className={`${styles.page} ${styles.commonChallengesPage}`} aria-label={`Page 14: Common ${label} Challenges`}>
       <BotanicalBranch className={styles.commonChallengesTopBranch} />
       <header className={styles.commonChallengesTopline}>ZenPlato <span>|</span> 02 Hormonal Rhythms</header>
       <div className={styles.commonChallengesTopRule} aria-hidden="true" />
       <section className={styles.commonChallengesIntro}>
-        <h2>Common<br />PCOS Challenges</h2>
+        <h2>Common<br />{label} Challenges</h2>
         <div className={styles.commonChallengesDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
-        <p>PCOS shows up differently for everyone.<br />These are some of the most common<br />challenges—and you are not alone.</p>
+        <p>{label} can show up differently for everyone. These are personalized patterns from your profile, and you are not alone.</p>
       </section>
       <section className={styles.commonChallengeCards}>
-        {pcosChallenges.map((challenge, index) => (
+        {challenges.map((challenge, index) => (
           <article className={styles.commonChallengeCard} key={challenge.image}>
             <div className={styles.commonChallengePhoto}>
-              <Image src={challenge.image} alt="" fill sizes="20dvh" />
+              <DynamicEbookImage mediaKey="opportunity" fallbackSrc={challenge.image} alt="" fill sizes="20dvh" />
               <b>{String(index + 1).padStart(2, "0")}</b>
             </div>
             <div className={styles.commonChallengeCopy}>
@@ -856,6 +1163,9 @@ const frameworkItems: Array<{ icon: FrameworkIconName; title: string; copy: stri
 ];
 
 function ZenPlatoFrameworkPhonePage() {
+  const { ebook } = useMobileEbook();
+  const label = conditionLabel(ebook);
+
   return (
     <article className={`${styles.page} ${styles.frameworkPage}`} aria-label="Page 15: The ZenPlato Framework">
       <BotanicalBranch className={styles.frameworkTopBranch} />
@@ -864,7 +1174,7 @@ function ZenPlatoFrameworkPhonePage() {
       <section className={styles.frameworkIntro}>
         <h2>The ZenPlato<br />Framework</h2>
         <div className={styles.frameworkDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
-        <p>A simple, sustainable framework to nourish<br />your body, balance your hormones, and<br />support your PCOS journey—every day.</p>
+        <p>A simple, sustainable framework to nourish your body and support your {label} journey every day.</p>
       </section>
       <section className={styles.frameworkItems}>
         {frameworkItems.map((item, index) => (
@@ -876,7 +1186,7 @@ function ZenPlatoFrameworkPhonePage() {
         ))}
       </section>
       <blockquote className={styles.frameworkTakeaway}><BotanicalBranch /><p>Balance isn&rsquo;t about perfection—<br />it&rsquo;s about supporting your body<br />with what it truly needs.</p></blockquote>
-      <div className={styles.frameworkPhoto}><Image src="/ebook/zenplato-framework-photo.png" alt="A balance journal, warm cup and leafy stems" fill sizes="45dvh" /></div>
+      <div className={styles.frameworkPhoto}><DynamicEbookImage mediaKey="framework" fallbackSrc="/ebook/zenplato-framework-photo.png" alt="A balance journal, warm cup and leafy stems" fill sizes="45dvh" /></div>
     </article>
   );
 }
@@ -884,7 +1194,7 @@ function ZenPlatoFrameworkPhonePage() {
 function FoodNutritionGuidePhonePage() {
   return (
     <article className={`${styles.page} ${styles.foodGuidePage}`} aria-label="Page 16: Your Food and Nutrition Guide">
-      <Image src="/ebook/food-nutrition-guide-bg.png" alt="A nourishing chickpea and avocado bowl beside water and leafy branches" fill sizes="45dvh" className={styles.foodGuideBackground} />
+      <DynamicEbookImage mediaKey="food_guide" fallbackSrc="/ebook/food-nutrition-guide-bg.png" alt="A nourishing meal beside water and leafy branches" fill sizes="45dvh" className={styles.foodGuideBackground} />
       <header className={styles.foodGuideTopline}>ZenPlato <span>|</span> 03 Your Food &amp; Nutrition Guide</header>
       <section className={styles.foodGuideContent}>
         <p className={styles.foodGuideSection}>Section 3</p>
@@ -927,6 +1237,18 @@ function MindfulFoodIcon({ index }: { index: number }) {
 }
 
 function MindfulFoodsPhonePage() {
+  const { ebook } = useMobileEbook();
+  const supplied = asRecords(ebook.summary.foods_to_be_mindful_of);
+  const foods = mindfulFoods.map((fallback, index) => {
+    const record = supplied[index] || {};
+    return {
+      ...fallback,
+      title: asText(record.title, typeof fallback.title === "string" ? fallback.title : `Mindful choice ${index + 1}`),
+      copy: asText(record.description, fallback.copy),
+      image: asText(record.image_url, fallback.image),
+    };
+  });
+
   return (
     <article className={`${styles.page} ${styles.mindfulPage}`} aria-label="Page 17: Foods To Be More Mindful Of">
       <BotanicalBranch className={styles.mindfulTopBranch} />
@@ -937,10 +1259,10 @@ function MindfulFoodsPhonePage() {
         <h2>Foods To Be<br />More Mindful Of</h2>
         <div className={styles.mindfulDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
         <p>These foods aren&rsquo;t “bad”, but they may impact<br />hormone balance, energy, and cravings when<br />consumed too often or in excess.</p>
-        <div className={styles.mindfulDynamic}><BotanicalBranch />Dynamic: &#123;&#123;foods_to_be_mindful_of&#125;&#125;</div>
+        <div className={styles.mindfulDynamic}><BotanicalBranch />Personalized from your health profile</div>
       </section>
       <section className={styles.mindfulGrid}>
-        {mindfulFoods.map((food, index) => (
+        {foods.map((food, index) => (
           <article className={styles.mindfulCard} key={food.image}>
             <div className={styles.mindfulPhoto}><Image src={food.image} alt="" fill sizes="10dvh" /></div>
             <div className={styles.mindfulCardHeading}><span><MindfulFoodIcon index={index} /></span><h3>{food.title}</h3></div>
@@ -966,6 +1288,18 @@ const priorityFoods = [
 ];
 
 function PriorityFoodsPhonePage() {
+  const { ebook } = useMobileEbook();
+  const supplied = asRecords(ebook.summary.foods_to_prioritize ?? ebook.summary.foods_to_prioritise);
+  const foods = priorityFoods.map((fallback, index) => {
+    const record = supplied[index] || {};
+    return {
+      ...fallback,
+      title: asText(record.title, typeof fallback.title === "string" ? fallback.title : `Priority food ${index + 1}`),
+      copy: asText(record.description, fallback.copy),
+      image: asText(record.image_url, fallback.image),
+    };
+  });
+
   return (
     <article className={`${styles.page} ${styles.priorityPage}`} aria-label="Page 18: Foods To Prioritize">
       <BotanicalBranch className={styles.priorityTopBranch} />
@@ -976,10 +1310,10 @@ function PriorityFoodsPhonePage() {
         <h2>Foods To<br />Prioritize</h2>
         <div className={styles.priorityDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
         <p>Nourish your body with whole, nutrient-<br />dense foods that support hormonal<br />balance, steady energy, and long-term<br />wellness.</p>
-        <div className={styles.priorityDynamic}><BotanicalBranch />Dynamic: &#123;&#123;foods_to_prioritize&#125;&#125;</div>
+        <div className={styles.priorityDynamic}><BotanicalBranch />Personalized from your health profile</div>
       </section>
       <section className={styles.priorityGrid}>
-        {priorityFoods.map((food) => (
+        {foods.map((food) => (
           <article className={styles.priorityCard} key={food.image}>
             <div className={styles.priorityPhoto}><Image src={food.image} alt="" fill sizes="10dvh" /></div>
             <div className={styles.priorityCardHeading}><span><FrameworkIcon name="protein" /></span><h3>{food.title}</h3></div>
@@ -1017,7 +1351,7 @@ function BalancedPlatePhonePage() {
         <div className={styles.balancedPlateDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
         <p>A simple visual guide to help you<br />build balanced, nourishing meals<br />that support hormone balance,<br />steady energy, and long-term<br />wellness.</p>
       </section>
-      <div className={styles.balancedPlateBowl}><Image src="/ebook/balanced-plate-bowl.png" alt="A balanced plate divided into vegetables, protein and smart carbohydrates" fill sizes="38dvh" /></div>
+      <div className={styles.balancedPlateBowl}><DynamicEbookImage mediaKey="balanced_plate" fallbackSrc="/ebook/balanced-plate-bowl.png" alt="A balanced plate divided into vegetables, protein and smart carbohydrates" fill sizes="38dvh" /></div>
       <section className={styles.balancedPlateSections}>
         {plateSections.map((section) => (
           <article className={styles.balancedPlateSection} key={section.amount + String(section.title)}>
@@ -1053,33 +1387,43 @@ const hydrationSteps: Array<{ icon: HydrationIconName; title: string; copy: Reac
 ];
 
 function HydrationPhonePage() {
+  const { ebook } = useMobileEbook();
+  const guidance = asRecord(ebook.summary.hydration_guidance);
+  const supplied = asRecords(guidance.steps);
+  const steps = hydrationSteps.map((fallback, index) => {
+    const record = supplied[index] || {};
+    return {
+      ...fallback,
+      title: `${index + 1}. ${asText(record.title, fallback.title.replace(/^\d+\.\s*/, ""))}`,
+      copy: asText(record.body, index === 0 ? asText(guidance.daily_goal, "Aim for 8 to 10 glasses spread throughout the day.") : `A practical hydration habit personalized to your routine.`),
+    };
+  });
+  const tips = asStrings(guidance.tips);
+
   return (
     <article className={`${styles.page} ${styles.hydrationPage}`} aria-label="Page 20: Hydration Recommendations">
       <BotanicalBranch className={styles.hydrationTopBranch} />
       <header className={styles.hydrationTopline}>ZenPlato <span>|</span> 03 Your Food &amp; Nutrition Guide</header>
       <div className={styles.hydrationTopRule} aria-hidden="true" />
-      <div className={styles.hydrationScene}><Image src="/ebook/hydration-scene.png" alt="A glass pitcher infused with lemon and mint beside a water glass" fill sizes="35dvh" /></div>
+      <div className={styles.hydrationScene}><DynamicEbookImage mediaKey="hydration" fallbackSrc="/ebook/hydration-scene.png" alt="A glass pitcher infused with lemon and mint beside a water glass" fill sizes="35dvh" /></div>
       <section className={styles.hydrationIntro}>
         <h2>Hydration<br />Recommendations</h2>
         <div className={styles.hydrationDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
-        <p>Proper hydration supports hormone balance,<br />energy levels, digestion, and glowing skin.<br />Small, consistent habits make a big<br />difference.</p>
+        <p>{asText(guidance.intro, "Proper hydration supports energy, digestion, recovery, and skin health. Small, consistent habits make a big difference.")}</p>
         <h3>Your Hydration Framework</h3>
       </section>
       <section className={styles.hydrationSteps}>
-        {hydrationSteps.map((step, index) => (
+        {steps.map((step, index) => (
           <article className={styles.hydrationStep} key={step.title}>
             <div className={styles.hydrationIcon}><HydrationIcon name={step.icon} /></div>
-            {index < hydrationSteps.length - 1 && <i className={styles.hydrationConnector} aria-hidden="true" />}
+            {index < steps.length - 1 && <i className={styles.hydrationConnector} aria-hidden="true" />}
             <div><h4>{step.title}</h4><p>{step.copy}</p></div>
           </article>
         ))}
       </section>
       <section className={styles.hydrationTips}>
         <h3>Additional Tips</h3>
-        <p>♙ <span>Keep a water bottle with you to stay on track.</span></p>
-        <p>♨ <span>Herbal teas and infused water count towards your intake.</span></p>
-        <p>⌁ <span>Include electrolytes if you sweat heavily or feel low energy.</span></p>
-        <p>▣ <span>Use reminders or hydration apps to build the habit.</span></p>
+        {(tips.length ? tips : ["Keep a water bottle with you to stay on track.", "Herbal teas and infused water count towards your intake.", "Include electrolytes when activity or climate increases your needs.", "Use reminders to make hydration automatic."]).slice(0, 4).map((tip) => <p key={tip}>• <span>{tip}</span></p>)}
       </section>
       <blockquote className={styles.hydrationTakeaway}><BotanicalBranch /><p>Hydration is self-care.<br />Nourish your body with water,<br />and it will nourish you in return.</p></blockquote>
       <div className={styles.hydrationPageNumber} aria-hidden="true"><i />25<i /></div>
@@ -1116,20 +1460,32 @@ const mealTimingRows = [
 ];
 
 function MealTimingPhonePage() {
+  const { ebook } = useMobileEbook();
+  const guidance = asRecord(ebook.summary.meal_timing_guidance);
+  const supplied = asRecords(guidance.entries);
+  const rows = mealTimingRows.map((fallback, index) => {
+    const record = supplied[index] || {};
+    return {
+      time: asText(record.time, fallback.time),
+      title: asText(record.title, fallback.title),
+      copy: asText(record.body, "A balanced eating window personalized to support your energy and daily routine."),
+    };
+  });
+
   return (
     <article className={`${styles.page} ${styles.mealTimingPage}`} aria-label="Page 21: Meal Timing Guidance">
       <BotanicalBranch className={styles.mealTimingTopBranch} />
-      <header className={styles.mealTimingTopline}>ZenPlato <span>|</span> 03 Your Food &amp; Nautrition Guide</header>
+      <header className={styles.mealTimingTopline}>ZenPlato <span>|</span> 03 Your Food &amp; Nutrition Guide</header>
       <div className={styles.mealTimingTopRule} aria-hidden="true" />
 
       <section className={styles.mealTimingIntro}>
         <h2>Meal Timing<br />Guidance</h2>
-        <p>When you eat is just as important as what<br />you eat. Consistent meal timing helps<br />stabilize blood sugar, balance hormones,<br />and support steady energy throughout<br />the day.</p>
+        <p>{asText(guidance.intro, "Consistent meal timing can support steadier energy, hunger, sleep, and recovery throughout your day.")}</p>
       </section>
 
       <section className={styles.mealTimingTimeline}>
         <h3>Daily Nutrition Timeline</h3>
-        {mealTimingRows.map((row) => (
+        {rows.map((row) => (
           <article className={styles.mealTimingRow} key={row.title}>
             <h4>{row.time}</h4>
             <h5>{row.title}</h5>
@@ -1139,8 +1495,8 @@ function MealTimingPhonePage() {
       </section>
 
       <section className={styles.mealTimingKey}>
-        <h3>Consistency Is Key</h3>
-        <p>Try to eat at regular times each day.<br />This helps regulate hunger, balance<br />hormones, and support overall<br />well-being.</p>
+        <h3>{asText(guidance.consistency_title, "Consistency Is Key")}</h3>
+        <p>{asText(guidance.consistency_body, "Try to eat at regular times each day to support hunger, energy, and overall wellbeing.")}</p>
       </section>
 
       <div className={styles.mealTimingPageNumber} aria-hidden="true"><i />26<i /></div>
@@ -1149,6 +1505,12 @@ function MealTimingPhonePage() {
 }
 
 function SustainableRhythmPhonePage() {
+  const { ebook } = useMobileEbook();
+  const guidance = asRecord(ebook.summary.meal_timing_guidance);
+  const entries = asRecords(guidance.entries);
+  const afternoon = entries[3] || {};
+  const dinner = entries[4] || {};
+
   return (
     <article className={`${styles.page} ${styles.sustainableRhythmPage}`} aria-label="Page 22: Building a Sustainable Rhythm">
       <header className={styles.sustainableRhythmTopline}>ZenPlato <span>|</span> 03 Your Food &amp; Nutrition Guide</header>
@@ -1160,50 +1522,56 @@ function SustainableRhythmPhonePage() {
 
       <section className={styles.sustainableRhythmMeals}>
         <article>
-          <h3>4:00 – 4:30 PM</h3>
-          <h4>Evening Snack</h4>
-          <p>Choose a protein- or fiber-rich<br />snack to stabilize blood sugar<br />and prevent overeating later.</p>
+          <h3>{asText(afternoon.time, "4:00 – 4:30 PM")}</h3>
+          <h4>{asText(afternoon.title, "Evening Snack")}</h4>
+          <p>{asText(afternoon.body, "Choose a protein- or fibre-rich snack to support energy before dinner.")}</p>
         </article>
         <article>
-          <h3>6:30 – 7:30 PM</h3>
-          <h4>Dinner</h4>
-          <p>Keep dinner light yet<br />satisfying with protein<br />and vegetables to support<br />digestion and restful sleep.</p>
+          <h3>{asText(dinner.time, "6:30 – 7:30 PM")}</h3>
+          <h4>{asText(dinner.title, "Dinner")}</h4>
+          <p>{asText(dinner.body, "Choose a satisfying dinner that supports digestion, recovery, and restful sleep.")}</p>
         </article>
       </section>
 
       <section className={styles.sustainableRhythmKey}>
-        <h3>Consistency Is Key</h3>
-        <p>Try to eat at regular times<br />each day. This helps regulate<br />hunger, balance hormones,<br />and support overall well-being.</p>
+        <h3>{asText(guidance.consistency_title, "Consistency Is Key")}</h3>
+        <p>{asText(guidance.consistency_body, "A repeatable rhythm helps regulate hunger, energy, and overall wellbeing.")}</p>
       </section>
 
-      <p className={styles.sustainableRhythmQuote}>Small, consistent habits create<br />meaningful long-term change.</p>
+      <p className={styles.sustainableRhythmQuote}>{asText(guidance.quote, "Small, consistent habits create meaningful long-term change.")}</p>
       <div className={styles.sustainableRhythmPageNumber} aria-hidden="true"><i />27<i /></div>
     </article>
   );
 }
 
 function SmartFoodSwapsPhonePage() {
+  const { ebook } = useMobileEbook();
+  const guidance = asRecord(ebook.summary.food_swaps);
+  const swaps = asRecords(guidance.swaps);
+  const first = swaps[0] || {};
+  const second = swaps[1] || {};
+
   return (
     <article className={`${styles.page} ${styles.smartFoodSwapsPage}`} aria-label="Page 23: Smart Food Swaps">
       <header className={styles.smartFoodSwapsTopline}>ZenPlato <span>|</span> 03 Your Food &amp; Nutrition Guide</header>
 
       <section className={styles.smartFoodSwapsIntro}>
         <h2>Smart<br />Food<br />Swaps</h2>
-        <p>Small swaps can make<br />a big difference.<br />Choose foods that<br />nourish your body,<br />balance hormones,<br />and support<br />long-term well-being.</p>
-        <div className={styles.smartFoodSwapsDynamic}><span>Dynamic:</span><strong>&#123;&#123;food_swaps&#125;&#125;</strong></div>
+        <p>{asText(guidance.intro, "Small swaps can make a big difference. Choose foods that nourish your body and support long-term wellbeing.")}</p>
+        <div className={styles.smartFoodSwapsDynamic}><span>Personalized</span><strong>From your profile</strong></div>
       </section>
 
       <section className={`${styles.smartFoodSwapCard} ${styles.smartFoodSwapCardOne}`}>
         <div className={styles.smartFoodSwapNumber}>01</div>
         <div className={styles.smartFoodSwapBefore}>
           <h3>Before</h3>
-          <h4>Sugary<br />Cereals</h4>
-          <p>High in refined<br />sugar and low in<br />fiber, can cause<br />energy crashes.</p>
+          <h4>{asText(first.before_title, "Sugary Cereals")}</h4>
+          <p>{asText(first.before_body, "High in refined sugar and low in fibre, which can lead to energy crashes.")}</p>
         </div>
         <div className={styles.smartFoodSwapAfter}>
           <h3>After</h3>
-          <h4>Oats with<br />Seeds &amp;<br />Berries</h4>
-          <p>High in fiber and<br />healthy fats to<br />keep you full and<br />energized.</p>
+          <h4>{asText(first.after_title, "Oats with Seeds & Berries")}</h4>
+          <p>{asText(first.after_body, "Fibre and healthy fats can support fullness and steadier energy.")}</p>
         </div>
       </section>
 
@@ -1211,13 +1579,13 @@ function SmartFoodSwapsPhonePage() {
         <div className={styles.smartFoodSwapNumber}>02</div>
         <div className={styles.smartFoodSwapBefore}>
           <h3>Before</h3>
-          <h4>White<br />Bread</h4>
-          <p>Refined carbs that<br />spike blood sugar<br />and increase<br />cravings.</p>
+          <h4>{asText(second.before_title, "White Bread")}</h4>
+          <p>{asText(second.before_body, "Refined carbohydrates may increase energy swings and cravings.")}</p>
         </div>
         <div className={styles.smartFoodSwapAfter}>
           <h3>After</h3>
-          <h4>Whole Grain<br />Sourdough</h4>
-          <p>Rich in fiber and<br />nutrients, supports<br />steady energy and<br />gut health.</p>
+          <h4>{asText(second.after_title, "Whole Grain Sourdough")}</h4>
+          <p>{asText(second.after_body, "A fibre-rich option can support steadier energy and gut health.")}</p>
         </div>
       </section>
 
@@ -1227,6 +1595,12 @@ function SmartFoodSwapsPhonePage() {
 }
 
 function SmartSwapsContinuedPhonePage() {
+  const { ebook } = useMobileEbook();
+  const guidance = asRecord(ebook.summary.food_swaps);
+  const swaps = asRecords(guidance.swaps);
+  const third = swaps[2] || {};
+  const fourth = swaps[3] || {};
+
   return (
     <article className={`${styles.page} ${styles.smartSwapsContinuedPage}`} aria-label="Page 24: Smart Swaps Continued">
       <header className={styles.smartSwapsContinuedTopline}>ZenPlato <span>|</span> 03 Your Food &amp; Nutrition Guide</header>
@@ -1235,13 +1609,13 @@ function SmartSwapsContinuedPhonePage() {
         <div className={styles.smartSwapsContinuedNumber}>03</div>
         <div className={styles.smartSwapsContinuedBefore}>
           <h3>Before</h3>
-          <h4>Sweetened<br />Yogurt</h4>
-          <p>Often high in added<br />sugar and artificial<br />ingredients.</p>
+          <h4>{asText(third.before_title, "Sweetened Yogurt")}</h4>
+          <p>{asText(third.before_body, "Often high in added sugar and less supportive ingredients.")}</p>
         </div>
         <div className={styles.smartSwapsContinuedAfter}>
           <h3>After</h3>
-          <h4>Plain Greek Yogurt<br />with Fruits &amp; Nuts</h4>
-          <p>High in protein and<br />healthy fats to support<br />hormone balance.</p>
+          <h4>{asText(third.after_title, "Plain Greek Yogurt with Fruit & Nuts")}</h4>
+          <p>{asText(third.after_body, "Protein and healthy fats support fullness and balance.")}</p>
         </div>
       </section>
 
@@ -1249,17 +1623,17 @@ function SmartSwapsContinuedPhonePage() {
         <div className={styles.smartSwapsContinuedNumber}>04</div>
         <div className={styles.smartSwapsContinuedBefore}>
           <h3>Before</h3>
-          <h4>Sugary Drinks</h4>
-          <p>Empty calories that<br />lead to energy crashes<br />and sugar spikes.</p>
+          <h4>{asText(fourth.before_title, "Sugary Drinks")}</h4>
+          <p>{asText(fourth.before_body, "Added sugars can contribute to spikes and energy crashes.")}</p>
         </div>
         <div className={styles.smartSwapsContinuedAfter}>
           <h3>After</h3>
-          <h4>Infused Water<br />or Herbal Tea</h4>
-          <p>Hydrating, refreshing,<br />and supports overall<br />well-being.</p>
+          <h4>{asText(fourth.after_title, "Infused Water or Herbal Tea")}</h4>
+          <p>{asText(fourth.after_body, "A refreshing option that supports hydration and wellbeing.")}</p>
         </div>
       </section>
 
-      <p className={styles.smartSwapsContinuedQuote}>Small choices<br />repeated consistently<br />become powerful<br />habits.</p>
+      <p className={styles.smartSwapsContinuedQuote}>{asText(guidance.quote, "Small choices repeated consistently become powerful habits.")}</p>
       <div className={styles.smartSwapsContinuedPageNumber} aria-hidden="true"><i />29<i /></div>
     </article>
   );
@@ -1335,6 +1709,9 @@ const stressCycleRows = [
 ];
 
 function StressWellbeingPhonePage() {
+  const { ebook } = useMobileEbook();
+  const insight = asText(ebook.summary.stress_insight, "Stress can influence sleep, cravings, energy, and consistency. Gentle recovery habits help protect your progress.");
+
   return (
     <article className={`${styles.page} ${styles.stressWellbeingPage}`} aria-label="Page 27: Stress and Wellbeing">
       <BotanicalBranch className={styles.stressWellbeingTopBranch} />
@@ -1356,7 +1733,7 @@ function StressWellbeingPhonePage() {
         ))}
       </section>
 
-      <aside className={styles.stressWellbeingInsight}>Insight: &#123;&#123;stress_insight&#125;&#125;</aside>
+      <aside className={styles.stressWellbeingInsight}>Insight: {insight}</aside>
       <p className={styles.stressWellbeingQuote}>When you manage stress,<br />you protect your energy,<br />your choices, and<br />your future.</p>
       <div className={styles.stressWellbeingPageNumber} aria-hidden="true">33<i /></div>
     </article>
@@ -1380,6 +1757,17 @@ const dailyWellnessHabits: Array<{ icon: WellnessIconName; number: string; title
 ];
 
 function DailyWellnessPhonePage() {
+  const { ebook } = useMobileEbook();
+  const supplied = asRecords(ebook.summary.daily_habits);
+  const habits = dailyWellnessHabits.map((fallback, index) => {
+    const record = supplied[index] || {};
+    return {
+      ...fallback,
+      title: asText(record.title, typeof fallback.title === "string" ? fallback.title : `Daily habit ${index + 1}`),
+      copy: asText(record.body, "A small daily action personalized to support your health goals."),
+    };
+  });
+
   return (
     <article className={`${styles.page} ${styles.dailyWellnessPage}`} aria-label="Page 28: Daily Wellness Habits">
       <BotanicalBranch className={styles.dailyWellnessTopBranch} />
@@ -1390,11 +1778,11 @@ function DailyWellnessPhonePage() {
         <h2>Daily<br />Wellness<br />Habits</h2>
         <div className={styles.dailyWellnessDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
         <p>Small daily habits create big shifts.<br />These simple, sustainable actions<br />support your hormones, boost energy,<br />and help you feel your best.</p>
-        <aside><span>Dynamic:</span> &#123;&#123;daily_habits&#125;&#125;</aside>
+        <aside><span>Personalized:</span> Based on your profile</aside>
       </section>
 
       <section className={styles.dailyWellnessCards}>
-        {dailyWellnessHabits.map((habit) => (
+        {habits.map((habit) => (
           <article className={styles.dailyWellnessCard} key={habit.number}>
             <div className={styles.dailyWellnessCardHead}>
               <span>{habit.number}</span>
@@ -1463,6 +1851,10 @@ function RecipeCollectionSectionPhonePage() {
 }
 
 function RecipeCollectionIntroPhonePage() {
+  const { ebook } = useMobileEbook();
+  const label = conditionLabel(ebook);
+  const insight = asText(ebook.summary.recipe_collection_intro, `These recipes are selected to support your ${label.toLowerCase()} needs, preferences, energy, and daily schedule.`);
+
   return (
     <article className={`${styles.page} ${styles.recipeCollectionIntroPage}`} aria-label="Page 31: Welcome to your personalized recipe collection">
       <BotanicalBranch className={styles.recipeCollectionIntroTopBranch} />
@@ -1473,13 +1865,13 @@ function RecipeCollectionIntroPhonePage() {
         <p className={styles.recipeCollectionIntroKicker}>Welcome To</p>
         <h2>Your<br />Personalized<br />Recipe<br />Collection</h2>
         <div className={styles.recipeCollectionIntroDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
-        <p>Every recipe in this collection is<br />crafted with your unique PCOS<br />needs in mind—balancing hormones,<br />supporting energy, and making<br />healthy eating simple and enjoyable.</p>
+        <p>Every recipe in this collection is crafted with your unique {label} needs and daily routine in mind.</p>
         <p>These meals focus on whole<br />ingredients, balanced nutrients,<br />and delicious flavors to help you<br />feel your best every day.</p>
       </section>
 
       <aside className={styles.recipeCollectionIntroInsight}>
         <span aria-hidden="true"><BotanicalBranch /></span>
-        <p><strong>Dynamic Insight</strong><br />&#123;&#123;recipe_collection_intro&#125;&#125;</p>
+        <p><strong>Your Recipe Insight</strong><br />{insight}</p>
       </aside>
 
       <section className={styles.recipeCollectionIntroPillars}>
@@ -1528,6 +1920,12 @@ const breakfastHighlights = [
 ];
 
 function BreakfastsPhonePage() {
+  const { ebook, media } = useMobileEbook();
+  const recipe = asRecords(ebook.summary.breakfast_recipes)[0] || {};
+  const ingredients = asStrings(recipe.ingredients);
+  const method = asRecords(recipe.method).map((step) => asText(step.body, "")).filter(Boolean);
+  const highlights = asRecords(recipe.nutrition_highlights);
+
   return (
     <article className={`${styles.page} ${styles.breakfastsPage}`} aria-label="Page 32: Building Better Breakfasts">
       <BotanicalBranch className={styles.breakfastsTopBranch} />
@@ -1536,34 +1934,34 @@ function BreakfastsPhonePage() {
 
       <section className={styles.breakfastsIntro}>
         <p>Building Better</p>
-        <h2>Breakfasts</h2>
+        <h2>{asText(recipe.name, "Breakfasts")}</h2>
         <div className={styles.breakfastsDivider} aria-hidden="true"><i /><BotanicalBranch /><i /></div>
         <em>Start your day with balance.</em>
-        <p className={styles.breakfastsCopy}>These breakfasts are designed to nourish<br />your body, balance hormones, and keep<br />you energized and satisfied for hours.</p>
+        <p className={styles.breakfastsCopy}>{asText(recipe.subtitle, "A nourishing breakfast designed to support balanced energy and lasting satisfaction.")}</p>
       </section>
 
       <section className={styles.breakfastsMeta}>
-        <article><WellnessIcon name="bottle" /><h3>Preparation Time</h3><p>10 mins</p></article>
-        <article><span>♆</span><h3>Servings</h3><p>2</p></article>
-        <article><FrameworkIcon name="fibre" /><h3>Difficulty</h3><p>Easy</p></article>
+        <article><WellnessIcon name="bottle" /><h3>Preparation Time</h3><p>{asText(recipe.prep_time, "10 mins")}</p></article>
+        <article><span>♆</span><h3>Servings</h3><p>{asText(recipe.servings, "2")}</p></article>
+        <article><FrameworkIcon name="fibre" /><h3>Difficulty</h3><p>{asText(recipe.difficulty, "Easy")}</p></article>
       </section>
 
-      <div className={styles.breakfastsHero}><Image src="/ebook/breakfasts-hero.png" alt="A bowl of oats topped with berries, seeds and nut butter" fill sizes="40dvh" /></div>
+      <div className={styles.breakfastsHero}><Image src={asText(recipe.image_url, media.breakfast || "/ebook/breakfasts-hero.png")} alt={`A serving of ${asText(recipe.name, "a nourishing breakfast")}`} fill sizes="40dvh" /></div>
 
       <section className={styles.breakfastsIngredients}>
         <h3>Ingredients</h3>
-        <ul>{breakfastIngredients.map((item) => <li key={item}>{item}</li>)}</ul>
+        <ul>{(ingredients.length ? ingredients : breakfastIngredients).map((item) => <li key={item}>{item}</li>)}</ul>
       </section>
 
       <section className={styles.breakfastsMethod}>
         <h3>Method</h3>
-        <ol>{breakfastMethod.map((item) => <li key={item}>{item}</li>)}</ol>
-        <aside><BotanicalBranch /><p><strong>Make It Yours</strong><br />Add a scoop of protein powder or swap berries for<br />diced apple and cinnamon for extra satisfaction.</p></aside>
+        <ol>{(method.length ? method : breakfastMethod).map((item) => <li key={item}>{item}</li>)}</ol>
+        <aside><BotanicalBranch /><p><strong>{asText(recipe.make_it_yours_title, "Make It Yours")}</strong><br />{asText(recipe.make_it_yours_body, "Adjust toppings and texture to match your preferences.")}</p></aside>
       </section>
 
       <section className={styles.breakfastsHighlights}>
         <h3>Nutrition Highlights</h3>
-        {breakfastHighlights.map(([title, copy]) => (
+        {(highlights.length ? highlights.map((item) => [asText(item.title, "Nutrition highlight"), asText(item.body, "A benefit selected for your health goals.")]) : breakfastHighlights).slice(0, 4).map(([title, copy]) => (
           <article key={title}>
             <span>{title === "Hormone Balancing" ? "♎" : title === "Steady Energy" ? "ϟ" : title === "Rich In Antioxidants" ? "♡" : <FrameworkIcon name="fibre" />}</span>
             <div><h4>{title}</h4><p>{copy}</p></div>
@@ -1583,34 +1981,38 @@ const matchaProteinRows = [
 ];
 
 function MatchaChiaNutritionPhonePage() {
+  const { ebook } = useMobileEbook();
+  const recipe = asRecords(ebook.summary.breakfast_recipes)[1] || asRecords(ebook.summary.breakfast_recipes)[0] || {};
+  const breakdown = asRecords(recipe.nutrition_breakdown);
+
   return (
     <article className={`${styles.page} ${styles.matchaNutritionPage}`} aria-label="Page 33: Matcha Chia Pudding Bowl nutrition highlights">
       <header className={styles.matchaNutritionTopline}>ZenPlato <span>|</span> 05 Your Personalized Recipe Collection</header>
 
       <section className={styles.matchaNutritionIntro}>
         <p>Building Better</p>
-        <h2>Matcha<br />Chia Pudding<br />Bowl</h2>
-        <p className={styles.matchaNutritionCopy}>A refreshing, antioxidant-rich<br />breakfast that supports balanced<br />energy and hormone health.</p>
+        <h2>{asText(recipe.name, "Matcha Chia Pudding Bowl")}</h2>
+        <p className={styles.matchaNutritionCopy}>{asText(recipe.subtitle, "A refreshing breakfast that supports balanced energy and everyday wellbeing.")}</p>
       </section>
 
       <section className={styles.matchaNutritionMeta}>
-        <article><h3>Preparation Time</h3><p>10 mins</p></article>
-        <article><h3>Servings</h3><p>2</p></article>
-        <article><h3>Difficulty</h3><p>Easy</p></article>
+        <article><h3>Preparation Time</h3><p>{asText(recipe.prep_time, "10 mins")}</p></article>
+        <article><h3>Servings</h3><p>{asText(recipe.servings, "2")}</p></article>
+        <article><h3>Difficulty</h3><p>{asText(recipe.difficulty, "Easy")}</p></article>
       </section>
 
       <h3 className={styles.matchaNutritionHeading}>Nutrition Highlights</h3>
       <section className={styles.matchaProteinCard}>
-        <h4>Protein</h4>
-        <p>A balanced blend of<br />plant-based proteins<br />to keep you full,<br />support muscle<br />health and balance<br />hormones.</p>
+        <h4>{asText(recipe.protein_summary_title, "Protein")}</h4>
+        <p>{asText(recipe.protein_summary_body, "A balanced protein mix to support fullness, recovery, and steady energy.")}</p>
       </section>
 
       <section className={styles.matchaProteinTable}>
         <header><span>Ingredient (Protein Source)</span><span>Amount Per Serving</span></header>
-        {matchaProteinRows.map(([ingredient, amount]) => (
+        {(breakdown.length ? breakdown.map((item) => [asText(item.ingredient, "Ingredient"), asText(item.amount, "-")]) : matchaProteinRows).map(([ingredient, amount]) => (
           <article key={ingredient}><span>{ingredient}</span><strong>{amount}</strong></article>
         ))}
-        <footer><span>Total Protein</span><strong>12 g</strong></footer>
+        <footer><span>Total Protein</span><strong>{asText(recipe.total_protein, "12 g")}</strong></footer>
       </section>
     </article>
   );
@@ -1626,12 +2028,16 @@ const matchaBenefitCards = [
 ];
 
 function MatchaChiaBenefitsPhonePage() {
+  const { ebook, media } = useMobileEbook();
+  const recipe = asRecords(ebook.summary.breakfast_recipes)[1] || asRecords(ebook.summary.breakfast_recipes)[0] || {};
+  const benefits = asRecords(recipe.benefits);
+
   return (
     <article className={`${styles.page} ${styles.matchaBenefitsPage}`} aria-label="Page 34: What this bowl does for you">
       <BotanicalBranch className={styles.matchaBenefitsTopBranch} />
       <header className={styles.matchaBenefitsTopline}>ZenPlato <span>|</span> 05 Your Personalized Recipe Collection</header>
       <div className={styles.matchaBenefitsTopRule} aria-hidden="true" />
-      <div className={styles.matchaBenefitsHero}><Image src="/ebook/matcha-benefits-hero.png" alt="Matcha chia pudding bowl with kiwi, blueberries, coconut and seeds" fill sizes="31dvh" /></div>
+      <div className={styles.matchaBenefitsHero}><Image src={asText(recipe.image_url, media.breakfast_benefits || "/ebook/matcha-benefits-phone-hero.png")} alt={`Benefits of ${asText(recipe.name, "your personalized breakfast")}`} fill sizes="31dvh" /></div>
 
       <section className={styles.matchaBenefitsIntro}>
         <p>Beyond Nutrition</p>
@@ -1641,7 +2047,7 @@ function MatchaChiaBenefitsPhonePage() {
       </section>
 
       <section className={styles.matchaBenefitsGrid}>
-        {matchaBenefitCards.map(([icon, title, copy]) => (
+        {(benefits.length ? benefits.map((item, index) => [matchaBenefitCards[index]?.[0] || "♡", asText(item.title, "Wellness benefit"), asText(item.body, "A benefit personalized to your health goals.")]) : matchaBenefitCards).slice(0, 6).map(([icon, title, copy]) => (
           <article key={String(title)}>
             <span>{icon}</span>
             <h3>{title}</h3>
@@ -1659,69 +2065,28 @@ function MatchaChiaBenefitsPhonePage() {
   );
 }
 
-const matchaIngredients = [
-  ["½ Cup", "Chia Seeds"],
-  ["2 Cups", "Unsweetened Almond Milk"],
-  ["1 Tsp", "Matcha Powder"],
-  ["1 Tbsp", "Maple Syrup"],
-  ["½ Tsp", "Vanilla Extract"],
-  ["Toppings", "Kiwi, Blueberries"],
-  ["Toppings", "Coconut Flakes"],
-  ["Toppings", "Pumpkin Seeds"],
-];
+function MatchaInstructionsSpreadPhonePage() {
+  const { ebook } = useMobileEbook();
+  const recipe = asRecords(ebook.summary.breakfast_recipes)[1] || asRecords(ebook.summary.breakfast_recipes)[0] || {};
+  const ingredients = asStrings(recipe.ingredients);
 
-function MatchaIngredientsPhonePage() {
   return (
-    <article className={`${styles.page} ${styles.matchaIngredientsPage}`} aria-label="Page 35: Matcha Chia Pudding Bowl ingredients">
+    <article className={`${styles.page} ${styles.matchaIngredientsPage}`} aria-label={`${asText(recipe.name, "Breakfast recipe")} ingredients`}>
       <header className={styles.matchaIngredientsTopline}>ZenPlato <span>|</span> 05 Your Personalized Recipe Collection</header>
       <section className={styles.matchaIngredientsIntro}>
-        <p>Matcha Chia Pudding Bowl</p>
+        <p>{asText(recipe.name, "Breakfast Recipe")}</p>
         <h2>Ingredients</h2>
       </section>
       <section className={styles.matchaIngredientsLabels}>
-        {matchaIngredients.map(([amount, name]) => (
-          <article key={`${amount}-${name}`}>
-            <strong>{amount}</strong>
-            <span>{name}</span>
-          </article>
+        {(ingredients.length ? ingredients : breakfastIngredients).slice(0, 8).map((ingredient) => (
+          <article key={ingredient}><span>{ingredient}</span></article>
         ))}
       </section>
       <aside className={styles.matchaIngredientsTip}>
-        <h3>Tip</h3>
-        <p>Feel free to customize<br />your toppings with<br />seasonal fruits or<br />your favorites.</p>
+        <h3>{asText(recipe.make_it_yours_title, "Tip")}</h3>
+        <p>{asText(recipe.make_it_yours_body, "Customize the toppings and sweetness to your preference.")}</p>
       </aside>
       <div className={styles.matchaIngredientsPageNumber} aria-hidden="true">75<i /></div>
-    </article>
-  );
-}
-
-const matchaMethodSteps = [
-  <>In a bowl or jar,<br />whisk together<br />chia seeds, almond<br />milk, matcha<br />powder, maple<br />syrup, and<br />vanilla extract.</>,
-  <>Stir well until<br />everything is<br />well combined.</>,
-  <>Cover and<br />refrigerate<br />overnight<br />(or at least<br />4 hours).</>,
-  <>In the morning,<br />give it a good stir<br />and top with your<br />favorite fruits<br />and seeds.</>,
-];
-
-function MatchaMethodPhonePage() {
-  return (
-    <article className={`${styles.page} ${styles.matchaMethodPage}`} aria-label="Page 36: Matcha Chia Pudding Bowl method">
-      <header className={styles.matchaMethodTopline}>ZenPlato <span>|</span> 05 Your Personalized Recipe Collection</header>
-      <section className={styles.matchaMethodIntro}>
-        <p>Matcha Chia Pudding Bowl</p>
-        <h2>Method</h2>
-      </section>
-      <section className={styles.matchaMethodSteps}>
-        {matchaMethodSteps.map((step, index) => (
-          <article key={index}>
-            <p>{step}</p>
-          </article>
-        ))}
-      </section>
-      <aside className={styles.matchaMethodMakeYours}>
-        <h3>Make It Yours</h3>
-        <p>Add a spoon of nut<br />butter or a sprinkle of<br />hemp seeds for extra<br />protein and healthy fats.</p>
-      </aside>
-      <div className={styles.matchaMethodPageNumber} aria-hidden="true">76<i /></div>
     </article>
   );
 }
@@ -1736,6 +2101,10 @@ const matchaCookingRows = [
 ];
 
 function MatchaCookingMethodPhonePage() {
+  const { ebook } = useMobileEbook();
+  const recipe = asRecords(ebook.summary.breakfast_recipes)[1] || asRecords(ebook.summary.breakfast_recipes)[0] || {};
+  const method = asRecords(recipe.method);
+
   return (
     <article className={`${styles.page} ${styles.matchaCookingPage}`} aria-label="Page 37: Matcha Chia Pudding Bowl method of cooking">
       <BotanicalBranch className={styles.matchaCookingTopBranch} />
@@ -1744,11 +2113,11 @@ function MatchaCookingMethodPhonePage() {
       <section className={styles.matchaCookingIntro}>
         <p>Building Better</p>
         <div className={styles.matchaCookingMiniDivider} aria-hidden="true"><BotanicalBranch /><i /></div>
-        <h2>Matcha<br />Chia Pudding<br />Bowl</h2>
+        <h2>{asText(recipe.name, "Matcha Chia Pudding Bowl")}</h2>
       </section>
       <h3 className={styles.matchaCookingHeading}>Method</h3>
       <section className={styles.matchaCookingRows}>
-        {matchaCookingRows.map(([number, title, copy]) => (
+        {(method.length ? method.map((step, index) => [String(index + 1).padStart(2, "0"), asText(step.title, `Step ${index + 1}`), asText(step.body, "Follow this personalized preparation step.")]) : matchaCookingRows).slice(0, 6).map(([number, title, copy]) => (
           <article key={number}>
             <div><strong>{number}</strong><h4>{title}</h4></div>
             <p>{copy}</p>
@@ -1756,8 +2125,8 @@ function MatchaCookingMethodPhonePage() {
         ))}
       </section>
       <aside className={styles.matchaCookingTip}>
-        <h3>Tip</h3>
-        <p>For a creamier texture, use full-fat coconut milk.<br />Adjust sweetness to your preference.</p>
+        <h3>{asText(recipe.make_it_yours_title, "Tip")}</h3>
+        <p>{asText(recipe.make_it_yours_body, "Adjust texture, toppings, and sweetness to your preference.")}</p>
       </aside>
     </article>
   );
@@ -1779,6 +2148,17 @@ const smartSnackColumns = [
 ];
 
 function SmartSnacksIngredientsPhonePage() {
+  const { ebook } = useMobileEbook();
+  const supplied = asRecords(ebook.summary.snack_recipes);
+  const columns = smartSnackColumns.map((fallback, index) => {
+    const record = supplied[index] || {};
+    const ingredients = asStrings(record.ingredients);
+    return {
+      title: asText(record.name, typeof fallback.title === "string" ? fallback.title : `Smart snack ${index + 1}`),
+      ingredients: ingredients.length ? ingredients : fallback.ingredients,
+    };
+  });
+
   return (
     <article className={`${styles.page} ${styles.smartSnacksIngredientsPage}`} aria-label="Page 38: Smart Snacks ingredients">
       <header className={styles.smartSnacksIngredientsTopline}>ZenPlato <span>|</span> 06 <span>|</span> Your Personalized Recipe Collection</header>
@@ -1787,7 +2167,7 @@ function SmartSnacksIngredientsPhonePage() {
         <p>Wholesome ingredients. Smarter choices.</p>
       </section>
       <section className={styles.smartSnacksIngredientColumns}>
-        {smartSnackColumns.map((column) => (
+        {columns.map((column) => (
           <article key={String(column.ingredients[0])}>
             <h3>{column.title}</h3>
             <h4>Ingredients</h4>
@@ -1852,6 +2232,25 @@ const smartSnackingBenefits = [
 ];
 
 function SmartSnacksCardsPhonePage() {
+  const { ebook } = useMobileEbook();
+  const supplied = asRecords(ebook.summary.snack_recipes);
+  const cards = smartSnackCards.map((fallback, index) => {
+    const record = supplied[index] || {};
+    const ingredients = asStrings(record.ingredients);
+    return {
+      title: asText(record.name, typeof fallback.title === "string" ? fallback.title : `Smart snack ${index + 1}`),
+      copy: asText(record.subtitle, "A smart snack selected to support energy and satisfaction."),
+      ingredients: ingredients.length ? ingredients : fallback.ingredients,
+      meta: [
+        ["Prep Time", asText(record.prep_time, fallback.meta[0][1])],
+        [record.bake_time ? "Bake Time" : record.chill_time ? "Chill Time" : "Store In", asText(record.bake_time ?? record.chill_time ?? record.store_in, fallback.meta[1][1])],
+        ["Serves", asText(record.servings, fallback.meta[2][1])],
+      ],
+    };
+  });
+  const features = asRecords(ebook.summary.snack_features);
+  const benefits = asRecords(ebook.summary.snack_benefits);
+
   return (
     <article className={`${styles.page} ${styles.smartSnacksCardsPage}`} aria-label="Page 39: Smart Snacks recipe cards">
       <header className={styles.smartSnacksCardsTopline}>ZenPlato <span>|</span> 06 <span>|</span> Your Personalized Recipe Collection</header>
@@ -1860,15 +2259,15 @@ function SmartSnacksCardsPhonePage() {
         <p>Delicious choices that fuel your day,<br />satisfy cravings, and support your goals.</p>
       </section>
       <section className={styles.smartSnackFeatureRows}>
-        {smartSnackFeatureRows.map((feature) => (
-          <article key={feature.title}>
-            <h3>{feature.title}</h3>
-            <p>{feature.copy}</p>
+        {smartSnackFeatureRows.map((fallback, index) => (
+          <article key={fallback.title}>
+            <h3>{asText(features[index]?.title, fallback.title)}</h3>
+            <p>{asText(features[index]?.body, "A personalized smart-snacking benefit.")}</p>
           </article>
         ))}
       </section>
       <section className={styles.smartSnackCardsGrid}>
-        {smartSnackCards.map((card) => (
+        {cards.map((card) => (
           <article key={String(card.ingredients[0])}>
             <h3>{card.title}</h3>
             <p>{card.copy}</p>
@@ -1893,7 +2292,7 @@ function SmartSnacksCardsPhonePage() {
         <h3>Smart Snacking = Smarter You</h3>
         <div>
           {smartSnackingBenefits.map((benefit, index) => (
-            <p key={index}>{benefit}</p>
+            <p key={index}>{asText(benefits[index]?.title, typeof benefit === "string" ? benefit : `Snack benefit ${index + 1}`)}</p>
           ))}
         </div>
       </section>
@@ -1945,13 +2344,34 @@ const beverageBenefits = [
 ];
 
 function NourishingBeveragesPhonePage() {
+  const { ebook } = useMobileEbook();
+  const supplied = asRecords(ebook.summary.beverage_recipes);
+  const cards = beverageCards.map((fallback, index) => {
+    const record = supplied[index] || {};
+    const ingredients = asStrings(record.ingredients);
+    return {
+      ...fallback,
+      title: asText(record.name, typeof fallback.title === "string" ? fallback.title : `Nourishing beverage ${index + 1}`),
+      copy: asText(record.subtitle, "A personalized beverage selected to support your health goals."),
+      ingredients: ingredients.length ? ingredients : fallback.ingredients,
+      image: asText(record.image_url, fallback.image),
+      metrics: [
+        ["Prep Time", asText(record.prep_time, fallback.metrics[0][1])],
+        [record.cook_time ? "Cook Time" : "Blend Time", asText(record.cook_time ?? record.blend_time, fallback.metrics[1][1])],
+        ["Serves", asText(record.servings, fallback.metrics[2][1])],
+      ],
+    };
+  });
+  const features = asRecords(ebook.summary.beverage_features);
+  const benefits = asRecords(ebook.summary.beverage_benefits);
+
   return (
     <article className={`${styles.page} ${styles.nourishingBeveragesPage}`} aria-label="Page 40: Nourishing Beverages">
       <BotanicalBranch className={styles.nourishingTopBranch} />
       <header className={styles.nourishingTopline}>ZenPlato <span>|</span> 07 <span>|</span> Your Personalized Recipe Collection</header>
       <div className={styles.nourishingTopRule} aria-hidden="true" />
       <div className={styles.nourishingHero}>
-        <Image src="/ebook/nourishing-phone-hero.png" alt="A creamy green nourishing beverage with mint and matcha" fill sizes="18dvh" />
+        <DynamicEbookImage mediaKey="beverages" fallbackSrc="/ebook/nourishing-phone-hero.png" alt="A nourishing beverage selected for your guide" fill sizes="18dvh" />
       </div>
       <section className={styles.nourishingIntro}>
         <h2>Nourishing<br />Beverages</h2>
@@ -1960,15 +2380,15 @@ function NourishingBeveragesPhonePage() {
         <p>Delicious beverages crafted with<br />real ingredients for a healthier you.</p>
       </section>
       <section className={styles.nourishingFeatures}>
-        {beverageFeatures.map((feature) => (
-          <article key={feature.title}>
-            <h3>{feature.title}</h3>
-            <p>{feature.copy}</p>
+        {beverageFeatures.map((fallback, index) => (
+          <article key={fallback.title}>
+            <h3>{asText(features[index]?.title, fallback.title)}</h3>
+            <p>{asText(features[index]?.body, "A personalized benefit for your daily wellbeing.")}</p>
           </article>
         ))}
       </section>
       <section className={styles.nourishingCards}>
-        {beverageCards.map((card) => (
+        {cards.map((card) => (
           <article className={styles[`nourishingCard${card.accent}`]} key={card.accent}>
             <div className={styles.nourishingCardPhoto}>
               <Image src={card.image} alt="" fill sizes="16dvh" aria-hidden="true" />
@@ -1994,7 +2414,7 @@ function NourishingBeveragesPhonePage() {
       <section className={styles.nourishingBenefits}>
         <div><h3>Good For You.<br />Good For Life.</h3><p>Simple ingredients.<br />Lasting impact.</p></div>
         {beverageBenefits.map((benefit, index) => (
-          <p key={index}>{benefit}</p>
+          <p key={index}>{asText(benefits[index]?.title, typeof benefit === "string" ? benefit : `Wellness benefit ${index + 1}`)}</p>
         ))}
       </section>
       <p className={styles.nourishingClosing}>Good ingredients. Real results.</p>
@@ -2029,6 +2449,21 @@ const fruitPanelBenefits = [
 ];
 
 function GroceryFruitsPhonePage() {
+  const { ebook } = useMobileEbook();
+  const grocery = asRecord(ebook.summary.grocery_list);
+  const supplied = asRecords(grocery.fruit_catalog);
+  const fruits = fruitCards.map((fallback, index) => {
+    const record = supplied[index] || {};
+    const benefits = asStrings(record.benefits);
+    return {
+      ...fallback,
+      name: asText(record.name, typeof fallback.name === "string" ? fallback.name : `Fruit ${index + 1}`),
+      copy: asText(record.description, "A nutrient-rich fruit selected for your plan."),
+      benefits: benefits.length ? benefits : fallback.benefits,
+      image: asText(record.image_url, "/ebook/prioritize-berries.png"),
+    };
+  });
+
   return (
     <article className={`${styles.page} ${styles.groceryFruitsPage}`} aria-label="Page 41: Fruits">
       <header className={styles.groceryFruitsTopline}>ZenPlato <span>|</span> 08 <span>|</span> Your Personalized Recipe Collection</header>
@@ -2039,8 +2474,9 @@ function GroceryFruitsPhonePage() {
       </section>
       <aside className={styles.groceryFruitsSeal}>Real Fruit.<br />Real Benefits.</aside>
       <section className={styles.groceryFruitsGrid}>
-        {fruitCards.map((fruit) => (
+        {fruits.map((fruit) => (
           <article key={String(fruit.name)}>
+            <div className={styles.catalogFoodImage}><Image src={fruit.image} alt="" fill sizes="8dvh" /></div>
             <h3>{fruit.name}</h3>
             <i aria-hidden="true" />
             <p>{fruit.copy}</p>
@@ -2098,6 +2534,19 @@ const vegetablePanelBenefits = [
 ];
 
 function GroceryVegetablesPhonePage() {
+  const { ebook } = useMobileEbook();
+  const grocery = asRecord(ebook.summary.grocery_list);
+  const supplied = asRecords(grocery.vegetable_catalog);
+  const vegetables = vegetableCards.map((fallback, index) => {
+    const record = supplied[index] || {};
+    return {
+      ...fallback,
+      name: asText(record.name, fallback.name),
+      copy: asText(record.description, "A nutrient-rich vegetable selected for your plan."),
+      image: asText(record.image_url, "/ebook/prioritize-greens.png"),
+    };
+  });
+
   return (
     <article className={`${styles.page} ${styles.groceryVegetablesPage}`} aria-label="Page 42: Vegetables">
       <header className={styles.groceryVegetablesTopline}>ZenPlato <span>|</span> 08 <span>|</span> Your Personalized Recipe Collection</header>
@@ -2107,8 +2556,9 @@ function GroceryVegetablesPhonePage() {
         <p>Nutrient-rich vegetables to add<br />color, flavor, and health to your<br />meals.</p>
       </section>
       <section className={styles.groceryVegetablesGrid}>
-        {vegetableCards.map((vegetable) => (
+        {vegetables.map((vegetable) => (
           <article key={vegetable.name}>
+            <div className={styles.catalogFoodImage}><Image src={vegetable.image} alt="" fill sizes="8dvh" /></div>
             <h3>{vegetable.name}</h3>
             <p>{vegetable.copy}</p>
           </article>
@@ -2177,6 +2627,17 @@ const actionTips = [
 ];
 
 function ActionPlanPhonePage() {
+  const { ebook } = useMobileEbook();
+  const weekRecords = [1, 2, 3, 4].map((number) => asRecord(ebook.summary[`week_${number}_plan`]));
+  const weeks = actionPlanWeeks.map((fallback, index) => ({
+    week: asText(weekRecords[index].week, fallback.week),
+    title: asText(weekRecords[index].title, typeof fallback.title === "string" ? fallback.title : `Week ${index + 1}`),
+    days: asText(weekRecords[index].range, fallback.days),
+    focus: asText(weekRecords[index].focus, typeof fallback.focus === "string" ? fallback.focus : "Steady daily progress"),
+  }));
+  const generatedDays = weekRecords.flatMap((week) => asRecords(week.days)).map((day) => asText(day.action, "")).filter(Boolean);
+  const tips = asStrings(ebook.summary.action_plan_tips);
+
   return (
     <article className={`${styles.page} ${styles.actionPlanPage}`} aria-label="Page 43: Your 30-Day Action Plan">
       <header className={styles.actionPlanTopline}>ZenPlato <span>|</span> 06 <span>|</span> Your Personalized Recipe Collection</header>
@@ -2195,7 +2656,7 @@ function ActionPlanPhonePage() {
         <p>Track daily, stay<br />accountable and<br />celebrate wins.</p>
       </section>
       <section className={styles.actionPlanTable}>
-        {actionPlanWeeks.map((week, weekIndex) => (
+        {weeks.map((week, weekIndex) => (
           <div className={styles.actionPlanWeekRow} key={week.week}>
             <aside>
               <h3>{week.week}</h3>
@@ -2203,7 +2664,7 @@ function ActionPlanPhonePage() {
               <strong>{week.days}</strong>
               <span>Focus:<br />{week.focus}</span>
             </aside>
-            {actionPlanDays.slice(weekIndex * 7, weekIndex === 3 ? 30 : weekIndex * 7 + 7).map((copy, dayIndex) => {
+            {(generatedDays.length ? generatedDays : actionPlanDays).slice(weekIndex * 7, weekIndex === 3 ? 30 : weekIndex * 7 + 7).map((copy, dayIndex) => {
               const dayNumber = weekIndex * 7 + dayIndex + 1;
               return (
                 <article key={dayNumber}>
@@ -2218,10 +2679,10 @@ function ActionPlanPhonePage() {
       <section className={styles.actionPlanRemember}>
         <div>
           <h3>Remember</h3>
-          <p>Consistency creates change.<br />Keep showing up for yourself<br />every single day.</p>
+          <p>{asText(ebook.summary.action_plan_remember, "Consistency creates change. Keep showing up for yourself every day.")}</p>
         </div>
         <h4>Tips For Success</h4>
-        {actionTips.map((tip, index) => (
+        {(tips.length ? tips : actionTips).slice(0, 5).map((tip, index) => (
           <p key={index}>{tip}</p>
         ))}
       </section>
@@ -2230,54 +2691,257 @@ function ActionPlanPhonePage() {
   );
 }
 
+const DEFAULT_PHONE_REFERENCE = [841, 1870] as const;
+
+function ebookPage(
+  title: string,
+  element: React.ReactElement,
+  reference: readonly [number, number] = DEFAULT_PHONE_REFERENCE,
+) {
+  return { title, element, reference };
+}
+
+function referenceFrameStyle([width, height]: readonly [number, number]) {
+  return {
+    "--reference-page-aspect": `${width} / ${height}`,
+    "--reference-page-width": `${((width / height) * 100).toFixed(5)}cqh`,
+  } as React.CSSProperties;
+}
+
 export default function MobileEbookPage() {
+  const { user, loading: authLoading } = useAuth();
+  const [ebook, setEbook] = useState<MobileEbookPayload>(() => buildMobileFallback(null));
+  const shellRef = useRef<HTMLDivElement | null>(null);
+  const readerControlsRef = useRef<HTMLElement | null>(null);
+  const contentsPanelRef = useRef<HTMLElement | null>(null);
+  const contentsButtonRef = useRef<HTMLButtonElement | null>(null);
+  const contentsCloseButtonRef = useRef<HTMLButtonElement | null>(null);
+  const pageRefs = useRef<Array<HTMLElement | null>>([]);
+  const [activePage, setActivePage] = useState(0);
+  const [contentsOpen, setContentsOpen] = useState(false);
+
+  useEffect(() => {
+    if (authLoading) return;
+    let cancelled = false;
+
+    const loadEbook = async () => {
+      const fallback = buildMobileFallback(user);
+      setEbook(fallback);
+
+      const premiumResponse = user?.is_premium
+        ? await api.get("/ebook/me?type=premium").catch(() => null)
+        : null;
+      const response = premiumResponse || await api.get("/ebook/me").catch(() => null);
+      if (!cancelled && response?.data) setEbook(normalizeMobileEbook(response.data, user));
+    };
+
+    void loadEbook();
+    return () => {
+      cancelled = true;
+    };
+  }, [authLoading, user]);
+
+  const ebookContext = useMemo<MobileEbookContextValue>(() => ({
+    ebook,
+    user,
+    media: { ...DEFAULT_MOBILE_MEDIA, ...(ebook.media || {}) },
+  }), [ebook, user]);
+
+  const dynamicCondition = conditionLabel(ebook);
+
+  const pages = [
+    ebookPage("Cover", <CoverPage />),
+    ebookPage("The Beginning", <BeginningPage />),
+    ebookPage("Health Snapshot", <SnapshotPage />),
+    ebookPage("Your Key Findings", <FindingsIntroPage />),
+    ebookPage("Key Findings Details", <FindingsCardsPage />, [851, 1847]),
+    ebookPage("Key Health Focus Areas", <FocusAreasPage />),
+    ebookPage("Personalized Summary", <PersonalizedSummaryPage />),
+    ebookPage("At A Glance", <AtGlancePage />),
+    ebookPage("Opportunity 3", <OpportunityThreePage />),
+    ebookPage("Opportunity 1", <OpportunityOnePage />),
+    ebookPage("Grocery Essentials", <GroceryEssentialsPhonePage />),
+    ebookPage("Understanding Your Journey", <UnderstandingJourneyPage />),
+    ebookPage(`Understanding ${dynamicCondition}`, <UnderstandingDetailPhonePage />),
+    ebookPage("Why Symptoms Happen", <WhySymptomsPhonePage />),
+    ebookPage("What Nutrition Can Influence", <NutritionInfluencePhonePage />),
+    ebookPage(`Common ${dynamicCondition} Challenges`, <CommonChallengesPhonePage />),
+    ebookPage("ZenPlato Framework", <ZenPlatoFrameworkPhonePage />),
+    ebookPage("Food & Nutrition Guide", <FoodNutritionGuidePhonePage />),
+    ebookPage("Foods To Be More Mindful Of", <MindfulFoodsPhonePage />, [853, 1844]),
+    ebookPage("Foods To Prioritize", <PriorityFoodsPhonePage />),
+    ebookPage("The Balanced Plate", <BalancedPlatePhonePage />),
+    ebookPage("Hydration Recommendations", <HydrationPhonePage />),
+    ebookPage("Meal Timing Guidance", <MealTimingPhonePage />, [853, 1844]),
+    ebookPage("Building A Sustainable Rhythm", <SustainableRhythmPhonePage />),
+    ebookPage("Smart Food Swaps", <SmartFoodSwapsPhonePage />),
+    ebookPage("Smart Swaps Continued", <SmartSwapsContinuedPhonePage />, [853, 1844]),
+    ebookPage("Lifestyle Foundation", <LifestyleFoundationPhonePage />),
+    ebookPage("Sleep & Recovery", <SleepRecoveryPhonePage />, [853, 1844]),
+    ebookPage("Stress & Wellbeing", <StressWellbeingPhonePage />, [863, 1822]),
+    ebookPage("Daily Wellness Habits", <DailyWellnessPhonePage />, [904, 1740]),
+    ebookPage("Consistency", <PerfectionConsistencyPhonePage />),
+    ebookPage("Recipe Collection", <RecipeCollectionSectionPhonePage />),
+    ebookPage("Personalized Recipe Collection", <RecipeCollectionIntroPhonePage />, [852, 1846]),
+    ebookPage("Building Better Breakfasts", <BreakfastsPhonePage />),
+    ebookPage("Matcha Chia Nutrition", <MatchaChiaNutritionPhonePage />),
+    ebookPage("Matcha Chia Benefits", <MatchaChiaBenefitsPhonePage />, [853, 1844]),
+    ebookPage("Matcha Ingredients & Method", <MatchaInstructionsSpreadPhonePage />, [864, 1821]),
+    ebookPage("Matcha Cooking Method", <MatchaCookingMethodPhonePage />, [864, 1821]),
+    ebookPage("Smart Snacks Ingredients", <SmartSnacksIngredientsPhonePage />, [863, 1822]),
+    ebookPage("Smart Snacks Cards", <SmartSnacksCardsPhonePage />, [878, 1792]),
+    ebookPage("Nourishing Beverages", <NourishingBeveragesPhonePage />),
+    ebookPage("Fruits", <GroceryFruitsPhonePage />),
+    ebookPage("Vegetables", <GroceryVegetablesPhonePage />, [840, 1871]),
+    ebookPage("30-Day Action Plan", <ActionPlanPhonePage />),
+  ];
+
+  const scrollToPage = useCallback((index: number) => {
+    const nextIndex = Math.max(0, Math.min(index, pages.length - 1));
+    pageRefs.current[nextIndex]?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+    setActivePage(nextIndex);
+  }, [pages.length]);
+
+  useEffect(() => {
+    const shell = shellRef.current;
+    if (!shell) return;
+
+    let frame = 0;
+    const updateActivePage = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const nextPage = Math.round(shell.scrollLeft / Math.max(shell.clientWidth, 1));
+        setActivePage(Math.max(0, Math.min(nextPage, pages.length - 1)));
+      });
+    };
+
+    shell.addEventListener("scroll", updateActivePage, { passive: true });
+    updateActivePage();
+
+    return () => {
+      cancelAnimationFrame(frame);
+      shell.removeEventListener("scroll", updateActivePage);
+    };
+  }, [pages.length]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && contentsOpen) {
+        setContentsOpen(false);
+        return;
+      }
+      if (contentsOpen) return;
+      if (event.key === "ArrowLeft") scrollToPage(activePage - 1);
+      if (event.key === "ArrowRight") scrollToPage(activePage + 1);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activePage, contentsOpen, scrollToPage]);
+
+  useEffect(() => {
+    if (!contentsOpen) return;
+
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const shell = shellRef.current;
+    const controls = readerControlsRef.current;
+    const fallbackFocus = contentsButtonRef.current;
+    shell?.setAttribute("inert", "");
+    controls?.setAttribute("inert", "");
+    contentsCloseButtonRef.current?.focus();
+
+    const trapFocus = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+      const focusable = Array.from(
+        contentsPanelRef.current?.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      );
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    window.addEventListener("keydown", trapFocus);
+    return () => {
+      window.removeEventListener("keydown", trapFocus);
+      shell?.removeAttribute("inert");
+      controls?.removeAttribute("inert");
+      if (previousFocus?.isConnected) previousFocus.focus();
+      else fallbackFocus?.focus();
+    };
+  }, [contentsOpen]);
+
   return (
-    <main className={styles.shell} aria-label="ZenPlato phone ebook">
-      <section className={styles.pageFrame}><CoverPage /></section>
-      <section className={styles.pageFrame}><BeginningPage /></section>
-      <section className={styles.pageFrame}><SnapshotPage /></section>
-      <section className={styles.pageFrame}><FindingsIntroPage /></section>
-      <section className={styles.pageFrame}><FindingsCardsPage /></section>
-      <section className={styles.pageFrame}><FocusAreasPage /></section>
-      <section className={styles.pageFrame}><PersonalizedSummaryPage /></section>
-      <section className={styles.pageFrame}><AtGlancePage /></section>
-      <section className={styles.pageFrame}><OpportunityThreePage /></section>
-      <section className={styles.pageFrame}><OpportunityOnePage /></section>
-      <section className={styles.pageFrame}><GroceryEssentialsPhonePage /></section>
-      <section className={styles.pageFrame}><UnderstandingJourneyPage /></section>
-      <section className={styles.pageFrame}><UnderstandingDetailPhonePage /></section>
-      <section className={styles.pageFrame}><WhySymptomsPhonePage /></section>
-      <section className={styles.pageFrame}><NutritionInfluencePhonePage /></section>
-      <section className={styles.pageFrame}><CommonChallengesPhonePage /></section>
-      <section className={styles.pageFrame}><ZenPlatoFrameworkPhonePage /></section>
-      <section className={styles.pageFrame}><FoodNutritionGuidePhonePage /></section>
-      <section className={styles.pageFrame}><MindfulFoodsPhonePage /></section>
-      <section className={styles.pageFrame}><PriorityFoodsPhonePage /></section>
-      <section className={styles.pageFrame}><BalancedPlatePhonePage /></section>
-      <section className={styles.pageFrame}><HydrationPhonePage /></section>
-      <section className={styles.pageFrame}><MealTimingPhonePage /></section>
-      <section className={styles.pageFrame}><SustainableRhythmPhonePage /></section>
-      <section className={styles.pageFrame}><SmartFoodSwapsPhonePage /></section>
-      <section className={styles.pageFrame}><SmartSwapsContinuedPhonePage /></section>
-      <section className={styles.pageFrame}><LifestyleFoundationPhonePage /></section>
-      <section className={styles.pageFrame}><SleepRecoveryPhonePage /></section>
-      <section className={styles.pageFrame}><StressWellbeingPhonePage /></section>
-      <section className={styles.pageFrame}><DailyWellnessPhonePage /></section>
-      <section className={styles.pageFrame}><PerfectionConsistencyPhonePage /></section>
-      <section className={styles.pageFrame}><RecipeCollectionSectionPhonePage /></section>
-      <section className={styles.pageFrame}><RecipeCollectionIntroPhonePage /></section>
-      <section className={styles.pageFrame}><BreakfastsPhonePage /></section>
-      <section className={styles.pageFrame}><MatchaChiaNutritionPhonePage /></section>
-      <section className={styles.pageFrame}><MatchaChiaBenefitsPhonePage /></section>
-      <section className={styles.pageFrame}><MatchaIngredientsPhonePage /></section>
-      <section className={styles.pageFrame}><MatchaMethodPhonePage /></section>
-      <section className={styles.pageFrame}><MatchaCookingMethodPhonePage /></section>
-      <section className={styles.pageFrame}><SmartSnacksIngredientsPhonePage /></section>
-      <section className={styles.pageFrame}><SmartSnacksCardsPhonePage /></section>
-      <section className={styles.pageFrame}><NourishingBeveragesPhonePage /></section>
-      <section className={styles.pageFrame}><GroceryFruitsPhonePage /></section>
-      <section className={styles.pageFrame}><GroceryVegetablesPhonePage /></section>
-      <section className={styles.pageFrame}><ActionPlanPhonePage /></section>
-    </main>
+    <MobileEbookContext.Provider value={ebookContext}>
+      <div ref={shellRef} className={styles.shell} role="region" aria-label="ZenPlato phone ebook">
+        {pages.map((page, index) => (
+          <section
+            className={styles.pageFrame}
+            key={page.title}
+            style={referenceFrameStyle(page.reference)}
+            ref={(node) => {
+              pageRefs.current[index] = node;
+            }}
+          >
+            {cloneElement(page.element as React.ReactElement<{ "aria-label"?: string }>, {
+              "aria-label": `Page ${index + 1} of ${pages.length}: ${page.title}`,
+            })}
+          </section>
+        ))}
+      </div>
+
+      <nav ref={readerControlsRef} className={styles.readerControls} aria-label="Ebook page controls">
+        <button type="button" onClick={() => scrollToPage(activePage - 1)} disabled={activePage === 0} aria-label="Previous page">
+          ←
+        </button>
+        <button ref={contentsButtonRef} type="button" className={styles.contentsButton} onClick={() => setContentsOpen(true)} aria-haspopup="dialog" aria-expanded={contentsOpen}>
+          Contents
+        </button>
+        <span aria-live="polite">{activePage + 1} / {pages.length}</span>
+        <button type="button" onClick={() => scrollToPage(activePage + 1)} disabled={activePage === pages.length - 1} aria-label="Next page">
+          →
+        </button>
+      </nav>
+
+      {contentsOpen && (
+        <div className={styles.contentsOverlay} role="presentation" onClick={() => setContentsOpen(false)}>
+          <aside ref={contentsPanelRef} className={styles.contentsPanel} role="dialog" aria-modal="true" aria-label="Page contents" onClick={(event) => event.stopPropagation()}>
+            <header>
+              <div>
+                <p>ZenPlato</p>
+                <h2>Page Contents</h2>
+              </div>
+              <button ref={contentsCloseButtonRef} type="button" onClick={() => setContentsOpen(false)} aria-label="Close contents">×</button>
+            </header>
+            <ol>
+              {pages.map((page, index) => (
+                <li key={page.title}>
+                  <button
+                    type="button"
+                    className={index === activePage ? styles.activeContentsItem : undefined}
+                    onClick={() => {
+                      scrollToPage(index);
+                      setContentsOpen(false);
+                    }}
+                  >
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    {page.title}
+                  </button>
+                </li>
+              ))}
+            </ol>
+          </aside>
+        </div>
+      )}
+    </MobileEbookContext.Provider>
   );
 }
