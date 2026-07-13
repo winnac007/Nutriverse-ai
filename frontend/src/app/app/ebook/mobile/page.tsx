@@ -6,7 +6,6 @@ import { cloneElement, createContext, useCallback, useContext, useEffect, useMem
 import api from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import type { User } from "@/lib/types";
-import opportunityThreeReference from "../../../../../../phone-ebook/8. Opportunity/file_00000000a60c71fab441ee6ae4830c4e.png";
 import styles from "./mobile-ebook.module.css";
 
 type EbookSummary = Record<string, unknown>;
@@ -703,7 +702,7 @@ function OpportunityThreePage() {
     <article className={`${styles.page} ${styles.opportunityThreePage}`} aria-label="Page 8: Your third biggest opportunity">
       <DynamicEbookImage
         mediaKey="opportunity"
-        fallbackSrc={opportunityThreeReference}
+        fallbackSrc="/ebook/opportunity-three-phone-reference.png"
         alt="A supportive wellness scene for your third opportunity"
         fill
         sizes="45dvh"
