@@ -846,19 +846,19 @@
 
 .findingsCardsMiddleBranch {
   position: absolute;
-  top: 61.4cqw;
+  top: 59.3cqw;
   left: 4.6cqw;
-  width: 18.7cqw;
+  width: 15.8cqw;
   color: #74825e;
 }
 
 .findingCardStack {
   position: absolute;
-  top: 75.4cqw;
+  top: 70.8cqw;
   left: 7cqw;
   right: 5.8cqw;
   display: grid;
-  gap: 1.75cqw;
+  gap: 1.65cqw;
 }
 
 .findingCard {
@@ -948,8 +948,9 @@
 
 .findingsTakeaway {
   position: absolute;
-  top: 185.1cqw;
+  top: 182.5cqw;
   left: 7cqw;
+  width: 68cqw;
 }
 
 .findingsTakeaway > p {
@@ -962,7 +963,8 @@
 }
 
 .findingsTakeaway h3 {
-  margin: 1.1cqw 0 0;
+  width: 67cqw;
+  margin: 1.35cqw 0 0;
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 3.75cqw;
   font-style: italic;
@@ -980,26 +982,27 @@
 
 .findingsTakeaway > span {
   display: block;
+  width: 65.5cqw;
   margin-top: 2.1cqw;
   color: #282b24;
   font-family: Inter, Arial, sans-serif;
   font-size: 1.48cqw;
-  line-height: 1.48;
+  line-height: 1.58;
 }
 
 .findingsCardsBottomBranch {
   position: absolute;
-  right: 3cqw;
-  bottom: 10.6cqw;
-  width: 21cqw;
+  right: -1.2cqw;
+  bottom: 3.4cqw;
+  width: 19cqw;
   color: #7a8764;
-  transform: rotate(-17deg);
+  transform: rotate(-20deg);
 }
 
 .findingsCardsBrand {
   position: absolute;
   left: 7cqw;
-  bottom: 3.8cqw;
+  bottom: .4cqw;
 }
 
 .findingsCardsBrand div {
@@ -1023,7 +1026,7 @@
 .findingsCardsPageNumber {
   position: absolute;
   right: 9.6cqw;
-  bottom: 3.4cqw;
+  bottom: .8cqw;
   display: grid;
   gap: 1cqw;
   justify-items: center;
@@ -1125,15 +1128,15 @@
   right: 6.9cqw;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.7cqw 2.5cqw;
+  gap: 2.2cqw 2.5cqw;
 }
 
 .focusCard {
-  height: 43.6cqw;
+  height: 40.1cqw;
   border: 1px solid rgba(204, 188, 166, .58);
   border-radius: 2cqw;
   background: rgba(251, 248, 241, .63);
-  padding: 4.1cqw 2.65cqw 2.7cqw;
+  padding: 3.2cqw 2.65cqw 2.4cqw;
 }
 
 .focusEyebrow {
@@ -1151,7 +1154,7 @@
   display: flex;
   align-items: center;
   gap: 2.4cqw;
-  margin-top: 3.3cqw;
+  margin-top: 2.4cqw;
 }
 
 .focusIcon {
@@ -1184,7 +1187,7 @@
 
 .focusCard > strong {
   display: block;
-  margin: 1.75cqw 0 0 13cqw;
+  margin: 1.35cqw 0 0 13cqw;
   color: #9b5631;
   font-family: Inter, Arial, sans-serif;
   font-size: 1.45cqw;
@@ -1195,7 +1198,7 @@
 
 .focusProgress {
   height: .7cqw;
-  margin-top: 4.2cqw;
+  margin-top: 2.75cqw;
   border-radius: 9px;
   background: #e3dbcf;
 }
@@ -1208,7 +1211,7 @@
 }
 
 .focusCard > p {
-  margin: 3.25cqw 0 0;
+  margin: 2.55cqw 0 0;
   color: #292b25;
   font-family: Inter, Arial, sans-serif;
   font-size: 1.48cqw;
@@ -1219,11 +1222,11 @@
   position: absolute;
   left: 5.7cqw;
   right: 6.9cqw;
-  bottom: 4.9cqw;
+  bottom: 7.2cqw;
   display: grid;
   grid-template-columns: 9.5cqw 1fr 38cqw;
   align-items: center;
-  height: 14.1cqw;
+  height: 15.2cqw;
   border: 1px solid rgba(204, 188, 166, .58);
   border-radius: 2cqw;
   background: rgba(243, 237, 226, .78);
@@ -1264,7 +1267,7 @@
 .focusPageNumber {
   position: absolute;
   left: 48%;
-  bottom: .7cqw;
+  bottom: 1.2cqw;
   font-family: Inter, Arial, sans-serif;
   font-size: 1.9cqw;
 }
@@ -2842,98 +2845,218 @@
 .hydrationPageNumber { position: absolute; left: 42.5cqw; bottom: 1.2cqw; display: flex; align-items: center; gap: 3.5cqw; font-family: Inter, Arial, sans-serif; font-size: 2.3cqw; }
 .hydrationPageNumber i { width: 3cqw; height: 1px; background: #ad7445; }
 
-.mealTimingPage { overflow: hidden; color: #163b26; background: #f8f5ef url('/ebook/meal-timing-bg.png') center/100% 100% no-repeat; }
+.mealTimingPage {
+  overflow: hidden;
+  color: #163b26;
+  background:
+    radial-gradient(circle at 12% 60%, rgba(185, 174, 151, .12), transparent 30%),
+    linear-gradient(180deg, #faf7f1, #f7f3ec);
+}
 .mealTimingTopBranch { position: absolute; z-index: 3; top: 2.8cqw; left: 4.6cqw; width: 7.5cqw; height: 9cqw; color: #596b4f; transform: rotate(-25deg); }
 .mealTimingTopline { position: absolute; z-index: 3; top: 7.5cqw; left: 11.6cqw; font-family: Inter, Arial, sans-serif; font-size: 1.55cqw; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: #212936; }
 .mealTimingTopline span { margin: 0 2.1cqw; color: #30323a; }
 .mealTimingTopRule { position: absolute; z-index: 3; top: 12.4cqw; left: 11.5cqw; width: 83cqw; height: 1px; background: rgba(33,42,44,.55); }
-.mealTimingIntro { position: absolute; z-index: 2; top: 21.5cqw; left: 5.5cqw; }
+.mealTimingIntro { position: absolute; z-index: 2; top: 19.5cqw; left: 6cqw; right: 6cqw; }
 .mealTimingIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 8.4cqw; font-weight: 400; line-height: 1.08; letter-spacing: -.035em; color: #0d3a21; }
-.mealTimingIntro p { margin: 14.4cqw 0 0; color: #303946; font-family: Inter, Arial, sans-serif; font-size: 1.85cqw; line-height: 1.74; }
-.mealTimingTimeline { position: absolute; z-index: 2; inset: 0; pointer-events: none; }
-.mealTimingTimeline > h3 { position: absolute; top: 21.8cqw; left: 53cqw; margin: 0; color: #102c1d; font-family: Inter, Arial, sans-serif; font-size: 1.85cqw; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
-.mealTimingRow { position: absolute; left: 58.7cqw; width: 18.8cqw; color: #25303b; font-family: Inter, Arial, sans-serif; }
-.mealTimingRow:nth-of-type(1) { top: 30cqw; }
-.mealTimingRow:nth-of-type(2) { top: 66.6cqw; }
-.mealTimingRow:nth-of-type(3) { top: 103.3cqw; }
-.mealTimingRow:nth-of-type(4) { top: 139.9cqw; }
-.mealTimingRow:nth-of-type(5) { top: 176.5cqw; }
-.mealTimingRow h4 { margin: 0 0 1.7cqw; font-size: 1.8cqw; font-weight: 500; line-height: 1.2; letter-spacing: .02em; color: #163b31; }
-.mealTimingRow h5 { margin: 0 0 1.7cqw; font-size: 1.4cqw; font-weight: 800; line-height: 1.2; letter-spacing: .12em; text-transform: uppercase; color: #132c22; }
-.mealTimingRow p { margin: 0; color: #2e3742; font-size: 1.55cqw; font-weight: 400; line-height: 1.6; }
-.mealTimingKey { position: absolute; z-index: 2; top: 172.6cqw; left: 16.9cqw; color: #1b2c25; font-family: Inter, Arial, sans-serif; }
+.mealTimingIntro > p:last-child { width: 84cqw; margin: 3.7cqw 0 0; color: #303946; font-family: Inter, Arial, sans-serif; font-size: 1.9cqw; line-height: 1.62; }
+.mealTimingTimeline { position: absolute; z-index: 2; top: 65.5cqw; left: 6cqw; right: 6cqw; pointer-events: none; }
+.mealTimingTimeline > h3 { margin: 0 0 4.1cqw; color: #102c1d; font-family: Inter, Arial, sans-serif; font-size: 1.8cqw; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
+.mealTimingRows { display: grid; gap: 3cqw; }
+.mealTimingRow {
+  position: relative;
+  display: grid;
+  grid-template-columns: 43.6cqw 7.8cqw 29cqw;
+  column-gap: 3.8cqw;
+  min-height: 40cqw;
+  align-items: center;
+  color: #25303b;
+  font-family: Inter, Arial, sans-serif;
+}
+.mealTimingRow:not(:last-child)::after {
+  position: absolute;
+  top: calc(50% + 4.4cqw);
+  bottom: -3.4cqw;
+  left: 51.25cqw;
+  width: 1px;
+  background: rgba(105, 107, 82, .48);
+  content: "";
+}
+.mealTimingRowCopy { align-self: center; padding-left: 1.2cqw; }
+.mealTimingRow h4 { margin: 0 0 1.35cqw; color: #607053; font-size: 2cqw; font-weight: 500; line-height: 1.2; letter-spacing: .02em; }
+.mealTimingRow h5 { margin: 0 0 1.45cqw; color: #132c22; font-size: 1.7cqw; font-weight: 800; line-height: 1.2; letter-spacing: .14em; text-transform: uppercase; }
+.mealTimingRow p { margin: 0; color: #2e3742; font-size: 1.88cqw; font-weight: 400; line-height: 1.58; }
+.mealTimingMarker {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 8.8cqw;
+  height: 8.8cqw;
+  place-items: center;
+  justify-self: center;
+  border-radius: 50%;
+  background: #7d8464;
+  box-shadow: 0 0 0 1.2cqw #f8f5ef;
+  color: #f7f3ec;
+}
+.mealTimingMarker svg { width: 5.1cqw; height: 5.1cqw; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
+.mealTimingPhoto {
+  position: relative;
+  width: 29cqw;
+  height: 35.5cqw;
+  overflow: hidden;
+  border-radius: 2.1cqw;
+  box-shadow: 0 1.2cqw 3cqw rgba(60, 47, 32, .08);
+}
+.mealTimingPhoto img { object-fit: cover; }
+.mealTimingKey {
+  position: absolute;
+  z-index: 2;
+  top: 173.5cqw;
+  left: 7cqw;
+  right: 7cqw;
+  min-height: 20cqw;
+  border: 1px solid rgba(188, 174, 149, .42);
+  border-radius: 2cqw;
+  background: rgba(239, 233, 222, .72);
+  padding: 3.5cqw 4.2cqw;
+  color: #1b2c25;
+  font-family: Inter, Arial, sans-serif;
+}
 .mealTimingKey h3 { margin: 0 0 1.9cqw; font-size: 1.65cqw; font-weight: 800; letter-spacing: .28em; text-transform: uppercase; }
-.mealTimingKey p { margin: 0; color: #3b4146; font-size: 1.52cqw; line-height: 1.55; }
-.mealTimingPageNumber { position: absolute; left: 42.2cqw; bottom: 4.5cqw; display: flex; align-items: center; gap: 3.5cqw; color: #092816; font-family: Inter, Arial, sans-serif; font-size: 2.2cqw; }
+.mealTimingKey p { width: 68cqw; margin: 0; color: #3b4146; font-size: 1.82cqw; line-height: 1.55; }
+.mealTimingPageNumber { position: absolute; left: 42.2cqw; bottom: 2cqw; display: flex; align-items: center; gap: 3.5cqw; color: #092816; font-family: Inter, Arial, sans-serif; font-size: 2.2cqw; }
 .mealTimingPageNumber i { width: 3.5cqw; height: 1px; background: #b9783e; }
 
-.sustainableRhythmPage { overflow: hidden; color: #163b26; background: #f8f5ef url('/ebook/sustainable-rhythm-bg.png') center/100% 100% no-repeat; }
-.sustainableRhythmTopline { position: absolute; z-index: 3; top: 7.3cqw; left: 11.7cqw; font-family: Inter, Arial, sans-serif; font-size: 1.55cqw; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: #212936; }
-.sustainableRhythmTopline span { margin: 0 2.2cqw; color: #30323a; }
-.sustainableRhythmIntro { position: absolute; z-index: 2; top: 22.8cqw; left: 7.6cqw; }
-.sustainableRhythmIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 8.65cqw; font-weight: 400; line-height: 1.12; letter-spacing: -.035em; color: #0d3a21; }
-.sustainableRhythmIntro p { margin: 12.2cqw 0 0; color: #303946; font-family: Inter, Arial, sans-serif; font-size: 2.1cqw; line-height: 1.62; }
-.sustainableRhythmMeals { position: absolute; z-index: 2; top: 94.1cqw; left: 27.4cqw; color: #18382a; font-family: Inter, Arial, sans-serif; }
-.sustainableRhythmMeals article { margin: 0 0 12.1cqw; }
-.sustainableRhythmMeals h3 { margin: 0 0 2.3cqw; font-size: 2cqw; font-weight: 500; line-height: 1.2; letter-spacing: .12em; }
-.sustainableRhythmMeals h4 { margin: 0 0 2.4cqw; font-size: 1.75cqw; font-weight: 800; line-height: 1.2; letter-spacing: .23em; text-transform: uppercase; }
-.sustainableRhythmMeals p { margin: 0; color: #2d3844; font-size: 1.85cqw; line-height: 1.55; }
-.sustainableRhythmKey { position: absolute; z-index: 2; top: 165.2cqw; left: 27.7cqw; color: #18382a; font-family: Inter, Arial, sans-serif; }
-.sustainableRhythmKey h3 { margin: 0 0 4cqw; font-size: 1.85cqw; font-weight: 800; line-height: 1.2; letter-spacing: .26em; text-transform: uppercase; }
-.sustainableRhythmKey p { margin: 0; color: #3a424a; font-size: 1.75cqw; line-height: 1.55; }
-.sustainableRhythmQuote { position: absolute; z-index: 2; left: 26.3cqw; bottom: 11.4cqw; margin: 0; color: #173a27; font-family: Cormorant Garamond, Georgia, serif; font-size: 3.45cqw; font-style: italic; font-weight: 500; line-height: 1.45; letter-spacing: -.02em; }
-.sustainableRhythmPageNumber { position: absolute; left: 40.7cqw; bottom: 1.8cqw; display: flex; align-items: center; gap: 3.2cqw; color: #082816; font-family: Inter, Arial, sans-serif; font-size: 2.4cqw; }
-.sustainableRhythmPageNumber i { width: 3.1cqw; height: 1px; background: #b9783e; }
+.mealTimingContinuedLabel {
+  margin: 0 0 2.1cqw !important;
+  color: #657157 !important;
+  font-size: 1.65cqw !important;
+  font-weight: 800;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+.mealTimingContinuationPage .mealTimingIntro > p:last-child { margin-top: 3.2cqw; }
+.mealTimingContinuationPage .mealTimingTimeline { top: 68cqw; }
+.mealTimingContinuationPage .mealTimingRow { min-height: 43cqw; }
+.mealTimingContinuationPage .mealTimingPhoto { height: 39cqw; }
+.mealTimingQuote {
+  position: absolute;
+  z-index: 2;
+  left: 10.8cqw;
+  bottom: 8.4cqw;
+  width: 72cqw;
+  margin: 0;
+  color: #173a27;
+  font-family: Cormorant Garamond, Georgia, serif;
+  font-size: 3.1cqw;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -.02em;
+  text-align: center;
+}
 
-.smartFoodSwapsPage { overflow: hidden; color: #163b26; background: #f8f5ef url('/ebook/smart-food-swaps-bg.png') center/100% 100% no-repeat; }
-.smartFoodSwapsTopline { position: absolute; z-index: 3; top: 7.4cqw; left: 10.7cqw; font-family: Inter, Arial, sans-serif; font-size: 1.55cqw; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: #212936; }
-.smartFoodSwapsTopline span { margin: 0 2.4cqw; color: #30323a; }
-.smartFoodSwapsIntro { position: absolute; z-index: 2; top: 24.4cqw; left: 6.1cqw; color: #0d3a21; }
-.smartFoodSwapsIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 9.6cqw; font-weight: 400; line-height: 1.12; letter-spacing: -.04em; }
-.smartFoodSwapsIntro p { margin: 14cqw 0 0; color: #303946; font-family: Inter, Arial, sans-serif; font-size: 2.1cqw; line-height: 1.72; }
-.smartFoodSwapsDynamic { position: absolute; top: 84.2cqw; left: -.9cqw; display: grid; grid-template-columns: 4.7cqw 1fr; column-gap: 2.4cqw; align-items: center; width: 26.8cqw; min-height: 6.9cqw; padding: 1.8cqw 2.2cqw; color: #657153; font-family: Inter, Arial, sans-serif; }
-.smartFoodSwapsDynamic::before { content: ""; width: 2.7cqw; height: 4.3cqw; background: currentColor; clip-path: polygon(48% 0,57% 30%,83% 11%,68% 43%,100% 41%,70% 58%,93% 80%,60% 66%,52% 100%,44% 66%,13% 82%,35% 57%,0 44%,34% 43%,18% 12%,43% 30%); }
-.smartFoodSwapsDynamic span,
-.smartFoodSwapsDynamic strong { grid-column: 2; font-size: 1.25cqw; line-height: 1.4; letter-spacing: .18em; text-transform: uppercase; }
-.smartFoodSwapsDynamic span { font-weight: 800; }
-.smartFoodSwapsDynamic strong { font-weight: 800; }
-.smartFoodSwapCard { position: absolute; z-index: 1; left: 38cqw; width: 58.7cqw; border-radius: 1.5cqw; background: linear-gradient(90deg, rgba(231,225,215,.58) 0 51.7%, rgba(246,243,238,.46) 51.7% 100%); overflow: hidden; color: #153628; font-family: Inter, Arial, sans-serif; }
-.smartFoodSwapCardOne { top: 21.4cqw; height: 95.8cqw; }
-.smartFoodSwapCardTwo { top: 120.7cqw; height: 86.5cqw; }
-.smartFoodSwapCard::after { content: ""; position: absolute; top: 0; bottom: 0; left: 51.7%; width: 1px; background: rgba(255,255,255,.35); }
-.smartFoodSwapNumber { position: absolute; top: 4.3cqw; left: 4.3cqw; font-size: 2.55cqw; font-weight: 800; letter-spacing: .08em; color: #4c613d; }
-.smartFoodSwapNumber::after { content: ""; display: block; width: 4.1cqw; height: 1px; margin-top: 2.1cqw; background: #69745a; }
-.smartFoodSwapBefore { position: absolute; top: 13.5cqw; left: 4.3cqw; width: 20.4cqw; }
-.smartFoodSwapAfter { position: absolute; top: 13.5cqw; left: 36.3cqw; width: 18.8cqw; }
-.smartFoodSwapCardTwo .smartFoodSwapBefore,
-.smartFoodSwapCardTwo .smartFoodSwapAfter { top: 13.2cqw; }
-.smartFoodSwapCard h3 { margin: 0 0 2.8cqw; color: #40543b; font-size: 1.45cqw; font-weight: 800; letter-spacing: .24em; text-transform: uppercase; }
-.smartFoodSwapCard h4 { margin: 0 0 2.8cqw; color: #081b10; font-family: Cormorant Garamond, Georgia, serif; font-size: 3.35cqw; font-weight: 500; line-height: 1.12; letter-spacing: -.02em; }
-.smartFoodSwapCard p { margin: 0; color: #303946; font-size: 1.8cqw; line-height: 1.55; }
-.smartFoodSwapCardTwo h4 { margin-bottom: 3.4cqw; }
-.smartFoodSwapsPageNumber { position: absolute; left: 40.8cqw; bottom: 3.8cqw; display: flex; align-items: center; gap: 3.3cqw; color: #5c6d4c; font-family: Inter, Arial, sans-serif; font-size: 2.45cqw; }
-.smartFoodSwapsPageNumber i { width: 3.8cqw; height: 1px; background: #bb7c45; }
-
-.smartSwapsContinuedPage { overflow: hidden; color: #163b26; background: #f8f5ef url('/ebook/smart-swaps-continued-bg.png') center/100% 100% no-repeat; }
-.smartSwapsContinuedTopline { position: absolute; z-index: 3; top: 7.3cqw; left: 10.7cqw; font-family: Inter, Arial, sans-serif; font-size: 1.55cqw; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: #212936; }
-.smartSwapsContinuedTopline span { margin: 0 2.2cqw; color: #30323a; }
-.smartSwapsContinuedCard { position: absolute; z-index: 2; left: 3.6cqw; width: 53.5cqw; color: #153628; font-family: Inter, Arial, sans-serif; }
-.smartSwapsContinuedCardThree { top: 19.8cqw; height: 76.5cqw; }
-.smartSwapsContinuedCardFour { top: 101.4cqw; height: 78.5cqw; }
-.smartSwapsContinuedNumber { position: absolute; top: 3.5cqw; left: 2.9cqw; font-size: 2.8cqw; font-weight: 800; letter-spacing: .08em; color: #4c613d; }
-.smartSwapsContinuedNumber::after { content: ""; display: block; width: 4.5cqw; height: 1px; margin-top: 2.2cqw; background: #69745a; }
-.smartSwapsContinuedBefore { position: absolute; top: 14.5cqw; left: 2.9cqw; width: 19cqw; }
-.smartSwapsContinuedAfter { position: absolute; top: 14.5cqw; left: 30.5cqw; width: 20.5cqw; }
-.smartSwapsContinuedCard h3 { margin: 0 0 2.5cqw; color: #40543b; font-size: 1.45cqw; font-weight: 800; letter-spacing: .24em; text-transform: uppercase; }
-.smartSwapsContinuedCard h4 { margin: 0 0 2.7cqw; color: #081b10; font-family: Cormorant Garamond, Georgia, serif; font-size: 3.05cqw; font-weight: 500; line-height: 1.16; letter-spacing: -.02em; }
-.smartSwapsContinuedCard p { margin: 0; color: #303946; font-size: 1.65cqw; line-height: 1.55; }
-.smartSwapsContinuedCardFour .smartSwapsContinuedNumber { top: 3.3cqw; }
-.smartSwapsContinuedCardFour .smartSwapsContinuedBefore,
-.smartSwapsContinuedCardFour .smartSwapsContinuedAfter { top: 14.2cqw; }
-.smartSwapsContinuedCardFour h4 { margin-bottom: 4.5cqw; }
-.smartSwapsContinuedQuote { position: absolute; z-index: 2; top: 150.5cqw; left: 65.2cqw; width: 23cqw; margin: 0; color: #173a27; font-family: Cormorant Garamond, Georgia, serif; font-size: 3.05cqw; font-style: italic; font-weight: 500; line-height: 1.36; text-align: center; letter-spacing: -.02em; }
-.smartSwapsContinuedPageNumber { position: absolute; left: 41.8cqw; bottom: 4.3cqw; display: flex; align-items: center; gap: 3.4cqw; color: #173a27; font-family: Inter, Arial, sans-serif; font-size: 2.45cqw; font-weight: 600; }
-.smartSwapsContinuedPageNumber i { width: 3.9cqw; height: 1px; background: #bb7c45; }
+.smartFoodSwapsPage,
+.smartSwapsContinuedPage {
+  overflow: hidden;
+  color: #163b26;
+  background:
+    radial-gradient(circle at 82% 18%, rgba(202, 192, 172, .16), transparent 28%),
+    linear-gradient(180deg, #faf7f1, #f7f3ec);
+}
+.smartSwapTopBranch { position: absolute; z-index: 3; top: 2.8cqw; left: 4.3cqw; width: 7.4cqw; height: 8.8cqw; color: #596b4f; transform: rotate(-25deg); }
+.smartSwapTopline { position: absolute; z-index: 3; top: 7.4cqw; left: 11cqw; color: #212936; font-family: Inter, Arial, sans-serif; font-size: 1.55cqw; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; }
+.smartSwapTopline span { margin: 0 2.3cqw; color: #30323a; }
+.smartSwapTopRule { position: absolute; z-index: 3; top: 12.4cqw; left: 11cqw; right: 6.2cqw; height: 1px; background: rgba(37,47,45,.48); }
+.smartSwapIntro { position: absolute; z-index: 2; top: 18.8cqw; left: 6cqw; right: 6cqw; }
+.smartSwapIntro h2 { margin: 0; color: #0d3a21; font-family: Cormorant Garamond, Georgia, serif; font-size: 8.2cqw; font-weight: 400; line-height: 1.04; letter-spacing: -.035em; }
+.smartSwapIntro > p:last-child { width: 83cqw; margin: 2.8cqw 0 0; color: #303946; font-family: Inter, Arial, sans-serif; font-size: 1.8cqw; line-height: 1.55; }
+.smartSwapList { position: absolute; z-index: 2; top: 49.5cqw; left: 5.5cqw; right: 5.5cqw; display: grid; gap: 4.5cqw; }
+.smartSwapComparison {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  border: 1px solid rgba(188, 174, 149, .46);
+  border-radius: 2cqw;
+  background: rgba(247, 243, 235, .82);
+  padding: 9cqw 3cqw 2.8cqw;
+  box-shadow: 0 1.2cqw 3cqw rgba(60, 47, 32, .035);
+}
+.smartSwapComparison01 { height: 72cqw; }
+.smartSwapComparison02 { height: 78cqw; }
+.smartSwapComparison03 { height: 72cqw; }
+.smartSwapComparison04 { height: 81cqw; }
+.smartSwapComparison::after {
+  position: absolute;
+  top: 8.5cqw;
+  bottom: 2.8cqw;
+  left: 50%;
+  width: 1px;
+  background: rgba(159, 148, 127, .34);
+  content: "";
+}
+.smartSwapNumber {
+  position: absolute;
+  top: 2.8cqw;
+  left: 4cqw;
+  color: #4c613d;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 2.25cqw;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+.smartSwapNumber::after { display: inline-block; width: 4.3cqw; height: 1px; margin: 0 0 .55cqw 2cqw; background: #69745a; content: ""; }
+.smartSwapChoice { display: flex; min-width: 0; flex-direction: column; padding: 0 1.6cqw; }
+.smartSwapLabel { margin: 0 0 1.2cqw; color: #738064; font-family: Inter, Arial, sans-serif; font-size: 1.35cqw; font-weight: 800; letter-spacing: .24em; text-transform: uppercase; }
+.smartSwapChoice h3 { margin: 0 0 1.25cqw; color: #0d2918; font-family: Cormorant Garamond, Georgia, serif; font-size: 3.15cqw; font-weight: 500; line-height: 1.02; letter-spacing: -.02em; }
+.smartSwapBody { margin: 0; color: #303946; font-family: Inter, Arial, sans-serif; font-size: 1.62cqw; line-height: 1.5; }
+.smartSwapPhoto {
+  flex: 0 0 auto;
+  margin: auto auto 0;
+  border-radius: 1.35cqw;
+  background-color: #eee8de;
+  background-repeat: no-repeat;
+  box-shadow: 0 .8cqw 2cqw rgba(61, 49, 35, .06);
+}
+.smartSwapArrow {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 13cqw;
+  display: grid;
+  width: 6.2cqw;
+  height: 6.2cqw;
+  place-items: center;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  background: #81896a;
+  box-shadow: 0 0 0 1cqw #f7f3eb;
+  color: #f8f4ed;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 3.1cqw;
+  line-height: 1;
+}
+.smartSwapOneBeforeImage,
+.smartSwapOneAfterImage,
+.smartSwapTwoBeforeImage,
+.smartSwapTwoAfterImage { background-image: url('/ebook/smart-food-swaps-bg.png'); background-size: 100cqw 141.56cqw; }
+.smartSwapOneBeforeImage { width: 28.1cqw; height: 35.1cqw; background-position: -37.8cqw -35.3cqw; }
+.smartSwapOneAfterImage { width: 30.7cqw; height: 35.1cqw; background-position: -69.3cqw -35.3cqw; }
+.smartSwapTwoBeforeImage { width: 27.8cqw; height: 41.3cqw; background-position: -37.7cqw -76.2cqw; }
+.smartSwapTwoAfterImage { width: 30.7cqw; height: 41.3cqw; background-position: -69.3cqw -76.2cqw; }
+.smartSwapThreeBeforeImage,
+.smartSwapThreeAfterImage,
+.smartSwapFourBeforeImage,
+.smartSwapFourAfterImage { background-image: url('/ebook/smart-swaps-continued-bg.png'); background-size: 100cqw 141.33cqw; }
+.smartSwapThreeBeforeImage { width: 24.4cqw; height: 33.3cqw; background-position: -3.6cqw -37cqw; }
+.smartSwapThreeAfterImage { width: 23.5cqw; height: 33.3cqw; background-position: -28cqw -37cqw; }
+.smartSwapFourBeforeImage { width: 24.4cqw; height: 42.5cqw; background-position: -3.6cqw -87.7cqw; }
+.smartSwapFourAfterImage { width: 25.2cqw; height: 42.5cqw; background-position: -26.3cqw -87.7cqw; }
+.smartSwapPageNumber { position: absolute; left: 41.2cqw; bottom: 2.2cqw; display: flex; align-items: center; gap: 3.4cqw; color: #173a27; font-family: Inter, Arial, sans-serif; font-size: 2.35cqw; font-weight: 600; }
+.smartSwapPageNumber i { width: 3.8cqw; height: 1px; background: #bb7c45; }
+.smartSwapContinuedIntro > p:first-child { margin: 0 0 1.6cqw; color: #657157; font-family: Inter, Arial, sans-serif; font-size: 1.55cqw; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
+.smartSwapContinuedList { top: 44.5cqw; }
 
 .lifestyleFoundationPage { overflow: hidden; color: #123b24; background: #f8f5ef url('/ebook/lifestyle-foundation-bg.png') center/100% 100% no-repeat; }
 .lifestyleFoundationTopBranch { position: absolute; z-index: 3; top: 2.8cqw; left: 4.4cqw; width: 7.5cqw; height: 9cqw; color: #596b4f; transform: rotate(-25deg); }
@@ -2956,43 +3079,518 @@
 .lifestyleFoundationPageNumber { position: absolute; left: 41.4cqw; bottom: 1.6cqw; display: flex; align-items: center; gap: 3.4cqw; color: #173a27; font-family: Inter, Arial, sans-serif; font-size: 2.45cqw; font-weight: 600; }
 .lifestyleFoundationPageNumber i { width: 3.4cqw; height: 1px; background: #bb7c45; }
 
-.sleepRecoveryPage { overflow: hidden; color: #123b24; background: #f8f5ef url('/ebook/sleep-recovery-bg.png') center/100% 100% no-repeat; }
-.sleepRecoveryTopBranch { position: absolute; z-index: 3; top: 2.8cqw; left: 4.4cqw; width: 7.5cqw; height: 9cqw; color: #596b4f; transform: rotate(-25deg); }
-.sleepRecoveryTopline { position: absolute; z-index: 3; top: 7.5cqw; left: 11cqw; font-family: Inter, Arial, sans-serif; font-size: 1.55cqw; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: #212936; }
-.sleepRecoveryTopline span { margin: 0 2.4cqw; color: #30323a; }
-.sleepRecoveryTopRule { position: absolute; z-index: 3; top: 12.4cqw; left: 11cqw; width: 82.8cqw; height: 1px; background: rgba(37,47,45,.55); }
-.sleepRecoveryIntro { position: absolute; z-index: 2; top: 25.7cqw; left: 7cqw; color: #0d3a21; }
-.sleepRecoveryIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 8.85cqw; font-weight: 400; line-height: 1.13; letter-spacing: -.045em; }
-.sleepRecoveryIntro p { margin: 15.1cqw 0 0; color: #303946; font-family: Inter, Arial, sans-serif; font-size: 2.05cqw; line-height: 1.78; }
-.sleepRecoveryRows { position: absolute; z-index: 2; top: 99.4cqw; left: 22.4cqw; color: #18382a; font-family: Inter, Arial, sans-serif; }
-.sleepRecoveryRows article { min-height: 27.4cqw; }
-.sleepRecoveryRows article:nth-child(2) { min-height: 30cqw; }
-.sleepRecoveryRows article:nth-child(3) { min-height: 0; }
-.sleepRecoveryRows h3 { margin: 0 0 2.6cqw; font-size: 1.65cqw; font-weight: 800; line-height: 1.2; letter-spacing: .26em; text-transform: uppercase; }
-.sleepRecoveryRows p { margin: 0; color: #303946; font-size: 1.55cqw; line-height: 1.65; }
-.sleepRecoveryTakeaway { position: absolute; z-index: 2; left: 15.9cqw; bottom: 13.9cqw; margin: 0; color: #18382a; font-family: Inter, Arial, sans-serif; }
-.sleepRecoveryTakeaway p { margin: 0; font-size: 1.65cqw; font-weight: 800; line-height: 1.85; letter-spacing: .28em; text-transform: uppercase; }
-.sleepRecoveryPageNumber { position: absolute; left: 41.7cqw; bottom: 3.8cqw; display: flex; align-items: center; gap: 3.4cqw; color: #173a27; font-family: Inter, Arial, sans-serif; font-size: 2.45cqw; font-weight: 600; }
-.sleepRecoveryPageNumber i { width: 3.4cqw; height: 1px; background: #bb7c45; }
+.sleepRecoveryPage,
+.stressWellbeingPage,
+.lifestyleContinuationPage {
+  overflow: hidden;
+  color: #123b24;
+  background:
+    radial-gradient(circle at 84% 16%, rgba(164, 153, 130, .12), transparent 28%),
+    linear-gradient(180deg, #faf7f1 0%, #f6f1e9 100%);
+}
 
-.stressWellbeingPage { overflow: hidden; color: #123b24; background: #f8f5ef url('/ebook/stress-wellbeing-bg.png') center/100% 100% no-repeat; }
-.stressWellbeingTopBranch { position: absolute; z-index: 3; top: 2.8cqw; left: 4.4cqw; width: 7.5cqw; height: 9cqw; color: #596b4f; transform: rotate(-25deg); }
-.stressWellbeingTopline { position: absolute; z-index: 3; top: 7.4cqw; left: 11cqw; font-family: Inter, Arial, sans-serif; font-size: 1.55cqw; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: #212936; }
-.stressWellbeingTopline span { margin: 0 2.4cqw; color: #30323a; }
-.stressWellbeingTopRule { position: absolute; z-index: 3; top: 12.4cqw; left: 11cqw; width: 82.8cqw; height: 1px; background: rgba(37,47,45,.55); }
-.stressWellbeingIntro { position: absolute; z-index: 2; top: 25.6cqw; left: 6.3cqw; color: #0d3a21; }
-.stressWellbeingIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 8.25cqw; font-weight: 400; line-height: 1.12; letter-spacing: -.045em; }
-.stressWellbeingIntro p { margin: 14.5cqw 0 0; color: #303946; font-family: Inter, Arial, sans-serif; font-size: 2.05cqw; font-weight: 600; line-height: 1.6; }
-.stressWellbeingIntro h3 { margin: 9.2cqw 0 0; color: #526543; font-family: Inter, Arial, sans-serif; font-size: 1.6cqw; font-weight: 800; line-height: 1.2; letter-spacing: .28em; text-transform: uppercase; }
-.stressWellbeingCycle { position: absolute; z-index: 2; top: 96.5cqw; left: 22.8cqw; width: 24cqw; color: #18382a; font-family: Inter, Arial, sans-serif; }
-.stressWellbeingCycle article { min-height: 27.3cqw; }
-.stressWellbeingCycle article:nth-child(4) { min-height: 0; }
-.stressWellbeingCycle h4 { margin: 0 0 2cqw; font-size: 1.7cqw; font-weight: 800; line-height: 1.2; letter-spacing: .22em; text-transform: uppercase; }
-.stressWellbeingCycle p { margin: 0; color: #303946; font-size: 1.55cqw; font-weight: 500; line-height: 1.65; }
-.stressWellbeingInsight { position: absolute; z-index: 2; top: 147.7cqw; left: 64.9cqw; color: #173a27; font-family: Cormorant Garamond, Georgia, serif; font-size: 2.45cqw; font-style: italic; line-height: 1.2; }
-.stressWellbeingQuote { position: absolute; z-index: 2; top: 174.3cqw; left: 57.7cqw; width: 32cqw; margin: 0; color: #173a27; font-family: Cormorant Garamond, Georgia, serif; font-size: 3cqw; font-style: italic; line-height: 1.45; text-align: center; letter-spacing: -.02em; }
-.stressWellbeingPageNumber { position: absolute; left: 6.2cqw; bottom: 4cqw; display: flex; flex-direction: column; align-items: center; gap: 1.2cqw; color: #173a27; font-family: Inter, Arial, sans-serif; font-size: 2.1cqw; font-weight: 600; }
-.stressWellbeingPageNumber i { width: 4cqw; height: 1px; background: #bb7c45; }
+.sleepRecoveryArtwork {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  width: 61cqw;
+  height: 100%;
+  background: url('/ebook/sleep-recovery-bg.png') right center / auto 100% no-repeat;
+}
+
+.sleepRecoveryArtwork::after {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 22cqw;
+  background: linear-gradient(90deg, #faf7f1 8%, rgba(250,247,241,.92) 32%, rgba(250,247,241,0));
+  content: "";
+}
+
+.sleepRecoveryTopBranch,
+.stressWellbeingTopBranch,
+.lifestyleContinuationTopBranch {
+  position: absolute;
+  z-index: 3;
+  top: 2.8cqw;
+  left: 4.4cqw;
+  width: 7.5cqw;
+  height: 9cqw;
+  color: #596b4f;
+  transform: rotate(-25deg);
+}
+
+.sleepRecoveryTopline,
+.stressWellbeingTopline,
+.lifestyleContinuationTopline {
+  position: absolute;
+  z-index: 3;
+  top: 7.4cqw;
+  left: 11cqw;
+  color: #212936;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 1.55cqw;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+
+.sleepRecoveryTopline span,
+.stressWellbeingTopline span,
+.lifestyleContinuationTopline span {
+  margin: 0 2.4cqw;
+  color: #30323a;
+}
+
+.sleepRecoveryTopRule,
+.stressWellbeingTopRule,
+.lifestyleContinuationTopRule {
+  position: absolute;
+  z-index: 3;
+  top: 12.4cqw;
+  left: 11cqw;
+  right: 6.2cqw;
+  height: 1px;
+  background: rgba(37,47,45,.55);
+}
+
+.sleepRecoveryIntro {
+  position: absolute;
+  z-index: 2;
+  top: 24.8cqw;
+  left: 6.5cqw;
+  width: 39cqw;
+  color: #0d3a21;
+}
+
+.sleepRecoveryIntro h2 {
+  margin: 0;
+  font-family: Cormorant Garamond, Georgia, serif;
+  font-size: 10.8cqw;
+  font-weight: 400;
+  line-height: .96;
+  letter-spacing: -.05em;
+}
+
+.sleepRecoveryIntro p {
+  margin: 7.5cqw 0 0;
+  color: #303946;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 2.7cqw;
+  line-height: 1.55;
+}
+
+.sleepRecoveryLeadFeature {
+  position: absolute;
+  z-index: 2;
+  top: 99cqw;
+  left: 5cqw;
+  width: 46cqw;
+}
+
+.sleepRecoveryFeature,
+.stressCycleStep {
+  display: grid;
+  grid-template-columns: 11cqw minmax(0, 1fr);
+  gap: 3cqw;
+  align-items: center;
+  border: 1px solid rgba(184, 170, 145, .34);
+  border-radius: 2cqw;
+  background: rgba(248, 244, 237, .93);
+  box-shadow: 0 1.3cqw 3.8cqw rgba(78, 61, 39, .05);
+}
+
+.sleepRecoveryFeature {
+  min-height: 39cqw;
+  padding: 4cqw 3.5cqw;
+}
+
+.sleepRecoveryFeature > div,
+.stressCycleStep > div {
+  display: grid;
+  width: 10.5cqw;
+  height: 10.5cqw;
+  place-items: center;
+  border-radius: 50%;
+  background: #e3e3d4;
+  color: #526347;
+}
+
+.sleepRecoveryFeature svg,
+.stressCycleStep svg {
+  width: 6cqw;
+  height: 6cqw;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sleepRecoveryFeature h3,
+.stressCycleStep h4 {
+  margin: 0 0 2cqw;
+  color: #1a432d;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 2.05cqw;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.sleepRecoveryFeature p,
+.stressCycleStep p {
+  margin: 0;
+  color: #303946;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 2.7cqw;
+  line-height: 1.48;
+}
+
+.sleepRecoveryContinue,
+.stressWellbeingContinue {
+  position: absolute;
+  z-index: 2;
+  width: 39cqw;
+  padding: 3.4cqw 3.8cqw;
+  border: 1px solid rgba(184, 170, 145, .34);
+  border-radius: 1.8cqw;
+  background: rgba(244, 239, 230, .92);
+  color: #18382a;
+  font-family: Inter, Arial, sans-serif;
+}
+
+.sleepRecoveryContinue {
+  left: 6.5cqw;
+  bottom: 17cqw;
+}
+
+.sleepRecoveryContinue span,
+.stressWellbeingContinue span {
+  display: block;
+  margin-bottom: 1.2cqw;
+  color: #6f7b60;
+  font-size: 1.65cqw;
+  font-weight: 800;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+
+.sleepRecoveryContinue p,
+.stressWellbeingContinue p {
+  margin: 0;
+  font-size: 2.45cqw;
+  font-weight: 650;
+  line-height: 1.42;
+}
+
+.sleepRecoveryPageNumber,
+.lifestyleContinuationPageNumber {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: 4.8cqw;
+  display: flex;
+  align-items: center;
+  gap: 3.4cqw;
+  transform: translateX(-50%);
+  color: #173a27;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 2.25cqw;
+  font-weight: 600;
+}
+
+.sleepRecoveryPageNumber i,
+.lifestyleContinuationPageNumber i {
+  width: 3.4cqw;
+  height: 1px;
+  background: #bb7c45;
+}
+
+.lifestyleContinuationDecor {
+  position: absolute;
+  top: 14cqw;
+  right: -8cqw;
+  width: 42cqw;
+  color: #7e896d;
+  opacity: .13;
+  transform: rotate(18deg);
+}
+
+.lifestyleContinuationIntro {
+  position: absolute;
+  z-index: 2;
+  top: 21cqw;
+  left: 6.5cqw;
+  width: 55cqw;
+  color: #103a24;
+}
+
+.lifestyleContinuationIntro > p {
+  margin: 0 0 2.4cqw;
+  color: #66745a;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 1.7cqw;
+  font-weight: 800;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+
+.lifestyleContinuationIntro h2 {
+  margin: 0;
+  font-family: Cormorant Garamond, Georgia, serif;
+  font-size: 8.9cqw;
+  font-weight: 400;
+  line-height: .94;
+  letter-spacing: -.05em;
+}
+
+.lifestyleContinuationIntro h3 {
+  margin: 3.4cqw 0 0;
+  color: #5c6d4e;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 1.75cqw;
+  font-weight: 800;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+
+.sleepRecoveryContinuationStack {
+  position: absolute;
+  z-index: 2;
+  top: 61cqw;
+  left: 6cqw;
+  right: 6cqw;
+  display: grid;
+  gap: 5cqw;
+}
+
+.sleepRecoveryContinuationStack .sleepRecoveryFeature {
+  min-height: 40cqw;
+  padding: 4.4cqw;
+}
+
+.sleepRecoveryContinuationStack .sleepRecoveryFeature p {
+  font-size: 2.9cqw;
+}
+
+.sleepRecoveryContinuationTakeaway {
+  position: absolute;
+  z-index: 2;
+  left: 7cqw;
+  right: 7cqw;
+  bottom: 26cqw;
+  display: grid;
+  grid-template-columns: 9cqw 1fr;
+  gap: 3.5cqw;
+  align-items: center;
+  min-height: 31cqw;
+  margin: 0;
+  padding: 4.5cqw;
+  border-radius: 2cqw;
+  background: rgba(233, 227, 216, .76);
+  color: #18382a;
+}
+
+.sleepRecoveryContinuationTakeaway svg {
+  width: 7cqw;
+  color: #637354;
+}
+
+.sleepRecoveryContinuationTakeaway p {
+  margin: 0;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 2.35cqw;
+  font-weight: 800;
+  line-height: 1.7;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+
+.stressWellbeingArtwork {
+  position: absolute;
+  z-index: 0;
+  top: 18cqw;
+  right: 3cqw;
+  width: 47cqw;
+  height: 128cqw;
+  border-radius: 2cqw;
+  background: url('/ebook/stress-wellbeing-bg.png') 88% 24.3% / auto 166.7% no-repeat;
+  box-shadow: 0 1.8cqw 4.8cqw rgba(70, 55, 37, .07);
+}
+
+.stressWellbeingIntro {
+  position: absolute;
+  z-index: 2;
+  top: 24.5cqw;
+  left: 5.8cqw;
+  width: 40cqw;
+  color: #0d3a21;
+}
+
+.stressWellbeingIntro h2 {
+  margin: 0;
+  font-family: Cormorant Garamond, Georgia, serif;
+  font-size: 9.7cqw;
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -.05em;
+}
+
+.stressWellbeingIntro p {
+  margin: 8cqw 0 0;
+  color: #303946;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 2.55cqw;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.stressWellbeingIntro h3 {
+  margin: 7cqw 0 0;
+  color: #526543;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 1.8cqw;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+}
+
+.stressWellbeingCycle {
+  position: absolute;
+  z-index: 2;
+  top: 96cqw;
+  left: 4.8cqw;
+  width: 46cqw;
+  display: grid;
+  gap: 4cqw;
+}
+
+.stressCycleStep {
+  min-height: 34cqw;
+  padding: 3.4cqw 3cqw;
+}
+
+.stressCycleStep p {
+  font-size: 2.55cqw;
+  line-height: 1.45;
+}
+
+.stressWellbeingContinue {
+  right: 5cqw;
+  bottom: 15cqw;
+}
+
+.stressWellbeingPageNumber {
+  position: absolute;
+  z-index: 3;
+  left: 6.2cqw;
+  bottom: 5.6cqw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2cqw;
+  color: #173a27;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 2.1cqw;
+  font-weight: 600;
+}
+
+.stressWellbeingPageNumber i {
+  width: 4cqw;
+  height: 1px;
+  background: #bb7c45;
+}
+
+.stressContinuationCycle {
+  position: absolute;
+  z-index: 2;
+  top: 61cqw;
+  left: 6cqw;
+  right: 6cqw;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4cqw;
+}
+
+.stressContinuationCycle .stressCycleStep {
+  grid-template-columns: 1fr;
+  min-height: 57cqw;
+  padding: 4.2cqw;
+  align-content: start;
+}
+
+.stressContinuationCycle .stressCycleStep > div {
+  margin-bottom: 3.2cqw;
+}
+
+.stressContinuationCycle .stressCycleStep p {
+  font-size: 2.75cqw;
+  line-height: 1.48;
+}
+
+.stressContinuationInsight {
+  position: absolute;
+  z-index: 2;
+  top: 125cqw;
+  left: 6cqw;
+  right: 6cqw;
+  min-height: 35cqw;
+  padding: 4.5cqw 5cqw;
+  border: 1px solid rgba(184, 170, 145, .34);
+  border-radius: 2cqw;
+  background: rgba(236, 231, 222, .8);
+  color: #173a27;
+}
+
+.stressContinuationInsight span {
+  display: block;
+  margin-bottom: 2cqw;
+  color: #647356;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 1.7cqw;
+  font-weight: 800;
+  letter-spacing: .23em;
+  text-transform: uppercase;
+}
+
+.stressContinuationInsight p {
+  margin: 0;
+  font-family: Cormorant Garamond, Georgia, serif;
+  font-size: 3cqw;
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.stressContinuationQuote {
+  position: absolute;
+  z-index: 2;
+  top: 168cqw;
+  left: 10cqw;
+  right: 10cqw;
+  display: grid;
+  grid-template-columns: 6cqw 1fr;
+  gap: 2.5cqw;
+  align-items: start;
+  margin: 0;
+  color: #173a27;
+}
+
+.stressContinuationQuote > span {
+  font-family: Georgia, serif;
+  font-size: 8cqw;
+  font-weight: 700;
+  line-height: .8;
+}
+
+.stressContinuationQuote p {
+  margin: 0;
+  font-family: Cormorant Garamond, Georgia, serif;
+  font-size: 3.5cqw;
+  font-style: italic;
+  line-height: 1.3;
+}
 
 .dailyWellnessPage { overflow: hidden; color: #123b24; background: #f8f5ef url('/ebook/daily-wellness-bg.png') center/100% 100% no-repeat; }
 .dailyWellnessTopBranch { position: absolute; z-index: 3; top: 2.8cqw; left: 4.4cqw; width: 7.5cqw; height: 9cqw; color: #596b4f; transform: rotate(-25deg); }
@@ -3061,112 +3659,189 @@
 .recipeCollectionSectionPageNumber { position: absolute; left: 38.6cqw; bottom: 2.7cqw; display: flex; align-items: center; gap: 3.9cqw; color: #173a27; font-family: Cormorant Garamond, Georgia, serif; font-size: 3.7cqw; font-weight: 600; }
 .recipeCollectionSectionPageNumber i { width: 3.9cqw; height: 1px; background: #bb7c45; }
 
-.recipeCollectionIntroPage { overflow: hidden; color: #123b24; background: #f8f5ef url('/ebook/recipe-collection-intro-bg.png') center/100% 100% no-repeat; }
+.recipeCollectionIntroPage,
+.recipeCollectionContinuationPage {
+  overflow: hidden;
+  color: #123b24;
+  background:
+    radial-gradient(circle at 84% 32%, rgba(222, 218, 202, .46), transparent 35%),
+    linear-gradient(145deg, #faf7f0 0%, #f5f0e7 100%);
+}
 .recipeCollectionIntroTopBranch { position: absolute; z-index: 3; top: 2.8cqw; left: 5.1cqw; width: 7.5cqw; height: 9cqw; color: #596b4f; transform: rotate(-25deg); }
-.recipeCollectionIntroTopline { position: absolute; z-index: 3; top: 7.6cqw; left: 12.4cqw; font-family: Inter, Arial, sans-serif; font-size: 1.48cqw; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: #212936; }
+.recipeCollectionIntroTopline { position: absolute; z-index: 3; top: 7.2cqw; left: 12.4cqw; font-family: Inter, Arial, sans-serif; font-size: 1.55cqw; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: #212936; }
 .recipeCollectionIntroTopline span { margin: 0 2.2cqw; color: #30323a; }
 .recipeCollectionIntroTopRule { position: absolute; z-index: 3; top: 12.7cqw; left: 12.4cqw; width: 82cqw; height: 1px; background: rgba(37,47,45,.55); }
-.recipeCollectionIntroCopy { position: absolute; z-index: 2; top: 27.6cqw; left: 7.4cqw; color: #0d3a21; }
-.recipeCollectionIntroKicker { margin: 0 0 3.7cqw; font-family: Inter, Arial, sans-serif; font-size: 1.8cqw; font-weight: 800; letter-spacing: .34em; text-transform: uppercase; }
-.recipeCollectionIntroCopy h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 7.6cqw; font-weight: 400; line-height: 1.12; letter-spacing: -.045em; }
-.recipeCollectionIntroDivider { display: flex; align-items: center; width: 34.5cqw; margin: 5.7cqw 0 5.8cqw; color: #b87942; }
+.recipeCollectionIntroArtwork {
+  position: absolute;
+  z-index: 0;
+  top: 21cqw;
+  right: 3.5cqw;
+  width: 88cqw;
+  height: 117.4cqw;
+  border-radius: 1.8cqw;
+  background: url('/ebook/recipe-collection-intro-bg.png') center/contain no-repeat;
+  filter: saturate(.9) contrast(.98);
+}
+.recipeCollectionIntroArtwork::after {
+  content: "";
+  position: absolute;
+  inset: -2cqw;
+  pointer-events: none;
+  background: linear-gradient(90deg, #f8f4ec 0%, rgba(248, 244, 236, .93) 22%, rgba(248, 244, 236, .45) 42%, transparent 64%);
+}
+.recipeCollectionIntroCopy { position: absolute; z-index: 2; top: 24cqw; left: 7cqw; width: 43cqw; color: #0d3a21; }
+.recipeCollectionIntroKicker { margin: 0 0 2.8cqw; font-family: Inter, Arial, sans-serif; font-size: 1.75cqw; font-weight: 800; letter-spacing: .31em; text-transform: uppercase; }
+.recipeCollectionIntroCopy h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 8.2cqw; font-weight: 400; line-height: 1.01; letter-spacing: -.045em; }
+.recipeCollectionIntroDivider { display: flex; align-items: center; width: 31cqw; margin: 4.1cqw 0 4.4cqw; color: #b87942; }
 .recipeCollectionIntroDivider i { flex: 1; height: 1px; background: currentColor; }
 .recipeCollectionIntroDivider svg { width: 6.1cqw; height: 3.6cqw; margin: 0 2.4cqw; transform: rotate(90deg); }
-.recipeCollectionIntroCopy > p:not(.recipeCollectionIntroKicker) { margin: 0 0 5.6cqw; color: #26313c; font-family: Inter, Arial, sans-serif; font-size: 1.75cqw; font-weight: 600; line-height: 1.7; }
-.recipeCollectionIntroInsight { position: absolute; z-index: 2; left: 6.9cqw; top: 136.9cqw; display: grid; grid-template-columns: 8.5cqw 1fr; align-items: center; gap: 3cqw; width: 43.2cqw; min-height: 12.4cqw; margin: 0; padding: 2.1cqw 2.2cqw; border-radius: 1.1cqw; background: rgba(229,226,217,.82); color: #18382a; font-family: Inter, Arial, sans-serif; }
-.recipeCollectionIntroInsight span { display: grid; width: 6.4cqw; height: 6.4cqw; place-items: center; border-radius: 50%; background: #d4d7c6; color: #5f6d4f; }
-.recipeCollectionIntroInsight svg { width: 3.4cqw; height: 4.8cqw; transform: rotate(-18deg); }
-.recipeCollectionIntroInsight p { margin: 0; color: #1e2d26; font-size: 1.55cqw; line-height: 1.75; }
-.recipeCollectionIntroInsight strong { display: inline-block; margin-bottom: .3cqw; font-size: 1.45cqw; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; }
-.recipeCollectionIntroPillars { position: absolute; z-index: 2; left: 5.6cqw; top: 159.8cqw; display: grid; grid-template-columns: repeat(4, 10.7cqw); gap: 3.3cqw; color: #172c22; font-family: Inter, Arial, sans-serif; }
-.recipeCollectionIntroPillars article { position: relative; display: grid; justify-items: center; gap: 2cqw; min-height: 13.8cqw; text-align: center; }
-.recipeCollectionIntroPillars article:not(:last-child)::after { content: ""; position: absolute; top: .7cqw; right: -1.7cqw; width: 1px; height: 12.8cqw; background: rgba(82,82,72,.26); }
+.recipeCollectionIntroCopy > p:not(.recipeCollectionIntroKicker) { margin: 0 0 3.8cqw; color: #26313c; font-family: Inter, Arial, sans-serif; font-size: 2.65cqw; font-weight: 560; line-height: 1.55; text-wrap: pretty; }
+.recipeCollectionIntroContinue {
+  position: absolute;
+  z-index: 2;
+  top: 148cqw;
+  left: 7cqw;
+  display: grid;
+  grid-template-columns: 19cqw 1fr;
+  align-items: center;
+  gap: 3cqw;
+  width: 78cqw;
+  min-height: 23cqw;
+  padding: 4cqw 4.5cqw;
+  border-radius: 1.5cqw;
+  background: rgba(241, 236, 226, .94);
+  box-shadow: 0 1.8cqw 5cqw rgba(51, 43, 31, .08);
+  font-family: Inter, Arial, sans-serif;
+}
+.recipeCollectionIntroContinue span { display: block; color: #6b745a; font-size: 1.75cqw; font-weight: 800; letter-spacing: .24em; text-transform: uppercase; }
+.recipeCollectionIntroContinue p { margin: 0; color: #20332a; font-size: 2.8cqw; font-weight: 600; line-height: 1.45; }
+.recipeCollectionContinuationDecor { position: absolute; z-index: 0; top: 14cqw; right: -8cqw; width: 43cqw; height: 52cqw; color: rgba(80, 105, 72, .22); transform: rotate(25deg); }
+.recipeCollectionContinuationIntro { position: absolute; z-index: 2; top: 19cqw; left: 6.5cqw; color: #0d3a21; }
+.recipeCollectionContinuationIntro > p { margin: 0 0 2.2cqw; font-family: Inter, Arial, sans-serif; font-size: 1.7cqw; font-weight: 800; letter-spacing: .3em; text-transform: uppercase; }
+.recipeCollectionContinuationIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 8.8cqw; font-weight: 400; line-height: .98; letter-spacing: -.04em; }
+.recipeCollectionContinuationBody { position: absolute; z-index: 2; top: 50cqw; right: 6cqw; bottom: 10cqw; left: 6cqw; display: flex; flex-direction: column; gap: 4cqw; }
+.recipeCollectionIntroInsight { display: grid; grid-template-columns: 11cqw 1fr; align-items: center; gap: 3.4cqw; min-height: 32cqw; margin: 0; padding: 4cqw; border: 1px solid rgba(94, 89, 74, .13); border-radius: 2cqw; background: rgba(241, 237, 228, .92); color: #18382a; box-shadow: 0 1.5cqw 4cqw rgba(51, 43, 31, .05); font-family: Inter, Arial, sans-serif; }
+.recipeCollectionIntroInsight span { display: grid; width: 9cqw; height: 9cqw; place-items: center; border-radius: 50%; background: #d7dacb; color: #5f6d4f; }
+.recipeCollectionIntroInsight svg { width: 4.5cqw; height: 6cqw; transform: rotate(-18deg); }
+.recipeCollectionIntroInsight p { margin: 0; color: #1e2d26; font-size: 2.85cqw; line-height: 1.5; text-wrap: pretty; }
+.recipeCollectionIntroInsight strong { display: block; margin-bottom: 1.2cqw; color: #274331; font-size: 1.65cqw; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
+.recipeCollectionIntroPillars { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3.2cqw; color: #172c22; font-family: Inter, Arial, sans-serif; }
+.recipeCollectionIntroPillars article { display: grid; grid-template-columns: 9cqw minmax(0, 1fr); align-items: center; gap: 2.6cqw; min-height: 36cqw; padding: 3.4cqw; border: 1px solid rgba(94, 89, 74, .13); border-radius: 1.8cqw; background: rgba(250, 248, 242, .84); }
 .recipeCollectionIntroPillars svg,
-.recipeCollectionIntroPillars span { display: grid; width: 7.1cqw; height: 7.1cqw; place-items: center; border-radius: 50%; background: rgba(226,225,215,.92); color: #243e2d; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; font-size: 3.5cqw; line-height: 1; }
-.recipeCollectionIntroPillars svg { padding: 1.9cqw; }
-.recipeCollectionIntroPillars p { margin: 0; color: #1f2b2a; font-size: 1.25cqw; font-weight: 800; line-height: 1.45; letter-spacing: .12em; text-transform: uppercase; }
-.recipeCollectionIntroTakeaway { position: absolute; z-index: 2; left: 5.6cqw; bottom: 12.2cqw; display: flex; align-items: center; gap: 2.7cqw; width: 74.9cqw; min-height: 7.7cqw; margin: 0; padding: 1.7cqw 3.1cqw; border-radius: .9cqw; background: rgba(229,226,217,.82); color: #1e3329; font-family: Inter, Arial, sans-serif; }
-.recipeCollectionIntroTakeaway svg { width: 3.5cqw; height: 5cqw; color: #5f6d4f; transform: rotate(-18deg); }
-.recipeCollectionIntroTakeaway p { margin: 0; font-size: 1.3cqw; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
-.recipeCollectionIntroPageNumber { position: absolute; left: 39.7cqw; bottom: 2.6cqw; display: flex; align-items: center; gap: 3.8cqw; color: #173a27; font-family: Inter, Arial, sans-serif; font-size: 3.1cqw; font-weight: 700; }
+.recipeCollectionIntroPillars span { display: grid; width: 8.5cqw; height: 8.5cqw; place-items: center; border-radius: 50%; background: rgba(226,225,215,.96); color: #243e2d; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; font-size: 3.5cqw; line-height: 1; }
+.recipeCollectionIntroPillars svg { padding: 2.2cqw; }
+.recipeCollectionIntroPillars h3 { margin: 0 0 1.2cqw; color: #173a27; font-size: 1.9cqw; font-weight: 800; line-height: 1.25; letter-spacing: .14em; text-transform: uppercase; }
+.recipeCollectionIntroPillars p { margin: 0; color: #39433f; font-size: 2.55cqw; font-weight: 520; line-height: 1.42; text-wrap: pretty; }
+.recipeCollectionIntroTakeaway { display: grid; grid-template-columns: 7cqw 1fr; align-items: center; gap: 2.8cqw; min-height: 20cqw; margin: 0; padding: 3.2cqw 3.8cqw; border-radius: 1.5cqw; background: rgba(229,226,217,.9); color: #1e3329; font-family: Inter, Arial, sans-serif; }
+.recipeCollectionIntroTakeaway svg { width: 5cqw; height: 7cqw; color: #5f6d4f; transform: rotate(-18deg); }
+.recipeCollectionIntroTakeaway p { margin: 0; font-size: 2.05cqw; font-weight: 800; line-height: 1.45; letter-spacing: .14em; text-transform: uppercase; }
+.recipeCollectionIntroPageNumber { position: absolute; z-index: 4; left: 50%; bottom: 3cqw; display: flex; align-items: center; gap: 3.8cqw; color: #173a27; font-family: Inter, Arial, sans-serif; font-size: 2.5cqw; font-weight: 700; transform: translateX(-50%); white-space: nowrap; }
 .recipeCollectionIntroPageNumber i { width: 4cqw; height: 1px; background: #bb7c45; }
 
-.breakfastsPage { overflow: hidden; color: #123b24; background: #f8f5ef; }
+.breakfastsPage,
+.breakfastPreparationPage { overflow: hidden; color: #123b24; background: linear-gradient(145deg, #faf7f0 0%, #f5f1e9 100%); }
 .breakfastsTopBranch { position: absolute; z-index: 3; top: 2.8cqw; left: 5.2cqw; width: 7.5cqw; height: 9cqw; color: #596b4f; transform: rotate(-25deg); }
-.breakfastsTopline { position: absolute; z-index: 3; top: 6.9cqw; left: 13cqw; font-family: Inter, Arial, sans-serif; font-size: 1.45cqw; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: #212936; }
+.breakfastsTopline { position: absolute; z-index: 3; top: 6.9cqw; left: 13cqw; font-family: Inter, Arial, sans-serif; font-size: 1.5cqw; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: #212936; }
 .breakfastsTopline span { margin: 0 2.1cqw; color: #30323a; }
 .breakfastsTopRule { position: absolute; top: 11.1cqw; left: 13cqw; width: 80.7cqw; height: 1px; background: rgba(37,47,45,.55); }
-.breakfastsIntro { position: absolute; top: 16.8cqw; left: 7.4cqw; color: #0d3a21; }
-.breakfastsIntro > p:first-child { margin: 0 0 1.8cqw; font-family: Inter, Arial, sans-serif; font-size: 1.9cqw; font-weight: 800; letter-spacing: .33em; text-transform: uppercase; }
-.breakfastsIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 8.2cqw; font-weight: 400; line-height: 1; letter-spacing: -.04em; }
-.breakfastsDivider { display: flex; align-items: center; width: 21.5cqw; margin: 3.7cqw 0 3.3cqw; color: #b87942; }
+.breakfastsIntro { position: absolute; top: 16cqw; left: 6.3cqw; right: 6.3cqw; color: #0d3a21; }
+.breakfastsIntro > p:first-child { margin: 0 0 1.5cqw; font-family: Inter, Arial, sans-serif; font-size: 1.75cqw; font-weight: 800; letter-spacing: .31em; text-transform: uppercase; }
+.breakfastsIntro h2 { max-width: 87cqw; margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 7.4cqw; font-weight: 400; line-height: .98; letter-spacing: -.04em; text-wrap: balance; }
+.breakfastsDivider { display: flex; align-items: center; width: 21.5cqw; margin: 2.2cqw 0 1.8cqw; color: #b87942; }
 .breakfastsDivider i { flex: 1; height: 1px; background: currentColor; }
 .breakfastsDivider svg { width: 5cqw; height: 3cqw; margin: 0 1.7cqw; transform: rotate(90deg); }
-.breakfastsIntro em { display: block; margin: 0 0 2.1cqw; font-family: Cormorant Garamond, Georgia, serif; font-size: 2.65cqw; font-style: italic; line-height: 1.2; }
-.breakfastsCopy { margin: 0; color: #232d36; font-family: Inter, Arial, sans-serif; font-size: 1.65cqw; font-weight: 600; line-height: 1.45; }
-.breakfastsMeta { position: absolute; top: 52.8cqw; left: 21.2cqw; display: grid; grid-template-columns: 18.5cqw 18.5cqw 18.5cqw; gap: 6cqw; text-align: center; font-family: Inter, Arial, sans-serif; color: #152f23; }
+.breakfastsIntro em { display: block; margin: 0 0 1.4cqw; font-family: Cormorant Garamond, Georgia, serif; font-size: 2.8cqw; font-style: italic; line-height: 1.2; }
+.breakfastsCopy { max-width: 86cqw; margin: 0; color: #232d36; font-family: Inter, Arial, sans-serif; font-size: 2.5cqw; font-weight: 560; line-height: 1.4; text-wrap: pretty; }
+.breakfastsMeta { position: absolute; top: 52cqw; right: 7cqw; left: 7cqw; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); text-align: center; font-family: Inter, Arial, sans-serif; color: #152f23; }
 .breakfastsMeta article { position: relative; }
-.breakfastsMeta article:not(:last-child)::after { content: ""; position: absolute; top: .5cqw; right: -3.1cqw; width: 1px; height: 11.6cqw; background: rgba(54,55,50,.25); }
+.breakfastsMeta article:not(:last-child)::after { content: ""; position: absolute; top: .5cqw; right: 0; width: 1px; height: 14.5cqw; background: rgba(54,55,50,.22); }
 .breakfastsMeta svg,
-.breakfastsMeta span { display: grid; width: 5.7cqw; height: 5.7cqw; place-items: center; margin: 0 auto 2.5cqw; border-radius: 50%; background: #e0dfd3; color: #173a27; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; font-size: 2.8cqw; }
-.breakfastsMeta h3 { margin: 0 0 1.3cqw; font-size: 1.2cqw; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
-.breakfastsMeta p { margin: 0; color: #1f252b; font-size: 1.8cqw; }
-.breakfastsHero { position: absolute; left: 6.2cqw; top: 71.4cqw; width: 87.5cqw; height: 46.7cqw; border-radius: 1cqw; overflow: hidden; }
+.breakfastsMeta span { display: grid; width: 6.5cqw; height: 6.5cqw; place-items: center; margin: 0 auto 1.3cqw; border-radius: 50%; background: #e0dfd3; color: #173a27; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; font-size: 2.8cqw; }
+.breakfastsMeta h3 { margin: 0 0 .8cqw; font-size: 1.6cqw; font-weight: 800; line-height: 1.25; letter-spacing: .11em; text-transform: uppercase; }
+.breakfastsMeta p { margin: 0; color: #1f252b; font-size: 2.5cqw; line-height: 1.2; }
+.breakfastsHero { position: absolute; left: 6.2cqw; top: 72cqw; width: 87.5cqw; height: 46.7cqw; border-radius: 1.5cqw; overflow: hidden; box-shadow: 0 2cqw 5cqw rgba(51, 43, 31, .08); }
 .breakfastsHero img { object-fit: cover; }
-.breakfastsIngredients,
-.breakfastsMethod { position: absolute; top: 122.4cqw; font-family: Inter, Arial, sans-serif; color: #1e2b2d; }
-.breakfastsIngredients { left: 6.9cqw; width: 33cqw; }
-.breakfastsMethod { left: 43.8cqw; width: 44.5cqw; }
-.breakfastsIngredients h3,
-.breakfastsMethod h3,
-.breakfastsHighlights h3 { margin: 0 0 3cqw; color: #142e22; font-size: 1.75cqw; font-weight: 800; letter-spacing: .24em; text-transform: uppercase; }
-.breakfastsIngredients h3::after,
-.breakfastsMethod h3::after,
-.breakfastsHighlights h3::after { content: ""; display: block; width: 4cqw; height: 1px; margin-top: 1.7cqw; background: #5d654e; }
-.breakfastsIngredients ul { margin: 0; padding-left: 1.8cqw; font-size: 1.34cqw; line-height: 1.45; }
-.breakfastsIngredients li { margin-bottom: 1.25cqw; }
-.breakfastsMethod ol { margin: 0; padding: 0; list-style: none; counter-reset: method; font-size: 1.32cqw; line-height: 1.35; }
-.breakfastsMethod li { position: relative; min-height: 7cqw; margin: 0 0 1.3cqw; padding-left: 5.2cqw; counter-increment: method; }
-.breakfastsMethod li::before { content: counter(method); position: absolute; left: 0; top: 0; display: grid; width: 3cqw; height: 3cqw; place-items: center; border-radius: 50%; background: #e0dfd3; color: #1c3426; font-weight: 700; }
-.breakfastsMethod aside { display: grid; grid-template-columns: 5.2cqw 1fr; gap: 2.2cqw; align-items: center; width: 50cqw; min-height: 12cqw; margin: 1.7cqw 0 0 -2.3cqw; padding: 2cqw 3.2cqw; border-radius: 1cqw; background: rgba(229,226,217,.82); }
-.breakfastsMethod aside svg { width: 3.5cqw; height: 5cqw; color: #5f6d4f; transform: rotate(-18deg); }
-.breakfastsMethod aside p { margin: 0; font-size: 1.25cqw; line-height: 1.55; }
-.breakfastsMethod aside strong { font-size: 1.35cqw; letter-spacing: .22em; text-transform: uppercase; }
-.breakfastsHighlights { position: absolute; left: 6.2cqw; bottom: 2.5cqw; width: 86.2cqw; height: 35.3cqw; padding: 2.2cqw 3cqw; border-radius: 1cqw; background: rgba(229,226,217,.72); font-family: Inter, Arial, sans-serif; color: #1e2b2d; }
-.breakfastsHighlights h3 { margin-bottom: 1.2cqw; }
-.breakfastsHighlights article { display: grid; grid-template-columns: 8.8cqw 1fr; align-items: center; min-height: 7.1cqw; border-bottom: 1px solid rgba(79,75,65,.2); }
+.breakfastsHighlights { position: absolute; top: 124cqw; right: 6.2cqw; left: 6.2cqw; padding: 3cqw 3.5cqw; border: 1px solid rgba(94, 89, 74, .12); border-radius: 1.8cqw; background: rgba(238,234,225,.9); font-family: Inter, Arial, sans-serif; color: #1e2b2d; }
+.breakfastsHighlights > header { display: flex; align-items: flex-end; justify-content: space-between; gap: 3cqw; min-height: 6.5cqw; padding-bottom: 2cqw; border-bottom: 1px solid rgba(79,75,65,.2); }
+.breakfastsHighlights > header span { width: auto; height: auto; margin: 0; border-radius: 0; background: transparent; color: #67705b; font-size: 1.45cqw; font-weight: 750; line-height: 1.35; letter-spacing: .1em; text-align: right; text-transform: uppercase; }
+.breakfastsHighlights h3 { margin: 0; color: #142e22; font-size: 1.85cqw; font-weight: 800; letter-spacing: .23em; text-transform: uppercase; }
+.breakfastsHighlights article { display: grid; grid-template-columns: 9cqw 1fr; align-items: center; min-height: 16.3cqw; border-bottom: 1px solid rgba(79,75,65,.18); }
 .breakfastsHighlights article:last-child { border-bottom: 0; }
-.breakfastsHighlights span { display: grid; width: 5.7cqw; height: 5.7cqw; place-items: center; border-radius: 50%; background: #e0dfd3; color: #173a27; font-size: 2.7cqw; }
-.breakfastsHighlights svg { width: 5.7cqw; height: 5.7cqw; padding: 1.6cqw; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-.breakfastsHighlights h4 { margin: 0 0 .8cqw; color: #173a27; font-size: 1.25cqw; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
-.breakfastsHighlights p { margin: 0; font-size: 1.25cqw; line-height: 1.3; }
+.breakfastsHighlights article > span { display: grid; width: 6.8cqw; height: 6.8cqw; place-items: center; border-radius: 50%; background: #dddfd2; color: #173a27; font-size: 3cqw; }
+.breakfastsHighlights svg { width: 6.8cqw; height: 6.8cqw; padding: 1.8cqw; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.breakfastsHighlights h4 { margin: 0 0 .7cqw; color: #173a27; font-size: 1.8cqw; font-weight: 800; line-height: 1.25; letter-spacing: .15em; text-transform: uppercase; }
+.breakfastsHighlights p { margin: 0; color: #39423f; font-size: 2.6cqw; line-height: 1.35; text-wrap: pretty; }
 
-.matchaNutritionPage { overflow: hidden; color: #123b24; background: #f8f5ef url('/ebook/breakfast-nutrition-bg.png') center/100% 100% no-repeat; }
-.matchaNutritionTopline { position: absolute; z-index: 3; top: 7.4cqw; left: 11.2cqw; font-family: Inter, Arial, sans-serif; font-size: 1.35cqw; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #151d22; }
+.breakfastPreparationPhoto { position: absolute; top: 16cqw; right: 6cqw; width: 39cqw; height: 20.8cqw; overflow: hidden; border-radius: 1.4cqw; box-shadow: 0 1.5cqw 4cqw rgba(51, 43, 31, .08); }
+.breakfastPreparationPhoto img { object-fit: cover; }
+.breakfastPreparationIntro { position: absolute; top: 17cqw; left: 6.3cqw; width: 45cqw; color: #0d3a21; }
+.breakfastPreparationIntro p { margin: 0 0 1.5cqw; font-family: Inter, Arial, sans-serif; font-size: 1.7cqw; font-weight: 800; letter-spacing: .3em; text-transform: uppercase; }
+.breakfastPreparationIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 7.4cqw; font-weight: 400; line-height: .96; letter-spacing: -.04em; }
+.breakfastPreparationColumns { position: absolute; top: 45cqw; right: 6cqw; bottom: 12cqw; left: 6cqw; display: grid; grid-template-rows: 57cqw minmax(0, 1fr); gap: 3.5cqw; }
+.breakfastsIngredients,
+.breakfastsMethod { min-width: 0; padding: 3.5cqw 4cqw; border: 1px solid rgba(94, 89, 74, .12); border-radius: 1.8cqw; background: rgba(250,248,242,.78); font-family: Inter, Arial, sans-serif; color: #1e2b2d; }
+.breakfastsMethod { display: flex; flex-direction: column; }
+.breakfastsIngredients h3,
+.breakfastsMethod h3 { margin: 0 0 3cqw; color: #142e22; font-size: 1.85cqw; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; }
+.breakfastsIngredients h3::after,
+.breakfastsMethod h3::after { content: ""; display: block; width: 4cqw; height: 1px; margin-top: 1.7cqw; background: #5d654e; }
+.breakfastsIngredients ul { display: grid; grid-template-rows: repeat(5, auto); grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); column-gap: 6cqw; margin: 0; padding-left: 3cqw; color: #37403c; font-size: 2.75cqw; line-height: 1.4; }
+.breakfastsIngredients li { margin-bottom: 1.6cqw; padding-left: .5cqw; }
+.breakfastsMethod ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.8cqw 4cqw; margin: 0; padding: 0; list-style: none; counter-reset: method; color: #37403c; font-size: 2.65cqw; line-height: 1.42; }
+.breakfastsMethod li { position: relative; margin: 0; padding-left: 7cqw; counter-increment: method; }
+.breakfastsMethod li:first-child { grid-column: 1 / -1; }
+.breakfastsMethod li::before { content: counter(method); position: absolute; left: 0; top: -.3cqw; display: grid; width: 5cqw; height: 5cqw; place-items: center; border-radius: 50%; background: #e0dfd3; color: #1c3426; font-size: 1.8cqw; font-weight: 700; }
+.breakfastsMethod aside { display: grid; grid-template-columns: 7cqw 1fr; gap: 2.5cqw; align-items: center; min-height: 18cqw; margin-top: auto; padding: 3cqw 4cqw; border-radius: 1.4cqw; background: rgba(229,226,217,.86); }
+.breakfastsMethod aside svg { width: 4.5cqw; height: 6cqw; color: #5f6d4f; transform: rotate(-18deg); }
+.breakfastsMethod aside p { margin: 0; font-size: 2.55cqw; line-height: 1.45; }
+.breakfastsMethod aside strong { display: block; margin-bottom: 1cqw; font-size: 1.55cqw; letter-spacing: .2em; text-transform: uppercase; }
+.breakfastsPageNumber { position: absolute; z-index: 5; left: 50%; bottom: 3cqw; display: flex; align-items: center; gap: 3.8cqw; color: #173a27; font-family: Inter, Arial, sans-serif; font-size: 2.45cqw; font-weight: 700; transform: translateX(-50%); white-space: nowrap; }
+.breakfastsPageNumber i { width: 4cqw; height: 1px; background: #bb7c45; }
+
+.matchaNutritionPage,
+.matchaProteinBreakdownPage { overflow: hidden; color: #123b24; background: linear-gradient(145deg, #faf7f0 0%, #f5f1e9 100%); }
+.matchaNutritionTopBranch { position: absolute; z-index: 3; top: 2.5cqw; left: 5cqw; width: 7.3cqw; height: 8.8cqw; color: #596b4f; transform: rotate(-20deg); }
+.matchaNutritionTopline { position: absolute; z-index: 3; top: 7cqw; left: 12cqw; font-family: Inter, Arial, sans-serif; font-size: 1.5cqw; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: #151d22; }
 .matchaNutritionTopline span { margin: 0 2.2cqw; color: #30323a; }
-.matchaNutritionIntro { position: absolute; z-index: 2; top: 19.9cqw; left: 5.8cqw; color: #0d3a21; }
-.matchaNutritionIntro > p:first-child { margin: 0 0 10cqw; font-family: Inter, Arial, sans-serif; font-size: 1.7cqw; font-weight: 800; letter-spacing: .34em; text-transform: uppercase; }
-.matchaNutritionIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 6.5cqw; font-weight: 400; line-height: 1.12; letter-spacing: -.045em; }
-.matchaNutritionCopy { margin: 6.1cqw 0 0; color: #3b3f46; font-family: Inter, Arial, sans-serif; font-size: 1.8cqw; font-weight: 500; line-height: 1.8; }
-.matchaNutritionMeta { position: absolute; z-index: 2; top: 96.6cqw; left: 5.7cqw; display: grid; grid-template-columns: 17.6cqw 17.6cqw 17.6cqw; gap: 8cqw; text-align: center; font-family: Inter, Arial, sans-serif; color: #142e22; }
-.matchaNutritionMeta article { position: relative; padding-top: 8.7cqw; }
-.matchaNutritionMeta article:not(:last-child)::after { content: ""; position: absolute; top: .2cqw; right: -4cqw; width: 1px; height: 15.2cqw; background: rgba(58,57,51,.25); }
-.matchaNutritionMeta h3 { margin: 0 0 2.4cqw; font-size: 1.2cqw; font-weight: 800; line-height: 1.2; letter-spacing: .16em; text-transform: uppercase; }
-.matchaNutritionMeta p { margin: 0; color: #111820; font-size: 2cqw; line-height: 1.2; }
-.matchaNutritionHeading { position: absolute; z-index: 2; top: 119.2cqw; left: 30.5cqw; margin: 0; color: #153925; font-family: Inter, Arial, sans-serif; font-size: 2.1cqw; font-weight: 800; letter-spacing: .34em; text-transform: uppercase; }
-.matchaProteinCard { position: absolute; z-index: 2; left: 8.8cqw; top: 163.3cqw; width: 17.5cqw; text-align: center; font-family: Inter, Arial, sans-serif; color: #173a27; }
-.matchaProteinCard h4 { margin: 0 0 4cqw; font-size: 1.8cqw; font-weight: 800; letter-spacing: .28em; text-transform: uppercase; }
-.matchaProteinCard p { margin: 0; color: #53545a; font-size: 1.4cqw; line-height: 1.95; }
-.matchaProteinTable { position: absolute; z-index: 2; top: 130.3cqw; left: 34.6cqw; width: 57.2cqw; color: #173a27; font-family: Inter, Arial, sans-serif; }
+.matchaNutritionTopRule { position: absolute; z-index: 3; top: 12.4cqw; left: 12cqw; width: 82cqw; height: 1px; background: rgba(37,47,45,.5); }
+.matchaNutritionHero { position: absolute; z-index: 0; top: 17cqw; right: 0; width: 70cqw; height: 98cqw; overflow: hidden; border-radius: 2cqw 0 0 2cqw; background: #efe9dd; box-shadow: -2cqw 2cqw 6cqw rgba(51, 43, 31, .08); }
+.matchaNutritionHero::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 2cqw 0 4cqw rgba(248,245,238,.18); }
+.matchaNutritionHero img { object-fit: contain; object-position: center; }
+.matchaNutritionIntro { position: absolute; z-index: 2; top: 20cqw; left: 6cqw; width: 40cqw; color: #0d3a21; }
+.matchaNutritionIntro > p:first-child { margin: 0 0 3cqw; font-family: Inter, Arial, sans-serif; font-size: 1.7cqw; font-weight: 800; letter-spacing: .31em; text-transform: uppercase; }
+.matchaNutritionIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 6.7cqw; font-weight: 400; line-height: 1.02; letter-spacing: -.045em; text-wrap: balance; }
+.matchaNutritionCopy { margin: 4.2cqw 0 0; color: #3b3f46; font-family: Inter, Arial, sans-serif; font-size: 2.7cqw; font-weight: 540; line-height: 1.5; text-wrap: pretty; }
+.matchaNutritionMeta { position: absolute; z-index: 2; top: 119cqw; right: 7cqw; left: 7cqw; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); text-align: center; font-family: Inter, Arial, sans-serif; color: #142e22; }
+.matchaNutritionMeta article { position: relative; }
+.matchaNutritionMeta article:not(:last-child)::after { content: ""; position: absolute; top: .5cqw; right: 0; width: 1px; height: 15cqw; background: rgba(58,57,51,.22); }
+.matchaNutritionMeta svg { display: grid; width: 7cqw; height: 7cqw; place-items: center; margin: 0 auto 1.4cqw; padding: 1.3cqw; border-radius: 50%; background: #e0dfd3; color: #173a27; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.matchaNutritionMeta h3 { margin: 0 0 .9cqw; font-size: 1.6cqw; font-weight: 800; line-height: 1.25; letter-spacing: .12em; text-transform: uppercase; }
+.matchaNutritionMeta p { margin: 0; color: #111820; font-size: 2.55cqw; line-height: 1.2; }
+.matchaNutritionContinue { position: absolute; z-index: 2; left: 6cqw; bottom: 29cqw; width: 72cqw; min-height: 24cqw; padding: 4cqw 4.5cqw; border-radius: 1.6cqw; background: rgba(235,231,221,.94); box-shadow: 0 1.8cqw 5cqw rgba(51, 43, 31, .06); font-family: Inter, Arial, sans-serif; }
+.matchaNutritionContinue span { display: block; margin-bottom: 1.2cqw; color: #5d6b50; font-size: 1.7cqw; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; }
+.matchaNutritionContinue p { margin: 0; color: #25362f; font-size: 2.85cqw; font-weight: 620; line-height: 1.42; }
+.matchaProteinBreakdownDecor { position: absolute; z-index: 0; top: 14cqw; right: -7cqw; width: 42cqw; height: 50cqw; color: rgba(80, 105, 72, .2); transform: rotate(24deg); }
+.matchaProteinBreakdownIntro { position: absolute; z-index: 2; top: 19cqw; left: 6.5cqw; color: #0d3a21; }
+.matchaProteinBreakdownIntro > p { margin: 0 0 2cqw; font-family: Inter, Arial, sans-serif; font-size: 1.7cqw; font-weight: 800; letter-spacing: .31em; text-transform: uppercase; }
+.matchaProteinBreakdownIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 8.7cqw; font-weight: 400; line-height: .97; letter-spacing: -.04em; }
+.matchaProteinCard { position: absolute; z-index: 2; top: 53cqw; right: 6cqw; left: 6cqw; display: grid; grid-template-columns: 10cqw 1fr; align-items: center; gap: 3cqw; min-height: 26cqw; padding: 3.5cqw 4cqw; border: 1px solid rgba(94, 89, 74, .13); border-radius: 1.8cqw; background: rgba(241,237,228,.92); box-shadow: 0 1.5cqw 4cqw rgba(51,43,31,.05); font-family: Inter, Arial, sans-serif; color: #173a27; }
+.matchaProteinCard > span { display: grid; width: 9cqw; height: 9cqw; place-items: center; border-radius: 50%; background: #d7dacb; color: #26432e; }
+.matchaProteinCard svg { width: 9cqw; height: 9cqw; padding: 2.2cqw; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.matchaProteinCard h4 { margin: 0 0 1cqw; font-size: 1.8cqw; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; }
+.matchaProteinCard p { margin: 0; color: #434a46; font-size: 2.55cqw; line-height: 1.45; text-wrap: pretty; }
+.matchaProteinTable { position: absolute; z-index: 2; top: 84cqw; right: 6cqw; left: 6cqw; color: #173a27; font-family: Inter, Arial, sans-serif; }
 .matchaProteinTable header,
 .matchaProteinTable article,
 .matchaProteinTable footer { display: grid; grid-template-columns: 1fr 15cqw; align-items: center; }
-.matchaProteinTable header { height: 7.8cqw; padding: 0 3cqw 0 4.2cqw; font-size: 1.35cqw; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+.matchaProteinTable header { height: 10cqw; padding: 0 3cqw 0 13cqw; border-bottom: 1px solid rgba(79,75,65,.25); font-size: 1.55cqw; font-weight: 800; line-height: 1.3; letter-spacing: .14em; text-transform: uppercase; }
 .matchaProteinTable header span:last-child { text-align: center; }
-.matchaProteinTable article { height: 13.2cqw; padding: 0 3.1cqw 0 12.4cqw; font-size: 2.35cqw; font-family: Cormorant Garamond, Georgia, serif; }
-.matchaProteinTable article strong { color: #3a3d42; font-family: Inter, Arial, sans-serif; font-size: 2cqw; font-weight: 500; text-align: center; }
-.matchaProteinTable footer { height: 8.7cqw; margin: 2.2cqw 2.4cqw 0 0; padding: 0 3.5cqw 0 12.4cqw; border-radius: 1cqw; background: rgba(227,224,214,.82); font-size: 1.7cqw; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-.matchaProteinTable footer strong { color: #173a27; font-size: 1.95cqw; text-align: center; }
+.matchaProteinTable article { position: relative; grid-template-columns: 10cqw 1fr 16cqw; min-height: 20cqw; padding: 0 3cqw; border-bottom: 1px solid rgba(79,75,65,.18); background: rgba(250,248,242,.48); font-size: 3cqw; font-family: Cormorant Garamond, Georgia, serif; }
+.matchaProteinTable article i { display: grid; width: 6.5cqw; height: 6.5cqw; place-items: center; border-radius: 50%; background: #e3e1d7; color: #52614d; font-family: Inter, Arial, sans-serif; font-size: 1.7cqw; font-style: normal; font-weight: 750; }
+.matchaProteinTable article strong { color: #3a3d42; font-family: Inter, Arial, sans-serif; font-size: 2.5cqw; font-weight: 600; text-align: center; }
+.matchaProteinTable footer { height: 10cqw; margin-top: 3cqw; padding: 0 3.5cqw 0 13cqw; border-radius: 1.4cqw; background: rgba(227,224,214,.9); font-size: 1.75cqw; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.matchaProteinTable footer strong { color: #173a27; font-size: 2.35cqw; text-align: center; }
+.matchaNutritionPageNumber { position: absolute; z-index: 5; left: 50%; bottom: 3cqw; display: flex; align-items: center; gap: 3.8cqw; color: #173a27; font-family: Inter, Arial, sans-serif; font-size: 2.45cqw; font-weight: 700; transform: translateX(-50%); white-space: nowrap; }
+.matchaNutritionPageNumber i { width: 4cqw; height: 1px; background: #bb7c45; }
 
 .matchaBenefitsPage { overflow: hidden; color: #123b24; background: #f8f5ef; }
 .matchaBenefitsTopBranch { position: absolute; z-index: 3; top: 2.5cqw; left: 5.5cqw; width: 6.8cqw; height: 8cqw; color: #123b24; transform: rotate(-8deg); }
@@ -3467,6 +4142,315 @@
 .actionPlanRemember > p:nth-of-type(5) { grid-column: 7; }
 .actionPlanClosing { position: absolute; z-index: 2; left: 30.1cqw; bottom: 4.25cqw; margin: 0; color: #071e10; font-family: Cormorant Garamond, Georgia, serif; font-size: 2.18cqw; font-style: italic; font-weight: 600; letter-spacing: -.01em; }
 
+/* Readable, split layouts for the original dense pages 41–49. */
+.laterEditorialPage {
+  overflow: hidden;
+  color: #123b24;
+  background:
+    radial-gradient(circle at 88% 23%, rgba(220, 220, 203, .42), transparent 32%),
+    linear-gradient(145deg, oklch(98% .012 88) 0%, oklch(96.5% .015 82) 100%);
+}
+
+.laterWarmPage {
+  color: #102a18;
+  background:
+    radial-gradient(circle at 88% 20%, rgba(226, 211, 177, .34), transparent 34%),
+    linear-gradient(145deg, oklch(98% .014 88) 0%, oklch(96.5% .018 78) 100%);
+}
+
+.laterEbookChrome {
+  position: absolute;
+  z-index: 8;
+  inset: 0;
+  pointer-events: none;
+  color: #536549;
+}
+
+.laterEbookChrome > svg {
+  position: absolute;
+  top: 2.6cqw;
+  left: 4.8cqw;
+  width: 7cqw;
+  height: 8.5cqw;
+  transform: rotate(-21deg);
+}
+
+.laterEbookChrome header {
+  position: absolute;
+  top: 6.8cqw;
+  left: 12cqw;
+  color: #1a2428;
+  font-family: Inter, Arial, sans-serif;
+  font-size: max(1.72cqw, 6px);
+  font-weight: 750;
+  letter-spacing: .13em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.laterEbookChrome header span { margin: 0 1.8cqw; color: #506047; }
+.laterEbookChrome > i { position: absolute; top: 11.8cqw; right: 6cqw; left: 12cqw; height: 1px; background: rgba(42, 54, 48, .46); }
+.laterEbookChromeWarm { color: #b7762c; }
+.laterEbookChromeWarm header span { color: #b7762c; }
+.laterEbookChromeWarm > i { background: rgba(183, 118, 44, .55); }
+
+.laterEbookFolio {
+  position: absolute;
+  z-index: 8;
+  bottom: 3cqw;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 3.6cqw;
+  color: #173a27;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 2.35cqw;
+  font-weight: 700;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.laterEbookFolio i { width: 4cqw; height: 1px; background: #b77942; }
+.fixedPageDecorBranch { position: absolute; z-index: 0; top: 14cqw; right: -7cqw; width: 42cqw; height: 50cqw; color: rgba(84, 107, 73, .19); transform: rotate(24deg); }
+
+.fixedPageContinue {
+  position: absolute;
+  z-index: 4;
+  right: 7cqw;
+  bottom: 10cqw;
+  left: 7cqw;
+  display: grid;
+  grid-template-columns: 19cqw 1fr;
+  align-items: center;
+  gap: 3cqw;
+  min-height: 17cqw;
+  padding: 3cqw 4cqw;
+  border: 1px solid rgba(93, 87, 72, .12);
+  border-radius: 1.5cqw;
+  background: rgba(235, 231, 221, .92);
+  box-shadow: 0 1.2cqw 4cqw rgba(53, 44, 31, .05);
+  font-family: Inter, Arial, sans-serif;
+}
+
+.fixedPageContinue strong { color: #59684f; font-size: max(1.75cqw, 6px); letter-spacing: .2em; text-transform: uppercase; }
+.fixedPageContinue span { color: #23352d; font-size: 2.7cqw; font-weight: 600; line-height: 1.4; }
+
+.fixedMatchaBenefitsHero {
+  position: absolute;
+  z-index: 0;
+  top: 15.5cqw;
+  right: 0;
+  width: 63cqw;
+  height: 88.2cqw;
+  overflow: hidden;
+  border-radius: 2cqw 0 0 2cqw;
+  background: #eee8dc;
+}
+
+.fixedMatchaBenefitsHero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(249, 246, 239, .96), rgba(249, 246, 239, .3) 22%, transparent 42%); pointer-events: none; }
+.fixedMatchaBenefitsHero img { object-fit: contain; object-position: center; }
+.fixedMatchaBenefitsIntro { position: absolute; z-index: 3; top: 20cqw; left: 6cqw; width: 43cqw; color: #123b24; }
+.fixedMatchaBenefitsIntro > p:first-child,
+.fixedContinuationTitle > p { margin: 0 0 3cqw; font-family: Inter, Arial, sans-serif; font-size: 1.7cqw; font-weight: 800; letter-spacing: .3em; text-transform: uppercase; }
+.fixedMatchaBenefitsIntro h2,
+.fixedContinuationTitle h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 7.1cqw; font-weight: 500; line-height: 1.02; letter-spacing: -.045em; }
+.fixedMatchaBenefitsIntro > p:last-child { margin: 4cqw 0 0; color: #37413f; font-family: Inter, Arial, sans-serif; font-size: 2.55cqw; font-weight: 540; line-height: 1.5; text-wrap: pretty; }
+
+.fixedBenefitRows { position: absolute; z-index: 3; right: 6cqw; left: 6cqw; display: grid; gap: 2.4cqw; font-family: Inter, Arial, sans-serif; }
+.fixedMatchaBenefitsPage .fixedBenefitRows { top: 83cqw; }
+.fixedMatchaBenefitsContinuationPage .fixedBenefitRows { top: 53cqw; }
+.fixedBenefitRows article { display: grid; grid-template-columns: 10cqw 1fr; align-items: center; gap: 3cqw; min-height: 27cqw; padding: 3cqw 4cqw; border: 1px solid rgba(92, 88, 77, .16); border-radius: 1.7cqw; background: rgba(250, 248, 243, .84); }
+.fixedMatchaBenefitsContinuationPage .fixedBenefitRows article { min-height: 30cqw; }
+.fixedBenefitRows article > span { display: grid; width: 8.5cqw; height: 8.5cqw; place-items: center; border-radius: 50%; background: #e1e1d7; color: #173a27; font-size: 3.4cqw; }
+.fixedBenefitRows h3 { margin: 0 0 1cqw; color: #173a27; font-size: 1.9cqw; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+.fixedBenefitRows p { margin: 0; color: #39423f; font-size: 2.55cqw; line-height: 1.42; text-wrap: pretty; }
+.fixedContinuationTitle { position: absolute; z-index: 3; top: 18cqw; left: 6.5cqw; color: #123b24; }
+.fixedContinuationTitle h2 { font-size: 8.4cqw; line-height: .96; }
+.fixedMatchaBenefitsTakeaway { position: absolute; z-index: 4; right: 6cqw; bottom: 13cqw; left: 6cqw; display: grid; grid-template-columns: 9cqw 1fr; align-items: center; gap: 3cqw; min-height: 23cqw; padding: 3.4cqw 4cqw; border-radius: 1.7cqw; background: rgba(227, 225, 215, .94); font-family: Inter, Arial, sans-serif; }
+.fixedMatchaBenefitsTakeaway > span { display: grid; width: 8cqw; height: 8cqw; place-items: center; border-radius: 50%; background: #174329; color: #f6f1e8; font-size: 3cqw; }
+.fixedMatchaBenefitsTakeaway strong { display: block; margin-bottom: 1cqw; color: #173a27; font-size: 1.75cqw; letter-spacing: .17em; text-transform: uppercase; }
+.fixedMatchaBenefitsTakeaway p { margin: 0; color: #3e4743; font-size: 2.5cqw; line-height: 1.4; }
+
+.fixedMatchaIngredientArtwork {
+  position: absolute;
+  z-index: 0;
+  top: 17cqw;
+  right: 2cqw;
+  width: 41cqw;
+  height: 116.4cqw;
+  overflow: hidden;
+}
+
+.fixedMatchaIngredientsContinuationPage .fixedMatchaIngredientArtwork { top: 17cqw; right: 3cqw; width: 47cqw; height: 66cqw; border-radius: 1.8cqw; background: #eee8dc; }
+.fixedMatchaIngredientArtwork img { object-fit: contain; object-position: center; }
+.fixedMatchaIngredientsIntro { position: absolute; z-index: 3; top: 19cqw; left: 6cqw; width: 50cqw; color: #123b24; }
+.fixedMatchaIngredientsIntro > p { width: 45cqw; margin: 0 0 2.5cqw; font-family: Inter, Arial, sans-serif; font-size: 1.65cqw; font-weight: 800; line-height: 1.35; letter-spacing: .22em; text-transform: uppercase; }
+.fixedMatchaIngredientsIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 8cqw; font-weight: 500; line-height: .94; letter-spacing: -.04em; }
+.fixedMatchaIngredientsIntro h2 span { color: #66715d; font-family: Inter, Arial, sans-serif; font-size: 2.1cqw; font-weight: 700; letter-spacing: .15em; }
+.fixedMatchaIngredientList { position: absolute; z-index: 3; top: 66cqw; left: 6cqw; display: grid; gap: 3cqw; width: 50cqw; font-family: Inter, Arial, sans-serif; }
+.fixedMatchaIngredientList article { display: grid; grid-template-columns: 8cqw 1fr; align-items: center; gap: 2.4cqw; min-height: 22cqw; padding: 2.5cqw 3cqw; border: 1px solid rgba(94, 89, 75, .14); border-radius: 1.5cqw; background: rgba(250, 248, 242, .88); }
+.fixedMatchaIngredientList i { display: grid; width: 6.5cqw; height: 6.5cqw; place-items: center; border-radius: 50%; background: #e0e1d5; color: #53624e; font-size: 1.7cqw; font-style: normal; font-weight: 750; }
+.fixedMatchaIngredientList span { color: #263630; font-size: 2.9cqw; font-weight: 600; line-height: 1.35; }
+.fixedMatchaIngredientsContinuationPage .fixedMatchaIngredientList { top: 82cqw; right: 6cqw; left: 6cqw; grid-template-columns: 1fr 1fr; width: auto; gap: 3.5cqw; }
+.fixedMatchaIngredientsContinuationPage .fixedMatchaIngredientList article { min-height: 32cqw; }
+.fixedMatchaIngredientTip { position: absolute; z-index: 4; right: 6cqw; bottom: 12cqw; left: 6cqw; display: grid; grid-template-columns: 8cqw 1fr; align-items: center; gap: 3cqw; min-height: 25cqw; padding: 3.5cqw 4cqw; border-radius: 1.6cqw; background: rgba(229, 226, 216, .94); font-family: Inter, Arial, sans-serif; }
+.fixedMatchaIngredientTip > svg { width: 6cqw; height: 8cqw; color: #68745c; transform: rotate(-18deg); }
+.fixedMatchaIngredientTip h3 { margin: 0 0 1cqw; color: #173a27; font-size: 1.7cqw; letter-spacing: .18em; text-transform: uppercase; }
+.fixedMatchaIngredientTip p { margin: 0; color: #3c4542; font-size: 2.5cqw; line-height: 1.42; }
+
+.fixedMatchaCookingHero { position: absolute; z-index: 0; top: 15cqw; right: 4cqw; width: 38cqw; height: 53.2cqw; overflow: hidden; border-radius: 1.8cqw; background: #eee8dc; }
+.fixedMatchaCookingHero img { object-fit: contain; }
+.fixedMatchaCookingIntro { position: absolute; z-index: 3; top: 19cqw; left: 6cqw; width: 53cqw; color: #123b24; }
+.fixedMatchaCookingIntro > p { margin: 0 0 2.5cqw; font-family: Inter, Arial, sans-serif; font-size: 1.7cqw; font-weight: 800; letter-spacing: .28em; text-transform: uppercase; }
+.fixedMatchaCookingIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 6.8cqw; font-weight: 500; line-height: .98; letter-spacing: -.04em; text-wrap: balance; }
+.fixedMatchaCookingIntro > span { display: block; margin-top: 2.7cqw; color: #66715d; font-family: Inter, Arial, sans-serif; font-size: 1.7cqw; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+.fixedMatchaCookingRows { position: absolute; z-index: 3; top: 65cqw; right: 6cqw; left: 6cqw; display: grid; gap: 3cqw; font-family: Inter, Arial, sans-serif; }
+.fixedMatchaCookingRows article { display: grid; grid-template-columns: 9cqw 1fr; align-items: center; gap: 3cqw; min-height: 31cqw; padding: 3.2cqw 4cqw; border: 1px solid rgba(92, 88, 77, .15); border-radius: 1.6cqw; background: rgba(250, 248, 242, .86); }
+.fixedMatchaCookingRows article > strong { display: grid; width: 8cqw; height: 8cqw; place-items: center; border-radius: 50%; background: #dde0d2; color: #4c604a; font-size: 1.8cqw; }
+.fixedMatchaCookingRows h3 { margin: 0 0 1cqw; color: #173a27; font-size: 1.9cqw; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+.fixedMatchaCookingRows p { margin: 0; color: #39423f; font-size: 2.65cqw; line-height: 1.42; text-wrap: pretty; }
+.fixedMatchaCookingTip { position: absolute; z-index: 4; right: 6cqw; bottom: 10cqw; left: 6cqw; display: grid; grid-template-columns: 8cqw 1fr; align-items: center; gap: 3cqw; min-height: 22cqw; padding: 3.2cqw 4cqw; border-radius: 1.6cqw; background: rgba(229, 226, 216, .94); font-family: Inter, Arial, sans-serif; }
+.fixedMatchaCookingTip > svg { width: 6cqw; height: 8cqw; color: #68745c; transform: rotate(-18deg); }
+.fixedMatchaCookingTip h3 { margin: 0 0 1cqw; color: #173a27; font-size: 1.7cqw; letter-spacing: .18em; text-transform: uppercase; }
+.fixedMatchaCookingTip p { margin: 0; color: #3c4542; font-size: 2.45cqw; line-height: 1.4; }
+
+.fixedSmartSnacksArtwork { position: absolute; z-index: 0; top: 15cqw; right: 2cqw; width: 40cqw; height: 56.5cqw; overflow: hidden; }
+.fixedSmartSnacksArtwork img { object-fit: contain; }
+.fixedSmartSnacksIntro { position: absolute; z-index: 3; top: 18cqw; left: 6cqw; width: 54cqw; color: #123b24; }
+.fixedSmartSnacksIntro > p { margin: 0 0 2cqw; font-family: Inter, Arial, sans-serif; font-size: 1.65cqw; font-weight: 800; letter-spacing: .27em; text-transform: uppercase; }
+.fixedSmartSnacksIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 8.8cqw; font-weight: 500; line-height: .95; letter-spacing: -.045em; }
+.fixedSmartSnacksIntro > span { display: block; margin-top: 3cqw; color: #38423f; font-family: Inter, Arial, sans-serif; font-size: 2.45cqw; font-weight: 560; }
+.fixedSmartSnackNames { position: absolute; z-index: 3; top: 57cqw; right: 6cqw; left: 6cqw; display: grid; gap: 2cqw; font-family: Inter, Arial, sans-serif; }
+.fixedSmartSnackNames article { display: grid; grid-template-columns: 8cqw 1fr; align-items: center; gap: 3cqw; min-height: 19cqw; padding: 2.7cqw 3.5cqw; border-bottom: 1px solid rgba(80, 77, 68, .2); }
+.fixedSmartSnackNames i { color: #68745c; font-size: 1.8cqw; font-style: normal; font-weight: 800; letter-spacing: .12em; }
+.fixedSmartSnackNames h3 { margin: 0 0 .7cqw; color: #173a27; font-family: Cormorant Garamond, Georgia, serif; font-size: 3.3cqw; font-weight: 650; line-height: 1; }
+.fixedSmartSnackNames p { margin: 0; color: #3b4541; font-size: 2.55cqw; line-height: 1.35; }
+.fixedSmartSnackFeatures { position: absolute; z-index: 3; top: 123cqw; right: 6cqw; left: 6cqw; display: grid; grid-template-columns: 1fr 1fr; gap: 2.5cqw; font-family: Inter, Arial, sans-serif; }
+.fixedSmartSnackFeatures article { min-height: 22cqw; padding: 3cqw 3.5cqw; border: 1px solid rgba(92, 88, 77, .14); border-radius: 1.5cqw; background: rgba(249, 247, 241, .82); }
+.fixedSmartSnackFeatures h3 { margin: 0 0 1cqw; color: #173a27; font-size: 1.75cqw; letter-spacing: .15em; text-transform: uppercase; }
+.fixedSmartSnackFeatures p { margin: 0; color: #3b4541; font-size: 2.55cqw; line-height: 1.35; }
+.fixedSmartSnackBenefitSummary { position: absolute; z-index: 3; right: 6cqw; bottom: 10cqw; left: 6cqw; min-height: 20cqw; padding: 3.2cqw 4cqw; border-radius: 1.5cqw; background: #e8e5dc; font-family: Inter, Arial, sans-serif; }
+.fixedSmartSnackBenefitSummary strong { display: block; margin-bottom: 1cqw; color: #173a27; font-size: 1.7cqw; letter-spacing: .17em; text-transform: uppercase; }
+.fixedSmartSnackBenefitSummary p { margin: 0; color: #3c4541; font-size: 2.55cqw; line-height: 1.4; }
+
+.fixedSmartSnackDetailIntro { position: absolute; z-index: 3; top: 18cqw; left: 6cqw; width: 49cqw; color: #123b24; }
+.fixedSmartSnackDetailIntro > p { margin: 0 0 2cqw; font-family: Inter, Arial, sans-serif; font-size: 1.65cqw; font-weight: 800; letter-spacing: .24em; text-transform: uppercase; }
+.fixedSmartSnackDetailIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 7.2cqw; font-weight: 520; line-height: .95; letter-spacing: -.04em; text-wrap: balance; }
+.fixedSmartSnackDetailIntro > span { display: block; margin-top: 2.5cqw; color: #3b4541; font-family: Inter, Arial, sans-serif; font-size: 2.45cqw; line-height: 1.4; }
+.fixedSmartSnackDetailPhoto { position: absolute; z-index: 1; top: 17cqw; right: 4cqw; width: 38cqw; height: 37.3cqw; overflow: hidden; border-radius: 1.7cqw; background-image: url('/ebook/smart-snacks-cards-bg.png'); background-repeat: no-repeat; background-size: 383.6% auto; box-shadow: 0 1.5cqw 4cqw rgba(51, 43, 31, .09); }
+.fixedSmartSnackDetailPhoto1 { background-position: 9.6% 43.6%; }
+.fixedSmartSnackDetailPhoto2 { background-position: 50% 43.6%; }
+.fixedSmartSnackDetailPhoto3 { background-position: 90.3% 43.6%; }
+.fixedSmartSnackDetailPhoto img { object-fit: contain; background: #eee8dc; }
+.fixedSmartSnackIngredients { position: absolute; z-index: 3; top: 70cqw; right: 6cqw; left: 6cqw; padding: 4cqw; border: 1px solid rgba(92, 88, 77, .14); border-radius: 1.7cqw; background: rgba(250, 248, 242, .86); font-family: Inter, Arial, sans-serif; }
+.fixedSmartSnackIngredients h3 { margin: 0 0 3cqw; color: #173a27; font-size: 1.8cqw; letter-spacing: .2em; text-transform: uppercase; }
+.fixedSmartSnackIngredients ul { display: grid; grid-template-columns: 1fr 1fr; gap: 2.2cqw 4cqw; margin: 0; padding: 0; list-style: none; }
+.fixedSmartSnackIngredients li { display: grid; grid-template-columns: 6cqw 1fr; align-items: center; gap: 2cqw; min-height: 14cqw; color: #35403b; font-size: 2.65cqw; line-height: 1.35; }
+.fixedSmartSnackIngredients li i { display: grid; width: 5cqw; height: 5cqw; place-items: center; border-radius: 50%; background: #e0e1d5; color: #52614d; font-size: 1.5cqw; font-style: normal; font-weight: 750; }
+.fixedSmartSnackMeta { position: absolute; z-index: 3; top: 131cqw; right: 6cqw; left: 6cqw; display: grid; grid-template-columns: repeat(3, 1fr); min-height: 18cqw; border-radius: 1.4cqw; background: rgba(229, 226, 216, .9); font-family: Inter, Arial, sans-serif; text-align: center; }
+.fixedSmartSnackMeta div { display: flex; flex-direction: column; justify-content: center; padding: 2cqw; }
+.fixedSmartSnackMeta div:not(:last-child) { border-right: 1px solid rgba(75, 74, 68, .2); }
+.fixedSmartSnackMeta strong { margin-bottom: 1cqw; color: #173a27; font-size: 1.55cqw; letter-spacing: .12em; text-transform: uppercase; }
+.fixedSmartSnackMeta span { color: #313c37; font-size: 2.5cqw; font-weight: 650; }
+.fixedSmartSnackDetailBenefit { position: absolute; z-index: 3; right: 6cqw; bottom: 12cqw; left: 6cqw; min-height: 22cqw; padding: 3.5cqw 4cqw; border-radius: 1.5cqw; background: #e8e5dc; font-family: Inter, Arial, sans-serif; }
+.fixedSmartSnackDetailBenefit strong { display: block; margin-bottom: 1cqw; color: #173a27; font-size: 1.7cqw; letter-spacing: .17em; text-transform: uppercase; }
+.fixedSmartSnackDetailBenefit p { margin: 0; color: #3c4541; font-size: 2.65cqw; line-height: 1.4; }
+
+.fixedBeverageOverviewHero { position: absolute; z-index: 1; top: 15cqw; right: 0; width: 48cqw; height: 51cqw; overflow: hidden; }
+.fixedBeverageOverviewHero img { object-fit: contain; }
+.fixedBeverageOverviewIntro { position: absolute; z-index: 3; top: 18cqw; left: 6cqw; width: 50cqw; color: #173a27; }
+.fixedBeverageOverviewIntro > p:first-child { margin: 0 0 2cqw; font-family: Inter, Arial, sans-serif; font-size: 1.65cqw; font-weight: 800; letter-spacing: .25em; text-transform: uppercase; }
+.fixedBeverageOverviewIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 7.7cqw; font-weight: 650; line-height: .94; letter-spacing: -.04em; text-transform: uppercase; }
+.fixedBeverageOverviewIntro > span { display: block; margin-top: 2.3cqw; color: #b76f25; font-family: Cormorant Garamond, Georgia, serif; font-size: 3cqw; font-style: italic; font-weight: 650; }
+.fixedBeverageOverviewIntro > p:last-child { margin: 1.5cqw 0 0; color: #3d4642; font-family: Inter, Arial, sans-serif; font-size: 2.55cqw; }
+.fixedBeverageFeatures { position: absolute; z-index: 3; top: 69cqw; right: 6cqw; left: 6cqw; display: grid; grid-template-columns: 1fr 1fr; gap: 2.5cqw; font-family: Inter, Arial, sans-serif; }
+.fixedBeverageFeatures article { min-height: 23cqw; padding: 3cqw 3.5cqw; border: 1px solid rgba(182, 112, 36, .18); border-radius: 1.5cqw; background: rgba(250, 247, 239, .84); }
+.fixedBeverageFeatures h3 { margin: 0 0 1cqw; color: #173a27; font-size: 1.75cqw; letter-spacing: .15em; text-transform: uppercase; }
+.fixedBeverageFeatures p { margin: 0; color: #3b4541; font-size: 2.55cqw; line-height: 1.35; }
+.fixedBeverageRecipeNames { position: absolute; z-index: 3; top: 121cqw; right: 6cqw; left: 6cqw; display: grid; gap: 1.5cqw; font-family: Inter, Arial, sans-serif; }
+.fixedBeverageRecipeNames article { display: grid; grid-template-columns: 7cqw 1fr; align-items: center; gap: 2.7cqw; min-height: 17cqw; padding: 2.5cqw 3.5cqw; border-bottom: 1px solid rgba(84, 78, 68, .18); }
+.fixedBeverageRecipeNames i { color: #b7752c; font-size: 1.7cqw; font-style: normal; font-weight: 800; }
+.fixedBeverageRecipeNames h3 { margin: 0 0 .6cqw; color: #173a27; font-family: Cormorant Garamond, Georgia, serif; font-size: 3cqw; line-height: 1; }
+.fixedBeverageRecipeNames p { margin: 0; color: #3b4541; font-size: 2.5cqw; line-height: 1.3; }
+.fixedBeverageOverviewBenefit { position: absolute; z-index: 3; right: 6cqw; bottom: 9cqw; left: 6cqw; min-height: 20cqw; padding: 3.2cqw 4cqw; border-radius: 1.5cqw; background: #e9e4d8; font-family: Inter, Arial, sans-serif; }
+.fixedBeverageOverviewBenefit strong { display: block; margin-bottom: 1cqw; color: #173a27; font-size: 1.7cqw; letter-spacing: .16em; text-transform: uppercase; }
+.fixedBeverageOverviewBenefit p { margin: 0; color: #3c4541; font-size: 2.55cqw; line-height: 1.4; }
+
+.fixedBeverageDetailIntro { position: absolute; z-index: 3; top: 18cqw; left: 6cqw; width: 49cqw; color: #173a27; }
+.fixedBeverageDetailIntro > p { margin: 0 0 2cqw; font-family: Inter, Arial, sans-serif; font-size: 1.6cqw; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; }
+.fixedBeverageDetailIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 7cqw; font-weight: 650; line-height: .96; letter-spacing: -.04em; text-transform: uppercase; text-wrap: balance; }
+.fixedBeverageDetailIntro > span { display: block; margin-top: 2.5cqw; color: #3b4541; font-family: Inter, Arial, sans-serif; font-size: 2.45cqw; line-height: 1.4; }
+.fixedBeverageDetailPhoto { position: absolute; z-index: 1; top: 16cqw; right: 3cqw; width: 44cqw; height: 47cqw; overflow: hidden; border-radius: 2cqw; background: #eee8dc; }
+.fixedBeverageDetailPhoto img { object-fit: contain; }
+.fixedBeverageIngredients { position: absolute; z-index: 3; top: 74cqw; right: 6cqw; left: 6cqw; min-height: 62cqw; padding: 4cqw; border: 1px solid rgba(182, 112, 36, .18); border-radius: 1.7cqw; background: rgba(250, 247, 239, .88); font-family: Inter, Arial, sans-serif; }
+.fixedBeverageIngredients h3 { margin: 0 0 3cqw; color: #173a27; font-size: 1.8cqw; letter-spacing: .2em; text-transform: uppercase; }
+.fixedBeverageIngredients ul { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5cqw 5cqw; margin: 0; padding-left: 3cqw; color: #35403b; font-size: 2.65cqw; line-height: 1.35; }
+.fixedBeverageIngredients li { min-height: 13cqw; padding-left: .5cqw; }
+.fixedBeverageMeta { position: absolute; z-index: 3; top: 143cqw; right: 6cqw; left: 6cqw; display: grid; grid-template-columns: repeat(3, 1fr); min-height: 19cqw; border-radius: 1.4cqw; background: rgba(229, 226, 216, .9); font-family: Inter, Arial, sans-serif; text-align: center; }
+.fixedBeverageMeta div { display: flex; flex-direction: column; justify-content: center; padding: 2cqw; }
+.fixedBeverageMeta div:not(:last-child) { border-right: 1px solid rgba(75, 74, 68, .2); }
+.fixedBeverageMeta strong { margin-bottom: 1cqw; color: #173a27; font-size: 1.55cqw; letter-spacing: .12em; text-transform: uppercase; }
+.fixedBeverageMeta span { color: #313c37; font-size: 2.5cqw; font-weight: 650; }
+.fixedBeverageBenefit { position: absolute; z-index: 3; right: 6cqw; bottom: 12cqw; left: 6cqw; display: grid; grid-template-columns: 8cqw 1fr; align-items: center; gap: 3cqw; min-height: 23cqw; padding: 3.3cqw 4cqw; border-radius: 1.5cqw; background: #e9e4d8; font-family: Inter, Arial, sans-serif; }
+.fixedBeverageBenefit > svg { width: 6cqw; height: 8cqw; color: #b7752c; transform: rotate(-17deg); }
+.fixedBeverageBenefit strong { display: block; margin-bottom: 1cqw; color: #173a27; font-size: 1.7cqw; letter-spacing: .16em; text-transform: uppercase; }
+.fixedBeverageBenefit p { margin: 0; color: #3c4541; font-size: 2.6cqw; line-height: 1.4; }
+
+.fixedProduceHero { position: absolute; z-index: 0; top: 15cqw; right: 2.5cqw; width: 38cqw; height: 57cqw; overflow: hidden; }
+.fixedProduceHero img { object-fit: contain; }
+.fixedProduceIntro { position: absolute; z-index: 3; top: 18cqw; left: 6cqw; width: 51cqw; color: #173a27; }
+.fixedProduceIntro > p { margin: 0 0 2cqw; font-family: Inter, Arial, sans-serif; font-size: 1.6cqw; font-weight: 800; letter-spacing: .23em; text-transform: uppercase; }
+.fixedProduceIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 8.5cqw; font-weight: 650; line-height: .94; letter-spacing: -.04em; text-transform: uppercase; }
+.fixedProduceIntro > span { display: block; margin-top: 2.8cqw; color: #3b4541; font-family: Inter, Arial, sans-serif; font-size: 2.45cqw; line-height: 1.4; text-wrap: pretty; }
+.fixedProduceRows { position: absolute; z-index: 3; top: 64cqw; right: 6cqw; left: 6cqw; display: grid; gap: 1.5cqw; font-family: Inter, Arial, sans-serif; }
+.fixedProduceRows article { display: grid; grid-template-columns: 9cqw minmax(0, 1fr) 31cqw; align-items: center; gap: 2.5cqw; min-height: 22.5cqw; padding: 2.5cqw 3cqw; border-bottom: 1px solid rgba(101, 88, 69, .18); background: rgba(250, 248, 242, .55); }
+.fixedProduceMark { position: relative; display: grid; width: 8cqw; height: 8cqw; place-items: center; overflow: hidden; border-radius: 50%; background: #e1dfd3; color: #69705c; }
+.fixedProduceMark img { object-fit: contain; }
+.fixedProduceMark span { font-size: 1.65cqw; font-weight: 800; letter-spacing: .08em; }
+.fixedProduceCopy h3 { margin: 0 0 .8cqw; color: #173a27; font-family: Cormorant Garamond, Georgia, serif; font-size: 3cqw; font-weight: 650; line-height: 1; }
+.fixedProduceCopy p { margin: 0; color: #3b4541; font-size: 2.6cqw; line-height: 1.35; text-wrap: pretty; }
+.fixedProduceRows footer { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 1cqw; }
+.fixedProduceRows footer span { padding: .7cqw 1.2cqw; border-radius: 99cqw; background: #e9e5da; color: #4a554e; font-size: max(1.8cqw, 6px); font-weight: 650; line-height: 1.25; }
+.fixedVegetablePage .fixedProduceRows article { grid-template-columns: 9cqw minmax(0, 1fr); }
+.fixedProduceBenefits { position: absolute; z-index: 4; right: 6cqw; bottom: 9cqw; left: 6cqw; min-height: 22cqw; padding: 3.3cqw 4cqw; border-radius: 1.5cqw; background: #e9e4d8; font-family: Inter, Arial, sans-serif; }
+.fixedProduceBenefits strong { display: block; margin-bottom: 1cqw; color: #173a27; font-size: 1.75cqw; letter-spacing: .18em; text-transform: uppercase; }
+.fixedProduceBenefits p { margin: 0; color: #3c4541; font-size: 2.5cqw; line-height: 1.4; }
+
+.fixedActionOverviewIntro { position: absolute; z-index: 3; top: 18cqw; left: 6cqw; width: 57cqw; color: #173a27; }
+.fixedActionOverviewIntro > p { display: inline-block; margin: 0 0 2.5cqw; padding: .8cqw 1.5cqw; border-radius: .5cqw; background: #2f542a; color: #f7f2e9; font-family: Inter, Arial, sans-serif; font-size: 1.6cqw; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.fixedActionOverviewIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 7.4cqw; font-weight: 650; line-height: .96; letter-spacing: -.04em; text-transform: uppercase; }
+.fixedActionOverviewIntro > span { display: block; margin-top: 2.7cqw; color: #3b4541; font-family: Inter, Arial, sans-serif; font-size: 2.5cqw; line-height: 1.4; }
+.fixedActionNotebook { position: absolute; z-index: 3; top: 18cqw; right: 6cqw; display: grid; width: 29cqw; height: 39cqw; place-content: center; border: 1px solid rgba(183, 118, 44, .28); border-radius: 1.5cqw; background: rgba(249, 246, 237, .9); color: #496340; font-family: Inter, Arial, sans-serif; text-align: center; text-transform: uppercase; box-shadow: 0 1.3cqw 4cqw rgba(53, 44, 31, .06); }
+.fixedActionNotebook strong { font-family: Cormorant Garamond, Georgia, serif; font-size: 10cqw; font-weight: 600; line-height: .8; }
+.fixedActionNotebook span { margin-top: 2cqw; font-size: 1.65cqw; font-weight: 800; line-height: 1.35; letter-spacing: .1em; }
+.fixedActionPrinciples { position: absolute; z-index: 3; top: 65cqw; right: 6cqw; left: 6cqw; display: grid; grid-template-columns: 1fr 1fr; gap: 2.5cqw; font-family: Inter, Arial, sans-serif; }
+.fixedActionPrinciples article { display: grid; grid-template-columns: 7cqw 1fr; align-items: center; gap: 2.5cqw; min-height: 27cqw; padding: 3cqw; border: 1px solid rgba(94, 89, 75, .14); border-radius: 1.5cqw; background: rgba(250, 248, 242, .82); }
+.fixedActionPrinciples i { color: #b7752c; font-size: 1.7cqw; font-style: normal; font-weight: 800; }
+.fixedActionPrinciples p { margin: 0; color: #35403b; font-size: 2.55cqw; line-height: 1.4; }
+.fixedActionWeekPreview { position: absolute; z-index: 3; top: 124cqw; right: 6cqw; left: 6cqw; display: grid; grid-template-columns: 1fr 1fr; gap: 2.5cqw; font-family: Inter, Arial, sans-serif; }
+.fixedActionWeekPreview article { min-height: 24cqw; padding: 3cqw 3.5cqw; border-radius: 1.4cqw; background: #e9e5da; }
+.fixedActionWeekPreview strong { color: #52704b; font-size: 1.55cqw; letter-spacing: .15em; text-transform: uppercase; }
+.fixedActionWeekPreview h3 { margin: 1cqw 0 .7cqw; color: #173a27; font-family: Cormorant Garamond, Georgia, serif; font-size: 3cqw; line-height: 1; }
+.fixedActionWeekPreview p { margin: 0; color: #3b4541; font-size: 2.5cqw; line-height: 1.35; }
+.fixedActionTips { position: absolute; z-index: 3; right: 6cqw; bottom: 9cqw; left: 6cqw; min-height: 21cqw; padding: 3.2cqw 4cqw; border-radius: 1.5cqw; background: #2f542a; color: #f7f2e9; font-family: Inter, Arial, sans-serif; }
+.fixedActionTips strong { display: block; margin-bottom: 1cqw; font-size: 1.65cqw; letter-spacing: .18em; text-transform: uppercase; }
+.fixedActionTips p { margin: 0; font-size: 2.55cqw; line-height: 1.45; }
+
+.fixedActionWeekIntro { position: absolute; z-index: 3; top: 18cqw; right: 6cqw; left: 6cqw; color: #173a27; }
+.fixedActionWeekIntro > p { margin: 0 0 2cqw; font-family: Inter, Arial, sans-serif; font-size: 1.65cqw; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; }
+.fixedActionWeekIntro h2 { max-width: 68cqw; margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 7.5cqw; font-weight: 650; line-height: .95; letter-spacing: -.04em; text-wrap: balance; }
+.fixedActionWeekIntro > span { display: block; max-width: 78cqw; margin-top: 2.2cqw; color: #3b4541; font-family: Inter, Arial, sans-serif; font-size: 2.45cqw; line-height: 1.4; }
+.fixedActionDays { position: absolute; z-index: 3; top: 58cqw; right: 6cqw; left: 6cqw; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 24cqw; gap: 2cqw 2.5cqw; font-family: Inter, Arial, sans-serif; }
+.fixedActionDays article { display: grid; grid-template-columns: 5.5cqw 1fr; align-items: start; gap: 2cqw; min-width: 0; padding: 2.5cqw 3cqw; border: 1px solid rgba(94, 89, 75, .14); border-radius: 1.4cqw; background: rgba(250, 248, 242, .84); }
+.fixedActionDays article > i { width: 4.5cqw; height: 4.5cqw; border: 1px solid rgba(66, 91, 57, .5); border-radius: .5cqw; }
+.fixedActionDays strong { display: block; margin-bottom: .8cqw; color: #52704b; font-size: 1.65cqw; letter-spacing: .12em; text-transform: uppercase; }
+.fixedActionDays p { margin: 0; color: #35403b; font-size: 2.55cqw; line-height: 1.35; text-wrap: pretty; }
+.fixedActionRemember { position: absolute; z-index: 4; right: 6cqw; bottom: 9cqw; left: 6cqw; display: grid; grid-template-columns: 7cqw 1fr; align-items: center; gap: 3cqw; min-height: 20cqw; padding: 3cqw 4cqw; border-radius: 1.5cqw; background: #e9e5da; font-family: Inter, Arial, sans-serif; }
+.fixedActionRemember > svg { width: 5.5cqw; height: 7cqw; color: #6e765b; transform: rotate(-17deg); }
+.fixedActionRemember strong { display: block; margin-bottom: .8cqw; color: #173a27; font-size: 1.65cqw; letter-spacing: .16em; text-transform: uppercase; }
+.fixedActionRemember p { margin: 0; color: #3b4541; font-size: 2.55cqw; line-height: 1.4; }
+
 /* Reference-measured alignment corrections. */
 .coverPage .photo { object-fit: fill; }
 .coverPage .title { top: 24.3cqw; line-height: 1.12; }
@@ -3559,17 +4543,9 @@
 .hydrationStep p { font-size: 1.75cqw; }
 .hydrationTips span { font-size: 1.75cqw; }
 
-.mealTimingRow { left: 61cqw; width: 21cqw; }
-.mealTimingRow p { font-size: 1.88cqw; }
-.mealTimingKey p { font-size: 1.82cqw; }
-.sustainableRhythmMeals p,
-.sustainableRhythmKey p { font-size: 2.05cqw; }
-
 .lifestyleFoundationNumber { font-size: 32cqw; }
 .lifestyleFoundationIntro h2 { font-size: 10.7cqw; }
 .lifestyleFoundationTakeaway { bottom: 18.5cqw; }
-.sleepRecoveryRows p { font-size: 1.9cqw; }
-.sleepRecoveryTakeaway { bottom: 18cqw; }
 .dailyWellnessCard { padding: 3cqw 2.8cqw 2cqw; }
 .dailyWellnessCardHead { min-height: 9cqw; }
 .dailyWellnessCard h3 { margin-top: 3.5cqw; }
