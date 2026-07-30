@@ -78,15 +78,213 @@ FOOD_IMAGE_RULES = [
     (("legume", "lentil", "chickpea", "bean", "pulse"), "/ebook/prioritize-legumes.png"),
 ]
 
+GROCERY_CATEGORY_KEYWORDS = {
+    "protein_sources": (
+        "protein",
+        "proteins",
+        "chicken",
+        "turkey",
+        "egg",
+        "eggs",
+        "salmon",
+        "tuna",
+        "fish",
+        "seafood",
+        "tofu",
+        "tempeh",
+        "lentil",
+        "lentils",
+        "chickpea",
+        "chickpeas",
+        "bean",
+        "beans",
+        "pulse",
+        "pulses",
+        "yogurt",
+        "yoghurt",
+        "cottage cheese",
+        "paneer",
+        "edamame",
+        "seitan",
+    ),
+    "vegetables": (
+        "vegetable",
+        "vegetables",
+        "leafy green",
+        "leafy greens",
+        "spinach",
+        "kale",
+        "broccoli",
+        "cauliflower",
+        "bell pepper",
+        "bell peppers",
+        "pepper",
+        "peppers",
+        "carrot",
+        "carrots",
+        "zucchini",
+        "courgette",
+        "tomato",
+        "tomatoes",
+        "cucumber",
+        "cucumbers",
+        "cabbage",
+        "asparagus",
+        "mushroom",
+        "mushrooms",
+        "onion",
+        "onions",
+        "okra",
+        "eggplant",
+        "aubergine",
+        "beet",
+        "beets",
+    ),
+    "fruits": (
+        "fruit",
+        "fruits",
+        "berry",
+        "berries",
+        "blueberry",
+        "blueberries",
+        "strawberry",
+        "strawberries",
+        "raspberry",
+        "raspberries",
+        "apple",
+        "apples",
+        "banana",
+        "bananas",
+        "orange",
+        "oranges",
+        "pear",
+        "pears",
+        "grape",
+        "grapes",
+        "kiwi",
+        "mango",
+        "mangoes",
+        "papaya",
+        "pineapple",
+        "peach",
+        "peaches",
+        "plum",
+        "plums",
+        "avocado",
+    ),
+}
 
-def _food_image_url(name: Any) -> str:
+GROCERY_CATEGORY_DEFAULTS = {
+    "protein_sources": (
+        "Eggs",
+        "Greek Yogurt",
+        "Lentils",
+        "Chickpeas",
+        "Tofu",
+        "Salmon",
+    ),
+    "vegetables": (
+        "Spinach",
+        "Broccoli",
+        "Bell Peppers",
+        "Carrots",
+        "Zucchini",
+        "Cherry Tomatoes",
+    ),
+    "fruits": ("Berries", "Apples", "Bananas", "Oranges", "Pears", "Grapes"),
+}
+
+GROCERY_CATEGORY_COPY = {
+    "protein_sources": (
+        "A satisfying protein choice for balanced meals.",
+        ["Protein Rich", "Satisfying", "Goal Support"],
+    ),
+    "vegetables": (
+        "Adds fiber, vitamins, and minerals to everyday meals.",
+        ["Fiber Rich", "Micronutrients", "Everyday Variety"],
+    ),
+    "fruits": (
+        "A naturally sweet source of fiber and protective nutrients.",
+        ["Fiber Rich", "Antioxidants", "Naturally Sweet"],
+    ),
+}
+
+
+def _specific_food_image_url(name: Any) -> str:
     normalized = str(name or "").strip().lower()
     if normalized in GROCERY_IMAGE_BY_NAME:
         return GROCERY_IMAGE_BY_NAME[normalized]
     for keywords, image_url in FOOD_IMAGE_RULES:
         if any(keyword in normalized for keyword in keywords):
             return image_url
+    return ""
+
+
+def _food_image_url(name: Any) -> str:
+    specific_image = _specific_food_image_url(name)
+    if specific_image:
+        return specific_image
     return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=480&auto=format&fit=crop"
+
+
+def _normalized_grocery_name(value: Any) -> str:
+    normalized = "".join(
+        character.lower() if character.isalnum() else " "
+        for character in str(value or "")
+    )
+    return " ".join(normalized.split())
+
+
+def _grocery_item_category(item: Dict[str, Any]) -> Optional[str]:
+    normalized_name = _normalized_grocery_name(item.get("name") or item.get("title"))
+    if not normalized_name:
+        return None
+
+    padded_name = f" {normalized_name} "
+    for category, keywords in GROCERY_CATEGORY_KEYWORDS.items():
+        if any(f" {keyword} " in padded_name for keyword in keywords):
+            return category
+    return None
+
+
+def _build_grocery_categories(
+    grocery_items: List[Dict[str, Any]],
+    condition_label: str,
+) -> Dict[str, List[Dict[str, Any]]]:
+    categorized: Dict[str, List[Dict[str, Any]]] = {
+        category: [] for category in GROCERY_CATEGORY_DEFAULTS
+    }
+    categorized_names = {
+        category: set() for category in GROCERY_CATEGORY_DEFAULTS
+    }
+
+    for item in grocery_items:
+        category = _grocery_item_category(item)
+        normalized_name = _normalized_grocery_name(item.get("name") or item.get("title"))
+        if (
+            category
+            and normalized_name not in categorized_names[category]
+            and len(categorized[category]) < 6
+        ):
+            categorized[category].append(dict(item))
+            categorized_names[category].add(normalized_name)
+
+    for category, default_names in GROCERY_CATEGORY_DEFAULTS.items():
+        description, benefits = GROCERY_CATEGORY_COPY[category]
+        for name in default_names:
+            if len(categorized[category]) >= 6:
+                break
+            normalized_name = _normalized_grocery_name(name)
+            if normalized_name in categorized_names[category]:
+                continue
+            categorized[category].append({
+                "name": name,
+                "description": f"{description} Selected for your {condition_label.lower()} plan.",
+                "benefits": list(benefits),
+            })
+            categorized_names[category].add(normalized_name)
+
+    return categorized
 
 
 def _enrich_ebook_food_images(ebook_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -101,16 +299,67 @@ def _enrich_ebook_food_images(ebook_data: Dict[str, Any]) -> Dict[str, Any]:
     grocery = summary.get("grocery_list") or {}
     if isinstance(grocery, dict):
         for key in ("protein_sources", "vegetables", "fruits", "fruit_catalog", "vegetable_catalog"):
-            for item in grocery.get(key) or []:
+            category = grocery.get(key) or []
+            if isinstance(category, dict):
+                items = category.get("items") or []
+            else:
+                items = category
+            if not isinstance(items, list):
+                continue
+            for item in items:
                 if isinstance(item, dict):
-                    item["image_url"] = _food_image_url(item.get("name") or item.get("title"))
+                    explicit_image = item.get("image_url") or item.get("imageUrl")
+                    item["image_url"] = explicit_image or _food_image_url(
+                        item.get("name") or item.get("title")
+                    )
 
     for key in ("breakfast_recipes", "snack_recipes", "beverage_recipes"):
         for recipe in summary.get(key) or []:
             if isinstance(recipe, dict):
                 ingredients = recipe.get("ingredients") or []
-                image_hint = " ".join([str(recipe.get("name") or ""), *[str(item) for item in ingredients[:3]]])
+                if not isinstance(ingredients, list):
+                    ingredients = []
+                ingredient_limit = {
+                    "breakfast_recipes": 10,
+                    "snack_recipes": 5,
+                    "beverage_recipes": 6,
+                }[key]
+                ingredient_names = [
+                    str(
+                        item.get("name")
+                        or item.get("title")
+                        or item.get("label")
+                        or ""
+                    )
+                    if isinstance(item, dict)
+                    else str(item)
+                    for item in ingredients[:ingredient_limit]
+                ]
+                image_hint = " ".join([str(recipe.get("name") or ""), *ingredient_names[:3]])
                 recipe["image_url"] = _food_image_url(image_hint)
+                supplied_images = recipe.get("ingredient_images") or []
+                if not isinstance(supplied_images, list):
+                    supplied_images = []
+                ingredient_images = []
+                for index, (ingredient, name) in enumerate(zip(ingredients[:ingredient_limit], ingredient_names)):
+                    supplied_image = supplied_images[index] if index < len(supplied_images) else {}
+                    supplied_url = (
+                        supplied_image.get("image_url")
+                        or supplied_image.get("imageUrl")
+                        if isinstance(supplied_image, dict)
+                        else ""
+                    )
+                    ingredient_url = (
+                        ingredient.get("image_url")
+                        or ingredient.get("imageUrl")
+                        if isinstance(ingredient, dict)
+                        else ""
+                    )
+                    ingredient_images.append({
+                        "name": name,
+                        "image_url": supplied_url or ingredient_url or _specific_food_image_url(name),
+                    })
+                recipe["ingredient_images"] = ingredient_images
 
     return ebook_data
 
@@ -833,6 +1082,7 @@ def _build_summary(user, ebook_doc, primary_cid):
         }
         for food in foods_to_eat
     ]
+    grocery_categories = _build_grocery_categories(grocery_items, condition_label)
 
     focus_area_names = [
         "Nutrition Rhythm",
@@ -899,9 +1149,9 @@ def _build_summary(user, ebook_doc, primary_cid):
         "foods_to_be_mindful_of": mindful_foods,
         "grocery_list": {
             "intro": f"A grocery starting point selected for {condition_label.lower()} and your current goal.",
-            "protein_sources": grocery_items[:6],
-            "vegetables": grocery_items[:6],
-            "fruits": grocery_items[:6],
+            "protein_sources": grocery_categories["protein_sources"],
+            "vegetables": grocery_categories["vegetables"],
+            "fruits": grocery_categories["fruits"],
             "fruit_catalog": grocery_items[:15],
             "vegetable_catalog": grocery_items[:20],
         },

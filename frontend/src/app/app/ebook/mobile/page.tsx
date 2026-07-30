@@ -77,6 +77,41 @@ function asStrings(value: unknown) {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string" && Boolean(item.trim())) : [];
 }
 
+type RecipeIngredientItem = {
+  name: string;
+  image: string;
+};
+
+function normalizeRecipeIngredients(
+  recipe: Record<string, unknown>,
+  fallbacks: readonly string[],
+  maxLength: number,
+): RecipeIngredientItem[] {
+  const supplied = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+  const imageRecords = asRecords(recipe.ingredient_images);
+  return fallbacks.map((fallback, index) => {
+    const suppliedIngredient = supplied[index];
+    const ingredientRecord = asRecord(suppliedIngredient);
+    const imageRecord = imageRecords[index] || {};
+    return {
+      name: fitEbookText(
+        typeof suppliedIngredient === "string"
+          ? suppliedIngredient
+          : ingredientRecord.name ?? ingredientRecord.title ?? imageRecord.name,
+        fallback,
+        maxLength,
+      ),
+      image: asText(
+        ingredientRecord.image_url
+          ?? ingredientRecord.imageUrl
+          ?? imageRecord.image_url
+          ?? imageRecord.imageUrl,
+        "",
+      ),
+    };
+  });
+}
+
 function paragraphs(value: unknown, fallback: string[]) {
   const content = asText(value, "");
   const result = content.split(/\n\s*\n|\n/).map((item) => item.trim()).filter(Boolean);
@@ -772,105 +807,201 @@ function OpportunityOnePage() {
   );
 }
 
+type MobileGroceryItem = {
+  name: string;
+  copy: string;
+  image: string;
+  tags: string[];
+};
+
+type MobileGroceryCategory = {
+  title: string;
+  summary: string;
+  items: MobileGroceryItem[];
+};
+
 const groceryColumns = [
   {
     title: "Protein Sources",
     items: [
-      ["Chicken Breast", <>Lean, high in<br />protein and<br />essential nutrients.</>],
-      ["Eggs", <>Versatile and<br />packed with<br />high-quality protein.</>],
-      ["Fish (Salmon, Tuna)", <>Rich in omega-3<br />fatty acids for heart<br />and brain health.</>],
-      ["Tofu", <>Great plant-based<br />protein for muscle<br />and bone health.</>],
-      ["Lentils & Pulses", <>High in protein, fiber<br />and iron.</>],
-      ["Greek Yogurt", <>Probiotic-rich and<br />supports gut health.</>],
+      ["Chicken Breast", "Lean, high in protein, and rich in essential nutrients."],
+      ["Eggs", "Versatile and packed with high-quality protein."],
+      ["Fish (Salmon, Tuna)", "Omega-3 fats support heart and brain health."],
+      ["Tofu", "A plant-based protein for muscle and bone health."],
+      ["Lentils & Pulses", "High in protein, fiber, and iron."],
+      ["Greek Yogurt", "Protein and probiotics help support gut health."],
     ],
-    summary: <>Builds and repairs<br />tissues, supports<br />muscle health.</>,
+    summary: "Protein helps build and repair tissue while supporting strength, fullness, and steady energy.",
   },
   {
     title: "Vegetables",
     items: [
-      ["Spinach", <>Rich in iron,<br />calcium and<br />antioxidants.</>],
-      ["Broccoli", <>High in fiber,<br />vitamin C and<br />supports immunity.</>],
-      ["Bell Peppers", <>Loaded with<br />vitamin C and<br />antioxidants.</>],
-      ["Carrots", <>Great source of<br />beta-carotene<br />and eye health.</>],
-      ["Zucchini", <>Low in calories,<br />high in water<br />and fiber.</>],
-      ["Cherry Tomatoes", <>Rich in lycopene<br />and heart-healthy<br />nutrients.</>],
+      ["Spinach", "Rich in iron, calcium, and protective antioxidants."],
+      ["Broccoli", "Fiber and vitamin C support digestion and immunity."],
+      ["Bell Peppers", "Colorful, crisp, and naturally high in vitamin C."],
+      ["Carrots", "Beta-carotene helps support healthy eyes and skin."],
+      ["Zucchini", "Hydrating, fiber-rich, and easy to add to meals."],
+      ["Cherry Tomatoes", "Lycopene and vitamin C support heart health."],
     ],
-    summary: <>Rich in vitamins, minerals<br />and fiber. Keep you<br />energized.</>,
+    summary: "A colorful vegetable mix adds fiber, vitamins, minerals, and satisfying volume to everyday meals.",
   },
   {
     title: "Fruits",
     items: [
-      ["Bananas", <>Great source of<br />potassium and<br />natural energy.</>],
-      [<>Berries<br />(Blueberries,<br />Strawberries)</>, <>High in antioxidants<br />and vitamin C.</>],
-      ["Apples", <>High in fiber and<br />supports digestion.</>],
-      ["Oranges", <>Boosts immunity<br />with vitamin C.</>],
-      ["Avocado", <>Rich in healthy fats,<br />vitamins and fiber.</>],
-      ["Grapes", <>Hydrating and<br />packed with<br />antioxidants.</>],
+      ["Bananas", "Potassium and natural carbohydrates provide easy energy."],
+      ["Berries", "Antioxidants and vitamin C support everyday wellness."],
+      ["Apples", "Fiber helps support digestion and lasting fullness."],
+      ["Oranges", "Juicy, hydrating, and naturally rich in vitamin C."],
+      ["Avocado", "Healthy fats, vitamins, and fiber support balanced meals."],
+      ["Grapes", "Hydrating fruit with naturally protective antioxidants."],
     ],
-    summary: <>Natural sweetness<br />packed with antioxidants<br />and nutrients.</>,
+    summary: "Fruit brings natural sweetness, hydration, fiber, and a broad mix of protective plant nutrients.",
   },
 ] as const;
 
-const groceryBenefits = [
-  ["Nutrient Dense", <>Essential nutrients for<br />optimal health.</>],
-  ["Supports Immunity", <>Strengthens your body<br />naturally.</>],
-  ["Aids Digestion", <>High fiber for a<br />happy gut.</>],
-  ["Heart Healthy", <>Supports heart and<br />brain function.</>],
-  ["Weight Friendly", <>Wholesome choices<br />for healthy weight.</>],
+const groceryCategoryMeta = [
+  {
+    kicker: "Build your plate",
+    hero: "/ebook/grocery-essentials-bg.png",
+    heroAlt: "A reusable grocery bag filled with wholesome staples",
+    accent: "Strength · Fullness · Recovery",
+  },
+  {
+    kicker: "Eat more color",
+    hero: "/ebook/grocery-vegetables-bg.png",
+    heroAlt: "A basket filled with fresh colorful vegetables",
+    accent: "Fiber · Variety · Everyday energy",
+  },
+  {
+    kicker: "Naturally nourishing",
+    hero: "/ebook/grocery-fruits-bg.png",
+    heroAlt: "A basket filled with fresh colorful fruit",
+    accent: "Hydration · Antioxidants · Balance",
+  },
 ] as const;
 
-function GroceryEssentialsPhonePage() {
+const proteinSpritePositions = [
+  "5.2% 40%", "5.2% 46.6%", "5.2% 53.4%", "5.2% 59%", "5.2% 65.7%", "5.2% 72.4%",
+] as const;
+
+const groceryFruitSpritePositions = [
+  "11.7% 30.2%", "48.6% 30.2%", "87.3% 30.2%",
+  "11.7% 45.1%", "48.6% 45.1%", "87.3% 45.1%",
+] as const;
+
+function normalizeGroceryItem(value: unknown, fallback: readonly [string, string]): MobileGroceryItem {
+  if (typeof value === "string") {
+    const [name, ...descriptionParts] = value.split(/[:|]/);
+    return {
+      name: fitEbookText(name, fallback[0], 38),
+      copy: fitEbookText(descriptionParts.join(" "), fallback[1], 92),
+      image: "",
+      tags: [],
+    };
+  }
+
+  const record = asRecord(value);
+  const tags = [
+    ...asStrings(record.tags),
+    ...asStrings(record.benefits),
+  ].slice(0, 2);
+
+  return {
+    name: fitEbookText(record.name ?? record.title, fallback[0], 38),
+    copy: fitEbookText(record.description ?? record.body, fallback[1], 92),
+    image: asText(record.image_url ?? record.imageUrl, ""),
+    tags: tags.map((tag) => fitEbookText(tag, "", 22)).filter(Boolean),
+  };
+}
+
+function normalizeGroceryCategory(value: unknown, fallback: typeof groceryColumns[number]): MobileGroceryCategory {
+  const category = asRecord(value);
+  const supplied = Array.isArray(value)
+    ? value
+    : Array.isArray(category.items)
+      ? category.items
+      : [];
+
+  return {
+    title: fitEbookText(category.title, fallback.title, 34),
+    summary: fitEbookText(category.summary, fallback.summary, 130),
+    items: fallback.items.map((item, index) => normalizeGroceryItem(supplied[index], item)),
+  };
+}
+
+function grocerySpriteStyle(categoryIndex: number, itemIndex: number): React.CSSProperties {
+  if (categoryIndex === 1) {
+    return {
+      backgroundImage: "url('/ebook/grocery-vegetables-bg.png')",
+      ...produceSpriteStyle("vegetable", itemIndex),
+    };
+  }
+  if (categoryIndex === 2) {
+    return {
+      backgroundImage: "url('/ebook/grocery-fruits-bg.png')",
+      backgroundPosition: groceryFruitSpritePositions[itemIndex] || "50% 50%",
+      backgroundSize: "650% auto",
+    };
+  }
+  return {
+    backgroundImage: "url('/ebook/grocery-essentials-bg.png')",
+    backgroundPosition: proteinSpritePositions[itemIndex] || "5.2% 50%",
+    backgroundSize: "850% auto",
+  };
+}
+
+function GroceryEssentialsPhonePage({ categoryIndex }: { categoryIndex: number }) {
   const { ebook } = useMobileEbook();
   const grocery = asRecord(ebook.summary.grocery_list);
   const sourceKeys = ["protein_sources", "vegetables", "fruits"];
-  const columns = groceryColumns.map((fallback, columnIndex) => {
-    const supplied = asRecords(grocery[sourceKeys[columnIndex]]);
-    return {
-      ...fallback,
-      items: fallback.items.map(([fallbackName, fallbackCopy], itemIndex) => {
-        const record = supplied[itemIndex] || {};
-        return {
-          name: asText(record.name ?? record.title, typeof fallbackName === "string" ? fallbackName : `Food ${itemIndex + 1}`),
-          copy: asText(record.description, typeof fallbackCopy === "string" ? fallbackCopy : "Selected to support your personalized grocery plan."),
-          image: asText(record.image_url, ""),
-        };
-      }),
-    };
-  });
+  const fallback = groceryColumns[categoryIndex] || groceryColumns[0];
+  const category = normalizeGroceryCategory(grocery[sourceKeys[categoryIndex]], fallback);
+  const meta = groceryCategoryMeta[categoryIndex] || groceryCategoryMeta[0];
+  const intro = fitEbookText(
+    grocery.intro,
+    "A clear, practical grocery starting point selected for your current goals.",
+    118,
+  );
 
   return (
-    <article className={`${styles.page} ${styles.groceryPage}`} aria-label="Page 10: Grocery Essentials">
-      <DynamicEbookImage mediaKey="grocery_essentials" fallbackSrc="/ebook/grocery-essentials-bg.png" alt="Fresh groceries arranged by proteins, vegetables and fruits" fill sizes="45dvh" className={styles.groceryArtwork} />
-      <header className={styles.groceryTopline}>ZenPlato <span>|</span> 08 <span>|</span> Your Personalized Recipe Collection</header>
-      <h2>Grocery<br />Essentials</h2>
-      <p className={styles.groceryIntro}>{asText(grocery.intro, "Wholesome ingredients for everyday meals and better living.")}</p>
-      <div className={styles.groceryBadge}>Real Food.<br />Real Good.</div>
-      <div className={styles.groceryPageLabel}>Page 1 of 3</div>
+    <article className={`${styles.page} ${styles.laterEditorialPage} ${styles.laterWarmPage} ${styles.groceryPage}`} aria-label={`Grocery Essentials: ${category.title}`}>
+      <LaterEbookChrome section="08" warm />
+      <section className={styles.groceryIntro}>
+        <p>{meta.kicker} <span>{String(categoryIndex + 1).padStart(2, "0")} / 03</span></p>
+        <h2>{category.title}</h2>
+        <div aria-hidden="true"><i /><BotanicalBranch /><i /></div>
+        <span>{intro}</span>
+      </section>
 
-      <div className={styles.groceryColumns}>
-        {columns.map((column) => (
-          <section className={styles.groceryColumn} key={column.title}>
-            <h3>{column.title}</h3>
-            <div className={styles.groceryItems}>
-              {column.items.map((item, index) => (
-                <article key={`${item.name}-${index}`}>
-                  {item.image && <div className={styles.groceryItemImage}><Image src={item.image} alt="" fill sizes="6dvh" /></div>}
-                  <strong>{item.name}</strong><p>{item.copy}</p>
-                </article>
-              ))}
-            </div>
-            <p className={styles.grocerySummary}>{column.summary}</p>
-          </section>
-        ))}
+      <div className={styles.groceryHero}>
+        <Image src={meta.hero} alt={meta.heroAlt} fill sizes="22dvh" priority={categoryIndex === 0} />
+        <span>{String(categoryIndex + 1).padStart(2, "0")}</span>
       </div>
 
-      <section className={styles.groceryBenefits}>
-        <div className={styles.groceryBenefitLead}><strong>Good Food.<br />Better You.</strong><p>Choose whole foods<br />for a healthier, happier<br />life every day.</p></div>
-        <div className={styles.groceryBenefitGrid}>
-          {groceryBenefits.map(([title, copy]) => <article key={title}><strong>{title}</strong><p>{copy}</p></article>)}
+      <section className={styles.groceryItems} aria-label={`${category.title} grocery items`}>
+        {category.items.map((item, index) => (
+          <article className={styles.groceryItem} key={`${item.name}-${index}`}>
+            <div className={styles.groceryItemImage} style={grocerySpriteStyle(categoryIndex, index)}>
+              {item.image ? <Image src={item.image} alt="" fill sizes="7dvh" /> : null}
+            </div>
+            <div>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <h3>{item.name}</h3>
+              <p>{item.copy}</p>
+              {item.tags.length ? <small>{item.tags.join(" · ")}</small> : null}
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section className={styles.grocerySummary}>
+        <div aria-hidden="true"><CoverLeaf /></div>
+        <div>
+          <p>{meta.accent}</p>
+          <strong>{category.summary}</strong>
         </div>
       </section>
-      <div className={styles.groceryBottomNote}>Good ingredients. Real results.</div>
+      <LaterEbookFolio>{categoryIndex + 1} / 3</LaterEbookFolio>
     </article>
   );
 }
@@ -2225,6 +2356,108 @@ const breakfastHighlights = [
   ["Rich In Antioxidants", "Berries help reduce inflammation and support overall wellness."],
 ];
 
+type IngredientSpriteSheet = "matcha" | "smartSnack" | "beverage";
+
+type IngredientFallbackVisual = {
+  sheet: IngredientSpriteSheet;
+  index: number;
+};
+
+const matchaIngredientSpritePositions = [
+  "10.9% 19.7%", "90.6% 19.7%",
+  "10.9% 40.1%", "90.6% 40.1%",
+  "10.9% 60.5%", "90.6% 60.5%",
+  "10.9% 81.2%", "90.6% 81.2%",
+];
+
+const smartSnackIngredientSpritePositions = [
+  "7.9% 61.3%", "7.9% 65.6%", "7.9% 69.5%", "7.9% 73.6%", "7.9% 78.1%",
+  "40.1% 61.3%", "40.1% 65.6%", "40.1% 69.5%", "40.1% 73.6%", "40.1% 78.1%",
+  "72.7% 61.3%", "72.7% 65.6%", "72.7% 69.5%", "72.7% 73.6%", "72.7% 78.1%",
+];
+
+function ingredientFallbackVisual(
+  name: string,
+  preferredSheet: IngredientSpriteSheet,
+  fallbackIndex: number,
+): IngredientFallbackVisual {
+  const normalized = name.toLowerCase();
+  if (normalized.includes("oat")) return { sheet: "smartSnack", index: 5 };
+  if (normalized.includes("peanut butter") || normalized.includes("nut butter")) return { sheet: "smartSnack", index: 6 };
+  if (normalized.includes("flax")) return { sheet: "smartSnack", index: 8 };
+  if (normalized.includes("chocolate") || normalized.includes("cacao") || normalized.includes("cocoa")) return { sheet: "smartSnack", index: 9 };
+  if (normalized.includes("chickpea")) return { sheet: "smartSnack", index: 10 };
+  if (normalized.includes("olive oil")) return { sheet: "smartSnack", index: 11 };
+  if (normalized.includes("paprika")) return { sheet: "smartSnack", index: 12 };
+  if (normalized.includes("cumin")) return { sheet: "smartSnack", index: 13 };
+  if (normalized.includes("salt")) return { sheet: "smartSnack", index: 14 };
+  if (normalized.includes("chia") || normalized.includes("hemp") || normalized.includes("seed")) return { sheet: "matcha", index: 0 };
+  if (normalized.includes("matcha")) return { sheet: "matcha", index: 2 };
+  if (normalized.includes("maple") || normalized.includes("honey")) return { sheet: "matcha", index: 3 };
+  if (normalized.includes("vanilla")) return { sheet: "matcha", index: 4 };
+  if (normalized.includes("blueberr") || normalized.includes("berr")) return { sheet: "matcha", index: 5 };
+  if (normalized.includes("coconut")) return { sheet: "matcha", index: 6 };
+  if (normalized.includes("pumpkin")) return { sheet: "matcha", index: 7 };
+  if (normalized.includes("yogurt") || normalized.includes("yoghurt")) return { sheet: "beverage", index: 4 };
+  if (normalized.includes("protein") || normalized.includes("whey")) return { sheet: "beverage", index: 3 };
+  if (normalized.includes("cinnamon")) return { sheet: "beverage", index: 7 };
+  if (normalized.includes("almond") && !normalized.includes("milk")) return { sheet: "beverage", index: 5 };
+  if (normalized.includes("milk")) return { sheet: "matcha", index: 1 };
+  return { sheet: preferredSheet, index: fallbackIndex };
+}
+
+function recipeIngredientSpriteStyle(visual: IngredientFallbackVisual): React.CSSProperties {
+  if (visual.sheet === "matcha") {
+    return {
+      backgroundPosition: matchaIngredientSpritePositions[visual.index] || "50% 50%",
+      backgroundSize: "210.4% auto",
+    };
+  }
+  if (visual.sheet === "smartSnack") {
+    return {
+      backgroundPosition: smartSnackIngredientSpritePositions[visual.index] || "50% 69.5%",
+      backgroundSize: "1406.7% auto",
+    };
+  }
+  return {
+    backgroundPosition: beverageIngredientSpritePositions[visual.index] || "50% 72%",
+    backgroundSize: "1280% auto",
+  };
+}
+
+function RecipeIngredientArtwork({
+  ingredient,
+  visual,
+  badge,
+  className,
+}: {
+  ingredient: RecipeIngredientItem;
+  visual: IngredientFallbackVisual;
+  badge?: string;
+  className?: string;
+}) {
+  const spriteClass = visual.sheet === "matcha"
+    ? styles.recipeIngredientSpriteMatcha
+    : visual.sheet === "smartSnack"
+      ? styles.recipeIngredientSpriteSmartSnack
+      : styles.recipeIngredientSpriteBeverage;
+  return (
+    <span className={`${styles.recipeIngredientArtwork} ${className || ""}`}>
+      {ingredient.image ? (
+        <Image src={ingredient.image} alt={ingredient.name} fill sizes="7dvh" />
+      ) : (
+        <i
+          className={`${styles.recipeIngredientSprite} ${spriteClass}`}
+          style={recipeIngredientSpriteStyle(visual)}
+          role="img"
+          aria-label={ingredient.name}
+        />
+      )}
+      {badge ? <b aria-hidden="true">{badge}</b> : null}
+    </span>
+  );
+}
+
 type RecipeMetaIconName = "time" | "servings" | "difficulty";
 
 function RecipeMetaIcon({ name }: { name: RecipeMetaIconName }) {
@@ -2259,13 +2492,12 @@ function RecipeMeta({ className, recipe }: { className: string; recipe: Record<s
 function useBreakfastRecipeContent() {
   const { ebook, media } = useMobileEbook();
   const recipe = asRecords(ebook.summary.breakfast_recipes)[0] || {};
-  const ingredients = asStrings(recipe.ingredients);
   const method = asRecords(recipe.method).map((step) => asText(step.body, "")).filter(Boolean);
   const highlights = asRecords(recipe.nutrition_highlights);
   return {
     recipe,
     hero: asText(recipe.image_url, media.breakfast || "/ebook/breakfasts-hero.png"),
-    ingredients: (ingredients.length ? ingredients : breakfastIngredients).slice(0, 10),
+    ingredients: normalizeRecipeIngredients(recipe, breakfastIngredients, 58).slice(0, 10),
     method: (method.length ? method : breakfastMethod).slice(0, 5),
     highlights: (highlights.length
       ? highlights.map((item) => [asText(item.title, "Nutrition highlight"), asText(item.body, "A benefit selected for your health goals.")])
@@ -2327,7 +2559,18 @@ function BreakfastPreparationPhonePage(props: PhonePageProps) {
       <div className={styles.breakfastPreparationColumns}>
         <section className={styles.breakfastsIngredients}>
           <h3>Ingredients</h3>
-          <ul>{ingredients.map((item) => <li key={item}>{item}</li>)}</ul>
+          <ul>
+            {ingredients.map((ingredient, index) => (
+              <li key={`${ingredient.name}-${index}`}>
+                <RecipeIngredientArtwork
+                  ingredient={ingredient}
+                  visual={ingredientFallbackVisual(ingredient.name, "matcha", index % 8)}
+                  className={styles.breakfastIngredientArtwork}
+                />
+                <span>{ingredient.name}</span>
+              </li>
+            ))}
+          </ul>
         </section>
 
         <section className={styles.breakfastsMethod}>
@@ -2354,12 +2597,25 @@ function useMatchaNutritionContent() {
   const { ebook, media } = useMobileEbook();
   const recipe = asRecords(ebook.summary.breakfast_recipes)[1] || asRecords(ebook.summary.breakfast_recipes)[0] || {};
   const breakdown = asRecords(recipe.nutrition_breakdown);
+  const recipeIngredients = normalizeRecipeIngredients(recipe, matchaIngredientFallback, 40);
+  const breakdownRows = breakdown.length
+    ? breakdown.map((item) => ({
+        ingredient: asText(item.ingredient, "Ingredient"),
+        amount: asText(item.amount, "-"),
+        image: asText(item.image_url ?? item.imageUrl, ""),
+      }))
+    : matchaProteinRows.map(([ingredient, amount]) => ({ ingredient, amount, image: "" }));
   return {
     recipe,
     hero: asText(recipe.image_url, media.breakfast_benefits || "/ebook/matcha-benefits-phone-hero.png"),
-    breakdown: (breakdown.length
-      ? breakdown.map((item) => [asText(item.ingredient, "Ingredient"), asText(item.amount, "-")])
-      : matchaProteinRows).slice(0, 5),
+    breakdown: breakdownRows.slice(0, 5).map((row) => {
+      const normalizedName = row.ingredient.toLowerCase();
+      const matchedIngredient = recipeIngredients.find((ingredient) => {
+        const normalizedIngredient = ingredient.name.toLowerCase();
+        return normalizedIngredient.includes(normalizedName) || normalizedName.includes(normalizedIngredient);
+      });
+      return { ...row, image: row.image || matchedIngredient?.image || "" };
+    }),
   };
 }
 
@@ -2416,8 +2672,17 @@ function MatchaProteinBreakdownPhonePage(props: PhonePageProps) {
 
       <section className={styles.matchaProteinTable}>
         <header><span>Ingredient (Protein Source)</span><span>Amount Per Serving</span></header>
-        {breakdown.map(([ingredient, amount], index) => (
-          <article key={ingredient}><i>{String(index + 1).padStart(2, "0")}</i><span>{ingredient}</span><strong>{amount}</strong></article>
+        {breakdown.map((row, index) => (
+          <article key={row.ingredient}>
+            <RecipeIngredientArtwork
+              ingredient={{ name: row.ingredient, image: row.image }}
+              visual={ingredientFallbackVisual(row.ingredient, "matcha", index)}
+              badge={String(index + 1).padStart(2, "0")}
+              className={styles.matchaProteinIngredientArtwork}
+            />
+            <span>{row.ingredient}</span>
+            <strong>{row.amount}</strong>
+          </article>
         ))}
         <footer><span>Total Protein</span><strong>{asText(recipe.total_protein, "12 g")}</strong></footer>
       </section>
@@ -2544,12 +2809,11 @@ const matchaCookingRows = [
 function useMatchaRecipeInstructions() {
   const { ebook } = useMobileEbook();
   const recipe = asRecords(ebook.summary.breakfast_recipes)[1] || asRecords(ebook.summary.breakfast_recipes)[0] || {};
-  const ingredients = asStrings(recipe.ingredients);
   const method = asRecords(recipe.method);
   return {
     recipe,
     name: fitEbookText(recipe.name, "Matcha Chia Pudding Bowl", 42),
-    ingredients: matchaIngredientFallback.map((fallback, index) => fitEbookText(ingredients[index], fallback, 36)),
+    ingredients: normalizeRecipeIngredients(recipe, matchaIngredientFallback, 36),
     steps: matchaCookingRows.map((fallback, index) => ({
       number: fallback.number,
       title: fitEbookText(method[index]?.title, fallback.title, 30),
@@ -2581,9 +2845,14 @@ function MatchaInstructionsSpreadPhonePage({ part, ...props }: PhonePageProps & 
       </section>
       <section className={styles.fixedMatchaIngredientList}>
         {visibleIngredients.map((ingredient, index) => (
-          <article key={ingredient}>
-            <i>{String(part * 4 + index + 1).padStart(2, "0")}</i>
-            <span>{ingredient}</span>
+          <article key={ingredient.name}>
+            <RecipeIngredientArtwork
+              ingredient={ingredient}
+              visual={ingredientFallbackVisual(ingredient.name, "matcha", part * 4 + index)}
+              badge={String(part * 4 + index + 1).padStart(2, "0")}
+              className={styles.matchaIngredientArtwork}
+            />
+            <span>{ingredient.name}</span>
           </article>
         ))}
       </section>
@@ -2841,13 +3110,10 @@ function useFixedSmartSnackContent() {
   return {
     cards: fixedSmartSnackCards.map((fallback, index) => {
       const record = supplied[index] || {};
-      const ingredients = asStrings(record.ingredients);
       return {
         title: fitEbookText(record.name, fallback.title, 46),
         copy: fitEbookText(record.subtitle, fallback.copy, 86),
-        ingredients: fallback.ingredients.map((fallbackIngredient, ingredientIndex) => (
-          fitEbookText(ingredients[ingredientIndex], fallbackIngredient, 34)
-        )),
+        ingredients: normalizeRecipeIngredients(record, fallback.ingredients, 34),
         image: asText(record.image_url, ""),
         meta: [
           ["Prep Time", fitEbookText(record.prep_time, fallback.meta[0][1], 16)],
@@ -2914,7 +3180,15 @@ function FixedSmartSnackDetailPhonePage({ index, ...props }: PhonePageProps & { 
         <h3>Ingredients</h3>
         <ul>
           {card.ingredients.map((ingredient, ingredientIndex) => (
-            <li key={ingredient}><i>{String(ingredientIndex + 1).padStart(2, "0")}</i><span>{ingredient}</span></li>
+            <li key={ingredient.name}>
+              <RecipeIngredientArtwork
+                ingredient={ingredient}
+                visual={ingredientFallbackVisual(ingredient.name, "smartSnack", index * 5 + ingredientIndex)}
+                badge={String(ingredientIndex + 1).padStart(2, "0")}
+                className={styles.smartSnackIngredientArtwork}
+              />
+              <span>{ingredient.name}</span>
+            </li>
           ))}
         </ul>
       </section>
@@ -3090,6 +3364,41 @@ const fixedBeverageBenefits = [
   "Supports mood and wellbeing",
 ];
 
+const beverageIngredientSpritePositions = [
+  "4.6% 65.4%", "20.9% 65.7%", "4.6% 69.4%", "20.9% 71%", "4.6% 75.3%", "4.6% 79.2%",
+  "38.4% 65.9%", "54.7% 67.5%", "38.4% 71.2%", "54.7% 71.4%", "38.4% 75.6%", "54.7% 75.8%",
+  "72.1% 65.5%", "88.4% 65.7%", "72.1% 69.9%", "72.1% 75.3%", "88.4% 71%", "88.4% 75.3%",
+];
+
+function beverageIngredientVisualIndex(name: string, fallbackIndex: number) {
+  const normalized = name.toLowerCase();
+  if (normalized.includes("blueberr") || normalized.includes("berr")) return 0;
+  if (normalized.includes("chia") || normalized.includes("seed")) return 1;
+  if (normalized.includes("banana")) return 2;
+  if (normalized.includes("protein") || normalized.includes("whey")) return 3;
+  if (normalized.includes("yogurt") || normalized.includes("yoghurt")) return 4;
+  if (normalized.includes("almond")) return 5;
+  if (normalized.includes("cinnamon")) return 7;
+  if (normalized.includes("turmeric")) return 8;
+  if (normalized.includes("pepper")) return 9;
+  if (normalized.includes("honey") || normalized.includes("maple")) return 11;
+  if (normalized.includes("cucumber")) return 12;
+  if (normalized.includes("lemon") || normalized.includes("lime") || normalized.includes("citrus")) return 13;
+  if (normalized.includes("celery")) return 14;
+  if (normalized.includes("spinach") || normalized.includes("leafy green")) return 15;
+  if (normalized.includes("ginger")) return fallbackIndex === 10 ? 10 : 16;
+  if (normalized.includes("mint")) return 17;
+  if (normalized.includes("milk")) return 6;
+  return fallbackIndex;
+}
+
+function beverageIngredientSpriteStyle(index: number): React.CSSProperties {
+  return {
+    backgroundPosition: beverageIngredientSpritePositions[index] || "50% 72%",
+    backgroundSize: "1280% auto",
+  };
+}
+
 function useFixedBeverageContent() {
   const { ebook } = useMobileEbook();
   const supplied = asRecords(ebook.summary.beverage_recipes);
@@ -3098,14 +3407,36 @@ function useFixedBeverageContent() {
   return {
     cards: fixedBeverageCards.map((fallback, index) => {
       const record = supplied[index] || {};
-      const ingredients = asStrings(record.ingredients);
+      const ingredients = Array.isArray(record.ingredients) ? record.ingredients : [];
+      const ingredientImages = asRecords(record.ingredient_images);
       return {
         accent: fallback.accent,
         title: fitEbookText(record.name, fallback.title, 42),
         copy: fitEbookText(record.subtitle, fallback.copy, 86),
-        ingredients: fallback.ingredients.map((fallbackIngredient, ingredientIndex) => (
-          fitEbookText(ingredients[ingredientIndex], fallbackIngredient, 34)
-        )),
+        ingredients: fallback.ingredients.map((fallbackIngredient, ingredientIndex) => {
+          const suppliedIngredient = ingredients[ingredientIndex];
+          const ingredientRecord = asRecord(suppliedIngredient);
+          const imageRecord = ingredientImages[ingredientIndex] || {};
+          const name = fitEbookText(
+            typeof suppliedIngredient === "string"
+              ? suppliedIngredient
+              : ingredientRecord.name ?? ingredientRecord.title ?? imageRecord.name,
+            fallbackIngredient,
+            34,
+          );
+          const fallbackVisualIndex = index * 6 + ingredientIndex;
+          return {
+            name,
+            image: asText(
+              ingredientRecord.image_url
+                ?? ingredientRecord.imageUrl
+                ?? imageRecord.image_url
+                ?? imageRecord.imageUrl,
+              "",
+            ),
+            visualIndex: beverageIngredientVisualIndex(name, fallbackVisualIndex),
+          };
+        }),
         image: asText(record.image_url, fallback.image),
         metrics: [
           ["Prep Time", fitEbookText(record.prep_time, fallback.metrics[0][1], 16)],
@@ -3160,7 +3491,25 @@ function FixedNourishingBeverageDetailPhonePage({ index, ...props }: PhonePagePr
       <div className={styles.fixedBeverageDetailPhoto}><Image src={card.image} alt={card.title} fill sizes="27dvh" /></div>
       <section className={styles.fixedBeverageIngredients}>
         <h3>Ingredients</h3>
-        <ul>{card.ingredients.map((ingredient) => <li key={ingredient}>{ingredient}</li>)}</ul>
+        <ul>
+          {card.ingredients.map((ingredient, ingredientIndex) => (
+            <li key={`${ingredient.name}-${ingredientIndex}`}>
+              <span className={styles.fixedBeverageIngredientVisual}>
+                {ingredient.image ? (
+                  <Image src={ingredient.image} alt={ingredient.name} fill sizes="7dvh" />
+                ) : (
+                  <i
+                    className={styles.fixedBeverageIngredientSprite}
+                    style={beverageIngredientSpriteStyle(ingredient.visualIndex)}
+                    role="img"
+                    aria-label={ingredient.name}
+                  />
+                )}
+              </span>
+              <span>{ingredient.name}</span>
+            </li>
+          ))}
+        </ul>
       </section>
       <section className={styles.fixedBeverageMeta}>
         {card.metrics.map(([label, value]) => <div key={label}><strong>{label}</strong><span>{value}</span></div>)}
@@ -3334,6 +3683,31 @@ type FixedProduceItem = {
   image: string;
 };
 
+const fruitSpritePositions = [
+  "9.5% 29.5%", "48.5% 29.5%", "89.5% 29.5%",
+  "9.5% 44.9%", "48.5% 44.9%", "89.5% 44.9%",
+  "9.5% 59.9%", "48.5% 59.9%", "89.5% 59.9%",
+  "9.5% 74.6%", "48.5% 74.6%", "89.5% 74.6%",
+  "9.5% 89.2%", "48.5% 89.2%", "89.5% 89.2%",
+];
+
+const vegetableSpritePositions = [
+  "4% 27.2%", "34.7% 27.2%", "65.3% 27.2%", "95.8% 27.2%",
+  "4% 42%", "34.7% 42%", "65.3% 42%", "95.8% 42%",
+  "4% 56.8%", "34.7% 56.8%", "65.3% 56.8%", "95.8% 56.8%",
+  "4% 71.6%", "34.7% 71.6%", "65.3% 71.6%", "95.8% 71.6%",
+  "4% 86.5%", "34.7% 86.5%", "65.3% 86.5%", "95.8% 86.5%",
+];
+
+function produceSpriteStyle(kind: "fruit" | "vegetable", index: number): React.CSSProperties {
+  return {
+    backgroundPosition: kind === "fruit"
+      ? fruitSpritePositions[index] || "50% 50%"
+      : vegetableSpritePositions[index] || "50% 50%",
+    backgroundSize: kind === "fruit" ? "500% auto" : "550% auto",
+  };
+}
+
 const fixedFruitCards = [
   { name: "Bananas", copy: "A source of potassium and natural energy.", benefits: ["Energy", "Heart health", "Digestion"] },
   { name: "Berries", copy: "High in antioxidants and vitamin C.", benefits: ["Immunity", "Healthy skin", "Antioxidants"] },
@@ -3405,13 +3779,32 @@ function useFixedVegetableCatalog() {
   });
 }
 
-function FixedProduceRows({ items, startIndex, showBenefits }: { items: FixedProduceItem[]; startIndex: number; showBenefits: boolean }) {
+function FixedProduceRows({
+  items,
+  startIndex,
+  showBenefits,
+  kind,
+}: {
+  items: FixedProduceItem[];
+  startIndex: number;
+  showBenefits: boolean;
+  kind: "fruit" | "vegetable";
+}) {
   return (
     <section className={styles.fixedProduceRows}>
       {items.map((item, index) => (
         <article key={item.name}>
           <div className={styles.fixedProduceMark}>
-            {item.image ? <Image src={item.image} alt="" fill sizes="7dvh" /> : <span>{String(startIndex + index + 1).padStart(2, "0")}</span>}
+            {item.image ? (
+              <Image src={item.image} alt={item.name} fill sizes="9dvh" />
+            ) : (
+              <span
+                className={`${styles.fixedProduceSprite} ${kind === "fruit" ? styles.fixedFruitSprite : styles.fixedVegetableSprite}`}
+                style={produceSpriteStyle(kind, startIndex + index)}
+                role="img"
+                aria-label={item.name}
+              />
+            )}
           </div>
           <div className={styles.fixedProduceCopy}><h3>{item.name}</h3><p>{item.copy}</p></div>
           {showBenefits ? <footer>{item.benefits?.map((benefit) => <span key={benefit}>{benefit}</span>)}</footer> : null}
@@ -3433,7 +3826,7 @@ function FixedGroceryFruitsPhonePage({ part, ...props }: PhonePageProps & { part
         <h2>Fruits</h2>
         <span>{part === 0 ? "Nature’s sweetest gifts, rich in vitamins, minerals, and antioxidants." : "More colorful choices for everyday nourishment."}</span>
       </section>
-      <FixedProduceRows items={visible} startIndex={part * 5} showBenefits />
+      <FixedProduceRows items={visible} startIndex={part * 5} showBenefits kind="fruit" />
       {part === 2 ? (
         <aside className={styles.fixedProduceBenefits}>
           <strong>Eat The Rainbow</strong>
@@ -3457,7 +3850,7 @@ function FixedGroceryVegetablesPhonePage({ part, ...props }: PhonePageProps & { 
         <h2>Vegetables</h2>
         <span>{part === 0 ? "Nutrient-rich vegetables add color, flavor, and health to your meals." : "Build variety across the week, one choice at a time."}</span>
       </section>
-      <FixedProduceRows items={visible} startIndex={part * 5} showBenefits={false} />
+      <FixedProduceRows items={visible} startIndex={part * 5} showBenefits={false} kind="vegetable" />
       {part === 3 ? (
         <aside className={styles.fixedProduceBenefits}>
           <strong>Eat A Rainbow</strong>
@@ -3597,6 +3990,58 @@ const fixedActionTips = [
   "Lean on your support system.",
 ];
 
+const actionVisualKeywords: Array<{ terms: string[]; index: number }> = [
+  { terms: ["lemon"], index: 0 },
+  { terms: ["breakfast", "oatmeal"], index: 1 },
+  { terms: ["green drink", "green beverage", "smoothie"], index: 2 },
+  { terms: ["vegetable", "salad"], index: 3 },
+  { terms: ["walk", "move", "movement"], index: 4 },
+  { terms: ["snack", "almond", "nut", "seed"], index: 5 },
+  { terms: ["reflect", "journal", "track", "progress", "goal"], index: 6 },
+  { terms: ["recipe", "meal plan", "plan your meal"], index: 7 },
+  { terms: ["fruit"], index: 8 },
+  { terms: ["water", "hydrat"], index: 9 },
+  { terms: ["protein", "fish", "salmon", "chicken"], index: 10 },
+  { terms: ["healthy fat", "avocado", "omega"], index: 11 },
+  { terms: ["mindful", "meditat"], index: 12 },
+  { terms: ["fiber"], index: 14 },
+  { terms: ["plant-based"], index: 15 },
+  { terms: ["activity", "intensity", "exercise"], index: 16 },
+  { terms: ["sugar", "processed"], index: 17 },
+  { terms: ["probiotic", "gut"], index: 18 },
+  { terms: ["unplug", "relax", "bed"], index: 19 },
+  { terms: ["sleep"], index: 20 },
+  { terms: ["nature", "outside"], index: 23 },
+  { terms: ["whole food", "unprocessed"], index: 24 },
+  { terms: ["breathe", "active"], index: 25 },
+  { terms: ["gratitude"], index: 26 },
+  { terms: ["celebrate", "small win"], index: 27 },
+  { terms: ["consistent", "stay kind"], index: 28 },
+  { terms: ["thriv", "you did it"], index: 29 },
+];
+
+function actionVisualIndex(action: string, fallbackIndex: number) {
+  const normalized = action.toLowerCase();
+  return actionVisualKeywords.find(({ terms }) => terms.some((term) => normalized.includes(term)))?.index ?? fallbackIndex;
+}
+
+function actionSpriteStyle(index: number): React.CSSProperties {
+  if (index >= 21) {
+    const column = Math.min(8, Math.max(0, index - 21));
+    return {
+      backgroundPosition: `${17.6 + (column * 9.63)}% 83.5%`,
+      backgroundSize: "1140% auto",
+    };
+  }
+
+  const row = Math.min(2, Math.max(0, Math.floor(index / 7)));
+  const column = Math.min(6, Math.max(0, index % 7));
+  return {
+    backgroundPosition: `${18.1 + (column * 12.8)}% ${[40, 55.5, 69.5][row]}%`,
+    backgroundSize: "890% auto",
+  };
+}
+
 function useFixedActionPlanContent() {
   const { ebook } = useMobileEbook();
   const weekRecords = [1, 2, 3, 4].map((number) => asRecord(ebook.summary[`week_${number}_plan`]));
@@ -3605,7 +4050,7 @@ function useFixedActionPlanContent() {
   let fallbackOffset = 0;
   const weeks = fixedActionPlanWeeks.map((fallback, index) => {
     const record = weekRecords[index];
-    const generated = asRecords(record.days).map((day) => asText(day.action, "")).filter(Boolean);
+    const generated = asRecords(record.days);
     const fallbackDays = actionPlanDays.slice(fallbackOffset, fallbackOffset + dayCounts[index]);
     const startDay = fallbackOffset + 1;
     fallbackOffset += dayCounts[index];
@@ -3615,7 +4060,16 @@ function useFixedActionPlanContent() {
       daysLabel: fitEbookText(record.range, fallback.days, 18),
       focus: fitEbookText(record.focus, fallback.focus, 74),
       startDay,
-      actions: fallbackDays.map((fallbackAction, dayIndex) => fitEbookText(generated[dayIndex], fallbackAction, 68)),
+      actions: fallbackDays.map((fallbackAction, dayIndex) => {
+        const generatedDay = generated[dayIndex] || {};
+        const copy = fitEbookText(generatedDay.action, fallbackAction, 52);
+        const fallbackIndex = startDay + dayIndex - 1;
+        return {
+          copy,
+          image: asText(generatedDay.image_url ?? generatedDay.imageUrl, ""),
+          visualIndex: actionVisualIndex(copy, fallbackIndex),
+        };
+      }),
     };
   });
   return {
@@ -3666,8 +4120,15 @@ function FixedActionPlanWeekPhonePage({ weekIndex, ...props }: PhonePageProps & 
       <section className={styles.fixedActionDays}>
         {week.actions.map((action, index) => (
           <article key={`${week.week}-${index}`}>
-            <i aria-hidden="true" />
-            <div><strong>Day {week.startDay + index}</strong><p>{action}</p></div>
+            <div className={styles.fixedActionDayVisual}>
+              {action.image ? (
+                <Image src={action.image} alt="" fill sizes="7dvh" aria-hidden="true" />
+              ) : (
+                <span className={styles.fixedActionDaySprite} style={actionSpriteStyle(action.visualIndex)} aria-hidden="true" />
+              )}
+              <i aria-hidden="true" />
+            </div>
+            <div><strong>Day {week.startDay + index}</strong><p>{action.copy}</p></div>
           </article>
         ))}
       </section>
@@ -3746,7 +4207,9 @@ export default function MobileEbookPage() {
     ebookPage("At A Glance", <AtGlancePage />),
     ebookPage("Opportunity 3", <OpportunityThreePage />),
     ebookPage("Opportunity 1", <OpportunityOnePage />),
-    ebookPage("Grocery Essentials", <GroceryEssentialsPhonePage />),
+    ebookPage("Grocery Essentials · Protein Sources", <GroceryEssentialsPhonePage categoryIndex={0} />),
+    ebookPage("Grocery Essentials · Vegetables", <GroceryEssentialsPhonePage categoryIndex={1} />),
+    ebookPage("Grocery Essentials · Fruits", <GroceryEssentialsPhonePage categoryIndex={2} />),
     ebookPage("Understanding Your Journey", <UnderstandingJourneyPage />),
     ebookPage(`Understanding ${dynamicCondition}`, <UnderstandingDetailPhonePage />),
     ebookPage("Why Symptoms Happen", <WhySymptomsPhonePage />),
