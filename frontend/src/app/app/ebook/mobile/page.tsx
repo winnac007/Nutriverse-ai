@@ -80,6 +80,7 @@ function asStrings(value: unknown) {
 type RecipeIngredientItem = {
   name: string;
   image: string;
+  detail?: string;
 };
 
 function normalizeRecipeIngredients(
@@ -107,6 +108,14 @@ function normalizeRecipeIngredients(
           ?? imageRecord.image_url
           ?? imageRecord.imageUrl,
         "",
+      ),
+      detail: fitEbookText(
+        ingredientRecord.description
+          ?? ingredientRecord.note
+          ?? ingredientRecord.benefit
+          ?? ingredientRecord.role,
+        "",
+        84,
       ),
     };
   });
@@ -2797,6 +2806,19 @@ const matchaIngredientFallback = [
   "Pumpkin seeds",
 ];
 
+function matchaIngredientDetail(name: string) {
+  const normalized = name.toLowerCase();
+  if (normalized.includes("chia")) return "Fiber-rich base that creates the pudding texture.";
+  if (normalized.includes("almond") || normalized.includes("milk")) return "Keeps the bowl creamy and dairy-light.";
+  if (normalized.includes("matcha") || normalized.includes("green tea")) return "Adds calm focus and antioxidant support.";
+  if (normalized.includes("maple") || normalized.includes("syrup") || normalized.includes("honey")) return "A gentle touch of natural sweetness.";
+  if (normalized.includes("vanilla")) return "Rounds out the flavor with a warm aroma.";
+  if (normalized.includes("blueberr") || normalized.includes("berr")) return "Adds freshness and protective antioxidants.";
+  if (normalized.includes("coconut")) return "Brings texture and satisfying healthy fats.";
+  if (normalized.includes("pumpkin") || normalized.includes("seed")) return "Adds crunch, magnesium, and plant protein.";
+  return "Adds balanced texture, flavor, and everyday nourishment.";
+}
+
 const matchaCookingRows = [
   { number: "01", title: "Prepare Matcha", copy: "Whisk matcha powder with a splash of warm water until smooth and lump-free." },
   { number: "02", title: "Make Pudding", copy: "Combine chia seeds, milk, maple syrup, vanilla, and the whisked matcha. Stir well." },
@@ -2813,7 +2835,16 @@ function useMatchaRecipeInstructions() {
   return {
     recipe,
     name: fitEbookText(recipe.name, "Matcha Chia Pudding Bowl", 42),
-    ingredients: normalizeRecipeIngredients(recipe, matchaIngredientFallback, 36),
+    ingredients: normalizeRecipeIngredients(recipe, matchaIngredientFallback, 36).map((ingredient) => ({
+      ...ingredient,
+      detail: ingredient.detail || matchaIngredientDetail(ingredient.name),
+    })),
+    methodMeta: [
+      ["Prep Time", fitEbookText(recipe.prep_time, "10 mins", 16)],
+      ["Servings", fitEbookText(recipe.servings, "2", 12)],
+      ["Difficulty", fitEbookText(recipe.difficulty, "Easy", 16)],
+    ],
+    prepNote: fitEbookText(method[0]?.body, matchaCookingRows[0].copy, 94),
     steps: matchaCookingRows.map((fallback, index) => ({
       number: fallback.number,
       title: fitEbookText(method[index]?.title, fallback.title, 30),
@@ -2825,7 +2856,7 @@ function useMatchaRecipeInstructions() {
 }
 
 function MatchaInstructionsSpreadPhonePage({ part, ...props }: PhonePageProps & { part: 0 | 1 }) {
-  const { name, ingredients, tipTitle, tipCopy } = useMatchaRecipeInstructions();
+  const { name, ingredients, prepNote, tipTitle, tipCopy } = useMatchaRecipeInstructions();
   const visibleIngredients = ingredients.slice(part * 4, part * 4 + 4);
 
   return (
@@ -2852,10 +2883,19 @@ function MatchaInstructionsSpreadPhonePage({ part, ...props }: PhonePageProps & 
               badge={String(part * 4 + index + 1).padStart(2, "0")}
               className={styles.matchaIngredientArtwork}
             />
-            <span>{ingredient.name}</span>
+            <div className={styles.fixedMatchaIngredientCopy}>
+              <span>{ingredient.name}</span>
+              <small>{ingredient.detail}</small>
+            </div>
           </article>
         ))}
       </section>
+      {part === 0 ? (
+        <aside className={styles.fixedMatchaIngredientPrepNote}>
+          <strong>Prep note</strong>
+          <p>{prepNote}</p>
+        </aside>
+      ) : null}
       {part === 1 ? (
         <aside className={styles.fixedMatchaIngredientTip}>
           <BotanicalBranch /><div><h3>{tipTitle}</h3><p>{tipCopy}</p></div>
@@ -2867,7 +2907,7 @@ function MatchaInstructionsSpreadPhonePage({ part, ...props }: PhonePageProps & 
 }
 
 function MatchaCookingMethodPhonePage({ part, ...props }: PhonePageProps & { part: 0 | 1 }) {
-  const { name, steps, tipTitle, tipCopy } = useMatchaRecipeInstructions();
+  const { name, methodMeta, steps, tipTitle, tipCopy } = useMatchaRecipeInstructions();
   const visibleSteps = steps.slice(part * 3, part * 3 + 3);
 
   return (
@@ -2887,6 +2927,17 @@ function MatchaCookingMethodPhonePage({ part, ...props }: PhonePageProps & { par
           </article>
         ))}
       </section>
+      {part === 0 ? (
+        <aside className={styles.fixedMatchaMethodMeta} aria-label="Recipe preparation details">
+          {methodMeta.map(([label, value]) => (
+            <div key={label}><strong>{label}</strong><span>{value}</span></div>
+          ))}
+        </aside>
+      ) : (
+        <aside className={styles.fixedMatchaReadyCue}>
+          <strong>Ready when</strong><span>Thick, spoonable, and fully chilled.</span>
+        </aside>
+      )}
       {part === 1 ? (
         <aside className={styles.fixedMatchaCookingTip}><BotanicalBranch /><div><h3>{tipTitle}</h3><p>{tipCopy}</p></div></aside>
       ) : <aside className={styles.fixedPageContinue}><strong>Continue</strong><span>Finish, assemble, and personalize your bowl</span></aside>}
@@ -3155,6 +3206,7 @@ function FixedSmartSnacksOverviewPhonePage(props: PhonePageProps) {
       <aside className={styles.fixedSmartSnackBenefitSummary}>
         <strong>Smart Snacking = Smarter You</strong>
         <p>{benefits.slice(0, 3).join(" · ")}</p>
+        <small>Also supports: {benefits.slice(3, 6).join(" · ")}</small>
       </aside>
       <LaterEbookFolio>77</LaterEbookFolio>
     </article>
@@ -3478,8 +3530,9 @@ function FixedNourishingBeveragesOverviewPhonePage(props: PhonePageProps) {
 }
 
 function FixedNourishingBeverageDetailPhonePage({ index, ...props }: PhonePageProps & { index: 0 | 1 | 2 }) {
-  const { cards, benefits } = useFixedBeverageContent();
+  const { cards, features, benefits } = useFixedBeverageContent();
   const card = cards[index];
+  const feature = features[[0, 2, 3][index]];
   return (
     <article className={`${styles.page} ${styles.laterEditorialPage} ${styles.laterWarmPage}`} aria-label={props["aria-label"] ?? card.title}>
       <LaterEbookChrome section="07" warm />
@@ -3514,6 +3567,10 @@ function FixedNourishingBeverageDetailPhonePage({ index, ...props }: PhonePagePr
       <section className={styles.fixedBeverageMeta}>
         {card.metrics.map(([label, value]) => <div key={label}><strong>{label}</strong><span>{value}</span></div>)}
       </section>
+      <aside className={styles.fixedBeverageFeatureNote} data-accent={card.accent}>
+        <strong>Why it works</strong>
+        <div><h3>{feature.title}</h3><p>{feature.copy}</p></div>
+      </aside>
       <aside className={styles.fixedBeverageBenefit}><BotanicalBranch /><div><strong>Daily Benefit</strong><p>{benefits[index]}.</p></div></aside>
       <LaterEbookFolio>79 · {index + 1}</LaterEbookFolio>
     </article>

@@ -4357,11 +4357,16 @@
 .fixedMatchaIngredientsIntro h2 { margin: 0; font-family: Cormorant Garamond, Georgia, serif; font-size: 8cqw; font-weight: 500; line-height: .94; letter-spacing: -.04em; }
 .fixedMatchaIngredientsIntro h2 span { color: #66715d; font-family: Inter, Arial, sans-serif; font-size: 2.1cqw; font-weight: 700; letter-spacing: .15em; }
 .fixedMatchaIngredientList { position: absolute; z-index: 3; top: 66cqw; left: 6cqw; display: grid; gap: 3cqw; width: 50cqw; font-family: Inter, Arial, sans-serif; }
-.fixedMatchaIngredientList article { display: grid; grid-template-columns: 10cqw minmax(0, 1fr); align-items: center; gap: 2.4cqw; min-height: 22cqw; padding: 2.2cqw 2.5cqw; border: 1px solid rgba(94, 89, 75, .14); border-radius: 1.5cqw; background: rgba(250, 248, 242, .88); }
+.fixedMatchaIngredientList article { display: grid; grid-template-columns: 10cqw minmax(0, 1fr); align-items: center; gap: 2.4cqw; min-height: 25cqw; padding: 2.2cqw 2.5cqw; border: 1px solid rgba(94, 89, 75, .14); border-radius: 1.5cqw; background: rgba(250, 248, 242, .88); }
 .matchaIngredientArtwork { width: 8.8cqw; height: 8.8cqw; }
-.fixedMatchaIngredientList span { color: #263630; font-size: 2.9cqw; font-weight: 600; line-height: 1.35; }
+.fixedMatchaIngredientCopy { min-width: 0; }
+.fixedMatchaIngredientCopy span { display: block; color: #263630; font-size: 2.75cqw; font-weight: 650; line-height: 1.25; }
+.fixedMatchaIngredientCopy small { display: block; margin-top: .85cqw; color: #58615d; font-size: 2cqw; line-height: 1.35; text-wrap: pretty; }
+.fixedMatchaIngredientPrepNote { position: absolute; z-index: 3; top: 142cqw; right: 7cqw; width: 34cqw; min-height: 25cqw; padding: 2.6cqw 0 2.6cqw 3cqw; border-top: 1px solid rgba(104, 116, 92, .22); border-bottom: 1px solid rgba(104, 116, 92, .22); border-left: 1px solid rgba(104, 116, 92, .22); font-family: Inter, Arial, sans-serif; }
+.fixedMatchaIngredientPrepNote strong { display: block; margin-bottom: 1.2cqw; color: #66715d; font-size: 1.55cqw; letter-spacing: .17em; text-transform: uppercase; }
+.fixedMatchaIngredientPrepNote p { margin: 0; color: #35403b; font-size: 2.15cqw; line-height: 1.42; text-wrap: pretty; }
 .fixedMatchaIngredientsContinuationPage .fixedMatchaIngredientList { top: 82cqw; right: 6cqw; left: 6cqw; grid-template-columns: 1fr 1fr; width: auto; gap: 3.5cqw; }
-.fixedMatchaIngredientsContinuationPage .fixedMatchaIngredientList article { min-height: 32cqw; }
+.fixedMatchaIngredientsContinuationPage .fixedMatchaIngredientList article { min-height: 35cqw; }
 .fixedMatchaIngredientTip { position: absolute; z-index: 4; right: 6cqw; bottom: 12cqw; left: 6cqw; display: grid; grid-template-columns: 8cqw 1fr; align-items: center; gap: 3cqw; min-height: 25cqw; padding: 3.5cqw 4cqw; border-radius: 1.6cqw; background: rgba(229, 226, 216, .94); font-family: Inter, Arial, sans-serif; }
 .fixedMatchaIngredientTip > svg { width: 6cqw; height: 8cqw; color: #68745c; transform: rotate(-18deg); }
 .fixedMatchaIngredientTip h3 { margin: 0 0 1cqw; color: #173a27; font-size: 1.7cqw; letter-spacing: .18em; text-transform: uppercase; }
@@ -4378,6 +4383,14 @@
 .fixedMatchaCookingRows article > strong { display: grid; width: 8cqw; height: 8cqw; place-items: center; border-radius: 50%; background: #dde0d2; color: #4c604a; font-size: 1.8cqw; }
 .fixedMatchaCookingRows h3 { margin: 0 0 1cqw; color: #173a27; font-size: 1.9cqw; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
 .fixedMatchaCookingRows p { margin: 0; color: #39423f; font-size: 2.65cqw; line-height: 1.42; text-wrap: pretty; }
+.fixedMatchaMethodMeta { position: absolute; z-index: 4; top: 168cqw; right: 7cqw; left: 7cqw; display: grid; grid-template-columns: repeat(3, 1fr); min-height: 11cqw; border-top: 1px solid rgba(104, 116, 92, .24); border-bottom: 1px solid rgba(104, 116, 92, .24); font-family: Inter, Arial, sans-serif; text-align: center; }
+.fixedMatchaMethodMeta div { display: flex; flex-direction: column; justify-content: center; padding: 1.5cqw; }
+.fixedMatchaMethodMeta div:not(:last-child) { border-right: 1px solid rgba(104, 116, 92, .17); }
+.fixedMatchaMethodMeta strong { margin-bottom: .65cqw; color: #66715d; font-size: 1.45cqw; letter-spacing: .15em; text-transform: uppercase; }
+.fixedMatchaMethodMeta span { color: #263630; font-size: 2.25cqw; font-weight: 650; }
+.fixedMatchaReadyCue { position: absolute; z-index: 4; top: 168cqw; right: 8cqw; left: 8cqw; display: flex; align-items: baseline; gap: 2.4cqw; min-height: 7cqw; padding-top: 2cqw; border-top: 1px solid rgba(104, 116, 92, .24); font-family: Inter, Arial, sans-serif; }
+.fixedMatchaReadyCue strong { flex: 0 0 auto; color: #66715d; font-size: 1.5cqw; letter-spacing: .17em; text-transform: uppercase; }
+.fixedMatchaReadyCue span { color: #35403b; font-size: 2.25cqw; line-height: 1.35; }
 .fixedMatchaCookingTip { position: absolute; z-index: 4; right: 6cqw; bottom: 10cqw; left: 6cqw; display: grid; grid-template-columns: 8cqw 1fr; align-items: center; gap: 3cqw; min-height: 22cqw; padding: 3.2cqw 4cqw; border-radius: 1.6cqw; background: rgba(229, 226, 216, .94); font-family: Inter, Arial, sans-serif; }
 .fixedMatchaCookingTip > svg { width: 6cqw; height: 8cqw; color: #68745c; transform: rotate(-18deg); }
 .fixedMatchaCookingTip h3 { margin: 0 0 1cqw; color: #173a27; font-size: 1.7cqw; letter-spacing: .18em; text-transform: uppercase; }
@@ -4398,9 +4411,10 @@
 .fixedSmartSnackFeatures article { min-height: 22cqw; padding: 3cqw 3.5cqw; border: 1px solid rgba(92, 88, 77, .14); border-radius: 1.5cqw; background: rgba(249, 247, 241, .82); }
 .fixedSmartSnackFeatures h3 { margin: 0 0 1cqw; color: #173a27; font-size: 1.75cqw; letter-spacing: .15em; text-transform: uppercase; }
 .fixedSmartSnackFeatures p { margin: 0; color: #3b4541; font-size: 2.55cqw; line-height: 1.35; }
-.fixedSmartSnackBenefitSummary { position: absolute; z-index: 3; right: 6cqw; bottom: 10cqw; left: 6cqw; min-height: 20cqw; padding: 3.2cqw 4cqw; border-radius: 1.5cqw; background: #e8e5dc; font-family: Inter, Arial, sans-serif; }
+.fixedSmartSnackBenefitSummary { position: absolute; z-index: 3; right: 6cqw; bottom: 10cqw; left: 6cqw; min-height: 25cqw; padding: 3.2cqw 4cqw; border-radius: 1.5cqw; background: #e8e5dc; font-family: Inter, Arial, sans-serif; }
 .fixedSmartSnackBenefitSummary strong { display: block; margin-bottom: 1cqw; color: #173a27; font-size: 1.7cqw; letter-spacing: .17em; text-transform: uppercase; }
 .fixedSmartSnackBenefitSummary p { margin: 0; color: #3c4541; font-size: 2.55cqw; line-height: 1.4; }
+.fixedSmartSnackBenefitSummary small { display: block; margin-top: 1.2cqw; padding-top: 1.2cqw; border-top: 1px solid rgba(72, 84, 77, .16); color: #56605b; font-size: 2.05cqw; line-height: 1.35; }
 
 .fixedSmartSnackDetailIntro { position: absolute; z-index: 3; top: 18cqw; left: 6cqw; width: 49cqw; color: #123b24; }
 .fixedSmartSnackDetailIntro > p { margin: 0 0 2cqw; font-family: Inter, Arial, sans-serif; font-size: 1.65cqw; font-weight: 800; letter-spacing: .24em; text-transform: uppercase; }
@@ -4463,6 +4477,13 @@
 .fixedBeverageMeta div:not(:last-child) { border-right: 1px solid rgba(75, 74, 68, .2); }
 .fixedBeverageMeta strong { margin-bottom: 1cqw; color: #173a27; font-size: 1.55cqw; letter-spacing: .12em; text-transform: uppercase; }
 .fixedBeverageMeta span { color: #313c37; font-size: 2.5cqw; font-weight: 650; }
+.fixedBeverageFeatureNote { position: absolute; z-index: 3; top: 165cqw; right: 7cqw; left: 7cqw; display: grid; grid-template-columns: 20cqw minmax(0, 1fr); align-items: center; gap: 3cqw; min-height: 18cqw; padding: 2.2cqw 1.5cqw; border-top: 1px solid rgba(154, 108, 54, .18); border-bottom: 1px solid rgba(154, 108, 54, .18); font-family: Inter, Arial, sans-serif; }
+.fixedBeverageFeatureNote > strong { font-size: 1.65cqw; letter-spacing: .16em; text-transform: uppercase; }
+.fixedBeverageFeatureNote h3 { margin: 0 0 .55cqw; color: #173a27; font-size: 1.75cqw; letter-spacing: .12em; text-transform: uppercase; }
+.fixedBeverageFeatureNote p { margin: 0; color: #3c4541; font-size: 2.3cqw; line-height: 1.32; text-wrap: pretty; }
+.fixedBeverageFeatureNote[data-accent="berry"] > strong { color: #74375f; }
+.fixedBeverageFeatureNote[data-accent="gold"] > strong { color: #9b641e; }
+.fixedBeverageFeatureNote[data-accent="green"] > strong { color: #486547; }
 .fixedBeverageBenefit { position: absolute; z-index: 3; right: 6cqw; bottom: 12cqw; left: 6cqw; display: grid; grid-template-columns: 8cqw 1fr; align-items: center; gap: 3cqw; min-height: 23cqw; padding: 3.3cqw 4cqw; border-radius: 1.5cqw; background: #e9e4d8; font-family: Inter, Arial, sans-serif; }
 .fixedBeverageBenefit > svg { width: 6cqw; height: 8cqw; color: #b7752c; transform: rotate(-17deg); }
 .fixedBeverageBenefit strong { display: block; margin-bottom: 1cqw; color: #173a27; font-size: 1.7cqw; letter-spacing: .16em; text-transform: uppercase; }
@@ -4563,11 +4584,21 @@
 
 .opportunityScenicPhoto { z-index: 0; object-fit: fill; }
 .opportunityBotanical { z-index: 0; }
+.opportunityTopline,
+.opportunityOneTopline { font-size: 1.95cqw; }
+.opportunityKicker,
+.opportunityOneKicker { font-size: 4.45cqw; line-height: 1.25; }
+.opportunityPanel > h2 { font-size: 7.15cqw; line-height: 1.06; }
+.opportunityText { margin-top: 3.6cqw; }
+.opportunityText p { margin-bottom: 4.2cqw; font-size: 2.45cqw; line-height: 1.58; }
 .opportunityOneTopline,
 .opportunityOneCopy,
 .opportunityOneBrand,
 .opportunityOnePageNumber { z-index: 1; }
-.opportunityOneBody p { font-size: 2.1cqw; }
+.opportunityOneCopy h2 { font-size: 6.55cqw; line-height: 1.05; }
+.opportunityOneBody { margin-top: 5cqw; }
+.opportunityOneBody p { margin-bottom: 5.2cqw; font-size: 2.55cqw; line-height: 1.62; }
+.opportunityOneBrand span { font-size: 1.45cqw; }
 
 .groceryArtwork { transform: none; }
 .groceryItems strong { font-size: 1.72cqw; }
