@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState, use } from "react";
-import Link from "next/link";
+import { useEffect, useRef, useState, use } from "react";
+import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
@@ -10,9 +10,13 @@ const FALLBACK_IMG = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?
 
 export default function RecipeDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const router = useRouter();
   const { user, refresh } = useAuth();
   const [recipe, setRecipe] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"Ingredients" | "Nutrition" | "Steps">("Ingredients");
+  const [cookingStage, setCookingStage] = useState<"idle" | "cooking" | "complete">("idle");
+  const [completing, setCompleting] = useState(false);
+  const tabContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     api.get(`/recipes/${id}`).then(r => setRecipe(r.data)).catch(() => {});
@@ -27,6 +31,43 @@ export default function RecipeDetail({ params }: { params: Promise<{ id: string 
       toast.success(saved ? "Removed from saved" : "Saved to favorites");
     } catch {
       toast.error("Failed to save");
+    }
+  };
+
+  const handleCookingAction = async () => {
+    if (cookingStage === "complete") {
+      router.push("/app/passport");
+      return;
+    }
+
+    if (cookingStage === "idle") {
+      setActiveTab("Steps");
+      setCookingStage("cooking");
+      window.setTimeout(() => {
+        tabContentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 60);
+      return;
+    }
+
+    setCompleting(true);
+    try {
+      const { data } = await api.post(`/passport/complete/${id}`);
+      const completion = data?.completion;
+      setCookingStage("complete");
+
+      if (completion?.stamp_awarded) {
+        toast.success(`${completion.destination.name} stamp earned!`);
+      } else if (completion?.created) {
+        toast.success(
+          `Added to your Passport · ${completion.destination.dishes_cooked}/${completion.destination.stamp_goal} dishes`,
+        );
+      } else {
+        toast.success("This dish is already in your Passport");
+      }
+    } catch {
+      toast.error("Could not update your Passport");
+    } finally {
+      setCompleting(false);
     }
   };
 
@@ -205,7 +246,7 @@ export default function RecipeDetail({ params }: { params: Promise<{ id: string 
         </div>
 
         {/* Tab content */}
-        <div style={{ position: "relative" }}>
+        <div ref={tabContentRef} style={{ position: "relative", scrollMarginTop: 16 }}>
           {activeTab === "Ingredients" && (
             <div style={{ paddingBottom: 20 }}>
               {(recipe.ingredients || []).map((ing: any, i: number) => (
@@ -293,6 +334,21 @@ export default function RecipeDetail({ params }: { params: Promise<{ id: string 
                   Cooking steps not available for this recipe.
                 </p>
               )}
+              {cookingStage === "cooking" && (
+                <div style={{
+                  marginTop: 18, padding: "13px 15px", borderRadius: 14,
+                  background: "#EDF1E7", border: "1px solid #D7E0CE",
+                  display: "flex", alignItems: "center", gap: 10,
+                }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3D5C3E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M7 3h11a2 2 0 012 2v16H7a3 3 0 01-3-3V6a3 3 0 013-3z" />
+                    <path d="M7 3v18M11 12l2 2 4-5" />
+                  </svg>
+                  <p style={{ margin: 0, color: "#4D654E", fontSize: 12.5, lineHeight: 1.45 }}>
+                    When your plate is ready, finish below to record this dish in your Food Passport.
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -300,13 +356,20 @@ export default function RecipeDetail({ params }: { params: Promise<{ id: string 
 
       {/* Start Cooking CTA */}
       <div style={{ padding: "0 20px 32px" }}>
-        <button style={{
-          width: "100%", background: "#3D5C3E", color: "#fff", border: "none",
+        <button onClick={handleCookingAction} disabled={completing} style={{
+          width: "100%", background: cookingStage === "complete" ? "#7E7A35" : "#3D5C3E", color: "#fff", border: "none",
           borderRadius: 999, padding: "17px 24px", fontSize: 16, fontWeight: 500,
-          fontFamily: "inherit", cursor: "pointer", boxShadow: "0 8px 24px rgba(61,92,62,0.28)",
+          fontFamily: "inherit", cursor: completing ? "wait" : "pointer", boxShadow: "0 8px 24px rgba(61,92,62,0.28)",
           display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 10,
+          opacity: completing ? 0.7 : 1,
         }}>
-          Start Cooking
+          {completing
+            ? "Adding to Passport…"
+            : cookingStage === "idle"
+              ? "Start Cooking"
+              : cookingStage === "cooking"
+                ? "Finish & add to Passport"
+                : "View Passport"}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
         </button>
       </div>

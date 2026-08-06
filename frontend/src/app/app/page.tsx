@@ -422,8 +422,8 @@ export default function Home() {
           <div style={{ background: "linear-gradient(135deg, #3D5C3E 0%, #2D4A2E 100%)", borderRadius: "1.1rem", padding: "1.1rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 4px 16px rgba(61,92,62,0.22)" }}>
             <div style={{ minWidth: 0 }}>
               <p style={{ fontFamily: "'DM Sans'", fontSize: "0.58rem", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)", margin: "0 0 0.2rem" }}>Discover</p>
-              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.05rem", color: "#FFFFFF", margin: 0 }}>Explore Recipes</p>
-              <p style={{ fontFamily: "'DM Sans'", fontSize: "0.73rem", color: "rgba(255,255,255,0.6)", margin: "0.1rem 0 0" }}>Tailored to your conditions</p>
+              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.05rem", color: "#FFFFFF", margin: 0 }}>Discover the Plate</p>
+              <p style={{ fontFamily: "'DM Sans'", fontSize: "0.73rem", color: "rgba(255,255,255,0.6)", margin: "0.1rem 0 0" }}>Travel through recipes and cuisines</p>
             </div>
             <div style={{ width: 40, height: 40, minWidth: 40, borderRadius: "50%", background: "rgba(255,255,255,0.14)", display: "flex", alignItems: "center", justifyContent: "center", marginLeft: "0.75rem" }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.2"><polyline points="9 18 15 12 9 6"/></svg>

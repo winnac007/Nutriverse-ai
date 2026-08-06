@@ -39,7 +39,7 @@ export default function StoryMap() {
   }, [selectedCountry]);
 
   return (
-    <div className="space-y-6 -mx-4 sm:-mx-6 px-4 sm:px-6 nv-ancient min-h-screen pb-12 -mt-6 pt-6 -mb-28">
+    <div className="space-y-6 px-4 sm:px-6 nv-ancient min-h-screen pb-12 -mt-6 pt-6">
       <Link href="/app" className="inline-flex items-center gap-2 text-sm" style={{color: "#5b3d22"}}>
         <ArrowLeft className="size-4" /> Home
       </Link>

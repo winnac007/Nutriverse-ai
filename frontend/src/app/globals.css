@@ -51,6 +51,7 @@
 
 :root {
   --radius: 1rem;
+  --app-bottom-nav-height: 4.75rem;
 
   /* Zenplato brand palette (oklch) */
   --ivory: oklch(0.957 0.018 90);          /* #F4F1E8 warm ivory */
