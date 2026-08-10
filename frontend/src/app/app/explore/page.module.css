@@ -15,7 +15,7 @@
 }
 
 .shell {
-  width: min(100%, 46rem);
+  width: min(100%, 70rem);
   margin: 0 auto;
   padding: calc(env(safe-area-inset-top, 0px) + 1rem) 1.25rem 2.25rem;
 }
@@ -25,6 +25,23 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.categoriesButton {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.65rem;
+  padding: 0 0.25rem;
+  color: var(--culinary-olive);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-decoration: none;
 }
 
 .brand {
@@ -260,6 +277,45 @@
   margin-top: clamp(2rem, 7vw, 3.2rem);
 }
 
+.syncMessage {
+  min-height: 1rem;
+  margin: 0.45rem 0 0;
+  color: #b9af72;
+  font-size: 0.68rem;
+}
+
+.errorBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid rgba(157, 120, 65, 0.48);
+  border-radius: 0.8rem;
+  background: rgba(157, 120, 65, 0.09);
+  color: #d6c5aa;
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.errorBanner button,
+.retryButton {
+  min-height: 2.35rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--culinary-olive);
+  border-radius: 0.75rem;
+  background: transparent;
+  color: var(--culinary-olive);
+  font: 600 0.72rem/1 var(--font-sans);
+  cursor: pointer;
+}
+
+.retryButton {
+  background: var(--culinary-olive);
+  color: #0a0b08;
+}
+
 .sectionHeader {
   display: flex;
   align-items: flex-end;
@@ -488,6 +544,10 @@
 @media (min-width: 640px) {
   .shell {
     padding-inline: 2rem;
+  }
+
+  .categoriesButton {
+    font-size: 0.72rem;
   }
 }
 

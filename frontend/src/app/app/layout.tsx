@@ -10,7 +10,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const isEbook = pathname?.startsWith("/app/ebook");
-  const isCulinary = pathname?.startsWith("/app/explore") || pathname?.startsWith("/app/passport");
+  const isCulinary = [
+    "/app/culinary",
+    "/app/explore",
+    "/app/passport",
+    "/app/recipe",
+    "/app/story-map",
+  ].some((prefix) => pathname?.startsWith(prefix));
+  const hideBottomNav = isEbook || pathname === "/app/culinary" || pathname === "/app/explore/welcome";
 
   useEffect(() => {
     if (!loading) {
@@ -45,14 +52,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div style={{ minHeight: "100vh", background: isEbook ? "#0A0D16" : isCulinary ? "#090B09" : "#FAF7F0" }}>
       <main
-        className={isEbook ? "" : "max-w-md md:max-w-2xl lg:max-w-4xl mx-auto"}
-        style={isEbook ? {} : {
+        className={isEbook ? "" : isCulinary ? "max-w-md md:max-w-3xl lg:max-w-6xl mx-auto" : "max-w-md md:max-w-2xl lg:max-w-4xl mx-auto"}
+        style={hideBottomNav ? {} : {
           paddingBottom: "calc(var(--app-bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 1rem + 1px)",
         }}
       >
         {children}
       </main>
-      {!isEbook && <BottomNav />}
+      {!hideBottomNav && <BottomNav />}
     </div>
   );
 }

@@ -6,39 +6,32 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.core.database import db
 from app.core.security import get_current_user
-
+from app.data.culinary_recipes import (
+    CULINARY_CUISINE_ALIASES,
+    CULINARY_DESTINATIONS,
+    get_curated_recipe,
+)
+from app.services.recipe_service import get_recipe_by_id
 
 router = APIRouter(prefix="/passport", tags=["passport"])
 
 STAMP_GOAL = 5
 
-DESTINATIONS: tuple[Dict[str, str], ...] = (
-    {"slug": "japan", "name": "Japan", "cuisine": "Japanese"},
-    {"slug": "india", "name": "India", "cuisine": "Indian"},
-    {"slug": "italy", "name": "Italy", "cuisine": "Italian"},
-    {"slug": "mexico", "name": "Mexico", "cuisine": "Mexican"},
-    {"slug": "thailand", "name": "Thailand", "cuisine": "Thai"},
-    {"slug": "mediterranean", "name": "Mediterranean", "cuisine": "Mediterranean"},
-    {"slug": "korea", "name": "Korea", "cuisine": "Korean"},
-    {"slug": "morocco", "name": "Morocco", "cuisine": "Middle Eastern"},
-    {"slug": "global", "name": "World Table", "cuisine": "International"},
-)
+DESTINATIONS = CULINARY_DESTINATIONS
 
 DESTINATION_BY_SLUG = {destination["slug"]: destination for destination in DESTINATIONS}
-CUISINE_ALIASES = {
-    "japanese": "japan",
-    "indian": "india",
-    "italian": "italy",
-    "mexican": "mexico",
-    "thai": "thailand",
-    "mediterranean": "mediterranean",
-    "greek": "mediterranean",
-    "korean": "korea",
-    "middle eastern": "morocco",
-    "moroccan": "morocco",
-    "international": "global",
-}
-NEXT_STAMP_ORDER = ("thailand", "japan", "india", "italy", "mexico", "mediterranean", "korea", "morocco", "global")
+CUISINE_ALIASES = CULINARY_CUISINE_ALIASES
+NEXT_STAMP_ORDER = (
+    "thailand",
+    "japan",
+    "india",
+    "italy",
+    "mexico",
+    "mediterranean",
+    "korea",
+    "morocco",
+    "global",
+)
 
 
 def resolve_destination(cuisine: Optional[str]) -> Dict[str, str]:
@@ -78,7 +71,11 @@ def build_passport_payload(events: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
         )
         dishes_cooked = completed_counts.get(slug, 0)
         stamp_earned = dishes_cooked >= STAMP_GOAL
-        earned_at = _event_timestamp(destination_events[STAMP_GOAL - 1]) if stamp_earned else None
+        earned_at = (
+            _event_timestamp(destination_events[STAMP_GOAL - 1])
+            if stamp_earned
+            else None
+        )
         item = {
             **destination,
             "explored": slug in explored_slugs,
@@ -103,7 +100,11 @@ def build_passport_payload(events: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
     else:
         destination_lookup = {item["slug"]: item for item in destinations}
         next_slug = next(
-            (slug for slug in NEXT_STAMP_ORDER if not destination_lookup[slug]["stamp_earned"]),
+            (
+                slug
+                for slug in NEXT_STAMP_ORDER
+                if not destination_lookup[slug]["stamp_earned"]
+            ),
             "global",
         )
         next_stamp = destination_lookup[next_slug]
@@ -144,6 +145,13 @@ async def _get_passport(user_id: str) -> Dict[str, Any]:
     return build_passport_payload(events)
 
 
+async def _get_recipe_for_completion(recipe_id: str) -> Optional[Dict[str, Any]]:
+    curated = get_curated_recipe(recipe_id)
+    if curated:
+        return curated
+    return await get_recipe_by_id(recipe_id, db)
+
+
 @router.get("")
 async def get_passport(user=Depends(get_current_user)):
     return await _get_passport(user["id"])
@@ -179,7 +187,7 @@ async def explore_destination(destination_slug: str, user=Depends(get_current_us
 
 @router.post("/complete/{recipe_id}")
 async def complete_recipe(recipe_id: str, user=Depends(get_current_user)):
-    recipe = await db.recipes.find_one({"id": recipe_id}, {"_id": 0})
+    recipe = await _get_recipe_for_completion(recipe_id)
     if not recipe:
         raise HTTPException(404, "Recipe not found")
 

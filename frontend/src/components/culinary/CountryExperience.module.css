@@ -1,0 +1,414 @@
+.notFound {
+  margin-top: 2rem;
+}
+
+.hero {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 1.4rem;
+  overflow: hidden;
+  border: 1px solid var(--zp-line);
+  border-radius: 1.6rem;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(160, 155, 82, 0.1), transparent 18rem),
+    #12130e;
+}
+
+.heroCopy {
+  padding: clamp(1.35rem, 5vw, 2.5rem);
+}
+
+.flag {
+  display: grid;
+  place-items: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  border: 1px solid var(--zp-line);
+  border-radius: 999px;
+  background: #eee4d2;
+  font-size: 1.6rem;
+}
+
+.heroCopy h2 {
+  margin: 1rem 0 0;
+  font-family: var(--font-serif);
+  font-size: clamp(3.2rem, 15vw, 6.4rem);
+  font-weight: 400;
+  line-height: 0.82;
+  letter-spacing: -0.045em;
+}
+
+.heroCopy > p {
+  max-width: 35rem;
+  margin: 0.7rem 0 0;
+  color: var(--zp-muted);
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+.heroCopy .lead {
+  margin-top: 1.35rem;
+  color: var(--zp-ink);
+  font-family: var(--font-serif);
+  font-size: clamp(1.2rem, 5vw, 1.65rem);
+  line-height: 1.2;
+}
+
+.actions {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1.4rem;
+}
+
+.primaryButton,
+.outlineButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  min-height: 3rem;
+  padding: 0 1.15rem;
+  border-radius: 1rem;
+  color: var(--zp-ink);
+  font: 500 0.9rem/1 var(--font-sans);
+  cursor: pointer;
+  transition: filter 180ms ease, transform 180ms ease, background 180ms ease;
+}
+
+.primaryButton {
+  border: 1px solid #a9a455;
+  background: linear-gradient(110deg, #6f6e30, #98914a);
+  color: #fff9ea;
+}
+
+.outlineButton {
+  border: 1px solid rgba(160, 155, 82, 0.65);
+  background: transparent;
+}
+
+.primaryButton:hover,
+.primaryButton:focus-visible,
+.outlineButton:hover,
+.outlineButton:focus-visible {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+}
+
+.primaryButton svg,
+.outlineButton svg {
+  width: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.outlineButton svg[data-filled] {
+  fill: currentColor;
+}
+
+.inlineError,
+.dataNotice {
+  color: #d4b079 !important;
+  font-size: 0.74rem !important;
+}
+
+.heroImage {
+  position: relative;
+  min-height: 18rem;
+  overflow: hidden;
+}
+
+.heroImage::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #12130e 0%, transparent 30%, rgba(8, 9, 6, 0.18));
+  content: "";
+  pointer-events: none;
+}
+
+.heroImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.recipeSection,
+.discoverySection,
+.regionExplorer {
+  scroll-margin-top: 1rem;
+  margin-top: clamp(2rem, 7vw, 3.8rem);
+}
+
+.recipeRail,
+.discoveryRail {
+  display: grid;
+  grid-auto-columns: minmax(10rem, 45%);
+  grid-auto-flow: column;
+  gap: 0.85rem;
+  margin: 0 calc(clamp(1rem, 4vw, 2rem) * -1);
+  padding: 0 clamp(1rem, 4vw, 2rem) 0.8rem;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.recipeRail::-webkit-scrollbar,
+.discoveryRail::-webkit-scrollbar {
+  display: none;
+}
+
+.recipeTile,
+.skeleton {
+  overflow: hidden;
+  border: 1px solid var(--zp-line);
+  border-radius: 1rem;
+  background: var(--zp-surface);
+  scroll-snap-align: start;
+}
+
+.recipeTile a {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.recipeTile img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  transition: transform 240ms ease;
+}
+
+.recipeTile:hover img,
+.recipeTile:focus-within img {
+  transform: scale(1.035);
+}
+
+.recipeTile a > span {
+  display: grid;
+  gap: 0.32rem;
+  padding: 0.8rem;
+}
+
+.recipeTile strong {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.05;
+}
+
+.recipeTile small {
+  color: var(--zp-muted);
+  font-size: 0.62rem;
+}
+
+.skeleton {
+  aspect-ratio: 0.78;
+  background: linear-gradient(105deg, #13140f 25%, #202117 42%, #13140f 58%);
+  background-size: 220% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+@keyframes shimmer {
+  to { background-position-x: -220%; }
+}
+
+.discoveryRail a {
+  display: grid;
+  gap: 0.65rem;
+  color: var(--zp-ink);
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  text-decoration: none;
+  scroll-snap-align: start;
+}
+
+.discoveryRail img {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid var(--zp-line);
+  border-radius: 1rem;
+  object-fit: cover;
+}
+
+.regionExplorer {
+  display: grid;
+  gap: 1rem;
+}
+
+.indiaVisual {
+  display: grid;
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr) minmax(9rem, 0.62fr);
+  gap: 1rem;
+  min-height: 18rem;
+  padding: 1.4rem;
+  border: 1px solid var(--zp-line);
+  border-radius: 1.4rem;
+  background:
+    radial-gradient(circle at 80% 40%, rgba(160, 155, 82, 0.16), transparent 16rem),
+    rgba(25, 25, 18, 0.88);
+}
+
+.kicker {
+  margin: 0 0 0.45rem;
+  color: var(--zp-olive);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.indiaVisual h2 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 8vw, 3.6rem);
+  font-weight: 500;
+  line-height: 0.95;
+}
+
+.indiaVisual p:last-child {
+  margin: 0.75rem 0 0;
+  color: var(--zp-muted);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.indiaMap {
+  width: 100%;
+  max-height: 17rem;
+  overflow: visible;
+}
+
+.indiaMap path:not(:first-of-type) {
+  fill: none;
+  stroke: rgba(10, 11, 8, 0.54);
+  stroke-width: 1.5;
+}
+
+.indiaMap circle {
+  fill: #e5cf8c;
+  stroke: #201f13;
+  stroke-width: 2;
+}
+
+.indiaMap text {
+  fill: #f0e5d2;
+  font: 600 11px/1 var(--font-sans);
+}
+
+.regionList {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.regionList a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 4.25rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(157, 120, 65, 0.18);
+  border-radius: 0.95rem;
+  background: rgba(30, 29, 21, 0.8);
+  color: var(--zp-ink);
+  text-decoration: none;
+  transition: border-color 180ms ease, transform 180ms ease;
+}
+
+.regionList a:hover,
+.regionList a:focus-visible {
+  border-color: var(--zp-line);
+  transform: translateX(2px);
+}
+
+.regionList a > span {
+  display: grid;
+  min-width: 0;
+  gap: 0.22rem;
+}
+
+.regionList strong {
+  font-family: var(--font-serif);
+  font-size: 1.16rem;
+  font-weight: 500;
+}
+
+.regionList small {
+  overflow: hidden;
+  color: var(--zp-muted);
+  font-size: 0.66rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.regionList svg {
+  flex: 0 0 auto;
+  width: 1.1rem;
+  fill: none;
+  stroke: var(--zp-olive);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+@media (min-width: 768px) {
+  .hero {
+    grid-template-columns: minmax(0, 0.92fr) minmax(20rem, 1.08fr);
+    min-height: 35rem;
+  }
+
+  .heroImage {
+    min-height: 100%;
+    order: 2;
+  }
+
+  .heroImage::after {
+    background: linear-gradient(90deg, #12130e 0%, transparent 30%);
+  }
+
+  .heroCopy {
+    align-self: center;
+  }
+
+  .actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .primaryButton {
+    grid-column: 1 / -1;
+  }
+
+  .recipeRail,
+  .discoveryRail {
+    grid-auto-columns: initial;
+    grid-auto-flow: initial;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-inline: 0;
+    padding-inline: 0;
+    overflow: visible;
+  }
+
+  .regionExplorer {
+    grid-template-columns: minmax(0, 1.1fr) minmax(20rem, 0.9fr);
+  }
+}
+
+@media (max-width: 390px) {
+  .indiaVisual {
+    grid-template-columns: 1fr;
+  }
+
+  .indiaMap {
+    max-height: 12rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}

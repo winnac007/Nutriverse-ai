@@ -1,34 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import api from "@/lib/api";
-import { CULINARY_DESTINATIONS, PassportDestinationProgress, PassportProgress } from "@/lib/culinary";
+import {
+  getCulinaryDestination,
+  getRecipeArticle,
+  PassportDestinationProgress,
+  PassportProgress,
+} from "@/lib/culinary";
 
 import styles from "./page.module.css";
 
-
-const EMPTY_DESTINATIONS: PassportDestinationProgress[] = CULINARY_DESTINATIONS.map((destination) => ({
-  slug: destination.slug,
-  name: destination.name,
-  cuisine: destination.cuisine,
-  explored: false,
-  dishes_cooked: 0,
-  stamp_goal: 5,
-  stamp_earned: false,
-  earned_at: null,
-}));
-
-const EMPTY_PROGRESS: PassportProgress = {
-  summary: { countries_explored: 0, dishes_cooked: 0, stamps_earned: 0 },
-  destinations: EMPTY_DESTINATIONS,
-  recent_stamps: [],
-  recent_dishes: [],
-  next_stamp: { ...EMPTY_DESTINATIONS[4], remaining: 5 },
-};
-
 const FEATURED_STAMP_ORDER = ["japan", "india", "italy", "mexico"];
+const RECENT_DATE_FORMATTER = new Intl.DateTimeFormat(undefined, {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+});
+
+function formatCompletedDate(value: string): string {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "Completed recently" : RECENT_DATE_FORMATTER.format(date);
+}
 
 function ArrowIcon({ direction = "right" }: { direction?: "left" | "right" }) {
   return (
@@ -42,9 +37,8 @@ function PassportMark() {
   return (
     <svg viewBox="0 0 120 120" aria-hidden="true">
       <circle cx="60" cy="60" r="41" />
-      <path d="M43 79V40l34 39V40" />
-      <path d="M76 49c10-1 17-7 21-17 1 12-5 22-18 25" />
-      <path d="M79 55c5-8 10-13 17-18" />
+      <path d="M38 42h44L40 78h44" />
+      <path d="M76 69c9 1 16-3 21-12-1 11-8 18-21 18" />
     </svg>
   );
 }
@@ -105,29 +99,37 @@ function StampIcon({ slug }: { slug: string }) {
 }
 
 export default function FoodPassport() {
-  const [progress, setProgress] = useState<PassportProgress>(EMPTY_PROGRESS);
+  const [progress, setProgress] = useState<PassportProgress | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
 
-  useEffect(() => {
-    let active = true;
-    api.get("/passport")
-      .then((response) => {
-        if (active) setProgress(response.data);
-      })
-      .catch(() => {
-        if (active) setProgress(EMPTY_PROGRESS);
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-
-    return () => {
-      active = false;
-    };
+  const loadPassport = useCallback(async (signal?: AbortSignal) => {
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const response = await api.get<PassportProgress>("/passport", { signal });
+      if (!signal?.aborted) setProgress(response.data);
+    } catch {
+      if (!signal?.aborted) {
+        setLoadError("We couldn’t open your Passport. Check your connection and try again.");
+      }
+    } finally {
+      if (!signal?.aborted) setLoading(false);
+    }
   }, []);
 
+  useEffect(() => {
+    const controller = new AbortController();
+    void loadPassport(controller.signal);
+
+    return () => {
+      controller.abort();
+    };
+  }, [loadPassport]);
+
   const stampGallery = useMemo(() => {
+    if (!progress) return [];
     const bySlug = new Map(progress.destinations.map((destination) => [destination.slug, destination]));
     const ordered: PassportDestinationProgress[] = [];
     const seen = new Set<string>();
@@ -154,10 +156,7 @@ export default function FoodPassport() {
     }
 
     return showAll ? ordered : ordered.slice(0, 4);
-  }, [progress.destinations, progress.recent_stamps, showAll]);
-
-  const nextStamp = progress.next_stamp;
-  const percentage = Math.min(100, Math.round((nextStamp.dishes_cooked / nextStamp.stamp_goal) * 100));
+  }, [progress, showAll]);
 
   return (
     <div className={styles.page} aria-busy={loading}>
@@ -167,7 +166,7 @@ export default function FoodPassport() {
           <Link href="/app/explore" className={styles.roundButton} aria-label="Back to Discover">
             <ArrowIcon direction="left" />
           </Link>
-          <h1>My Food Passport</h1>
+          <h1>My Passport</h1>
           <details className={styles.menu}>
             <summary aria-label="Passport menu"><span /><span /><span /></summary>
             <div>
@@ -178,33 +177,60 @@ export default function FoodPassport() {
           </details>
         </header>
 
-        <section className={styles.passportCover} aria-label="Nutriverse culinary passport cover">
-          <div className={styles.passportSpine} />
-          <div className={styles.coverInner}>
-            <p className={styles.coverBrand}>Nutriverse</p>
-            <div className={styles.monogram}><PassportMark /></div>
-            <h2>Culinary<br />Passport</h2>
-            <div className={styles.coverDivider}><span /><i>⌁</i><span /></div>
-            <p className={styles.coverSubtitle}>A record of dishes,<br />places &amp; stories</p>
-          </div>
-        </section>
+        {loading && !progress ? (
+          <section className={styles.statusCard} role="status" aria-live="polite">
+            <span className={styles.loadingSeal} aria-hidden="true"><PassportMark /></span>
+            <h2>Opening your Passport…</h2>
+            <p>Gathering your dishes, destinations, and stamps.</p>
+          </section>
+        ) : null}
 
-        <section className={styles.stats} aria-label="Passport statistics">
+        {loadError && !progress ? (
+          <section className={styles.statusCard} role="alert">
+            <span className={styles.errorSeal} aria-hidden="true">!</span>
+            <h2>Passport unavailable</h2>
+            <p>{loadError}</p>
+            <button type="button" onClick={() => void loadPassport()} disabled={loading}>
+              {loading ? "Trying again…" : "Try again"}
+            </button>
+          </section>
+        ) : null}
+
+        {progress ? (
+          <>
+            {loadError ? (
+              <div className={styles.inlineError} role="alert">
+                <span>{loadError}</span>
+                <button type="button" onClick={() => void loadPassport()} disabled={loading}>
+                  {loading ? "Retrying…" : "Retry"}
+                </button>
+              </div>
+            ) : null}
+
+            <section className={styles.passportCover} aria-label="Zenplato food passport cover">
+              <div className={styles.coverInner}>
+                <p className={styles.coverBrand}>Zenplato</p>
+                <div className={styles.monogram}><PassportMark /></div>
+                <h2>Food Passport</h2>
+              </div>
+            </section>
+
+            <section className={styles.stats} aria-label="Passport statistics">
           <div>
             <strong>{progress.summary.countries_explored}</strong>
-            <span>Countries</span>
+            <span>Countries explored</span>
           </div>
           <div>
             <strong>{progress.summary.dishes_cooked}</strong>
-            <span>Dishes</span>
+            <span>Recipes cooked</span>
           </div>
           <div>
             <strong>{progress.summary.stamps_earned}</strong>
-            <span>Stamps</span>
+            <span>Badges earned</span>
           </div>
-        </section>
+            </section>
 
-        <section className={styles.stampsSection} aria-labelledby="recent-stamps-title">
+            <section className={styles.stampsSection} aria-labelledby="recent-stamps-title">
           <div className={styles.sectionHeader}>
             <div>
               <h2 id="recent-stamps-title">Recent stamps</h2>
@@ -215,52 +241,116 @@ export default function FoodPassport() {
             </button>
           </div>
 
-          <div className={`${styles.stampGrid} ${showAll ? styles.stampGridExpanded : ""}`}>
-            {stampGallery.map((destination) => (
-              <article
-                key={destination.slug}
-                className={`${styles.stampItem} ${destination.stamp_earned ? styles.stampEarned : styles.stampLocked}`}
-              >
-                <div className={styles.stampSeal}>
-                  <span className={styles.stampName}>{destination.name}</span>
-                  <StampIcon slug={destination.slug} />
-                  <span className={styles.stampFlourish}>✦</span>
-                </div>
-                <h3>{destination.name}</h3>
-                <p>
-                  {destination.stamp_earned
-                    ? "Earned"
-                    : `${destination.dishes_cooked}/${destination.stamp_goal} dishes`}
-                </p>
-              </article>
-            ))}
-          </div>
-        </section>
+              <div className={`${styles.stampGrid} ${showAll ? styles.stampGridExpanded : ""}`}>
+                {stampGallery.map((destination) => (
+                  <Link
+                    key={destination.slug}
+                    href={`/app/explore?cuisine=${destination.slug}`}
+                    aria-label={`Explore ${destination.name} recipes${destination.stamp_earned ? ", stamp earned" : ""}`}
+                    className={`${styles.stampItem} ${destination.stamp_earned ? styles.stampEarned : styles.stampLocked}`}
+                  >
+                    <div className={styles.stampSeal}>
+                      <span className={styles.stampName}>{destination.name}</span>
+                      <StampIcon slug={destination.slug} />
+                      <span className={styles.stampFlourish}>✦</span>
+                    </div>
+                    <h3>{destination.name}</h3>
+                    <p>
+                      {destination.stamp_earned
+                        ? destination.earned_at
+                          ? formatCompletedDate(destination.earned_at)
+                          : "Earned"
+                        : `${destination.dishes_cooked}/${destination.stamp_goal} dishes`}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </section>
 
-        <section className={styles.nextStamp} aria-labelledby="next-stamp-title">
-          <div className={styles.nextStampHeading}>
-            <div className={styles.nextStampIcon}><StampIcon slug={nextStamp.slug} /></div>
-            <div>
-              <p>Next stamp</p>
-              <h2 id="next-stamp-title">{nextStamp.name}</h2>
-              <span>
-                {nextStamp.remaining === 1
-                  ? "Cook 1 more dish"
-                  : `Cook ${nextStamp.remaining} more dishes`}
-              </span>
-            </div>
-          </div>
-          <div className={styles.progressRow}>
-            <div className={styles.progressTrack}>
-              <span style={{ width: `${percentage}%` }} />
-            </div>
-            <strong>{nextStamp.dishes_cooked}/{nextStamp.stamp_goal}</strong>
-          </div>
-          <Link href={`/app/explore?cuisine=${nextStamp.slug}`}>
-            Find a {nextStamp.cuisine} recipe <ArrowIcon />
-          </Link>
-        </section>
+            <section className={styles.dishesSection} aria-labelledby="recent-dishes-title">
+              <div className={styles.sectionHeader}>
+                <div>
+                  <h2 id="recent-dishes-title">Recent dishes</h2>
+                  <p>The plates behind your journey</p>
+                </div>
+              </div>
+
+              {progress.recent_dishes.length > 0 ? (
+                <div className={styles.dishList}>
+                  {progress.recent_dishes.map((dish) => {
+                    const destination = getCulinaryDestination(dish.destination_slug);
+                    return (
+                      <Link key={dish.recipe_id} href={`/app/recipe/${encodeURIComponent(dish.recipe_id)}`} className={styles.dishRow}>
+                        <img
+                          src={dish.image || destination?.image || "/landing/discover-bowl.jpg"}
+                          alt=""
+                          loading="lazy"
+                          onError={(event) => {
+                            event.currentTarget.src = destination?.image || "/landing/discover-bowl.jpg";
+                          }}
+                        />
+                        <span className={styles.dishCopy}>
+                          <span>{destination?.flag} {dish.cuisine}</span>
+                          <strong>{dish.title}</strong>
+                          <time dateTime={dish.completed_at}>{formatCompletedDate(dish.completed_at)}</time>
+                        </span>
+                        <ArrowIcon />
+                      </Link>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className={styles.emptyDishes}>
+                  <p>Your completed recipes will appear here.</p>
+                  <Link href="/app/explore">Choose your first dish <ArrowIcon /></Link>
+                </div>
+              )}
+            </section>
+
+            <NextStampCard nextStamp={progress.next_stamp} />
+          </>
+        ) : null}
       </div>
     </div>
+  );
+}
+
+function NextStampCard({ nextStamp }: { nextStamp: PassportProgress["next_stamp"] }) {
+  const percentage = nextStamp.stamp_goal > 0
+    ? Math.min(100, Math.round((nextStamp.dishes_cooked / nextStamp.stamp_goal) * 100))
+    : 0;
+  const article = getRecipeArticle(nextStamp.cuisine);
+
+  return (
+    <section className={styles.nextStamp} aria-labelledby="next-stamp-title">
+      <div className={styles.nextStampHeading}>
+        <div className={styles.nextStampIcon}><StampIcon slug={nextStamp.slug} /></div>
+        <div>
+          <p>Next stamp</p>
+          <h2 id="next-stamp-title">{nextStamp.name}</h2>
+          <span>
+            {nextStamp.remaining === 1
+              ? "Cook 1 more dish"
+              : `Cook ${nextStamp.remaining} more dishes`}
+          </span>
+        </div>
+      </div>
+      <div className={styles.progressRow}>
+        <div
+          className={styles.progressTrack}
+          role="progressbar"
+          aria-label={`${nextStamp.name} stamp progress`}
+          aria-valuemin={0}
+          aria-valuemax={nextStamp.stamp_goal}
+          aria-valuenow={Math.min(nextStamp.dishes_cooked, nextStamp.stamp_goal)}
+        >
+          <span style={{ width: `${percentage}%` }} />
+        </div>
+        <strong>{nextStamp.dishes_cooked}/{nextStamp.stamp_goal}</strong>
+      </div>
+      <Link href={`/app/explore?cuisine=${nextStamp.slug}`}>
+        Find {article} {nextStamp.cuisine} recipe <ArrowIcon />
+      </Link>
+    </section>
   );
 }

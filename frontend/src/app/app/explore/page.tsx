@@ -1,18 +1,28 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import {
+  ArrowIcon,
+  EmptyState,
+  SearchIcon,
+  ZenplatoMark,
+} from "@/components/culinary/CulinaryPrimitives";
 import { useDebounce } from "@/hooks/use-debounce";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/auth";
-import { CULINARY_DESTINATIONS } from "@/lib/culinary";
+import {
+  CULINARY_DESTINATIONS,
+  CURATED_RECIPE_REFERENCES,
+  getCulinaryDestination,
+} from "@/lib/culinary";
 
 import styles from "./page.module.css";
 
-
 type DiscoverRecipe = {
-  id?: string;
+  id: string;
   title: string;
   cuisine?: string;
   country?: string;
@@ -20,57 +30,10 @@ type DiscoverRecipe = {
   cook_time?: number;
 };
 
-const FALLBACK_RECIPES: DiscoverRecipe[] = [
-  {
-    title: "Miso & greens bowl",
-    cuisine: "Japanese",
-    image: "/landing/dish-japan.jpg",
-    cook_time: 25,
-  },
-  {
-    title: "South Indian tiffin",
-    cuisine: "Indian",
-    image: "/landing/dish-india.jpg",
-    cook_time: 30,
-  },
-  {
-    title: "Garden mezze plate",
-    cuisine: "Mediterranean",
-    image: "/landing/dish-greece.jpg",
-    cook_time: 20,
-  },
-];
-
 const FALLBACK_IMAGE = "/landing/journey-discover.jpg";
 
-function ArrowIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M5 12h13M13 6l6 6-6 6" />
-    </svg>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="11" cy="11" r="7" />
-      <path d="m16.5 16.5 4 4" />
-    </svg>
-  );
-}
-
-function LeafMark() {
-  return (
-    <svg viewBox="0 0 44 44" aria-hidden="true">
-      <circle cx="22" cy="22" r="19" />
-      <path d="M13 27c8-1 14-7 17-15 2 8-2 17-11 19" />
-      <path d="M16 29c3-6 7-10 13-14" />
-    </svg>
-  );
-}
-
 export default function DiscoverThePlate() {
+  const router = useRouter();
   const { user, refresh } = useAuth();
   const [searchOpen, setSearchOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -78,24 +41,44 @@ export default function DiscoverThePlate() {
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const [recipes, setRecipes] = useState<DiscoverRecipe[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [requestVersion, setRequestVersion] = useState(0);
+  const [passportMessage, setPassportMessage] = useState("");
+  const [saveMessage, setSaveMessage] = useState("");
   const recipeSectionRef = useRef<HTMLElement>(null);
 
-  const selectedDestination = useMemo(
-    () => CULINARY_DESTINATIONS.find((destination) => destination.slug === selectedSlug) ?? null,
-    [selectedSlug],
-  );
+  const selectedDestination = useMemo(() => getCulinaryDestination(selectedSlug), [selectedSlug]);
   const savedRecipes = useMemo(() => new Set(user?.saved_recipes ?? []), [user?.saved_recipes]);
 
+  const curatedForSelection = useMemo(() => {
+    const query = debouncedSearch.trim().toLocaleLowerCase();
+    return CURATED_RECIPE_REFERENCES
+      .filter((recipe) => !selectedSlug || recipe.destinationSlug === selectedSlug)
+      .filter((recipe) => !query || `${recipe.title} ${recipe.cuisine} ${recipe.description}`.toLocaleLowerCase().includes(query))
+      .map<DiscoverRecipe>((recipe) => ({
+        id: recipe.id,
+        title: recipe.title,
+        cuisine: recipe.cuisine,
+        image: recipe.image,
+        cook_time: recipe.cookTime,
+      }));
+  }, [debouncedSearch, selectedSlug]);
+
   useEffect(() => {
-    const requestedSlug = new URLSearchParams(window.location.search).get("cuisine");
-    if (CULINARY_DESTINATIONS.some((destination) => destination.slug === requestedSlug)) {
-      setSelectedSlug(requestedSlug);
+    const params = new URLSearchParams(window.location.search);
+    const requestedSlug = params.get("cuisine");
+    const requestedSearch = params.get("search");
+    if (getCulinaryDestination(requestedSlug)) setSelectedSlug(requestedSlug);
+    if (requestedSearch) {
+      setSearch(requestedSearch);
+      setSearchOpen(true);
     }
   }, []);
 
   useEffect(() => {
     let active = true;
     setLoading(true);
+    setLoadError(false);
 
     const params: Record<string, string> = {};
     if (selectedDestination) params.country = selectedDestination.cuisine;
@@ -103,10 +86,18 @@ export default function DiscoverThePlate() {
 
     api.get("/recipes", { params })
       .then((response) => {
-        if (active) setRecipes(Array.isArray(response.data) ? response.data.slice(0, 6) : []);
+        if (!active) return;
+        const nextRecipes = Array.isArray(response.data) ? response.data : [];
+        const uniqueRecipes = new Map<string, DiscoverRecipe>();
+        nextRecipes.forEach((recipe: DiscoverRecipe) => {
+          if (recipe.id) uniqueRecipes.set(recipe.id, recipe);
+        });
+        setRecipes(Array.from(uniqueRecipes.values()).slice(0, 12));
       })
       .catch(() => {
-        if (active) setRecipes([]);
+        if (!active) return;
+        setRecipes([]);
+        setLoadError(true);
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -115,51 +106,84 @@ export default function DiscoverThePlate() {
     return () => {
       active = false;
     };
-  }, [debouncedSearch, selectedDestination]);
+  }, [debouncedSearch, selectedDestination, requestVersion]);
 
-  const exploreDestination = useCallback((slug: string, scrollToRecipes = false) => {
-    const destination = CULINARY_DESTINATIONS.find((item) => item.slug === slug);
+  const updateCuisineUrl = (slug: string | null) => {
+    const url = new URL(window.location.href);
+    if (slug) url.searchParams.set("cuisine", slug);
+    else url.searchParams.delete("cuisine");
+    window.history.replaceState({}, "", `${url.pathname}${url.search}`);
+  };
+
+  const exploreDestination = useCallback(async (slug: string, openGuide = false) => {
+    const destination = getCulinaryDestination(slug);
     if (!destination) return;
 
     setSelectedSlug(slug);
-    void api.post(`/passport/explore/${slug}`).catch(() => undefined);
+    updateCuisineUrl(slug);
+    setPassportMessage("Saving this stop…");
 
-    if (scrollToRecipes) {
-      window.setTimeout(() => {
-        recipeSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 80);
+    try {
+      await api.post(`/passport/explore/${slug}`);
+      setPassportMessage(`${destination.name} added to your Passport journey`);
+    } catch {
+      setPassportMessage("Explore now; Passport sync is temporarily unavailable");
     }
-  }, []);
 
-  const toggleSaved = useCallback(async (recipeId: string) => {
+    if (openGuide) {
+      router.push(`/app/explore/country/${slug}`);
+      return;
+    }
+
+    window.setTimeout(() => {
+      recipeSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+  }, [router]);
+
+  const clearFilters = () => {
+    setSelectedSlug(null);
+    setSearch("");
+    setSearchOpen(false);
+    setPassportMessage("");
+    const url = new URL(window.location.href);
+    url.searchParams.delete("cuisine");
+    url.searchParams.delete("search");
+    window.history.replaceState({}, "", url.pathname);
+  };
+
+  const toggleSaved = useCallback(async (recipeId: string, title: string) => {
+    setSaveMessage("");
     try {
       await api.post(`/user/save-recipe/${recipeId}`);
       await refresh();
+      setSaveMessage(`${title} saved`);
     } catch {
-      // The recipe remains usable even if saving is temporarily unavailable.
+      setSaveMessage(`Could not save ${title}. Try again.`);
     }
   }, [refresh]);
 
-  const visibleRecipes = recipes.length > 0 ? recipes : FALLBACK_RECIPES;
+  const visibleRecipes = loadError ? curatedForSelection : recipes;
 
   return (
     <div className={styles.page}>
       <div className={styles.shell}>
         <header className={styles.header}>
-          <Link href="/app" className={styles.brand} aria-label="Nutriverse home">
-            <span className={styles.brandMark}><LeafMark /></span>
-            <span>Nutriverse</span>
+          <Link href="/app/explore/welcome" className={styles.brand} aria-label="Zenplato welcome">
+            <ZenplatoMark />
           </Link>
-          <button
-            type="button"
-            className={styles.searchButton}
-            aria-label={searchOpen ? "Close recipe search" : "Search recipes"}
-            aria-expanded={searchOpen}
-            aria-controls="discover-search-panel"
-            onClick={() => setSearchOpen((open) => !open)}
-          >
-            <SearchIcon />
-          </button>
+          <div className={styles.headerActions}>
+            <Link href="/app/explore/categories" className={styles.categoriesButton}>Categories</Link>
+            <button
+              type="button"
+              className={styles.searchButton}
+              aria-label={searchOpen ? "Close recipe search" : "Search recipes"}
+              aria-expanded={searchOpen}
+              aria-controls="discover-search-panel"
+              onClick={() => setSearchOpen((open) => !open)}
+            >
+              <SearchIcon />
+            </button>
+          </div>
         </header>
 
         <div
@@ -182,28 +206,25 @@ export default function DiscoverThePlate() {
         </div>
 
         <h1 className={styles.headline}>
-          Taste the world,
-          <span>one plate at a time</span>
+          Discover
+          <span>The Plate</span>
         </h1>
 
         <section className={styles.hero} aria-labelledby="featured-destination-title">
-          <img src="/landing/journey-discover.jpg" alt="Japanese noodle bowl in a dark, atmospheric setting" />
+          <img src="/landing/japan-fuji.png" alt="Mount Fuji and a traditional Japanese pagoda at dusk" />
           <div className={styles.heroShade} />
           <div className={styles.heroContent}>
-            <p className={styles.eyebrow}>
-              <span aria-hidden="true">⌁</span> Featured destination
-            </p>
-            <h2 id="featured-destination-title">Coastal<br />Japan</h2>
-            <p>Umami, ritual, and the sea.</p>
-            <button type="button" onClick={() => exploreDestination("japan", true)}>
-              Explore <ArrowIcon />
+            <h2 id="featured-destination-title">Explore<br />Japan</h2>
+            <p>Experience centuries of Japanese culinary tradition.</p>
+            <button type="button" onClick={() => void exploreDestination("japan", true)}>
+              Explore Now <ArrowIcon />
             </button>
           </div>
         </section>
 
         <section id="countries" className={styles.section} aria-labelledby="countries-title">
           <div className={styles.sectionHeader}>
-            <h2 id="countries-title">Explore by country</h2>
+            <h2 id="countries-title">Explore by Country</h2>
             <Link href="/app/story-map">View map <ArrowIcon /></Link>
           </div>
           <div className={styles.countryRail}>
@@ -215,7 +236,7 @@ export default function DiscoverThePlate() {
                   key={destination.slug}
                   className={selected ? styles.countrySelected : undefined}
                   aria-pressed={selected}
-                  onClick={() => exploreDestination(destination.slug, true)}
+                  onClick={() => void exploreDestination(destination.slug)}
                 >
                   <span className={styles.flag} aria-hidden="true">{destination.flag}</span>
                   <span>{destination.name}</span>
@@ -223,78 +244,84 @@ export default function DiscoverThePlate() {
               );
             })}
           </div>
+          <p className={styles.syncMessage} aria-live="polite">{passportMessage}</p>
         </section>
 
         <section ref={recipeSectionRef} className={styles.section} aria-labelledby="popular-title">
           <div className={styles.sectionHeader}>
             <div>
               <h2 id="popular-title">
-                {selectedDestination ? `Popular in ${selectedDestination.name}` : "Popular near you"}
+                {selectedDestination ? `Popular in ${selectedDestination.name}` : "Popular Cuisines"}
               </h2>
               {selectedDestination ? <p>{selectedDestination.note}</p> : null}
             </div>
             {selectedDestination ? (
-              <button type="button" className={styles.clearButton} onClick={() => setSelectedSlug(null)}>
-                Clear
-              </button>
-            ) : null}
+              <Link href={`/app/explore/country/${selectedDestination.slug}`}>Open guide <ArrowIcon /></Link>
+            ) : (
+              <Link href="/app/explore/categories">View all <ArrowIcon /></Link>
+            )}
           </div>
 
           {loading ? (
             <div className={styles.recipeRail} aria-label="Loading recipes">
               {[0, 1, 2].map((item) => <div key={item} className={styles.recipeSkeleton} />)}
             </div>
+          ) : loadError && visibleRecipes.length === 0 ? (
+            <EmptyState
+              title="Recipes could not be loaded"
+              message="The destination guide is still available. Reconnect and try the live recipe collection again."
+              action={<button className={styles.retryButton} type="button" onClick={() => setRequestVersion((value) => value + 1)}>Try again</button>}
+            />
+          ) : visibleRecipes.length === 0 ? (
+            <EmptyState
+              title="No plates found"
+              message="Try a broader dish name, another destination, or clear the current filters."
+              action={<button className={styles.retryButton} type="button" onClick={clearFilters}>Clear filters</button>}
+            />
           ) : (
-            <div className={styles.recipeRail}>
-              {visibleRecipes.slice(0, 3).map((recipe, index) => {
-                const liveRecipe = Boolean(recipe.id);
-                const cardContent = (
-                  <>
-                    <div className={styles.recipeImage}>
-                      <img
-                        src={recipe.image || FALLBACK_IMAGE}
-                        alt={recipe.title}
-                        loading="lazy"
-                        onError={(event) => {
-                          event.currentTarget.src = FALLBACK_IMAGE;
-                        }}
-                      />
-                    </div>
-                    <div className={styles.recipeCopy}>
-                      <h3>{recipe.title}</h3>
-                      <p>
-                        {recipe.country || recipe.cuisine || "World table"}
-                        <span aria-hidden="true">⌁</span>
-                      </p>
-                      <span>{recipe.cook_time || 30} min</span>
-                    </div>
-                  </>
-                );
-
-                return liveRecipe ? (
+            <>
+              {loadError ? (
+                <div className={styles.errorBanner} role="status">
+                  Live results are unavailable. Showing the curated Zenplato collection.
+                  <button type="button" onClick={() => setRequestVersion((value) => value + 1)}>Retry</button>
+                </div>
+              ) : null}
+              <div className={styles.recipeRail}>
+                {visibleRecipes.slice(0, 6).map((recipe) => (
                   <article className={styles.recipeCard} key={recipe.id}>
                     <Link className={styles.recipeLink} href={`/app/recipe/${recipe.id}`}>
-                      {cardContent}
+                      <div className={styles.recipeImage}>
+                        <img
+                          src={recipe.image || FALLBACK_IMAGE}
+                          alt={recipe.title}
+                          loading="lazy"
+                          onError={(event) => {
+                            event.currentTarget.src = FALLBACK_IMAGE;
+                          }}
+                        />
+                      </div>
+                      <div className={styles.recipeCopy}>
+                        <h3>{recipe.title}</h3>
+                        <p>{recipe.country || recipe.cuisine || "World table"}<span aria-hidden="true">⌁</span></p>
+                        <span>{recipe.cook_time || 30} min</span>
+                      </div>
                     </Link>
                     <button
                       type="button"
                       className={styles.saveButton}
-                      aria-label={savedRecipes.has(recipe.id!) ? `Remove ${recipe.title} from saved recipes` : `Save ${recipe.title}`}
-                      aria-pressed={savedRecipes.has(recipe.id!)}
-                      onClick={() => void toggleSaved(recipe.id!)}
+                      aria-label={savedRecipes.has(recipe.id) ? `Remove ${recipe.title} from saved recipes` : `Save ${recipe.title}`}
+                      aria-pressed={savedRecipes.has(recipe.id)}
+                      onClick={() => void toggleSaved(recipe.id, recipe.title)}
                     >
                       <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M20.8 4.7a5.4 5.4 0 0 0-7.7 0L12 5.8l-1.1-1.1a5.4 5.4 0 0 0-7.7 7.7l1.1 1.1L12 21l7.7-7.5 1.1-1.1a5.4 5.4 0 0 0 0-7.7Z" />
                       </svg>
                     </button>
                   </article>
-                ) : (
-                  <article className={styles.recipeCard} key={`${recipe.title}-${index}`}>
-                    {cardContent}
-                  </article>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+              <p className={styles.syncMessage} aria-live="polite">{saveMessage}</p>
+            </>
           )}
         </section>
       </div>

@@ -418,7 +418,7 @@ export default function Home() {
         </Link>
 
         {/* ── Explore CTA ─────────────────────────────── */}
-        <Link href="/app/explore" style={{ textDecoration: "none", display: "block" }}>
+        <Link href="/app/explore/welcome" style={{ textDecoration: "none", display: "block" }}>
           <div style={{ background: "linear-gradient(135deg, #3D5C3E 0%, #2D4A2E 100%)", borderRadius: "1.1rem", padding: "1.1rem 1rem", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 4px 16px rgba(61,92,62,0.22)" }}>
             <div style={{ minWidth: 0 }}>
               <p style={{ fontFamily: "'DM Sans'", fontSize: "0.58rem", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)", margin: "0 0 0.2rem" }}>Discover</p>

@@ -74,7 +74,13 @@ const tabs: Tab[] = [
 
 export default function BottomNav() {
   const pathname = usePathname() ?? "/app";
-  const culinaryTheme = pathname.startsWith("/app/explore") || pathname.startsWith("/app/passport");
+  const culinaryTheme = [
+    "/app/culinary",
+    "/app/explore",
+    "/app/passport",
+    "/app/recipe",
+    "/app/story-map",
+  ].some((prefix) => pathname.startsWith(prefix));
 
   const palette = culinaryTheme
     ? {
@@ -104,7 +110,7 @@ export default function BottomNav() {
       }}
     >
       <nav
-        className="flex items-center justify-around px-2 max-w-2xl mx-auto"
+        className="flex items-center justify-around px-2 max-w-4xl mx-auto"
         style={{ height: "var(--app-bottom-nav-height)" }}
         aria-label="Primary navigation"
       >

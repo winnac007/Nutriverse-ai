@@ -1,0 +1,238 @@
+.layout {
+  display: grid;
+  gap: 1rem;
+  margin-top: clamp(1.25rem, 4vw, 2rem);
+}
+
+.mapSection {
+  min-width: 0;
+}
+
+.mapCanvas {
+  position: relative;
+  min-height: 31rem;
+  overflow: hidden;
+  border: 1px solid rgba(157, 120, 65, 0.34);
+  border-radius: 1.5rem;
+  background: #080906;
+  isolation: isolate;
+}
+
+.mapCanvas::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(8, 9, 6, 0.08), transparent 62%, rgba(8, 9, 6, 0.68)),
+    radial-gradient(circle at 50% 40%, transparent 30%, rgba(8, 9, 6, 0.45) 100%);
+  content: "";
+  pointer-events: none;
+}
+
+.mapCanvas > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: brightness(0.76) contrast(1.05) saturate(0.82);
+}
+
+.routes {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.routes path {
+  fill: none;
+  stroke: #b78a3e;
+  stroke-dasharray: 1.4 1.5;
+  stroke-linecap: round;
+  stroke-width: 0.22;
+  opacity: 0.72;
+}
+
+.hotspot {
+  position: absolute;
+  z-index: 3;
+  top: var(--hotspot-y);
+  left: var(--hotspot-x);
+  display: grid;
+  place-items: center;
+  width: clamp(2.75rem, 12vw, 4.3rem);
+  height: clamp(2.75rem, 12vw, 4.3rem);
+  padding: 0;
+  border: 2px solid #dbc49a;
+  border-radius: 999px;
+  background: #14140e;
+  color: var(--zp-ink);
+  cursor: pointer;
+  box-shadow: 0 0 0 4px rgba(10, 10, 7, 0.76), 0 0.8rem 1.8rem rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -50%);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.hotspot:hover,
+.hotspot:focus-visible,
+.hotspotActive {
+  border-color: #d8cb69;
+  box-shadow: 0 0 0 5px rgba(160, 155, 82, 0.2), 0 0.8rem 2rem rgba(0, 0, 0, 0.56);
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.hotspot > img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+.hotspot > span {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 50%;
+  padding: 0.12rem 0.35rem;
+  border-radius: 0.25rem;
+  background: rgba(8, 9, 6, 0.78);
+  color: #e7dbc8;
+  font-size: clamp(0.48rem, 2.2vw, 0.66rem);
+  font-weight: 600;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.prompt {
+  display: grid;
+  align-items: center;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+  min-height: 10.5rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(157, 120, 65, 0.3);
+  border-radius: 1.4rem;
+  background:
+    radial-gradient(circle at 95% 10%, rgba(160, 155, 82, 0.13), transparent 11rem),
+    rgba(27, 27, 19, 0.9);
+}
+
+.flag,
+.compass {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border: 1px solid var(--zp-line);
+  border-radius: 999px;
+  background: #12130e;
+  font-size: 1.75rem;
+}
+
+.compass {
+  color: var(--zp-olive);
+  font-size: 1.3rem;
+}
+
+.promptCopy {
+  min-width: 0;
+}
+
+.promptCopy h2 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.65rem, 7vw, 2.45rem);
+  font-weight: 500;
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.promptCopy > p:not(.kicker) {
+  max-width: 34rem;
+  margin: 0.55rem 0 0;
+  color: var(--zp-muted);
+  font-size: 0.83rem;
+  line-height: 1.55;
+}
+
+.kicker {
+  margin: 0 0 0.25rem;
+  color: var(--zp-olive);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.saveState {
+  display: block;
+  min-height: 1.2rem;
+  margin-top: 0.45rem;
+  color: #c4bb79;
+  font-size: 0.68rem;
+}
+
+.prompt > a {
+  grid-column: 1 / -1;
+}
+
+.categoryLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 2.7rem;
+  color: var(--zp-olive);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.categoryLink svg {
+  width: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+@media (min-width: 768px) {
+  .layout {
+    grid-template-columns: minmax(0, 1.7fr) minmax(18rem, 0.8fr);
+    align-items: stretch;
+  }
+
+  .mapCanvas,
+  .prompt {
+    min-height: min(67vh, 38rem);
+  }
+
+  .prompt {
+    align-content: center;
+    padding: 2rem;
+  }
+
+  .prompt > a {
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .mapCanvas {
+    min-height: 27rem;
+  }
+
+  .hotspot > span {
+    display: none;
+  }
+
+  .hotspot {
+    width: 2.45rem;
+    height: 2.45rem;
+  }
+}

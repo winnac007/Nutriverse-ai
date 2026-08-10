@@ -1,122 +1,108 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
+import type { CSSProperties } from "react";
+import { useState } from "react";
+
+import {
+  ArrowIcon,
+  CulinaryPage,
+  CulinaryShell,
+  PrimaryLink,
+  ScreenHeader,
+} from "@/components/culinary/CulinaryPrimitives";
 import api from "@/lib/api";
-import { ArrowLeft, MapPin, ArrowRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { CULINARY_DESTINATIONS, type CulinaryDestination } from "@/lib/culinary";
 
-const REGION_DESCRIPTIONS: Record<string, string> = {
-  "South India": "Coconut, curry leaves, tamarind. Steamed batters and tempered spice.",
-  "North India": "Wheat, ghee, dairy. Tandoor, slow-simmered curries, royal flavours.",
-  "East India": "Mustard oil, river fish, jaggery. Light curries, sweets, panch phoron.",
-  "West India": "Vada-pav, bhel, jaggery & tamarind. Coastal seafood meets bold spice.",
-  "Naples": "Wood-fired pizza, San Marzano tomatoes, mozzarella di bufala.",
-  "Tokyo": "Donburi bowls, miso, yakitori — precision and umami.",
-  "Bangkok Street": "Hot wok action, tamarind sweetness, fish sauce funk.",
-  "Mexico City": "Maize, salsa, slow-roasted meats, pineapple-tinged tacos.",
-  "Marrakesh": "Tagines, ras el hanout, preserved lemon and dried fruit.",
-  "Valencia": "Bomba rice, saffron, paella over open flame.",
-  "Hanoi": "Pho, herbs, fish sauce — clear broths, fresh aromatics.",
-  "Provence": "Sun-ripened vegetables, herbs, olive oil — countryside soul.",
-  "Beirut": "Mezze culture, tahini, sumac, charcoal grilling.",
-  "Seoul": "Banchan, gochujang, fermentation — bold Korean flavours.",
-  "Pacific Northwest": "Wild salmon, berries, wholesome grains.",
-  "Andean": "Quinoa, potatoes, corn — high-altitude superfoods.",
-};
+import styles from "./page.module.css";
 
-export default function StoryMap() {
-  const [countries, setCountries] = useState<string[]>([]);
-  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
-  const [regions, setRegions] = useState<string[]>([]);
-  const [recipes, setRecipes] = useState<any[]>([]);
+type ExploreState = "idle" | "saving" | "saved" | "unavailable";
 
-  useEffect(() => { api.get("/recipes/countries").then((r) => setCountries(r.data)); }, []);
-  useEffect(() => {
-    if (!selectedCountry) { setRegions([]); setRecipes([]); return; }
-    api.get("/recipes/regions", { params: { country: selectedCountry } }).then((r) => setRegions(r.data));
-    api.get("/recipes", { params: { country: selectedCountry } }).then((r) => setRecipes(r.data));
-  }, [selectedCountry]);
+export default function StoryMapPage() {
+  const [selected, setSelected] = useState<CulinaryDestination | null>(null);
+  const [exploreState, setExploreState] = useState<ExploreState>("idle");
+
+  const chooseDestination = async (destination: CulinaryDestination) => {
+    setSelected(destination);
+    setExploreState("saving");
+
+    try {
+      await api.post(`/passport/explore/${destination.slug}`);
+      setExploreState("saved");
+    } catch {
+      setExploreState("unavailable");
+    }
+  };
 
   return (
-    <div className="space-y-6 px-4 sm:px-6 nv-ancient min-h-screen pb-12 -mt-6 pt-6">
-      <Link href="/app" className="inline-flex items-center gap-2 text-sm" style={{color: "#5b3d22"}}>
-        <ArrowLeft className="size-4" /> Home
-      </Link>
+    <CulinaryPage>
+      <CulinaryShell>
+        <ScreenHeader title="Explore the World" backHref="/app/explore" />
 
-      <header className="relative">
-        <div className="text-[10px] uppercase tracking-[0.4em]" style={{color: "#8a5d33"}}>The Origins Atlas</div>
-        <h1 className="font-display text-3xl sm:text-5xl font-bold mt-1" style={{color: "#3a2618"}}>
-          Where does your food come from?
-        </h1>
-        <p className="text-sm mt-2 max-w-md" style={{color: "#5b3d22"}}>
-          A storytelling atlas. Pick a country, then drift into a region or city to taste what locals actually cook.
-        </p>
-      </header>
+        <main className={styles.layout}>
+          <section className={styles.mapSection} aria-label="Culinary world map">
+            <div className={styles.mapCanvas}>
+              <img src="/landing/map-dark.jpg" alt="A warm gold map of the world at night" />
+              <svg className={styles.routes} viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M19 28 C35 15, 55 52, 68 29 S78 16,84 21" />
+                <path d="M45 26 C52 21, 64 24, 75 31 S60 43,50 32" />
+              </svg>
 
-      <AnimatePresence mode="wait">
-        {!selectedCountry ? (
-          <motion.section key="countries" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-            <h2 className="font-display text-lg mb-3" style={{color: "#3a2618"}}>Choose a country</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {countries.map((c) => (
-                <button key={c} onClick={() => setSelectedCountry(c)}
-                  className="nv-parchment-card rounded-2xl p-4 text-left hover:-translate-y-1 transition-all">
-                  <div className="text-xs uppercase tracking-[0.2em]" style={{color: "#8a5d33"}}>Country</div>
-                  <div className="font-display text-lg font-bold mt-1" style={{color: "#3a2618"}}>{c}</div>
-                  <div className="mt-2 inline-flex items-center gap-1 text-xs" style={{color: "#6b4423"}}>
-                    Travel here <ArrowRight className="size-3" />
-                  </div>
-                </button>
-              ))}
-            </div>
-          </motion.section>
-        ) : (
-          <motion.section key="country" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="space-y-5">
-            <button onClick={() => setSelectedCountry(null)} className="text-xs underline" style={{color: "#5b3d22"}}>
-              ← All countries
-            </button>
-            <h2 className="font-display text-3xl font-bold" style={{color: "#3a2618"}}>
-              <MapPin className="size-6 inline mb-1" /> {selectedCountry}
-            </h2>
+              {CULINARY_DESTINATIONS.filter((destination) => destination.slug !== "global").map((destination) => {
+                const style = {
+                  "--hotspot-x": `${destination.mapPosition.x}%`,
+                  "--hotspot-y": `${destination.mapPosition.y}%`,
+                } as CSSProperties;
+                const active = selected?.slug === destination.slug;
 
-            <div>
-              <div className="text-xs uppercase tracking-[0.2em] mb-2" style={{color: "#8a5d33"}}>Regions in {selectedCountry}</div>
-              <div className="flex flex-wrap gap-2">
-                {regions.map((r) => (
-                  <span key={r} className="nv-parchment-card rounded-full px-3 py-1.5 text-xs font-medium">
-                    {r}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              {regions.map((r) => {
-                const desc = REGION_DESCRIPTIONS[r] || "Local ingredients, time-honoured methods, soulful stories.";
-                const regionRecipes = recipes.filter((rec) => (rec.region || "").toLowerCase() === r.toLowerCase());
                 return (
-                  <div key={r} className="nv-parchment-card rounded-2xl p-5">
-                    <div className="text-[10px] uppercase tracking-[0.25em]" style={{color: "#8a5d33"}}>Region</div>
-                    <div className="font-display text-xl font-bold" style={{color: "#3a2618"}}>{r}</div>
-                    <p className="text-sm mt-1.5 italic" style={{color: "#5b3d22"}}>{desc}</p>
-                    <div className="mt-3 space-y-1.5">
-                      {regionRecipes.map((rec) => (
-                        <Link key={rec.id} href={`/app/recipe/${rec.id}`}
-                          className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                          <img src={rec.image} alt={rec.title} className="size-10 rounded-lg object-cover" loading="lazy"
-                            onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800"; }} />
-                          <span className="text-sm font-medium" style={{color: "#3a2618"}}>{rec.title}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
+                  <button
+                    type="button"
+                    key={destination.slug}
+                    className={`${styles.hotspot} ${active ? styles.hotspotActive : ""}`}
+                    style={style}
+                    aria-label={`Explore ${destination.name}`}
+                    aria-pressed={active}
+                    onClick={() => void chooseDestination(destination)}
+                  >
+                    <img src={destination.image} alt="" aria-hidden="true" />
+                    <span>{destination.name}</span>
+                  </button>
                 );
               })}
             </div>
-          </motion.section>
-        )}
-      </AnimatePresence>
-    </div>
+          </section>
+
+          <aside className={styles.prompt} aria-live="polite">
+            {selected ? (
+              <>
+                <span className={styles.flag} aria-hidden="true">{selected.flag}</span>
+                <div className={styles.promptCopy}>
+                  <p className={styles.kicker}>Your next plate</p>
+                  <h2>{selected.name}</h2>
+                  <p>{selected.note}</p>
+                  <span className={styles.saveState}>
+                    {exploreState === "saving" ? "Saving this stop…" : null}
+                    {exploreState === "saved" ? "Added to your Passport journey" : null}
+                    {exploreState === "unavailable" ? "You can explore now; Passport sync is temporarily unavailable" : null}
+                  </span>
+                </div>
+                <PrimaryLink href={`/app/explore/country/${selected.slug}`}>Explore cuisine</PrimaryLink>
+              </>
+            ) : (
+              <>
+                <div className={styles.compass} aria-hidden="true">✦</div>
+                <div className={styles.promptCopy}>
+                  <h2>Where will your next plate take you?</h2>
+                  <p>Choose a destination on the map to explore its food, regions, and stories.</p>
+                </div>
+                <a className={styles.categoryLink} href="/app/explore/categories">
+                  Browse categories <ArrowIcon />
+                </a>
+              </>
+            )}
+          </aside>
+        </main>
+      </CulinaryShell>
+    </CulinaryPage>
   );
 }
