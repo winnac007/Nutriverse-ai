@@ -86,6 +86,45 @@
   --ring: var(--olive);
 }
 
+/* Scoped to the light wellness app. Culinary and ebook surfaces keep their own systems. */
+.core-app {
+  --core-canvas: #f7f1e5;
+  --core-paper: #fffdf7;
+  --core-ink: #1f2e1f;
+  --core-forest: #2d4530;
+  --core-action: #3d5c3e;
+  --core-sage: #8d9e8d;
+  --core-sage-soft: #e9ecdf;
+  --core-gold: #caaa70;
+  --core-border: #e5ddd0;
+  --core-coral: #d8775c;
+  color: var(--core-ink);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(202, 170, 112, 0.09), transparent 25rem),
+    var(--core-canvas);
+  font-family: var(--font-sans);
+}
+
+.core-app :where(h1, h2, h3, h4) {
+  color: var(--core-ink);
+  font-family: var(--font-serif);
+  font-weight: 500;
+}
+
+.core-app :where(button, a, input, select, textarea) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.core-app :where(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid var(--core-action);
+  outline-offset: 3px;
+}
+
+.core-app ::selection {
+  color: #fffdf7;
+  background: var(--core-action);
+}
+
 @layer base {
   * {
     border-color: var(--color-border);

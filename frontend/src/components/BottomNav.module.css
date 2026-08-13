@@ -1,0 +1,134 @@
+.frame {
+  position: fixed;
+  z-index: 50;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  border-top: 1px solid var(--nav-border);
+  background: var(--nav-background);
+  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(22px);
+}
+
+.nav {
+  display: flex;
+  width: 100%;
+  max-width: 78rem;
+  height: var(--app-bottom-nav-height);
+  margin: 0 auto;
+  padding: 0 0.45rem;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.culinary .nav {
+  max-width: 56rem;
+  padding-inline: 0.5rem;
+}
+
+.culinary .link {
+  gap: 0.25rem;
+  border-radius: 0.75rem;
+}
+
+.culinary .iconFrame {
+  border-radius: 0.75rem;
+}
+
+.culinary .iconFrame svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.link {
+  display: flex;
+  min-width: 3rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  border-radius: 0.9rem;
+  color: var(--nav-item-color);
+  text-decoration: none;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.link:hover {
+  transform: translateY(-1px);
+}
+
+.iconFrame {
+  position: relative;
+  display: flex;
+  width: 3rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.8rem;
+  background: var(--nav-item-surface, transparent);
+  transition: background 180ms ease;
+}
+
+.iconFrame svg {
+  width: 1.42rem;
+  height: 1.42rem;
+}
+
+.dot {
+  position: absolute;
+  bottom: -0.1rem;
+  left: 50%;
+  width: 0.25rem;
+  height: 0.25rem;
+  border-radius: 50%;
+  background: currentColor;
+  transform: translateX(-50%);
+}
+
+.label {
+  font-size: 0.625rem;
+  font-weight: 450;
+  letter-spacing: 0.025em;
+}
+
+.active .label {
+  font-weight: 650;
+}
+
+@media (min-width: 768px) {
+  .frame:not(.culinary) {
+    right: max(1.5rem, calc((100vw - 62rem) / 2));
+    bottom: 1rem;
+    left: max(1.5rem, calc((100vw - 62rem) / 2));
+    padding-bottom: 0;
+    overflow: hidden;
+    border: 1px solid var(--nav-border);
+    border-radius: 1.35rem;
+    box-shadow: 0 18px 50px rgba(45, 69, 48, 0.14);
+  }
+
+  .frame:not(.culinary) .nav {
+    height: 4.5rem;
+    padding-inline: 2.5rem;
+  }
+
+  .frame:not(.culinary) .link {
+    flex-direction: row;
+    gap: 0.55rem;
+  }
+
+  .frame:not(.culinary) .iconFrame {
+    width: 2.35rem;
+  }
+
+  .frame:not(.culinary) .label {
+    font-size: 0.76rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link,
+  .iconFrame {
+    transition: none;
+  }
+}

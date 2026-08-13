@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import styles from "./BottomNav.module.css";
 
 
 type Tab = {
@@ -12,7 +13,7 @@ type Tab = {
   icon: ReactNode;
 };
 
-const tabs: Tab[] = [
+const culinaryTabs: Tab[] = [
   {
     href: "/app",
     label: "Home",
@@ -72,6 +73,49 @@ const tabs: Tab[] = [
   },
 ];
 
+const wellnessTabs: Tab[] = [
+  culinaryTabs[0],
+  {
+    href: "/app/daily-plan",
+    label: "Meals",
+    matches: (pathname) => [
+      "/app/daily-plan",
+      "/app/meal-plan",
+      "/app/grocery",
+      "/app/food-guidelines",
+      "/app/category",
+    ].some((prefix) => pathname.startsWith(prefix)),
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 14h16c0 4-3.6 7-8 7s-8-3-8-7Z" />
+        <path d="M2.5 14h19M8 11c0-2 1-3 1-5M12 11c0-2 1-3 1-5M16 11c0-2 1-3 1-5" />
+      </svg>
+    ),
+  },
+  {
+    href: "/app/track",
+    label: "Track",
+    matches: (pathname) => pathname.startsWith("/app/track"),
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3" />
+        <circle cx="12" cy="12" r="3.25" />
+      </svg>
+    ),
+  },
+  {
+    href: "/app/progress",
+    label: "Progress",
+    matches: (pathname) => pathname.startsWith("/app/progress"),
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 20V11h4v9H5ZM10 20V6h4v14h-4ZM15 20V3h4v17h-4Z" />
+      </svg>
+    ),
+  },
+  culinaryTabs[4],
+];
+
 export default function BottomNav() {
   const pathname = usePathname() ?? "/app";
   const culinaryTheme = [
@@ -98,20 +142,19 @@ export default function BottomNav() {
         activeSurface: "rgba(61, 92, 62, 0.1)",
       };
 
+  const tabs = culinaryTheme ? culinaryTabs : wellnessTabs;
+  const navigationStyle = {
+    "--nav-background": palette.background,
+    "--nav-border": palette.border,
+  } as CSSProperties;
+
   return (
     <div
-      className="fixed bottom-0 inset-x-0 z-50"
-      style={{
-        paddingBottom: "env(safe-area-inset-bottom, 0px)",
-        borderTop: `1px solid ${palette.border}`,
-        background: palette.background,
-        WebkitBackdropFilter: "blur(20px)",
-        backdropFilter: "blur(20px)",
-      }}
+      className={`${styles.frame} ${culinaryTheme ? styles.culinary : ""}`}
+      style={navigationStyle}
     >
       <nav
-        className="flex items-center justify-around px-2 max-w-4xl mx-auto"
-        style={{ height: "var(--app-bottom-nav-height)" }}
+        className={styles.nav}
         aria-label="Primary navigation"
       >
         {tabs.map((tab) => {
@@ -121,27 +164,17 @@ export default function BottomNav() {
               key={tab.href}
               href={tab.href}
               aria-current={isActive ? "page" : undefined}
-              className="flex flex-col items-center gap-1 transition-all duration-200 min-w-[3rem] rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2"
-              style={{ color: isActive ? palette.active : palette.inactive }}
+              className={`${styles.link} ${isActive ? styles.active : ""}`}
+              style={{
+                "--nav-item-color": isActive ? palette.active : palette.inactive,
+                "--nav-item-surface": isActive ? palette.activeSurface : "transparent",
+              } as CSSProperties}
             >
-              <span
-                className="relative flex items-center justify-center w-12 h-8 rounded-xl transition-all duration-200"
-                style={{ background: isActive ? palette.activeSurface : "transparent" }}
-              >
+              <span className={styles.iconFrame}>
                 {tab.icon}
-                {isActive ? (
-                  <span
-                    className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
-                    style={{ background: palette.active }}
-                  />
-                ) : null}
+                {isActive ? <span className={styles.dot} /> : null}
               </span>
-              <span
-                className="text-[10px] tracking-wide"
-                style={{ fontWeight: isActive ? 600 : 400 }}
-              >
-                {tab.label}
-              </span>
+              <span className={styles.label}>{tab.label}</span>
             </Link>
           );
         })}

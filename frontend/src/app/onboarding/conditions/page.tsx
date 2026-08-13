@@ -1,18 +1,13 @@
 "use client";
 
-import React, { CSSProperties, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import api from "@/lib/api";
+import styles from "./Conditions.module.css";
 
-const BG = "#F5EFE2";
 const GREEN = "#3D5C3E";
 const DARK = "#2D4530";
-const MUTED = "#6F806F";
-const CARD = "#FFFDF8";
-const LINE = "#E6DDCA";
-const SAGE = "#E7E7D7";
-const CLAY = "#B96545";
 
 type Option = {
   id: string;
@@ -366,19 +361,7 @@ function cookingAbility(mealPrep: string) {
 
 function ButtonIcon({ active }: { active: boolean }) {
   return (
-    <span
-      style={{
-        width: 20,
-        height: 20,
-        borderRadius: "50%",
-        border: active ? `2px solid ${GREEN}` : "1.5px solid #D4CAB8",
-        background: active ? GREEN : "transparent",
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexShrink: 0,
-      }}
-    >
+    <span className={`${styles.check} ${active ? styles.checkActive : ""}`}>
       {active && (
         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2">
           <polyline points="20 6 9 17 4 12" />
@@ -391,9 +374,9 @@ function ButtonIcon({ active }: { active: boolean }) {
 function ProgressBar({ index, total }: { index: number; total: number }) {
   const pct = Math.max(4, Math.round(((index + 1) / total) * 100));
   return (
-    <div style={{ marginTop: 10 }}>
-      <div style={{ height: 4, background: "#D7CDBA", borderRadius: 999, overflow: "hidden" }}>
-        <div style={{ width: `${pct}%`, height: "100%", background: GREEN, borderRadius: 999, transition: "width 0.25s" }} />
+    <div className={styles.progressWrap}>
+      <div className={styles.progressTrack}>
+        <div className={styles.progressValue} style={{ width: `${pct}%` }} />
       </div>
     </div>
   );
@@ -401,82 +384,60 @@ function ProgressBar({ index, total }: { index: number; total: number }) {
 
 function PageShell({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: BG,
-        fontFamily: "var(--font-dm-sans), 'DM Sans', sans-serif",
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
-      <div style={{ width: "100%", maxWidth: 520, minHeight: "100vh", background: BG, display: "flex", flexDirection: "column" }}>
+    <main className={styles.page}>
+      <aside className={styles.rail} aria-hidden="true">
+        <div className={styles.railImage} />
+        <div className={styles.railWash} />
+        <div className={styles.railBotanical} />
+        <div className={styles.railCopy}>
+          <p className={styles.railBrand}>ZENPLATE</p>
+          <div className={styles.railRule}><span>✦</span></div>
+          <h2>A plan shaped<br />around you.</h2>
+          <p>Your answers help us understand the food, rhythm, and support that fit your life.</p>
+        </div>
+      </aside>
+      <div className={styles.shell}>
         {children}
       </div>
-    </div>
+    </main>
   );
 }
 
 function Header({ step, index, total, onBack }: { step: Step; index: number; total: number; onBack: () => void }) {
   return (
-    <div style={{ padding: "18px 24px 0" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-        <button onClick={onBack} style={{ background: "transparent", border: "none", cursor: "pointer", padding: 4 }}>
+    <header className={styles.header}>
+      <div className={styles.headerTop}>
+        <button type="button" onClick={onBack} className={styles.back} aria-label="Go to previous question">
           <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke={DARK} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="19" y1="12" x2="5" y2="12" />
             <polyline points="12 19 5 12 12 5" />
           </svg>
         </button>
-        <span style={{ color: MUTED, fontSize: 12, fontWeight: 600 }}>
+        <span className={styles.stepCount}>
           {index + 1} of {total}
         </span>
       </div>
       <ProgressBar index={index} total={total} />
-      <p style={{ margin: "24px 0 8px", color: CLAY, fontSize: 11, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase" }}>
-        {step.phase}
-      </p>
-      <h1
-        style={{
-          margin: 0,
-          fontFamily: "var(--font-playfair), 'Playfair Display', serif",
-          fontSize: 31,
-          lineHeight: 1.12,
-          color: DARK,
-          fontWeight: 500,
-        }}
-      >
-        {step.title}
-      </h1>
-      <p style={{ margin: "10px 0 0", color: MUTED, fontSize: 14, lineHeight: 1.55 }}>{step.sub}</p>
-    </div>
+      <p className={styles.phase}>{step.phase}</p>
+      <h1>{step.title}</h1>
+      <div className={styles.titleRule} aria-hidden="true"><span>✦</span></div>
+      <p className={styles.subtitle}>{step.sub}</p>
+    </header>
   );
 }
 
 function OptionButton({ option, active, onClick, subMuted = false }: { option: Option; active: boolean; onClick: () => void; subMuted?: boolean }) {
   return (
     <button
+      type="button"
       onClick={onClick}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 14,
-        width: "100%",
-        border: active ? `1.5px solid ${GREEN}` : `1px solid ${LINE}`,
-        background: active ? "rgba(61,92,62,0.065)" : CARD,
-        borderRadius: 16,
-        padding: "14px 15px",
-        cursor: "pointer",
-        fontFamily: "inherit",
-        textAlign: "left",
-        boxShadow: active ? "0 8px 24px rgba(61,92,62,0.08)" : "0 1px 6px rgba(31,46,31,0.035)",
-        transition: "border-color 0.18s, background 0.18s, box-shadow 0.18s",
-      }}
+      aria-pressed={active}
+      className={`${styles.option} ${active ? styles.optionActive : ""}`}
     >
-      <span>
-        <span style={{ display: "block", color: DARK, fontSize: 15, fontWeight: 650 }}>{option.label}</span>
+      <span className={styles.optionCopy}>
+        <span className={styles.optionLabel}>{option.label}</span>
         {option.sub && (
-          <span style={{ display: "block", marginTop: 4, color: subMuted ? "#8F9C8F" : MUTED, fontSize: 12.5, lineHeight: 1.35 }}>
+          <span className={`${styles.optionSub} ${subMuted ? styles.optionSubMuted : ""}`}>
             {option.sub}
           </span>
         )}
@@ -488,30 +449,18 @@ function OptionButton({ option, active, onClick, subMuted = false }: { option: O
 
 function InputStep({ step, value, onChange }: { step: Step; value: string; onChange: (value: string) => void }) {
   return (
-    <div style={{ position: "relative" }}>
+    <div className={styles.inputWrap}>
       <input
         type={step.inputType || "text"}
         inputMode={step.inputType === "number" ? "decimal" : "text"}
+        aria-label={step.title}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={step.placeholder}
-        style={{
-          width: "100%",
-          boxSizing: "border-box",
-          padding: step.unit ? "17px 54px 17px 18px" : "17px 18px",
-          background: CARD,
-          color: DARK,
-          border: `1px solid ${LINE}`,
-          borderRadius: 18,
-          fontSize: 18,
-          outline: "none",
-          fontFamily: "inherit",
-        }}
+        className={step.unit ? styles.inputWithUnit : styles.input}
       />
       {step.unit && (
-        <span style={{ position: "absolute", right: 18, top: "50%", transform: "translateY(-50%)", color: MUTED, fontSize: 13 }}>
-          {step.unit}
-        </span>
+        <span className={styles.unit}>{step.unit}</span>
       )}
     </div>
   );
@@ -671,8 +620,8 @@ export default function OnboardingQuestionnaire() {
   if (generating) {
     return (
       <PageShell>
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "42px 28px", textAlign: "center" }}>
-          <div style={{ width: 76, height: 76, borderRadius: "50%", background: SAGE, display: "grid", placeItems: "center", marginBottom: 24 }}>
+        <div className={styles.generating} role="status" aria-live="polite">
+          <div className={styles.generatingIcon}>
             <svg width="44" height="44" viewBox="0 0 64 64" fill="none">
               <path d="M32 8 C32 22 32 30 32 42" stroke={GREEN} strokeWidth="3" strokeLinecap="round">
                 <animateTransform attributeName="transform" type="rotate" from="0 32 32" to="360 32 32" dur="1.8s" repeatCount="indefinite" />
@@ -682,16 +631,14 @@ export default function OnboardingQuestionnaire() {
               <path d="M32 28 C40 24 43 17 43 10 C35 13 31 19 32 28Z" fill={GREEN} />
             </svg>
           </div>
-          <h2 style={{ margin: 0, fontFamily: "var(--font-playfair), 'Playfair Display', serif", color: DARK, fontSize: 27, fontWeight: 500 }}>
-            Building your nutrition profile
-          </h2>
-          <p style={{ margin: "12px 0 0", maxWidth: 340, color: MUTED, fontSize: 14, lineHeight: 1.6 }}>
+          <h2>Building your nutrition profile</h2>
+          <p>
             Understanding your habits, preferences and goals so your ebook preview starts with the right context.
           </p>
           {error && (
-            <div style={{ marginTop: 22, padding: "14px 16px", background: "#F7E4DC", border: "1px solid #E6B9A7", borderRadius: 14, color: "#8F3E28", fontSize: 13 }}>
+            <div className={styles.generatingError} role="alert">
               {error}
-              <button onClick={submit} style={{ display: "block", margin: "12px auto 0", background: GREEN, color: "#fff", border: "none", borderRadius: 999, padding: "9px 18px", cursor: "pointer" }}>
+              <button type="button" onClick={submit}>
                 Try again
               </button>
             </div>
@@ -703,16 +650,16 @@ export default function OnboardingQuestionnaire() {
 
   const field = step.field;
   const canContinue = isStepComplete(step);
-  const optionGridStyle: CSSProperties = step.id === "symptoms" || step.id === "conditions"
-    ? { display: "grid", gridTemplateColumns: "1fr", gap: 9 }
-    : { display: "flex", flexDirection: "column", gap: 10 };
+  const optionListClass = step.id === "symptoms" || step.id === "conditions"
+    ? `${styles.optionList} ${styles.optionListDense}`
+    : styles.optionList;
 
   return (
     <PageShell>
       <Header step={step} index={index} total={steps.length} onBack={back} />
-      <div style={{ padding: "22px 20px 14px", flex: 1, overflowY: "auto" }}>
+      <div className={styles.content}>
         {step.type === "single" && field && step.options && (
-          <div style={optionGridStyle}>
+          <div className={optionListClass}>
             {step.options.map((option) => (
               <OptionButton
                 key={option.id}
@@ -728,11 +675,11 @@ export default function OnboardingQuestionnaire() {
         {step.type === "multi" && field && step.options && (
           <>
             {step.max && (
-              <p style={{ margin: "0 0 12px", color: MUTED, fontSize: 12 }}>
+              <p className={styles.selectionCount}>
                 {asArray(answers[field]).length} of {step.max} selected
               </p>
             )}
-            <div style={optionGridStyle}>
+            <div className={optionListClass}>
               {step.options.map((option) => (
                 <OptionButton
                   key={option.id}
@@ -751,7 +698,7 @@ export default function OnboardingQuestionnaire() {
         )}
 
         {step.type === "review" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div className={styles.review}>
             {[
               { label: "Key findings", value: deriveGoal(answers) },
               { label: "Nutrition insights", value: `${compactLabel(answers.dietaryType, DIETS)} profile in ${compactLabel(answers.country, COUNTRIES)}` },
@@ -759,16 +706,16 @@ export default function OnboardingQuestionnaire() {
               { label: "Foods to limit", value: selectedLabels(FOODS_TO_AVOID, asArray(answers.foodsAvoid)).join(", ") || "No specific avoid list" },
               { label: "Starter action plan", value: `${compactLabel(answers.sleep, SLEEP)} sleep, ${compactLabel(answers.water, WATER)} water, ${compactLabel(answers.mealTiming, MEAL_TIMING).toLowerCase()} meal timing` },
             ].map((item) => (
-              <div key={item.label} style={{ background: CARD, border: `1px solid ${LINE}`, borderRadius: 18, padding: "16px 17px" }}>
-                <p style={{ margin: "0 0 6px", color: CLAY, fontSize: 11, fontWeight: 800, letterSpacing: "0.13em", textTransform: "uppercase" }}>{item.label}</p>
-                <p style={{ margin: 0, color: DARK, fontSize: 15, lineHeight: 1.45 }}>{item.value}</p>
+              <div key={item.label} className={styles.reviewCard}>
+                <p className={styles.reviewLabel}>{item.label}</p>
+                <p className={styles.reviewValue}>{item.value}</p>
               </div>
             ))}
-            <div style={{ background: "#2A2B22", color: "#F7F1E8", borderRadius: 20, padding: 18, marginTop: 6 }}>
-              <p style={{ margin: "0 0 8px", color: "#C8B77B", fontSize: 11, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" }}>
+            <div className={styles.previewNote}>
+              <p className={styles.previewEyebrow}>
                 There is more beneath the surface
               </p>
-              <p style={{ margin: 0, color: "rgba(247,241,232,0.72)", fontSize: 13.5, lineHeight: 1.55 }}>
+              <p className={styles.previewCopy}>
                 Your free preview will show the strongest starting signals. The premium blueprint unlocks deeper condition guidance, recipes, grocery lists, food swaps, lifestyle recommendations and a practical implementation guide.
               </p>
             </div>
@@ -776,35 +723,20 @@ export default function OnboardingQuestionnaire() {
         )}
       </div>
 
-      <div style={{ padding: "16px 20px 28px" }}>
+      <footer className={styles.footer}>
         <button
+          type="button"
           onClick={step.type === "review" ? submit : next}
           disabled={!canContinue}
-          style={{
-            width: "100%",
-            background: canContinue ? GREEN : "#BBC9BB",
-            color: "#fff",
-            border: "none",
-            borderRadius: 999,
-            padding: "16px 24px",
-            fontSize: 15,
-            fontWeight: 700,
-            fontFamily: "inherit",
-            cursor: canContinue ? "pointer" : "default",
-            boxShadow: canContinue ? "0 8px 22px rgba(61,92,62,0.22)" : "none",
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 10,
-          }}
+          className={styles.continue}
         >
           {step.type === "review" ? "Generate My Ebook Preview" : "Continue"}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <polyline points="9 18 15 12 9 6" />
           </svg>
         </button>
-        {error && <p style={{ margin: "12px 0 0", color: "#A33A24", fontSize: 12, textAlign: "center" }}>{error}</p>}
-      </div>
+        {error && <p className={styles.submitError} role="alert">{error}</p>}
+      </footer>
     </PageShell>
   );
 }

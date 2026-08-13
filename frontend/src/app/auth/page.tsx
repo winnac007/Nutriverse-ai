@@ -1,18 +1,22 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { useAuth } from "@/lib/auth";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { useAuth } from "@/lib/auth";
+import styles from "./Auth.module.css";
 
-const inp: React.CSSProperties = {
-  width: "100%", padding: "0.75rem 1rem",
-  border: "1.5px solid #E0D8CC", borderRadius: "0.75rem",
-  fontSize: "0.9rem", color: "#1F2E1F", outline: "none",
-  fontFamily: "'DM Sans', sans-serif", background: "#FDFAF6",
-  transition: "border-color 0.2s",
-};
+function ZenMark({ inverse = false }: { inverse?: boolean }) {
+  return (
+    <span className={`${styles.mark} ${inverse ? styles.markInverse : ""}`} aria-hidden="true">
+      <span className={styles.markBowl} />
+      <span className={styles.markStem} />
+      <span className={styles.markLeafLeft} />
+      <span className={styles.markLeafRight} />
+    </span>
+  );
+}
 
 function AuthContent() {
   const router = useRouter();
@@ -23,6 +27,7 @@ function AuthContent() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [formError, setFormError] = useState("");
   const { login, register } = useAuth();
 
   const getSafeNext = () => {
@@ -31,119 +36,149 @@ function AuthContent() {
   };
 
   useEffect(() => {
-    const m = searchParams.get("mode") === "register" ? "register" : "login";
-    setMode(m);
+    const nextMode = searchParams.get("mode") === "register" ? "register" : "login";
+    setMode(nextMode);
+    setFormError("");
   }, [searchParams]);
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setBusy(true);
+    setFormError("");
+
     try {
       if (mode === "register") {
-        const u = await register(email, password, name);
+        const user = await register(email, password, name);
         toast.success("Welcome to Zenplate");
-        router.push(getSafeNext() || (u.onboarded ? "/app" : "/onboarding"));
+        router.push(getSafeNext() || (user.onboarded ? "/app" : "/onboarding"));
       } else {
-        const u = await login(email, password);
+        const user = await login(email, password);
         toast.success("Welcome back");
-        router.push(getSafeNext() || (u.onboarded ? "/app" : "/onboarding"));
+        router.push(getSafeNext() || (user.onboarded ? "/app" : "/onboarding"));
       }
-    } catch (err: any) {
-      toast.error(err?.response?.data?.detail || "Something went wrong");
+    } catch (error: any) {
+      const message = error?.response?.data?.detail || "Something went wrong. Please try again.";
+      setFormError(message);
+      toast.error(message);
     } finally {
       setBusy(false);
     }
   };
 
+  const toggleMode = () => {
+    setMode((current) => current === "register" ? "login" : "register");
+    setFormError("");
+  };
+
   return (
-    <div className="min-h-screen bg-[#FAF7F0] flex" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');input:focus{border-color:#3D5C3E!important;}`}</style>
+    <main className={styles.page}>
+      <section className={styles.story} aria-label="Zenplate philosophy">
+        <div className={styles.storyImage} aria-hidden="true" />
+        <div className={styles.storyWash} aria-hidden="true" />
+        <div className={styles.botanicalTop} aria-hidden="true" />
+        <div className={styles.botanicalBottom} aria-hidden="true" />
 
-      {/* Left botanical art — visible on wider screens */}
-      <div className="hidden lg:flex w-[45%] flex-col items-center justify-center p-12 relative overflow-hidden" style={{ background: "linear-gradient(160deg, #2D4A2E 0%, #1A2E1B 100%)" }}>
-        <svg style={{ position: "absolute", top: 0, right: 0, opacity: 0.2 }} width="200" height="200" viewBox="0 0 200 200" fill="none">
-          <ellipse cx="150" cy="40" rx="50" ry="90" fill="#FFFFFF" transform="rotate(-25 150 40)"/>
-          <ellipse cx="180" cy="120" rx="35" ry="65" fill="#FFFFFF" transform="rotate(15 180 120)"/>
-        </svg>
-        <div style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
-          {/* Zen circle */}
-          <svg width="90" height="90" viewBox="0 0 90 90" fill="none" style={{ marginBottom: "2rem" }}>
-            <circle cx="45" cy="45" r="40" stroke="rgba(255,255,255,0.4)" strokeWidth="2.5" fill="none"/>
-            <circle cx="45" cy="45" r="30" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" fill="none"/>
-            <ellipse cx="45" cy="50" rx="16" ry="11" fill="rgba(255,255,255,0.15)"/>
-            <circle cx="45" cy="33" r="7" fill="rgba(255,255,255,0.5)"/>
-            <path d="M40 30 L38 25 M50 30 L52 25" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round"/>
-          </svg>
-          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "2rem", color: "#FFFFFF", fontWeight: 400, margin: "0 0 0.5rem" }}>ZENPLATE</p>
-          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1rem", color: "rgba(255,255,255,0.65)", fontStyle: "italic", margin: 0 }}>Eat with intention.<br/>Heal with food.</p>
+        <div className={styles.storyContent}>
+          <div className={styles.enso} aria-hidden="true"><ZenMark inverse /></div>
+          <p className={styles.wordmark}>ZENPLATE</p>
+          <div className={styles.lotusRule} aria-hidden="true"><span>✦</span></div>
+          <h1>Eat with intention.<br />Heal with food.</h1>
+          <p className={styles.storyBody}>
+            Personalised nourishment rooted in your culture, rhythm, and real life.
+          </p>
         </div>
-        <div style={{ position: "absolute", bottom: "2rem", textAlign: "center", width: "100%" }}>
-          <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.75rem" }}>2,400+ people healing with Zenplate</p>
-        </div>
-      </div>
 
-      {/* Right — form */}
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
-        <div className="w-full max-w-[440px] bg-white rounded-[1.5rem] border border-[#E5DDD0] p-6 sm:p-10 shadow-[0_8px_40px_rgba(31,46,31,0.08)]">
-          <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.5rem", textDecoration: "none", marginBottom: "2rem" }}>
-            <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
-              <circle cx="18" cy="18" r="16" stroke="#3D5C3E" strokeWidth="2.5" fill="none" opacity="0.7"/>
-              <circle cx="18" cy="14" r="2.5" fill="#3D5C3E"/>
-              <path d="M14 22 Q18 16 22 22" stroke="#3D5C3E" strokeWidth="1.5" fill="none"/>
-            </svg>
-            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1F2E1F", letterSpacing: "0.04em" }}>ZENPLATE</span>
+        <p className={styles.storyFoot}>A calmer way to care for your everyday health</p>
+      </section>
+
+      <section className={styles.formSide}>
+        <div className={styles.mobileBrand}>
+          <Link href="/" className={styles.brandLink} aria-label="Zenplate home">
+            <ZenMark />
+            <span>ZENPLATE</span>
+          </Link>
+          <p>Eat with intention. Heal with food.</p>
+        </div>
+
+        <div className={styles.formWrap}>
+          <Link href="/" className={styles.desktopBrand} aria-label="Zenplate home">
+            <ZenMark />
+            <span>ZENPLATE</span>
           </Link>
 
-          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 400, color: "#1F2E1F", margin: "0 0 0.4rem" }}>
-            {mode === "register" ? "Begin your journey" : "Welcome back"}
-          </h1>
-          <p style={{ fontSize: "0.85rem", color: "#8D9E8D", margin: "0 0 2rem", lineHeight: 1.5 }}>
-            {mode === "register" ? "Create your account to start healing with food." : "Sign in to continue your wellness journey."}
+          <p className={styles.eyebrow}>{mode === "register" ? "Your journey begins" : "Welcome home"}</p>
+          <h2>{mode === "register" ? "Create your space" : "Continue your journey"}</h2>
+          <p className={styles.intro}>
+            {mode === "register"
+              ? "Tell us where to save the plan we will shape around you."
+              : "Sign in to return to your meals, progress, and wellness plan."}
           </p>
 
-          <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <form onSubmit={submit} className={styles.form}>
             {mode === "register" && (
-              <div>
-                <label style={{ display: "block", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8D9E8D", marginBottom: "0.4rem" }}>Name</label>
-                <input style={inp} value={name} onChange={e => setName(e.target.value)} placeholder="Your name" required />
-              </div>
+              <label className={styles.field}>
+                <span>Name</span>
+                <input
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  placeholder="Your name"
+                  autoComplete="name"
+                  required
+                />
+              </label>
             )}
-            <div>
-              <label style={{ display: "block", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8D9E8D", marginBottom: "0.4rem" }}>Email</label>
-              <input style={inp} type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" required />
-            </div>
-            <div>
-              <label style={{ display: "block", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8D9E8D", marginBottom: "0.4rem" }}>Password</label>
-              <input style={inp} type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required minLength={6} />
-            </div>
-            <button type="submit" disabled={busy} style={{ marginTop: "0.5rem", background: busy ? "#A8B8A8" : "#3D5C3E", color: "#FFFFFF", border: "none", borderRadius: 999, padding: "0.9rem", fontSize: "0.95rem", fontWeight: 600, fontFamily: "'DM Sans', sans-serif", cursor: busy ? "default" : "pointer", boxShadow: busy ? "none" : "0 4px 20px rgba(61,92,62,0.25)", transition: "all 0.2s" }}>
-              {busy ? "Please wait…" : mode === "register" ? "Create account" : "Sign in"}
+
+            <label className={styles.field}>
+              <span>Email</span>
+              <input
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="you@example.com"
+                autoComplete="email"
+                required
+              />
+            </label>
+
+            <label className={styles.field}>
+              <span>Password</span>
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="At least 6 characters"
+                autoComplete={mode === "register" ? "new-password" : "current-password"}
+                required
+                minLength={6}
+              />
+            </label>
+
+            {formError && <p className={styles.error} role="alert">{formError}</p>}
+
+            <button className={styles.submit} type="submit" disabled={busy} aria-busy={busy}>
+              <span>{busy ? "Please wait…" : mode === "register" ? "Create account" : "Sign in"}</span>
+              {!busy && <span aria-hidden="true">→</span>}
             </button>
           </form>
 
-          {/* Divider */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", margin: "1.5rem 0" }}>
-            <div style={{ flex: 1, height: 1, background: "#E5DDD0" }} />
-            <span style={{ fontSize: "0.72rem", color: "#A8B8A8" }}>or</span>
-            <div style={{ flex: 1, height: 1, background: "#E5DDD0" }} />
-          </div>
+          <div className={styles.divider}><span>or</span></div>
 
-          <button type="button" onClick={() => setMode(mode === "register" ? "login" : "register")} style={{ width: "100%", background: "transparent", border: "1.5px solid #E0D8CC", borderRadius: 999, padding: "0.75rem", fontSize: "0.88rem", color: "#4A5E4A", fontFamily: "'DM Sans', sans-serif", cursor: "pointer", fontWeight: 500 }}>
+          <button type="button" onClick={toggleMode} className={styles.switchMode}>
             {mode === "register" ? "Already have an account? Sign in" : "New to Zenplate? Create an account"}
           </button>
 
-          <p style={{ textAlign: "center", fontSize: "0.72rem", color: "#A8B8A8", marginTop: "1.5rem" }}>
-            🔒 Your information is safe and private
+          <p className={styles.privacy}>
+            <span aria-hidden="true">♢</span> Your information is safe and private
           </p>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
 
 export default function Auth() {
   return (
-    <Suspense fallback={<div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "#FAF7F0" }}>Loading…</div>}>
+    <Suspense fallback={<div className={styles.loading} role="status">Preparing your space…</div>}>
       <AuthContent />
     </Suspense>
   );

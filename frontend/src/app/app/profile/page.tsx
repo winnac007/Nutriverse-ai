@@ -1,81 +1,145 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/auth";
+import {
+  ArrowLeft,
+  Bell,
+  ChevronRight,
+  CircleHelp,
+  Crown,
+  HeartPulse,
+  Info,
+  Leaf,
+  LockKeyhole,
+  Pencil,
+  RefreshCcw,
+  Salad,
+  ShieldCheck,
+  Target,
+  UserRound,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import { toast } from "sonner";
 import api from "@/lib/api";
-import Link from "next/link";
+import { useAuth } from "@/lib/auth";
+import styles from "./page.module.css";
 
-const SETTINGS_ROWS = [
-  { icon: GoalIcon, label: "My Goals", desc: "View and update your health goals", href: null },
-  { icon: PersonIcon, label: "Personal Information", desc: "Manage your basic details", href: null },
-  { icon: DietIcon, label: "Dietary Preferences", desc: "Allergies, dislikes, food choices", href: null },
-  { icon: HeartIcon, label: "Health Conditions", desc: "PCOS, Diabetes, Thyroid, and more", href: null },
-  { icon: BellIcon, label: "Notifications", desc: "Manage reminders and alerts", href: null },
-  { icon: LockIcon, label: "Privacy & Security", desc: "Manage your data and privacy", href: null },
-  { icon: HelpIcon, label: "Help & Support", desc: "FAQs, chat with support", href: null },
-  { icon: InfoIcon, label: "About ZenPlate", desc: "App version, terms and policies", href: null },
+type Panel = "preferences" | "privacy" | "about" | null;
+
+interface SettingRow {
+  icon: LucideIcon;
+  label: string;
+  description: string;
+  action?: "edit" | Exclude<Panel, null>;
+  href?: string;
+  unavailable?: boolean;
+}
+
+interface FormState {
+  name: string;
+  age: string;
+  weight_kg: string;
+  height_cm: string;
+  activity_level: string;
+}
+
+const SETTINGS_ROWS: SettingRow[] = [
+  { icon: Target, label: "My goals", description: "Review the details used for your plan", action: "edit" },
+  { icon: UserRound, label: "Personal information", description: "Name, age, height and weight", action: "edit" },
+  { icon: Salad, label: "Dietary preferences", description: "See your current food preferences", action: "preferences" },
+  { icon: HeartPulse, label: "Health conditions", description: "Open your condition-aware food guidance", href: "/app/food-guidelines" },
+  { icon: Bell, label: "Notifications", description: "Reminders and alerts are not available yet", unavailable: true },
+  { icon: ShieldCheck, label: "Privacy & security", description: "How your account is protected", action: "privacy" },
+  { icon: CircleHelp, label: "Help & support", description: "In-app support is coming soon", unavailable: true },
+  { icon: Info, label: "About ZenPlate", description: "Product and experience details", action: "about" },
 ];
 
-function GoalIcon() {
-  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5A7A5B" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>;
-}
-function PersonIcon() {
-  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5A7A5B" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" /></svg>;
-}
-function DietIcon() {
-  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5A7A5B" strokeWidth="1.8" strokeLinecap="round"><path d="M3 11h18M3 17h18M3 5h18M12 5v16" /></svg>;
-}
-function HeartIcon() {
-  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5A7A5B" strokeWidth="1.8" strokeLinecap="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" /></svg>;
-}
-function BellIcon() {
-  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5A7A5B" strokeWidth="1.8" strokeLinecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" /></svg>;
-}
-function LockIcon() {
-  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5A7A5B" strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>;
-}
-function HelpIcon() {
-  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5A7A5B" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01" /></svg>;
-}
-function InfoIcon() {
-  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5A7A5B" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>;
-}
+const EMPTY_FORM: FormState = {
+  name: "",
+  age: "",
+  weight_kg: "",
+  height_cm: "",
+  activity_level: "moderate",
+};
 
-export default function Profile() {
+export default function ProfilePage() {
   const { user, refresh, logout } = useAuth();
   const router = useRouter();
   const [streak, setStreak] = useState(0);
+  const [streakStatus, setStreakStatus] = useState<"loading" | "ready" | "error">("loading");
   const [editOpen, setEditOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", age: "", weight_kg: "", height_cm: "", activity_level: "moderate" });
+  const [panel, setPanel] = useState<Panel>(null);
+  const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState("");
 
   useEffect(() => {
-    if (user) {
-      setForm({
-        name: user.name || "",
-        age: user.age ? String(user.age) : "",
-        weight_kg: user.weight_kg ? String(user.weight_kg) : "",
-        height_cm: user.height_cm ? String(user.height_cm) : "",
-        activity_level: user.activity_level || "moderate",
-      });
-    }
-    api.get("/healthcare/streak").then(r => setStreak(r.data?.current_streak_days ?? 0)).catch(() => {});
+    if (!user) return;
+    setForm({
+      name: user.name || "",
+      age: user.age ? String(user.age) : "",
+      weight_kg: user.weight_kg ? String(user.weight_kg) : "",
+      height_cm: user.height_cm ? String(user.height_cm) : "",
+      activity_level: user.activity_level || "moderate",
+    });
   }, [user]);
 
-  const save = async () => {
-    setSaving(true);
+  const loadStreak = useCallback(async () => {
+    setStreakStatus("loading");
     try {
-      const payload: any = { name: form.name, activity_level: form.activity_level };
-      if (form.age) payload.age = parseInt(form.age);
-      if (form.weight_kg) payload.weight_kg = parseFloat(form.weight_kg);
-      if (form.height_cm) payload.height_cm = parseFloat(form.height_cm);
+      const response = await api.get<{ current_streak_days: number }>("/healthcare/streak");
+      setStreak(response.data?.current_streak_days ?? 0);
+      setStreakStatus("ready");
+    } catch {
+      setStreakStatus("error");
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadStreak();
+  }, [loadStreak]);
+
+  useEffect(() => {
+    if (!editOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !saving) setEditOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [editOpen, saving]);
+
+  const openEdit = () => {
+    setFormError("");
+    setEditOpen(true);
+  };
+
+  const save = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const trimmedName = form.name.trim();
+    if (!trimmedName) {
+      setFormError("Please enter your name.");
+      return;
+    }
+
+    setSaving(true);
+    setFormError("");
+    try {
+      const payload: Record<string, string | number> = {
+        name: trimmedName,
+        activity_level: form.activity_level,
+      };
+      if (form.age) payload.age = Number.parseInt(form.age, 10);
+      if (form.weight_kg) payload.weight_kg = Number.parseFloat(form.weight_kg);
+      if (form.height_cm) payload.height_cm = Number.parseFloat(form.height_cm);
       await api.put("/user/profile", payload);
       await refresh();
       toast.success("Profile saved");
       setEditOpen(false);
     } catch {
+      setFormError("Your changes could not be saved. Please try again.");
       toast.error("Failed to save profile");
     } finally {
       setSaving(false);
@@ -87,295 +151,267 @@ export default function Profile() {
     router.push("/auth");
   };
 
+  const handleSetting = (row: SettingRow) => {
+    if (row.action === "edit") {
+      openEdit();
+      return;
+    }
+    const nextPanel = row.action;
+    if (nextPanel) setPanel((current) => current === nextPanel ? null : nextPanel);
+  };
+
   const firstName = user?.name?.split(" ")[0] || "Friend";
-  const joinedDate = "May 2024"; // Would come from created_at field
-  const wellnessScore = Math.min(100, 35 + Math.min(40, streak * 3) + 25);
+  const conditions = user?.conditions ?? [];
+  const savedRecipes = user?.saved_recipes?.length ?? 0;
 
   return (
-    <div style={{
-      minHeight: "100vh", background: "#F5EFE2",
-      fontFamily: "var(--font-dm-sans), 'DM Sans', sans-serif",
-    }}>
-      {/* Header */}
-      <div style={{ position: "relative", padding: "18px 20px 0", overflow: "hidden" }}>
-        {/* Vase/botanical image slot top-right */}
-        <div
-          data-image-slot="profile-botanical-top-right"
-          style={{
-            position: "absolute", top: 0, right: 0, width: 160, height: 180,
-            pointerEvents: "none", opacity: 0.6,
-            background: "radial-gradient(ellipse at 30% 60%, rgba(160,180,140,0.4), transparent 65%)",
-          }}
-        />
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 2 }}>
-          <button
-            onClick={() => window.history.back()}
-            style={{ background: "transparent", border: "none", cursor: "pointer", padding: 4 }}
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2D4530" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
-            </svg>
+    <main className={styles.page}>
+      <header className={styles.hero}>
+        <div className={styles.vaseArt} aria-hidden="true">
+          <span className={styles.vase} />
+          <i className={styles.stemOne} />
+          <i className={styles.stemTwo} />
+          <i className={styles.stemThree} />
+        </div>
+        <div className={styles.headerActions}>
+          <button className={styles.iconButton} type="button" onClick={() => router.back()} aria-label="Go back">
+            <ArrowLeft size={20} />
           </button>
-          <div style={{ display: "flex", gap: 10 }}>
-            <button style={{ background: "transparent", border: "none", cursor: "pointer", padding: 4 }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2D4530" strokeWidth="1.8" strokeLinecap="round">
-                <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" />
-              </svg>
-            </button>
-            <button style={{ background: "transparent", border: "none", cursor: "pointer", padding: 4 }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2D4530" strokeWidth="1.8" strokeLinecap="round">
-                <circle cx="12" cy="12" r="3" />
-                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
-              </svg>
-            </button>
-          </div>
+          <button className={styles.editHeaderButton} type="button" onClick={openEdit}>
+            <Pencil size={15} /> Edit profile
+          </button>
         </div>
-        <div style={{ position: "relative", zIndex: 2, marginTop: 12 }}>
-          <h1 style={{
-            fontFamily: "var(--font-playfair), 'Playfair Display', serif",
-            fontSize: 28, fontWeight: 500, color: "#2D4530", margin: 0,
-            display: "inline-flex", alignItems: "center", gap: 8,
-          }}>
-            Profile &amp; Settings
-            <svg width="18" height="14" viewBox="0 0 24 18" fill="none">
-              <path d="M12 16 Q4 12 6 4 Q12 8 12 16 Z" fill="#C4974A" opacity="0.85" />
-              <path d="M12 16 Q20 12 18 4 Q12 8 12 16 Z" fill="#C4974A" opacity="0.85" />
-            </svg>
-          </h1>
-          <p style={{ fontSize: 13, color: "#7B8A7B", margin: "6px 0 0", lineHeight: 1.5 }}>
-            Manage your journey, preferences and app experience.
-          </p>
+        <div className={styles.heroCopy}>
+          <p className={styles.eyebrow}>Your space</p>
+          <h1>Profile &amp; Settings <Leaf size={20} aria-hidden="true" /></h1>
+          <p>Manage the information that shapes your ZenPlate experience.</p>
         </div>
-      </div>
+      </header>
 
-      <div style={{ padding: "18px 20px 0", display: "flex", flexDirection: "column", gap: 14 }}>
-        {/* User card */}
-        <div style={{
-          background: "#FFFFFF", borderRadius: 20, padding: "18px",
-          boxShadow: "0 1px 8px rgba(31,46,31,0.06)",
-        }}>
-          <div style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
-            {/* Avatar */}
-            <div style={{ position: "relative", flexShrink: 0 }}>
-              <div style={{
-                width: 68, height: 68, borderRadius: "50%",
-                background: "linear-gradient(135deg, #D9E0D3, #C8D4C8)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                border: "3px solid #fff", boxShadow: "0 2px 10px rgba(61,92,62,0.15)",
-                fontFamily: "var(--font-playfair), 'Playfair Display', serif",
-                fontSize: 24, fontWeight: 500, color: "#3D5C3E",
-              }}>
-                {firstName[0]?.toUpperCase()}
+      <div className={styles.contentGrid}>
+        <div className={styles.profileColumn}>
+          <section className={styles.profileCard} aria-label="Account summary">
+            <div className={styles.identityRow}>
+              <div className={styles.avatar} aria-hidden="true">{firstName[0]?.toUpperCase()}</div>
+              <div className={styles.identityCopy}>
+                <p className={styles.eyebrow}>Your profile</p>
+                <h2>{user?.name || "Your ZenPlate account"}</h2>
+                <p>{user?.email}</p>
               </div>
-              <button
-                onClick={() => setEditOpen(true)}
-                style={{
-                  position: "absolute", bottom: -2, right: -2,
-                  width: 22, height: 22, borderRadius: "50%",
-                  background: "#3D5C3E", border: "2px solid #fff",
-                  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
-                }}
-              >
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
-                  <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-                </svg>
+              <button className={styles.avatarEdit} type="button" onClick={openEdit} aria-label="Edit profile">
+                <Pencil size={13} />
               </button>
             </div>
-            {/* Info */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <h2 style={{
-                fontFamily: "var(--font-playfair), 'Playfair Display', serif",
-                fontSize: 20, fontWeight: 500, color: "#2D4530", margin: "0 0 2px",
-              }}>{user?.name || "Loading…"}</h2>
-              <p style={{ fontSize: 12.5, color: "#7B8A7B", fontStyle: "italic", margin: "0 0 8px" }}>Eat with intention.</p>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, color: "#9DA89D" }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
-                  </svg>
-                  Joined {joinedDate}
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, color: "#9DA89D" }}>
-                  <svg width="12" height="12" viewBox="0 0 24 18" fill="none">
-                    <path d="M12 16 Q4 12 6 4 Q12 8 12 16 Z" fill="#3D5C3E" opacity="0.7" />
-                    <path d="M12 16 Q20 12 18 4 Q12 8 12 16 Z" fill="#3D5C3E" opacity="0.7" />
-                  </svg>
-                  ZenStreak {streak} days
-                </div>
-              </div>
-            </div>
-          </div>
 
-          {/* Wellness score row */}
-          <div style={{
-            marginTop: 14, background: "#F5F0E8", borderRadius: 12,
-            padding: "12px 14px", display: "flex", alignItems: "center", justifyContent: "space-between",
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{
-                width: 32, height: 32, borderRadius: "50%", background: "#E8F0E8",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <svg width="14" height="14" viewBox="0 0 24 18" fill="none">
-                  <path d="M12 16 Q4 12 6 4 Q12 8 12 16 Z" fill="#3D5C3E" opacity="0.85" />
-                  <path d="M12 16 Q20 12 18 4 Q12 8 12 16 Z" fill="#3D5C3E" opacity="0.85" />
-                </svg>
+            <div className={styles.accountStats}>
+              <div>
+                <span><Crown size={15} /></span>
+                <strong>{user?.is_premium ? "Premium" : "Free"}</strong>
+                <small>membership</small>
               </div>
               <div>
-                <div style={{ fontSize: 10.5, color: "#9DA89D", letterSpacing: "0.08em", textTransform: "uppercase" }}>Your wellness score</div>
-                <div style={{
-                  fontFamily: "var(--font-playfair), 'Playfair Display', serif",
-                  fontSize: 20, fontWeight: 500, color: "#2D4530",
-                }}>
-                  {wellnessScore}<span style={{ fontSize: 12, color: "#9DA89D" }}>/100</span>
-                </div>
+                <span><Leaf size={15} /></span>
+                <strong>{savedRecipes}</strong>
+                <small>saved recipes</small>
+              </div>
+              <div>
+                <span><Target size={15} /></span>
+                <strong>{streakStatus === "ready" ? streak : "—"}</strong>
+                <small>day streak</small>
               </div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <span style={{ fontSize: 13, color: "#3D5C3E", fontWeight: 500 }}>Great progress!</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3D5C3E" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
-            </div>
-          </div>
-        </div>
 
-        {/* Settings rows */}
-        <div style={{ background: "#FFFFFF", borderRadius: 20, overflow: "hidden", boxShadow: "0 1px 8px rgba(31,46,31,0.06)" }}>
-          {SETTINGS_ROWS.map((row, i) => {
-            const Icon = row.icon;
-            const content = (
-              <div style={{
-                display: "flex", alignItems: "center", gap: 14,
-                padding: "14px 16px",
-                borderBottom: i < SETTINGS_ROWS.length - 1 ? "1px solid #F5F0E8" : "none",
-              }}>
-                <div style={{
-                  width: 36, height: 36, borderRadius: "50%", background: "#F5F0E8",
-                  display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-                }}>
-                  <Icon />
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 14, fontWeight: 500, color: "#2D4530" }}>{row.label}</div>
-                  <div style={{ fontSize: 11.5, color: "#9DA89D", marginTop: 1 }}>{row.desc}</div>
-                </div>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D7CFC0" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
+            {streakStatus === "loading" && <p className={styles.inlineStatus}>Refreshing your current meal streak…</p>}
+            {streakStatus === "error" && (
+              <div className={styles.inlineError} role="status">
+                <span>Streak data is unavailable.</span>
+                <button type="button" onClick={() => void loadStreak()}><RefreshCcw size={13} /> Retry</button>
               </div>
-            );
-            return row.href ? (
-              <Link key={i} href={row.href} style={{ textDecoration: "none", display: "block" }}>{content}</Link>
-            ) : (
-              <button key={i} style={{ width: "100%", background: "transparent", border: "none", cursor: "pointer", textAlign: "left", fontFamily: "inherit" }}>
-                {content}
-              </button>
-            );
-          })}
-        </div>
+            )}
 
-        {/* Encouragement banner */}
-        <div style={{
-          background: "#FFFFFF", borderRadius: 20, overflow: "hidden",
-          boxShadow: "0 1px 6px rgba(31,46,31,0.05)", display: "flex",
-        }}>
-          <div style={{ padding: "18px 16px", flex: 1 }}>
-            <div style={{
-              width: 36, height: 36, borderRadius: "50%", background: "#E8F0E8",
-              display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 10,
-            }}>
-              <svg width="16" height="16" viewBox="0 0 24 18" fill="none">
-                <path d="M12 16 Q4 12 6 4 Q12 8 12 16 Z" fill="#3D5C3E" opacity="0.85" />
-                <path d="M12 16 Q20 12 18 4 Q12 8 12 16 Z" fill="#3D5C3E" opacity="0.85" />
-              </svg>
+            <div className={styles.profileDetails}>
+              <div><span>Food style</span><strong>{user?.dietary_type || "Not set"}</strong></div>
+              <div><span>Activity</span><strong>{user?.activity_level?.replace("_", " ") || "Not set"}</strong></div>
+              <div><span>Primary goal</span><strong>{user?.goal?.replace("_", " ") || user?.goal_30day || "Not set"}</strong></div>
             </div>
-            <p style={{
-              fontFamily: "var(--font-playfair), 'Playfair Display', serif",
-              fontSize: 15, color: "#2D4530", margin: "0 0 4px",
-            }}>
-              You&apos;re doing amazing, {firstName}!
-            </p>
-            <p style={{ fontSize: 12, color: "#7B8A7B", margin: "0 0 10px", lineHeight: 1.4 }}>
-              Small choices, big transformation.
-            </p>
-            <button style={{
-              background: "transparent", border: "none", cursor: "pointer",
-              fontSize: 12.5, color: "#3D5C3E", fontFamily: "inherit", fontWeight: 500,
-              padding: 0, display: "inline-flex", alignItems: "center", gap: 4,
-            }}>
-              Continue your journey →
-            </button>
-          </div>
-          <div
-            data-image-slot="profile-banner-right"
-            style={{
-              width: 110, background: "linear-gradient(135deg, rgba(170,185,150,0.4), rgba(200,210,180,0.3))",
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}
-          >
-            <div style={{ fontSize: 36 }}>🏯</div>
-          </div>
+
+            <div className={styles.conditions}>
+              <p className={styles.eyebrow}>Health focus</p>
+              {conditions.length ? (
+                <div>{conditions.map((condition) => <span key={condition}>{condition.replaceAll("-", " ")}</span>)}</div>
+              ) : (
+                <p>No health conditions have been added.</p>
+              )}
+            </div>
+          </section>
+
+          <section className={styles.encouragement}>
+            <span className={styles.roundIcon}><Leaf size={18} /></span>
+            <p className={styles.eyebrow}>Keep going, {firstName}</p>
+            <h2>Small choices, noticed over time.</h2>
+            <p>Your progress view uses only what you have actually logged.</p>
+            <Link href="/app/progress">Continue your journey <ChevronRight size={15} /></Link>
+          </section>
         </div>
 
-        {/* Sign out */}
-        <button onClick={handleLogout} style={{
-          width: "100%", background: "transparent", border: "1.5px solid #EAE3D2",
-          borderRadius: 999, padding: "14px 24px", fontSize: 14, color: "#C25E4B",
-          fontFamily: "inherit", cursor: "pointer", fontWeight: 500,
-        }}>
-          Sign Out
-        </button>
+        <section className={styles.settingsCard} aria-label="Profile settings">
+          <div className={styles.settingsHeading}>
+            <p className={styles.eyebrow}>Settings</p>
+            <h2>Shape your experience</h2>
+          </div>
+          <div className={styles.settingsList}>
+            {SETTINGS_ROWS.map((row) => {
+              const Icon = row.icon;
+              const content = (
+                <>
+                  <span className={styles.settingIcon}><Icon size={18} aria-hidden="true" /></span>
+                  <span className={styles.settingCopy}>
+                    <strong>{row.label}</strong>
+                    <small>{row.description}</small>
+                  </span>
+                  {row.unavailable ? <span className={styles.soonBadge}>Soon</span> : <ChevronRight className={styles.chevron} size={16} aria-hidden="true" />}
+                </>
+              );
+
+              if (row.href) {
+                return <Link className={styles.settingRow} href={row.href} key={row.label}>{content}</Link>;
+              }
+
+              return (
+                <button
+                  className={styles.settingRow}
+                  type="button"
+                  key={row.label}
+                  onClick={() => handleSetting(row)}
+                  disabled={row.unavailable}
+                  aria-expanded={row.action && row.action !== "edit" ? panel === row.action : undefined}
+                >
+                  {content}
+                </button>
+              );
+            })}
+          </div>
+
+          {panel === "preferences" && (
+            <div className={styles.infoPanel} role="status">
+              <Salad size={18} />
+              <div>
+                <strong>Your current dietary preference</strong>
+                <p>{user?.dietary_type || "No dietary preference is set."} Editing this setting here is not available yet.</p>
+              </div>
+            </div>
+          )}
+          {panel === "privacy" && (
+            <div className={styles.infoPanel} role="status">
+              <LockKeyhole size={18} />
+              <div>
+                <strong>Account security</strong>
+                <p>Your signed-in session protects access to this profile. In-app password and data controls are not available yet.</p>
+              </div>
+            </div>
+          )}
+          {panel === "about" && (
+            <div className={styles.infoPanel} role="status">
+              <Leaf size={18} />
+              <div>
+                <strong>ZenPlate</strong>
+                <p>Mindful nutrition planning, recipe discovery, and progress tracking in one calm experience.</p>
+              </div>
+            </div>
+          )}
+
+          <button className={styles.signOutButton} type="button" onClick={handleLogout}>Sign out</button>
+        </section>
       </div>
 
-      {/* Edit modal */}
       {editOpen && (
-        <div style={{
-          position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 100,
-          display: "flex", alignItems: "flex-end", justifyContent: "center",
-        }}>
-          <div style={{
-            background: "#F5EFE2", borderTopLeftRadius: 28, borderTopRightRadius: 28,
-            padding: "24px 20px 36px", width: "100%", maxWidth: 440,
-          }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-              <h2 style={{
-                fontFamily: "var(--font-playfair), 'Playfair Display', serif",
-                fontSize: 20, color: "#2D4530", margin: 0,
-              }}>Edit Profile</h2>
-              <button onClick={() => setEditOpen(false)} style={{ background: "transparent", border: "none", cursor: "pointer", padding: 4 }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2D4530" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+        <div
+          className={styles.modalBackdrop}
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !saving) setEditOpen(false);
+          }}
+        >
+          <section className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="edit-profile-title">
+            <div className={styles.modalHeader}>
+              <div>
+                <p className={styles.eyebrow}>Personal details</p>
+                <h2 id="edit-profile-title">Edit profile</h2>
+              </div>
+              <button type="button" onClick={() => setEditOpen(false)} disabled={saving} aria-label="Close edit profile">
+                <X size={19} />
               </button>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {[
-                { label: "Name", key: "name", type: "text", placeholder: "Your name" },
-                { label: "Age", key: "age", type: "number", placeholder: "25" },
-                { label: "Weight (kg)", key: "weight_kg", type: "number", placeholder: "65" },
-                { label: "Height (cm)", key: "height_cm", type: "number", placeholder: "165" },
-              ].map(f => (
-                <div key={f.key}>
-                  <label style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#7B8A7B", display: "block", marginBottom: 5 }}>{f.label}</label>
+
+            <form onSubmit={save}>
+              <div className={styles.formGrid}>
+                <label className={styles.fullField}>
+                  <span>Name</span>
                   <input
-                    type={f.type}
-                    placeholder={f.placeholder}
-                    value={(form as any)[f.key]}
-                    onChange={e => setForm(prev => ({ ...prev, [f.key]: e.target.value }))}
-                    style={{
-                      width: "100%", padding: "11px 14px", border: "1px solid #EAE3D2",
-                      borderRadius: 12, fontSize: 14, color: "#2D4530", background: "#FFFFFF",
-                      fontFamily: "inherit", outline: "none", boxSizing: "border-box",
-                    }}
+                    type="text"
+                    value={form.name}
+                    onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
+                    autoComplete="name"
+                    required
                   />
-                </div>
-              ))}
-            </div>
-            <button onClick={save} disabled={saving} style={{
-              marginTop: 20, width: "100%", background: saving ? "#A8B8A8" : "#3D5C3E",
-              color: "#fff", border: "none", borderRadius: 999, padding: "15px 24px",
-              fontSize: 15, fontWeight: 500, fontFamily: "inherit", cursor: saving ? "default" : "pointer",
-            }}>
-              {saving ? "Saving…" : "Save Changes"}
-            </button>
-          </div>
+                </label>
+                <label>
+                  <span>Age</span>
+                  <input
+                    type="number"
+                    min="13"
+                    max="120"
+                    value={form.age}
+                    onChange={(event) => setForm((current) => ({ ...current, age: event.target.value }))}
+                    inputMode="numeric"
+                  />
+                </label>
+                <label>
+                  <span>Weight (kg)</span>
+                  <input
+                    type="number"
+                    min="20"
+                    max="400"
+                    step="0.1"
+                    value={form.weight_kg}
+                    onChange={(event) => setForm((current) => ({ ...current, weight_kg: event.target.value }))}
+                    inputMode="decimal"
+                  />
+                </label>
+                <label>
+                  <span>Height (cm)</span>
+                  <input
+                    type="number"
+                    min="80"
+                    max="250"
+                    step="0.1"
+                    value={form.height_cm}
+                    onChange={(event) => setForm((current) => ({ ...current, height_cm: event.target.value }))}
+                    inputMode="decimal"
+                  />
+                </label>
+                <label>
+                  <span>Activity level</span>
+                  <select
+                    value={form.activity_level}
+                    onChange={(event) => setForm((current) => ({ ...current, activity_level: event.target.value }))}
+                  >
+                    <option value="sedentary">Sedentary</option>
+                    <option value="light">Light</option>
+                    <option value="moderate">Moderate</option>
+                    <option value="active">Active</option>
+                    <option value="very_active">Very active</option>
+                  </select>
+                </label>
+              </div>
+              {formError && <p className={styles.formError} role="alert">{formError}</p>}
+              <button className={styles.saveButton} type="submit" disabled={saving}>
+                {saving ? "Saving changes…" : "Save changes"}
+              </button>
+            </form>
+          </section>
         </div>
       )}
-    </div>
+    </main>
   );
 }

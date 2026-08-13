@@ -1,20 +1,24 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { ArrowLeft, CalendarDays, ChevronRight, Clock3, Leaf, UtensilsCrossed } from "lucide-react";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import styles from "../wellnessMeals.module.css";
 
-const MEAL_TYPES = ["Breakfast", "Lunch", "Dinner", "Snacks"];
-
-const MEAL_TAGS: Record<string, string[]> = {
+const MEAL_TYPES = ["Breakfast", "Lunch", "Dinner", "Snacks"] as const;
+const MEAL_TAGS: Record<(typeof MEAL_TYPES)[number], string[]> = {
   Breakfast: ["Light", "Energizing"],
   Lunch: ["Balanced", "Filling"],
   Dinner: ["Protein-rich", "Satisfying"],
   Snacks: ["Light", "Gut-friendly"],
 };
+const FALLBACK_IMG = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=480";
 
-const FALLBACK_IMG = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200";
+type MealItem = { day: string; meal_type: string; recipe_id: string; reason?: string };
+type MealPlanData = { items?: MealItem[] };
+type Recipe = { id?: string; title?: string; image?: string; cook_time?: number };
 
 function todayDayKey() {
   return new Date().toLocaleDateString("en-US", { weekday: "short" });
@@ -22,251 +26,149 @@ function todayDayKey() {
 
 export default function DailyPlan() {
   const { user } = useAuth();
-  const [selectedType, setSelectedType] = useState("Breakfast");
-  const [plan, setPlan] = useState<any>(null);
-  const [recipeCache, setRecipeCache] = useState<Record<string, any>>({});
+  const [selectedType, setSelectedType] = useState<(typeof MEAL_TYPES)[number]>("Breakfast");
+  const [plan, setPlan] = useState<MealPlanData | null>(null);
+  const [recipeCache, setRecipeCache] = useState<Record<string, Recipe>>({});
+  const [recipeFailures, setRecipeFailures] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const fetchPlan = useCallback(async () => {
     setLoading(true);
+    setError("");
+    setRecipeFailures({});
     try {
       const { data } = await api.get("/meal-plan");
       setPlan(data);
     } catch {
-      /* fail silently */
+      setError("We couldn’t load your plan. Check your connection and try again.");
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => { fetchPlan(); }, [fetchPlan]);
+  useEffect(() => { void fetchPlan(); }, [fetchPlan]);
 
-  const todayDay = todayDayKey();
-  const todayItems = (plan?.items || []).filter((i: any) => i.day === todayDay);
+  const todayItems = useMemo(
+    () => (plan?.items || []).filter((item) => item.day === todayDayKey()),
+    [plan],
+  );
+  const recipeIds = useMemo(
+    () => [...new Set(todayItems.map((item) => item.recipe_id))],
+    [todayItems],
+  );
 
   useEffect(() => {
-    todayItems.forEach(({ recipe_id }: { recipe_id: string }) => {
-      if (!recipeCache[recipe_id]) {
-        api.get(`/recipes/${recipe_id}`)
-          .then(({ data }) => setRecipeCache(prev => ({ ...prev, [recipe_id]: data })))
-          .catch(() => {});
+    let cancelled = false;
+    const missing = recipeIds.filter((id) => !recipeCache[id] && !recipeFailures[id]);
+    if (!missing.length) return;
+    void Promise.all(missing.map(async (id) => {
+      try {
+        const { data } = await api.get(`/recipes/${id}`);
+        return { id, data, failed: false };
+      } catch {
+        return { id, data: null, failed: true };
       }
+    })).then((results) => {
+      if (cancelled) return;
+      const loaded = results.filter((result) => !result.failed).map((result) => [result.id, result.data] as const);
+      const failed = results.filter((result) => result.failed).map((result) => result.id);
+      if (loaded.length) setRecipeCache((current) => ({ ...current, ...Object.fromEntries(loaded) }));
+      if (failed.length) setRecipeFailures((current) => ({ ...current, ...Object.fromEntries(failed.map((id) => [id, true])) }));
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [plan]);
+    return () => { cancelled = true; };
+  }, [recipeCache, recipeFailures, recipeIds]);
 
   const currentMealItems = todayItems.filter(
-    (i: any) => i.meal_type?.toLowerCase() === selectedType.toLowerCase()
+    (item) => item.meal_type?.toLowerCase() === selectedType.toLowerCase(),
   );
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "#F5EFE2",
-      fontFamily: "var(--font-dm-sans), 'DM Sans', sans-serif",
-    }}>
-      {/* Header */}
-      <div style={{
-        position: "relative",
-        padding: "18px 20px 0",
-        overflow: "hidden",
-      }}>
-        {/* Leaf decoration top-left */}
-        <div style={{
-          position: "absolute", top: 0, left: -10, width: 100, height: 130,
-          pointerEvents: "none", opacity: 0.55,
-          background: "radial-gradient(ellipse at 60% 40%, rgba(160,180,140,0.45), transparent 70%)",
-        }} />
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 2 }}>
-          <button
-            onClick={() => window.history.back()}
-            style={{ background: "transparent", border: "none", cursor: "pointer", padding: 4 }}
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2D4530" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
-            </svg>
-          </button>
-          <Link href="/app/meal-plan" style={{ background: "transparent", border: "none", cursor: "pointer", padding: 4, display: "flex" }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2D4530" strokeWidth="1.8" strokeLinecap="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
-            </svg>
-          </Link>
-        </div>
-        <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "12px 20px 0" }}>
-          <h1 style={{
-            fontFamily: "var(--font-playfair), 'Playfair Display', serif",
-            fontSize: 26, fontWeight: 500, color: "#2D4530", margin: 0,
-            display: "inline-flex", alignItems: "center", gap: 8,
-          }}>
-            Today&apos;s Plan
-            <svg width="20" height="16" viewBox="0 0 24 18" fill="none">
-              <path d="M12 16 Q4 12 6 4 Q12 8 12 16 Z" fill="#C4974A" opacity="0.85" />
-              <path d="M12 16 Q20 12 18 4 Q12 8 12 16 Z" fill="#C4974A" opacity="0.85" />
-            </svg>
-          </h1>
-          <p style={{ fontSize: 13, color: "#7B8A7B", margin: "6px 0 0", lineHeight: 1.5 }}>
-            Personalized for your goals and wellness journey.
-          </p>
-        </div>
-      </div>
+    <main className={styles.page}>
+      <div className={styles.shell}>
+        <nav className={styles.topbar} aria-label="Meal plan navigation">
+          <Link className={styles.backLink} href="/app" aria-label="Back to home"><ArrowLeft size={19} /></Link>
+          <span className={styles.brand}><span className={styles.brandMark}>❧</span> Zenplate</span>
+          <Link className={styles.iconButton} href="/app/meal-plan" aria-label="Open full meal plan"><CalendarDays size={20} /></Link>
+        </nav>
 
-      {/* Meal type tabs */}
-      <div style={{ padding: "16px 20px 0", display: "flex", gap: 8 }}>
-        {MEAL_TYPES.map(type => {
-          const active = selectedType === type;
-          return (
-            <button key={type} onClick={() => setSelectedType(type)} style={{
-              padding: "8px 14px", borderRadius: 999, fontSize: 13.5, fontWeight: active ? 600 : 400,
-              background: active ? "#3D5C3E" : "transparent",
-              color: active ? "#fff" : "#5C6B5C",
-              border: active ? "none" : "1px solid transparent",
-              fontFamily: "inherit", cursor: "pointer", transition: "all 0.2s",
-            }}>
+        <header className={styles.hero}>
+          <p className={styles.eyebrow}>Your daily rhythm</p>
+          <h1 className={styles.title}>Today&apos;s Plan <span className={styles.leaf}>❧</span></h1>
+          <p className={styles.subtitle}>Personalized for your goals and wellness journey.</p>
+        </header>
+
+        <div className={styles.tabs} role="tablist" aria-label="Meal type">
+          {MEAL_TYPES.map((type) => (
+            <button
+              key={type}
+              className={`${styles.tab} ${selectedType === type ? styles.activeTab : ""}`}
+              type="button"
+              role="tab"
+              aria-selected={selectedType === type}
+              onClick={() => setSelectedType(type)}
+            >
               {type}
             </button>
-          );
-        })}
-      </div>
+          ))}
+        </div>
 
-      {/* Recipe rows */}
-      <div style={{ padding: "16px 20px 0", display: "flex", flexDirection: "column", gap: 12 }}>
         {loading ? (
-          <div style={{ textAlign: "center", padding: "40px 0", color: "#A8B8A8", fontSize: 14 }}>
-            Loading your plan…
-          </div>
+          <div className={styles.state} aria-live="polite"><div className={styles.skeleton} aria-label="Loading your meal plan" /></div>
+        ) : error ? (
+          <State title="Your plan is resting" text={error} action={<button className={styles.primaryButton} type="button" onClick={fetchPlan}>Try again</button>} />
         ) : currentMealItems.length === 0 ? (
-          <EmptyMealState mealType={selectedType} user={user} />
+          <EmptyMealState mealType={selectedType} onboarded={Boolean(user?.onboarded)} />
         ) : (
-          currentMealItems.map((item: any) => {
-            const recipe = recipeCache[item.recipe_id];
-            const tags = MEAL_TAGS[selectedType] || [];
-            return (
-              <Link key={item.recipe_id} href={`/app/recipe/${item.recipe_id}`} style={{ textDecoration: "none" }}>
-                <div style={{
-                  display: "flex", alignItems: "center", gap: 14,
-                  background: "#FFFFFF", borderRadius: 18, overflow: "hidden",
-                  boxShadow: "0 1px 8px rgba(31,46,31,0.06)",
-                }}>
-                  <div style={{ width: 100, height: 90, flexShrink: 0, background: "#F5F0E8" }}>
-                    <img
-                      src={recipe?.image || FALLBACK_IMG}
-                      alt={recipe?.title || "Recipe"}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                      loading="lazy"
-                      onError={e => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
-                    />
+          <div className={styles.recipeList} role="tabpanel">
+            {currentMealItems.map((item) => {
+              const recipe = recipeCache[item.recipe_id];
+              return (
+                <Link key={`${item.meal_type}-${item.recipe_id}`} href={`/app/recipe/${item.recipe_id}`} className={styles.recipeRow}>
+                  <img
+                    className={styles.recipeImage}
+                    src={recipe?.image || FALLBACK_IMG}
+                    alt=""
+                    loading="lazy"
+                    onError={(event) => { event.currentTarget.src = FALLBACK_IMG; }}
+                  />
+                  <div className={styles.recipeCopy}>
+                    <h2 className={styles.recipeTitle}>{recipe?.title || (recipeFailures[item.recipe_id] ? "Recipe details unavailable" : "Preparing recipe details…")}</h2>
+                    <p className={styles.recipeTags}>{MEAL_TAGS[selectedType].join(" · ")}</p>
+                    <span className={styles.meta}><Clock3 size={15} /> {recipe?.cook_time ? `${recipe.cook_time} min` : recipeFailures[item.recipe_id] ? "Open to try again" : "Time available in recipe"}</span>
                   </div>
-                  <div style={{ flex: 1, padding: "12px 14px 12px 0" }}>
-                    <h3 style={{
-                      fontFamily: "var(--font-playfair), 'Playfair Display', serif",
-                      fontSize: 16, fontWeight: 500, color: "#2D4530", margin: "0 0 4px",
-                    }}>
-                      {recipe?.title || item.recipe_id}
-                    </h3>
-                    <p style={{ fontSize: 12, color: "#7B8A7B", margin: "0 0 8px" }}>
-                      {tags.join(" • ")}
-                    </p>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9DA89D" strokeWidth="2" strokeLinecap="round">
-                        <circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" />
-                      </svg>
-                      <span style={{ fontSize: 12, color: "#9DA89D" }}>
-                        {recipe?.cook_time ? `${recipe.cook_time} min` : "—"}
-                      </span>
-                    </div>
-                  </div>
-                  <div style={{ paddingRight: 14 }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C8D4C8" strokeWidth="2" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
-                  </div>
-                </div>
-              </Link>
-            );
-          })
-        )}
-      </div>
-
-      {/* View Full Plan banner */}
-      <div style={{ padding: "20px 20px 0" }}>
-        <Link href="/app/meal-plan" style={{ textDecoration: "none" }}>
-          <div style={{
-            display: "flex", alignItems: "center", gap: 14,
-            background: "#FFFFFF", borderRadius: 18, padding: "14px 16px",
-            boxShadow: "0 1px 8px rgba(31,46,31,0.06)",
-          }}>
-            <div style={{
-              width: 40, height: 40, borderRadius: "50%", background: "#F0EDE0",
-              display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-            }}>
-              <svg width="18" height="18" viewBox="0 0 24 18" fill="none">
-                <path d="M12 16 Q4 12 6 4 Q12 8 12 16 Z" fill="#C4974A" opacity="0.85" />
-                <path d="M12 16 Q20 12 18 4 Q12 8 12 16 Z" fill="#C4974A" opacity="0.85" />
-                <path d="M12 16 Q12 8 12 2 Q14 9 12 16 Z" fill="#D4B070" />
-              </svg>
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{
-                fontFamily: "var(--font-playfair), 'Playfair Display', serif",
-                fontSize: 15, fontWeight: 500, color: "#2D4530",
-              }}>View Full Plan</div>
-              <div style={{ fontSize: 12, color: "#7B8A7B", marginTop: 2 }}>See your complete meal plan</div>
-            </div>
-            <div style={{
-              width: 34, height: 34, borderRadius: "50%", background: "#3D5C3E",
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>
-            </div>
+                  <ChevronRight className={styles.chevron} size={21} aria-hidden="true" />
+                </Link>
+              );
+            })}
           </div>
-        </Link>
-      </div>
+        )}
 
-      {/* Landscape image slot */}
-      <div style={{ padding: "20px 0 0", position: "relative", overflow: "hidden", height: 140 }}>
-        <div
-          data-image-slot="landscape-bottom"
-          style={{
-            position: "absolute", inset: 0,
-            background: "linear-gradient(to top, rgba(170,180,150,0.45) 0%, rgba(200,200,170,0.25) 50%, transparent 100%)",
-          }}
-        />
+        <Link className={styles.featureLink} href="/app/meal-plan">
+          <span className={styles.featureIcon}><Leaf size={19} /></span>
+          <span><span className={styles.featureTitle}>View Full Plan</span><span className={styles.featureText}>See your complete seven-day meal plan</span></span>
+          <span className={styles.roundArrow}><ChevronRight size={19} /></span>
+        </Link>
+        <div className={styles.landscape} aria-hidden="true" />
       </div>
+    </main>
+  );
+}
+
+function State({ title, text, action }: { title: string; text: string; action?: React.ReactNode }) {
+  return (
+    <div className={styles.state} role="status">
+      <div><span className={styles.stateIcon}><UtensilsCrossed size={20} /></span><h2 className={styles.stateTitle}>{title}</h2><p className={styles.stateText}>{text}</p>{action}</div>
     </div>
   );
 }
 
-function EmptyMealState({ mealType, user }: { mealType: string; user: any }) {
+function EmptyMealState({ mealType, onboarded }: { mealType: string; onboarded: boolean }) {
   return (
-    <div style={{
-      background: "#FFFFFF", borderRadius: 18, padding: "28px 20px",
-      textAlign: "center", boxShadow: "0 1px 8px rgba(31,46,31,0.06)",
-    }}>
-      <div style={{
-        width: 52, height: 52, borderRadius: "50%", background: "#F0EDE0",
-        display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px",
-      }}>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3D5C3E" strokeWidth="1.6" strokeLinecap="round">
-          <path d="M4 16 Q4 20 12 20 Q20 20 20 16 L18 10 H6 Z" />
-          <path d="M8 10 Q8 6 12 6 Q16 6 16 10" />
-        </svg>
-      </div>
-      <p style={{
-        fontFamily: "var(--font-playfair), 'Playfair Display', serif",
-        fontSize: 16, color: "#2D4530", margin: "0 0 8px",
-      }}>
-        No {mealType} planned yet
-      </p>
-      <p style={{ fontSize: 12.5, color: "#7B8A7B", margin: "0 0 16px", lineHeight: 1.5 }}>
-        {user?.onboarded
-          ? "Generate your personalized meal plan to see today's meals."
-          : "Complete your profile to get a personalized plan."}
-      </p>
-      <Link href="/app/meal-plan" style={{
-        display: "inline-block", background: "#3D5C3E", color: "#fff",
-        borderRadius: 999, padding: "10px 22px", fontSize: 13, fontWeight: 500,
-        textDecoration: "none",
-      }}>
-        Generate Plan
-      </Link>
-    </div>
+    <State
+      title={`No ${mealType.toLowerCase()} planned yet`}
+      text={onboarded ? "Generate your personalized meal plan to fill today’s rhythm." : "Complete your profile to receive a personalized plan."}
+      action={<Link className={styles.secondaryButton} href="/app/meal-plan">Build my plan</Link>}
+    />
   );
 }

@@ -44,17 +44,23 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <path d="M12 24 L28 24 Q28 34 20 36 Q12 34 12 24 Z" fill="#3D5C3E" opacity="0.9" />
           <ellipse cx="20" cy="24" rx="8" ry="2" fill="#2D4530" />
         </svg>
-        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#8D9E8D" }}>Loading…</p>
+        <p style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: 13, color: "#8D9E8D" }}>Loading…</p>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: isEbook ? "#0A0D16" : isCulinary ? "#090B09" : "#FAF7F0" }}>
+    <div
+      className={isEbook ? "" : isCulinary ? "" : "core-app"}
+      style={{
+        minHeight: isEbook || isCulinary ? "100vh" : "100dvh",
+        background: isEbook ? "#0A0D16" : isCulinary ? "#090B09" : "#F7F1E5",
+      }}
+    >
       <main
-        className={isEbook ? "" : isCulinary ? "max-w-md md:max-w-3xl lg:max-w-6xl mx-auto" : "max-w-md md:max-w-2xl lg:max-w-4xl mx-auto"}
+        className={isEbook ? "" : isCulinary ? "max-w-md md:max-w-3xl lg:max-w-6xl mx-auto" : "w-full max-w-[78rem] mx-auto min-h-[100dvh]"}
         style={hideBottomNav ? {} : {
-          paddingBottom: "calc(var(--app-bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 1rem + 1px)",
+          paddingBottom: `calc(var(--app-bottom-nav-height) + env(safe-area-inset-bottom, 0px) + ${isCulinary ? "1rem" : "2rem"} + 1px)`,
         }}
       >
         {children}

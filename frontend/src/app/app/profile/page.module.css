@@ -1,0 +1,259 @@
+.page {
+  min-height: 100vh;
+  padding: 1rem 1rem 2rem;
+  color: #2d4530;
+  background:
+    radial-gradient(circle at 90% 2%, rgba(180, 194, 159, 0.3), transparent 20rem),
+    linear-gradient(180deg, #f7f1e5, #fbf8f1 55%, #f6efe2);
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.hero,
+.profileCard,
+.encouragement,
+.settingsCard {
+  border: 1px solid rgba(111, 103, 82, 0.18);
+  background: rgba(255, 252, 245, 0.95);
+  box-shadow: 0 18px 50px rgba(51, 63, 43, 0.07);
+}
+
+.hero {
+  position: relative;
+  min-height: 13.5rem;
+  overflow: hidden;
+  padding: 1.1rem;
+  border-radius: 1.5rem 1.5rem 3.8rem 1.5rem;
+}
+
+.hero::after {
+  position: absolute;
+  right: -2rem;
+  bottom: -4rem;
+  width: 13rem;
+  height: 10rem;
+  border-radius: 50%;
+  background: rgba(174, 191, 157, 0.25);
+  content: "";
+}
+
+.vaseArt {
+  position: absolute;
+  top: -0.4rem;
+  right: 1.2rem;
+  width: 9rem;
+  height: 13rem;
+  opacity: 0.65;
+  pointer-events: none;
+  background: url('/app-ui/botanical-vase.webp') center / contain no-repeat;
+}
+
+.vase {
+  display: none;
+  position: absolute;
+  right: 1.7rem;
+  bottom: 0.2rem;
+  width: 4.2rem;
+  height: 4.7rem;
+  border-radius: 42% 42% 28% 28%;
+  background: linear-gradient(110deg, rgba(190, 168, 126, 0.58), rgba(244, 232, 204, 0.72));
+  box-shadow: inset 0 0 0 1px rgba(133, 104, 63, 0.18);
+}
+
+.stemOne,
+.stemTwo,
+.stemThree {
+  display: none;
+  position: absolute;
+  right: 3.7rem;
+  bottom: 4.5rem;
+  width: 1px;
+  height: 6.5rem;
+  background: rgba(66, 96, 59, 0.55);
+  transform-origin: bottom;
+}
+
+.stemOne { transform: rotate(-24deg); }
+.stemTwo { transform: rotate(12deg); }
+.stemThree { transform: rotate(34deg); }
+
+.stemOne::before,
+.stemOne::after,
+.stemTwo::before,
+.stemTwo::after,
+.stemThree::before,
+.stemThree::after {
+  position: absolute;
+  width: 2.7rem;
+  height: 1.25rem;
+  border-radius: 100% 0 100% 0;
+  background: rgba(89, 116, 76, 0.34);
+  content: "";
+}
+
+.stemOne::before,
+.stemTwo::before,
+.stemThree::before { top: 1.1rem; left: -2.5rem; transform: rotate(-16deg); }
+.stemOne::after,
+.stemTwo::after,
+.stemThree::after { top: 3.3rem; left: 0.1rem; transform: rotate(145deg); }
+
+.headerActions {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.iconButton,
+.editHeaderButton {
+  border: 1px solid rgba(76, 98, 69, 0.18);
+  color: #2d4530;
+  background: rgba(255, 252, 245, 0.76);
+  cursor: pointer;
+}
+
+.iconButton { display: grid; width: 2.5rem; height: 2.5rem; padding: 0; place-items: center; border-radius: 50%; }
+.editHeaderButton { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.62rem 0.8rem; border-radius: 999px; font: 650 0.66rem Inter, sans-serif; }
+
+.heroCopy {
+  position: relative;
+  z-index: 2;
+  max-width: 20rem;
+  margin-top: 1.45rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  color: #9b6d36;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.heroCopy h1,
+.identityCopy h2,
+.encouragement h2,
+.settingsHeading h2,
+.modalHeader h2 {
+  margin: 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.heroCopy h1 { display: flex; align-items: center; gap: 0.5rem; font-size: clamp(2.25rem, 10vw, 3.05rem); line-height: 0.94; }
+.heroCopy h1 svg { color: #b57e39; }
+.heroCopy > p:last-child { max-width: 17rem; margin: 0.72rem 0 0; color: #71806e; font-size: 0.76rem; line-height: 1.6; }
+
+.contentGrid,
+.profileColumn { display: grid; gap: 0.9rem; }
+.contentGrid { margin-top: 0.9rem; }
+
+.profileCard,
+.encouragement,
+.settingsCard { border-radius: 1.4rem; }
+.profileCard,
+.settingsCard { padding: 1.1rem; }
+
+.identityRow { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 0.8rem; align-items: center; }
+.avatar { display: grid; width: 4.1rem; height: 4.1rem; place-items: center; border: 3px solid #fffdf8; border-radius: 50%; color: #3d5c3e; background: linear-gradient(135deg, #dbe3d4, #becdbb); box-shadow: 0 8px 20px rgba(61, 92, 62, 0.13); font: 500 1.65rem "Cormorant Garamond", serif; }
+.identityCopy { min-width: 0; }
+.identityCopy .eyebrow { margin-bottom: 0.22rem; }
+.identityCopy h2 { overflow: hidden; font-size: 1.35rem; line-height: 1.04; text-overflow: ellipsis; white-space: nowrap; }
+.identityCopy > p:last-child { overflow: hidden; margin: 0.28rem 0 0; color: #7b8778; font-size: 0.64rem; text-overflow: ellipsis; white-space: nowrap; }
+.avatarEdit { display: grid; width: 2.2rem; height: 2.2rem; padding: 0; place-items: center; border: 1px solid #d9d0c2; border-radius: 50%; color: #3d5c3e; background: #fffdf8; cursor: pointer; }
+
+.accountStats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.45rem; margin-top: 1.2rem; }
+.accountStats > div { display: grid; min-width: 0; justify-items: center; padding: 0.75rem 0.2rem; border: 1px solid #e5ddcf; border-radius: 0.9rem; background: #faf6ed; text-align: center; }
+.accountStats span { color: #a6783e; }
+.accountStats strong { max-width: 100%; overflow: hidden; margin: 0.2rem 0 0.08rem; font-size: 0.73rem; text-overflow: ellipsis; white-space: nowrap; }
+.accountStats small { color: #899486; font-size: 0.53rem; }
+
+.inlineStatus,
+.inlineError { margin: 0.75rem 0 0; padding: 0.65rem 0.75rem; border-radius: 0.7rem; font-size: 0.62rem; }
+.inlineStatus { color: #667561; background: #eef1e9; }
+.inlineError { display: flex; align-items: center; justify-content: space-between; gap: 0.7rem; color: #8c5547; background: #f8eae4; }
+.inlineError button { display: inline-flex; align-items: center; gap: 0.25rem; border: 0; color: inherit; background: transparent; font: 700 0.61rem Inter, sans-serif; cursor: pointer; }
+
+.profileDetails { display: grid; gap: 0; margin-top: 1rem; border-top: 1px solid #e8dfd1; }
+.profileDetails > div { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 0.68rem 0; border-bottom: 1px solid #eee7dc; }
+.profileDetails span { color: #7d897a; font-size: 0.63rem; }
+.profileDetails strong { max-width: 58%; overflow: hidden; font-size: 0.66rem; font-weight: 650; text-align: right; text-overflow: ellipsis; text-transform: capitalize; white-space: nowrap; }
+
+.conditions { margin-top: 1rem; }
+.conditions > p:last-child { margin: 0; color: #849080; font-size: 0.65rem; }
+.conditions > div { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.conditions span { padding: 0.35rem 0.58rem; border: 1px solid #d6dece; border-radius: 999px; color: #557052; background: #edf1e8; font-size: 0.57rem; font-weight: 650; text-transform: capitalize; }
+
+.encouragement { position: relative; overflow: hidden; padding: 1.2rem; background: linear-gradient(135deg, #e9eee3, #fffaf1 68%); }
+.encouragement::after { position: absolute; right: -2rem; bottom: -3rem; width: 8rem; height: 8rem; border-radius: 50%; background: rgba(196, 151, 74, 0.11); content: ""; }
+.roundIcon { display: grid; width: 2.4rem; height: 2.4rem; margin-bottom: 0.9rem; place-items: center; border-radius: 50%; color: #557052; background: rgba(255, 252, 245, 0.76); }
+.encouragement h2 { position: relative; z-index: 1; font-size: 1.35rem; }
+.encouragement > p:not(.eyebrow) { position: relative; z-index: 1; margin: 0.45rem 0 0.9rem; color: #788476; font-size: 0.68rem; line-height: 1.5; }
+.encouragement a { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 0.2rem; color: #3d5c3e; font-size: 0.68rem; font-weight: 700; text-decoration: none; }
+
+.settingsHeading { padding-bottom: 1rem; border-bottom: 1px solid #e7dfd2; }
+.settingsHeading h2 { font-size: 1.48rem; }
+.settingsList { display: grid; }
+.settingRow { display: grid; width: 100%; grid-template-columns: auto minmax(0, 1fr) auto; gap: 0.75rem; align-items: center; padding: 0.82rem 0; border: 0; border-bottom: 1px solid #eee7dc; color: inherit; background: transparent; text-align: left; text-decoration: none; cursor: pointer; }
+.settingRow:not(:disabled):hover .settingIcon { background: #e4eadf; }
+.settingRow:disabled { cursor: default; }
+.settingIcon { display: grid; width: 2.25rem; height: 2.25rem; place-items: center; border-radius: 50%; color: #557052; background: #f0ece3; transition: background 180ms ease; }
+.settingCopy { min-width: 0; }
+.settingCopy strong,
+.settingCopy small { display: block; }
+.settingCopy strong { font-size: 0.7rem; font-weight: 650; }
+.settingCopy small { overflow: hidden; margin-top: 0.16rem; color: #8a9587; font-size: 0.58rem; text-overflow: ellipsis; white-space: nowrap; }
+.chevron { color: #b8afa0; }
+.soonBadge { padding: 0.25rem 0.45rem; border-radius: 999px; color: #8a7b67; background: #eee7dc; font-size: 0.5rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+
+.infoPanel { display: grid; grid-template-columns: auto 1fr; gap: 0.7rem; margin-top: 0.9rem; padding: 0.85rem; border: 1px solid #d9d2c4; border-radius: 0.9rem; color: #557052; background: #f8f4eb; }
+.infoPanel strong { display: block; font-size: 0.68rem; }
+.infoPanel p { margin: 0.2rem 0 0; color: #7c8879; font-size: 0.61rem; line-height: 1.5; }
+
+.signOutButton { width: 100%; margin-top: 1rem; padding: 0.78rem 1rem; border: 1px solid #dfcfc7; border-radius: 999px; color: #a25d4d; background: transparent; font: 700 0.7rem Inter, sans-serif; cursor: pointer; }
+.signOutButton:hover { background: #fbefeb; }
+
+.modalBackdrop { position: fixed; z-index: 100; inset: 0; display: flex; align-items: flex-end; justify-content: center; padding: 0; background: rgba(25, 35, 26, 0.46); backdrop-filter: blur(4px); }
+.modal { width: 100%; max-height: min(92vh, 44rem); overflow-y: auto; padding: 1.3rem 1.1rem calc(1.5rem + env(safe-area-inset-bottom)); border: 1px solid #ded5c6; border-radius: 1.7rem 1.7rem 0 0; color: #2d4530; background: #f7f1e5; box-shadow: 0 -24px 60px rgba(31, 43, 31, 0.2); }
+.modalHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.1rem; }
+.modalHeader h2 { font-size: 1.7rem; }
+.modalHeader button { display: grid; width: 2.3rem; height: 2.3rem; padding: 0; place-items: center; border: 1px solid #d6cdbf; border-radius: 50%; color: #2d4530; background: #fffdf8; cursor: pointer; }
+.modalHeader button:disabled { opacity: 0.5; }
+.formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+.formGrid label { display: grid; gap: 0.35rem; }
+.fullField { grid-column: 1 / -1; }
+.formGrid label > span { color: #6f7d6d; font-size: 0.56rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.formGrid input,
+.formGrid select { width: 100%; min-width: 0; padding: 0.75rem 0.8rem; border: 1px solid #d8cfc1; border-radius: 0.8rem; outline: none; color: #2d4530; background: #fffdf8; font: 0.74rem Inter, sans-serif; }
+.formGrid input:focus,
+.formGrid select:focus { border-color: #698064; box-shadow: 0 0 0 3px rgba(105, 128, 100, 0.13); }
+.formError { margin: 0.8rem 0 0; padding: 0.65rem 0.75rem; border-radius: 0.7rem; color: #965644; background: #f8e7e1; font-size: 0.65rem; }
+.saveButton { width: 100%; margin-top: 1rem; padding: 0.85rem 1rem; border: 0; border-radius: 999px; color: #fffdf8; background: #3d5c3e; font: 700 0.76rem Inter, sans-serif; cursor: pointer; }
+.saveButton:disabled { opacity: 0.58; cursor: wait; }
+
+@media (min-width: 520px) {
+  .page { padding: 1.5rem; }
+  .hero { min-height: 15rem; padding: 1.45rem; }
+  .heroCopy { margin-top: 1.8rem; }
+  .profileCard,
+  .settingsCard { padding: 1.35rem; }
+  .modalBackdrop { align-items: center; padding: 1.5rem; }
+  .modal { max-width: 34rem; padding: 1.5rem; border-radius: 1.5rem; }
+}
+
+@media (min-width: 820px) {
+  .page { padding: 2rem clamp(1.5rem, 4vw, 3rem) 3rem; }
+  .hero { min-height: 17rem; padding: 1.7rem; border-radius: 1.8rem 1.8rem 5rem 1.8rem; }
+  .heroCopy { max-width: 35rem; margin-top: 2.1rem; }
+  .heroCopy h1 { font-size: clamp(3rem, 5vw, 4.35rem); }
+  .heroCopy > p:last-child { max-width: 28rem; font-size: 0.84rem; }
+  .vaseArt { right: 4rem; transform: scale(1.25); transform-origin: top right; }
+  .contentGrid { grid-template-columns: minmax(17rem, 0.82fr) minmax(0, 1.2fr); gap: 1rem; margin-top: 1rem; align-items: start; }
+  .profileColumn { gap: 1rem; }
+  .profileCard,
+  .settingsCard { padding: 1.45rem; }
+  .settingsCard { min-height: 100%; }
+}

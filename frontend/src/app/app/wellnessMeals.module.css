@@ -1,0 +1,400 @@
+.page {
+  position: relative;
+  min-height: 100vh;
+  overflow: clip;
+  padding: clamp(1.1rem, 2.8vw, 2.4rem) clamp(1rem, 4vw, 3rem) clamp(2rem, 5vw, 4.5rem);
+  background:
+    radial-gradient(circle at 50% -10%, rgba(255, 255, 255, 0.95), transparent 32rem),
+    #f7f1e5;
+  color: #233626;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.page::before,
+.page::after {
+  position: absolute;
+  z-index: 0;
+  width: clamp(7rem, 17vw, 14rem);
+  aspect-ratio: 1;
+  background: url("/landing/olive-branch.png") center / contain no-repeat;
+  content: "";
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.page::before { top: 2.5rem; left: -3rem; transform: rotate(-18deg); }
+.page::after { top: 1rem; right: -3rem; transform: scaleX(-1) rotate(-8deg); }
+
+.shell {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 70rem);
+  margin-inline: auto;
+}
+
+.topbar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+.brand {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.45rem;
+  color: #223526;
+}
+
+.brandMark { color: #5d7753; font-size: 1.2rem; }
+
+.iconButton,
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: rgba(255, 253, 247, 0.58);
+  color: #2d4530;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.iconButton { justify-self: end; }
+.backLink { justify-self: start; }
+.iconButton:hover,
+.backLink:hover { border-color: #d8cebd; background: #fffdf7; transform: translateY(-1px); }
+.iconButton:focus-visible,
+.backLink:focus-visible,
+.tab:focus-visible,
+.primaryButton:focus-visible,
+.secondaryButton:focus-visible,
+.categoryToggle:focus-visible,
+.checkButton:focus-visible,
+.textInput:focus-visible { outline: 3px solid rgba(61, 92, 62, 0.2); outline-offset: 2px; }
+
+.hero {
+  max-width: 44rem;
+  margin: clamp(1rem, 3vw, 2.5rem) auto clamp(1.2rem, 3vw, 2.2rem);
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0 0 0.55rem;
+  color: #789071;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.title,
+.sectionTitle,
+.cardTitle {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.title { margin: 0; color: #17231a; font-size: clamp(2.25rem, 5vw, 4rem); line-height: 0.98; }
+.subtitle { max-width: 34rem; margin: 0.65rem auto 0; color: #607064; font-size: clamp(0.82rem, 1.4vw, 0.95rem); line-height: 1.65; }
+.leaf { color: #55734d; font-size: 0.55em; vertical-align: 0.2em; }
+
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  width: min(100%, 56rem);
+  margin: 0 auto clamp(1.2rem, 3vw, 2rem);
+  padding: 0.25rem;
+  border: 1px solid rgba(229, 221, 208, 0.75);
+  border-radius: 999px;
+  background: rgba(241, 234, 220, 0.8);
+}
+
+.tab {
+  min-height: 2.7rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #415345;
+  font: 500 clamp(0.72rem, 1.6vw, 0.88rem)/1 Inter, sans-serif;
+  cursor: pointer;
+  transition: color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.activeTab { background: #365632; color: #fffdf7; box-shadow: 0 5px 15px rgba(45, 69, 48, 0.17); }
+
+.recipeList,
+.weekList { width: min(100%, 57rem); margin-inline: auto; }
+
+.recipeRow {
+  display: grid;
+  grid-template-columns: clamp(6.4rem, 19vw, 11rem) minmax(0, 1fr) 2.5rem;
+  align-items: center;
+  min-height: 8.6rem;
+  border-bottom: 1px solid #e5ddd0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.recipeImage {
+  width: 100%;
+  height: clamp(6.4rem, 14vw, 8rem);
+  border-radius: 1rem;
+  object-fit: cover;
+  background: #eee6d8;
+}
+
+.recipeCopy { min-width: 0; padding: 1rem clamp(1rem, 3vw, 1.8rem); }
+.recipeTitle { margin: 0; overflow-wrap: anywhere; color: #17231a; font: 500 clamp(1.3rem, 2.5vw, 1.75rem)/1.05 "Cormorant Garamond", Georgia, serif; }
+.recipeTags { margin: 0.38rem 0 0.62rem; color: #446045; font-size: 0.8rem; }
+.meta { display: flex; align-items: center; gap: 0.4rem; color: #66736a; font-size: 0.75rem; }
+.chevron { color: #3d5c3e; transition: transform 180ms ease; }
+.recipeRow:hover .chevron { transform: translateX(0.25rem); }
+
+.featureLink {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  width: min(100%, 58rem);
+  margin: 0.35rem auto 0;
+  padding: 1rem 1.2rem;
+  border: 1px solid #e5ddd0;
+  border-radius: 1.25rem;
+  background: rgba(247, 241, 229, 0.84);
+  color: inherit;
+  text-decoration: none;
+  backdrop-filter: blur(8px);
+}
+
+.featureIcon,
+.roundArrow {
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 999px;
+}
+
+.featureIcon { background: #fffaf0; color: #58724f; box-shadow: 0 2px 8px rgba(45, 69, 48, 0.08); }
+.roundArrow { background: #365632; color: #fff; }
+.featureTitle { margin: 0; color: #344f34; font: 500 1.35rem/1 "Cormorant Garamond", Georgia, serif; }
+.featureText { margin: 0.22rem 0 0; color: #68766b; font-size: 0.74rem; }
+
+.landscape {
+  position: relative;
+  width: min(100%, 72rem);
+  min-height: clamp(8.5rem, 19vw, 14rem);
+  margin: -0.35rem auto 0;
+  background:
+    linear-gradient(to bottom, #f7f1e5 0, rgba(247, 241, 229, 0.2) 32%, rgba(247, 241, 229, 0.04)),
+    url("/app-ui/wellness-landscape.webp") center 54% / cover no-repeat;
+  opacity: 0.74;
+  mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 86%, transparent);
+}
+
+.state {
+  display: grid;
+  place-items: center;
+  width: min(100%, 50rem);
+  min-height: 15rem;
+  margin: 1rem auto;
+  padding: 2rem;
+  border: 1px solid #e5ddd0;
+  border-radius: 1.5rem;
+  background: rgba(255, 253, 248, 0.72);
+  text-align: center;
+}
+.stateIcon { display: grid; place-items: center; width: 3rem; height: 3rem; margin: 0 auto 0.8rem; border-radius: 999px; background: #e8ecdf; color: #3d5c3e; }
+.stateTitle { margin: 0; color: #223526; font: 500 1.45rem/1.15 "Cormorant Garamond", Georgia, serif; }
+.stateText { max-width: 28rem; margin: 0.45rem auto 1rem; color: #68766b; font-size: 0.78rem; line-height: 1.6; }
+.skeleton { width: 100%; max-width: 40rem; height: 5rem; border-radius: 1rem; background: linear-gradient(90deg, #eee6d8, #faf6ed, #eee6d8); background-size: 220% 100%; animation: shimmer 1.6s infinite linear; }
+@keyframes shimmer { to { background-position: -220% 0; } }
+
+.primaryButton,
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 2.75rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
+  font: 600 0.78rem/1 Inter, sans-serif;
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease;
+}
+.primaryButton { border: 1px solid #365632; background: #365632; color: #fff; }
+.secondaryButton { border: 1px solid #d8cebd; background: #fffdf8; color: #365632; text-decoration: none; }
+.primaryButton:hover,
+.secondaryButton:hover { transform: translateY(-1px); }
+.primaryButton:disabled { opacity: 0.58; cursor: wait; transform: none; }
+
+.plannerGrid { display: grid; gap: 1.25rem; }
+.actionRail { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.65rem; }
+.actionLink {
+  display: grid;
+  place-items: center;
+  min-height: 5rem;
+  padding: 0.75rem;
+  border: 1px solid #e5ddd0;
+  border-radius: 1rem;
+  background: rgba(255,255,255,0.66);
+  color: #3f5541;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+.actionGlyph { margin-bottom: 0.25rem; color: #5e7757; }
+
+.editorialCard {
+  border: 1px solid #e5ddd0;
+  border-radius: 1.35rem;
+  background: rgba(255, 253, 248, 0.76);
+  box-shadow: 0 10px 28px rgba(56, 67, 49, 0.055);
+}
+.generateCard { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1rem; padding: 1.1rem; }
+.cardTitle { margin: 0; color: #223526; font-size: 1.25rem; line-height: 1.1; }
+.cardText { margin: 0.25rem 0 0; color: #738078; font-size: 0.72rem; line-height: 1.5; }
+
+.targetCard { padding: 1.2rem; }
+.sectionLabel { margin: 0 0 0.8rem; color: #80917e; font-size: 0.64rem; font-weight: 700; letter-spacing: 0.17em; text-transform: uppercase; }
+.metricGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.55rem; }
+.metric { padding: 0.75rem; border-radius: 0.9rem; background: #f3eddf; text-align: center; }
+.metricValue { margin: 0; color: #365632; font: 500 1.3rem/1 "Cormorant Garamond", Georgia, serif; }
+.metricLabel { margin: 0.25rem 0 0; color: #879286; font-size: 0.57rem; letter-spacing: 0.11em; text-transform: uppercase; }
+.analysis { margin: 0.9rem 0 0; color: #607064; font: italic 500 0.98rem/1.5 "Cormorant Garamond", Georgia, serif; }
+
+.premiumCard { padding: 1.4rem; border-radius: 1.35rem; background: #2d4530; color: #f8f3e8; }
+.premiumCard .sectionLabel { color: #d2aa6c; }
+.premiumCard .cardTitle { color: #fff9ee; font-size: 1.5rem; }
+.premiumCard .cardText { color: rgba(255,255,255,0.68); }
+.featureList { display: grid; gap: 0.45rem; margin: 1rem 0; padding: 0; list-style: none; color: rgba(255,255,255,0.78); font-size: 0.75rem; }
+.featureList li::before { margin-right: 0.5rem; color: #d2aa6c; content: "✓"; }
+
+.mealTabs { margin-bottom: 1rem; grid-template-columns: repeat(3, 1fr); }
+.dayRow {
+  display: grid;
+  grid-template-columns: 3rem 4.7rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  min-height: 6.2rem;
+  border-bottom: 1px solid #e5ddd0;
+  color: inherit;
+  text-decoration: none;
+}
+.todayPill { display: inline-flex; align-items: center; justify-content: center; min-height: 1.6rem; border-radius: 999px; background: #365632; color: #fff; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.dayName { color: #6d7a70; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.dayImage { width: 4.7rem; height: 4.7rem; border-radius: 0.9rem; object-fit: cover; background: #eee6d8; }
+.dayTitle { margin: 0; color: #223526; font: 500 1.15rem/1.15 "Cormorant Garamond", Georgia, serif; }
+.dayMeta { margin: 0.25rem 0 0; color: #768278; font-size: 0.67rem; }
+.emptySlot { opacity: 0.72; }
+.disclaimer { display: flex; gap: 0.6rem; padding: 1rem 0; border-top: 1px solid #e5ddd0; color: #758178; font-size: 0.68rem; line-height: 1.6; }
+
+.groceryHead { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin: 1rem 0 1.2rem; }
+.leftTitle { margin: 0; color: #29422c; font: 500 clamp(2.6rem, 6vw, 4.4rem)/0.95 "Cormorant Garamond", Georgia, serif; letter-spacing: -0.035em; }
+.weekLabel { margin: 0.55rem 0 0; color: #435246; font-size: 0.84rem; }
+.searchBox { display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 0.8rem 1rem; border: 1px solid #ded4c2; border-radius: 999px; background: rgba(255,253,248,0.78); }
+.textInput { width: 100%; border: 0; outline: 0; background: transparent; color: #263a2a; font: 400 0.82rem/1 Inter, sans-serif; }
+.textInput::placeholder { color: #9c9d96; }
+.categoryGrid { display: grid; gap: 0.9rem; margin-top: 1.2rem; }
+.groceryCategory { overflow: hidden; border: 1px solid #e5ddd0; border-radius: 1.35rem; background: rgba(255,253,248,0.73); }
+.categoryToggle { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 3.6rem; padding: 0.8rem 1rem; border: 0; background: transparent; color: #2b452f; cursor: pointer; }
+.categoryName { font: 500 1.45rem/1 "Cormorant Garamond", Georgia, serif; }
+.categoryCount { display: flex; align-items: center; gap: 0.6rem; color: #657267; font-size: 0.7rem; }
+.groceryItems { display: grid; grid-template-columns: repeat(auto-fit, minmax(5.3rem, 1fr)); gap: 0.75rem; padding: 0 1rem 1rem; }
+.groceryItem { position: relative; display: grid; justify-items: center; gap: 0.42rem; min-width: 0; }
+.checkButton { position: relative; display: grid; place-items: center; width: 4.5rem; height: 4.5rem; padding: 0; overflow: hidden; border: 1px solid #e5ddd0; border-radius: 1rem; background: #eee7da; cursor: pointer; }
+.itemImage { width: 100%; height: 100%; object-fit: cover; }
+.checked .itemImage { filter: saturate(0.4); opacity: 0.48; }
+.checkmark { position: absolute; display: grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 999px; background: #365632; color: #fff; opacity: 0; transform: scale(0.75); transition: opacity 160ms ease, transform 160ms ease; }
+.checked .checkmark { opacity: 1; transform: scale(1); }
+.itemName { overflow: hidden; max-width: 100%; color: #536257; font-size: 0.65rem; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+.checked + .itemName { text-decoration: line-through; opacity: 0.62; }
+.moreBubble { display: grid; place-items: center; width: 4.5rem; height: 4.5rem; border-radius: 999px; background: #f1ebde; color: #405642; font-size: 0.76rem; }
+.moreAction { display: grid; justify-content: center; padding: 0; }
+.noResults { padding: 2rem; color: #758178; font-size: 0.78rem; text-align: center; }
+.groceryBanner { display: grid; grid-template-columns: auto 1fr minmax(6rem, 25%); align-items: center; gap: 1rem; min-height: 7rem; margin-top: 1rem; padding: 1rem; overflow: hidden; }
+.bannerArt { align-self: stretch; min-height: 5rem; border-radius: 1rem; background: linear-gradient(90deg, rgba(247,241,229,0), rgba(247,241,229,0.08)), url("/landing/healthcare-bowl.jpg") center / cover; }
+.addPanel { display: grid; grid-template-columns: 1fr auto; gap: 0.65rem; margin-top: 1rem; }
+.fullWidth { width: 100%; margin-top: 1rem; }
+
+.guideLayout { display: grid; gap: 1rem; }
+.conditionTabs { display: flex; gap: 0.55rem; overflow-x: auto; padding-bottom: 0.2rem; scrollbar-width: none; }
+.conditionTab { flex: 0 0 auto; padding-inline: 1.1rem; }
+.guideColumns { display: grid; gap: 1rem; }
+.guideSection { padding: 1.2rem; }
+.guideList { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.guideItem { display: flex; align-items: flex-start; gap: 0.65rem; padding: 0.7rem 0; border-bottom: 1px solid #eee5d7; color: #526156; font-size: 0.76rem; line-height: 1.5; }
+.guideItem:last-child { border-bottom: 0; }
+.good { color: #4f704b; }
+.limit { color: #a35e4c; }
+.ruleNumber { display: grid; flex: 0 0 auto; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 999px; background: #e7ecdf; color: #3d5c3e; font-size: 0.64rem; font-weight: 700; }
+.swap { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 0.7rem; padding: 0.8rem 0; border-bottom: 1px solid #eee5d7; }
+.swap:last-child { border-bottom: 0; }
+.swapFrom { color: #8c7770; font-size: 0.76rem; text-decoration: line-through; }
+.swapTo { color: #3f6042; font-size: 0.76rem; font-weight: 600; }
+.swapReason { grid-column: 1 / -1; margin: -0.35rem 0 0; color: #7a857d; font-size: 0.65rem; line-height: 1.5; }
+
+.categoryHero { display: grid; gap: 0.8rem; margin: 1rem 0 1.5rem; }
+.categoryIntro { max-width: 34rem; margin: 0; color: #647166; font-size: 0.82rem; line-height: 1.65; }
+.recipeGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1rem; }
+
+@media (min-width: 48rem) {
+  .brand { display: flex; }
+  .plannerGrid { grid-template-columns: minmax(16rem, 0.72fr) minmax(24rem, 1.28fr); align-items: start; }
+  .plannerAside { position: sticky; top: 1.5rem; display: grid; gap: 1rem; }
+  .metricGrid { grid-template-columns: repeat(4, 1fr); }
+  .categoryGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .guideColumns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rulesWide { grid-column: 1 / -1; }
+  .categoryHero { grid-template-columns: 1.2fr 0.8fr; align-items: end; }
+  .categoryIntro { justify-self: end; }
+}
+
+@media (max-width: 40rem) {
+  .page { padding-inline: 1rem; }
+  .page::before { top: 4rem; left: -4.4rem; }
+  .page::after { top: 1rem; right: -4.6rem; }
+  .title { font-size: 2.45rem; }
+  .tabs { gap: 0; }
+  .tab { min-height: 2.5rem; font-size: 0.69rem; }
+  .recipeList { display: grid; gap: 0.75rem; }
+  .recipeRow { grid-template-columns: 6.6rem minmax(0, 1fr) 1.4rem; min-height: 7.25rem; overflow: hidden; border: 1px solid #e5ddd0; border-radius: 1.2rem; background: rgba(255,253,248,0.78); box-shadow: 0 5px 15px rgba(56,67,49,0.045); }
+  .recipeImage { height: 100%; min-height: 7.25rem; border-radius: 0; }
+  .recipeCopy { padding: 0.75rem 0.65rem; }
+  .recipeTitle { font-size: 1.18rem; }
+  .recipeTags { font-size: 0.68rem; }
+  .chevron { margin-left: -0.25rem; }
+  .featureLink { margin-top: 1rem; }
+  .landscape { margin-inline: -1rem; width: calc(100% + 2rem); }
+  .generateCard { grid-template-columns: auto 1fr; }
+  .generateCard .primaryButton { grid-column: 1 / -1; width: 100%; }
+  .dayRow { grid-template-columns: 2.2rem 4rem minmax(0, 1fr) auto; gap: 0.65rem; }
+  .dayImage { width: 4rem; height: 4rem; }
+  .groceryItems { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; }
+  .checkButton,
+  .moreBubble { width: clamp(3.3rem, 16vw, 4.15rem); height: clamp(3.3rem, 16vw, 4.15rem); }
+  .groceryBanner { grid-template-columns: auto 1fr; }
+  .bannerArt { display: none; }
+  .addPanel { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iconButton,
+  .backLink,
+  .tab,
+  .primaryButton,
+  .secondaryButton,
+  .chevron,
+  .checkmark { transition: none; }
+  .skeleton { animation: none; }
+}
