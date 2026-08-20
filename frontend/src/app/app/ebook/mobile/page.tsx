@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import type { ImageProps } from "next/image";
+import Link from "next/link";
 import { cloneElement, createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/auth";
@@ -4428,6 +4429,9 @@ export default function MobileEbookPage() {
       </div>
 
       <nav ref={readerControlsRef} className={styles.readerControls} aria-label="Ebook page controls">
+        <Link href="/app" className={styles.homeButton} aria-label="Back to home">
+          Home
+        </Link>
         <button type="button" onClick={() => scrollToPage(activePage - 1)} disabled={activePage === 0} aria-label="Previous page">
           ←
         </button>

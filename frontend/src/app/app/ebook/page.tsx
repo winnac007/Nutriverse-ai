@@ -6667,6 +6667,22 @@ function MobileReaderLink() {
   );
 }
 
+function EbookHomeLink({ inverse = false }: { inverse?: boolean }) {
+  return (
+    <Link
+      href="/app"
+      className={`fixed left-4 top-[max(1rem,env(safe-area-inset-top))] z-[80] inline-flex items-center gap-1.5 rounded-full border px-4 py-2.5 text-xs font-bold shadow-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#BC5B38] ${
+        inverse
+          ? "border-white/15 bg-[#26211B]/90 text-white shadow-black/20 hover:bg-[#3F5247]"
+          : "border-[#DCD0BD] bg-[#F7F1E8]/95 text-[#26211B] shadow-[#26211B]/10 hover:bg-white"
+      }`}
+      aria-label="Back to home"
+    >
+      <ChevronLeft size={16} aria-hidden="true" /> Home
+    </Link>
+  );
+}
+
 /* ─── Main Page ──────────────────────────────────────────────────────────── */
 export default function EbookPage() {
   const { user } = useAuth();
@@ -6782,6 +6798,7 @@ export default function EbookPage() {
   if (view === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[#F7F1E8]">
+        <EbookHomeLink />
         <motion.div 
           animate={{ rotateY: [0, 180, 360], scale: [1, 1.1, 1] }}
           transition={{ duration: 2, repeat: Infinity }}
@@ -6799,6 +6816,7 @@ export default function EbookPage() {
       <div className="min-h-screen bg-[#F7F1E8] p-5 md:p-8 flex items-center justify-center relative overflow-hidden">
         <style>{ZENPLATO_CSS}</style>
         <BotanicalSVG />
+        <EbookHomeLink />
         <MobileReaderLink />
 
         <div className="relative z-10 w-full max-w-5xl">
@@ -6876,6 +6894,7 @@ export default function EbookPage() {
       <div className="min-h-screen bg-[#F7F1E8] p-6 flex flex-col items-center justify-center relative overflow-hidden">
         <style>{ZENPLATO_CSS}</style>
         <BotanicalSVG />
+        <EbookHomeLink />
         <MobileReaderLink />
         
         <Reveal y={-20}>
@@ -6944,6 +6963,7 @@ export default function EbookPage() {
     return (
       <div className="min-h-screen bg-[#F7F1E8] p-6 flex items-center justify-center">
         <style>{ZENPLATO_CSS}</style>
+        <EbookHomeLink />
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -7035,6 +7055,7 @@ export default function EbookPage() {
     return (
       <div className="min-h-screen bg-[#26211B] flex flex-col items-center justify-center p-8 text-center">
         <style>{ZENPLATO_CSS}</style>
+        <EbookHomeLink inverse />
         
         {/* 3D Animated Elements */}
         <div className="relative w-64 h-64 mb-12">
@@ -7109,6 +7130,7 @@ export default function EbookPage() {
       <div className="min-h-screen bg-[#F7F1E8] p-6 flex items-center justify-center relative overflow-hidden">
         <style>{ZENPLATO_CSS}</style>
         <BotanicalSVG />
+        <EbookHomeLink />
         <MobileReaderLink />
 
         <div className="relative z-10 max-w-xl w-full bg-white/80 border border-[#DCD0BD] rounded-[32px] p-8 md:p-10 shadow-xl shadow-[#26211B]/5 text-center">
@@ -7155,6 +7177,7 @@ export default function EbookPage() {
       "--accent": colors.accent
     } as React.CSSProperties}>
       <style>{ZENPLATO_CSS}</style>
+      <EbookHomeLink />
       <MobileReaderLink />
 
       {/* Progress bar */}

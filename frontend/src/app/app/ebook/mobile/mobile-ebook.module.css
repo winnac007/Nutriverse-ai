@@ -4686,7 +4686,7 @@
   left: 50%;
   bottom: max(.45rem, env(safe-area-inset-bottom));
   display: grid;
-  grid-template-columns: 3rem auto auto 3rem;
+  grid-template-columns: auto 3rem auto auto 3rem;
   align-items: center;
   gap: .55rem;
   padding: .5rem;
@@ -4722,6 +4722,28 @@
   opacity: .34;
 }
 
+.readerControls .homeButton {
+  display: grid;
+  height: 2.7rem;
+  place-items: center;
+  padding: 0 .9rem;
+  border: 1px solid rgba(19, 48, 28, .18);
+  border-radius: 999px;
+  background: #f6f0e6;
+  color: #173a24;
+  font: 800 .78rem/1 Inter, Arial, sans-serif;
+  letter-spacing: .08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.readerControls .homeButton:hover,
+.readerControls .homeButton:focus-visible {
+  background: #173a24;
+  color: #fff;
+  outline: none;
+}
+
 .readerControls .contentsButton {
   min-width: 6.6rem;
   padding: 0 1rem;
@@ -4740,6 +4762,29 @@
   font-weight: 800;
   letter-spacing: .08em;
   text-align: center;
+}
+
+@media (max-width: 380px) {
+  .readerControls {
+    gap: .3rem;
+    padding: .35rem;
+  }
+
+  .readerControls .homeButton {
+    padding: 0 .65rem;
+    font-size: .7rem;
+  }
+
+  .readerControls .contentsButton {
+    min-width: 5.3rem;
+    padding: 0 .65rem;
+    font-size: .72rem;
+  }
+
+  .readerControls span {
+    min-width: 3.25rem;
+    font-size: .75rem;
+  }
 }
 
 .contentsOverlay {

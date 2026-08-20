@@ -203,7 +203,7 @@ export function Library() {
                       ))}
                     </div>
                     <a
-                      href="/auth?mode=login&next=/onboarding"
+                      href="/auth?mode=login&next=/app"
                       className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-[11px] font-medium tracking-[0.18em] uppercase transition-all bg-olive text-white hover:bg-olive/90"
                     >
                       Sign in to read free →

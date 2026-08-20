@@ -610,7 +610,7 @@ export default function OnboardingQuestionnaire() {
         preferences,
       });
       await refresh();
-      router.push("/app/ebook");
+      router.push("/app");
     } catch (e: any) {
       setError(e?.response?.data?.detail || "Something went wrong. Please try again.");
       setGenerating(false);
