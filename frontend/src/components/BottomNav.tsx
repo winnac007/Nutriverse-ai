@@ -62,7 +62,7 @@ const culinaryTabs: Tab[] = [
   },
   {
     href: "/app/profile",
-    label: "You",
+    label: "Profile",
     matches: (pathname) => pathname.startsWith("/app/profile"),
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
@@ -93,23 +93,23 @@ const wellnessTabs: Tab[] = [
     ),
   },
   {
-    href: "/app/track",
-    label: "Track",
-    matches: (pathname) => pathname.startsWith("/app/track"),
+    href: "/app/progress",
+    label: "Journey",
+    matches: (pathname) => pathname.startsWith("/app/progress") || pathname.startsWith("/app/track"),
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3" />
-        <circle cx="12" cy="12" r="3.25" />
+        <rect x="4" y="5.5" width="16" height="15" rx="2.5" />
+        <path d="M8 3v5M16 3v5M4 10h16M8 14h3M13 14h3M8 17h3" />
       </svg>
     ),
   },
   {
-    href: "/app/progress",
-    label: "Progress",
-    matches: (pathname) => pathname.startsWith("/app/progress"),
+    href: "/app/consult",
+    label: "Consult",
+    matches: (pathname) => pathname.startsWith("/app/consult"),
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M5 20V11h4v9H5ZM10 20V6h4v14h-4ZM15 20V3h4v17h-4Z" />
+        <path d="M20 11.5a7.5 7.5 0 0 1-8 7.47 8.7 8.7 0 0 1-3.2-.83L4 20l1.7-4.12A7.5 7.5 0 1 1 20 11.5Z" />
       </svg>
     ),
   },
