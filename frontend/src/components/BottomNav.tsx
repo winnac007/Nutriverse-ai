@@ -76,9 +76,10 @@ const culinaryTabs: Tab[] = [
 const wellnessTabs: Tab[] = [
   culinaryTabs[0],
   {
-    href: "/app/daily-plan",
+    href: "/app/meals",
     label: "Meals",
     matches: (pathname) => [
+      "/app/meals",
       "/app/daily-plan",
       "/app/meal-plan",
       "/app/grocery",
@@ -120,11 +121,10 @@ export default function BottomNav() {
   const pathname = usePathname() ?? "/app";
   const culinaryTheme = [
     "/app/culinary",
-    "/app/explore",
     "/app/passport",
     "/app/recipe",
     "/app/story-map",
-  ].some((prefix) => pathname.startsWith(prefix));
+  ].some((prefix) => pathname.startsWith(prefix)) || pathname.startsWith("/app/explore/");
 
   const palette = culinaryTheme
     ? {

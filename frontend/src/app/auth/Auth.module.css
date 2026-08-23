@@ -3,7 +3,7 @@
   display: grid;
   background: #f6f0e4;
   color: #263d2a;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: "DM Sans", Inter, system-ui, sans-serif;
 }
 
 .story {
@@ -83,7 +83,7 @@
 .wordmark {
   margin: 0;
   color: #29452d;
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: clamp(2.4rem, 4vw, 4rem);
   font-weight: 500;
   letter-spacing: .19em;
@@ -109,7 +109,7 @@
 .story h1 {
   margin: 0;
   color: #29452d;
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: clamp(2rem, 3vw, 3.15rem);
   font-weight: 500;
   line-height: 1.12;
@@ -161,7 +161,7 @@
 .mobileBrand p {
   margin: 0;
   color: #526a52;
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: 1rem;
 }
 
@@ -171,7 +171,7 @@
   align-items: center;
   gap: .65rem;
   color: #2e4932;
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: 1.18rem;
   font-weight: 600;
   letter-spacing: .14em;
@@ -242,7 +242,7 @@
 .formWrap h2 {
   margin: 0;
   color: #29452d;
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: clamp(2.2rem, 7vw, 3.15rem);
   font-weight: 500;
   line-height: 1;
@@ -280,7 +280,7 @@
   outline: none;
   background: rgba(255, 253, 248, .78);
   color: #223727;
-  font: 400 .92rem/1.2 "Inter", system-ui, sans-serif;
+  font: 400 .92rem/1.2 "DM Sans", Inter, system-ui, sans-serif;
   transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
 }
 
@@ -307,7 +307,7 @@
 .switchMode {
   min-height: 52px;
   border-radius: 999px;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: "DM Sans", Inter, system-ui, sans-serif;
   cursor: pointer;
 }
 
@@ -355,6 +355,19 @@
 
 .switchMode:hover { background: #fffdf8; border-color: #9eae93; }
 
+.professionalLink {
+  display: block;
+  margin-top: .9rem;
+  color: #3d5c3e;
+  font-size: .72rem;
+  font-weight: 650;
+  line-height: 1.5;
+  text-align: center;
+  text-decoration: none;
+}
+
+.professionalLink:hover { text-decoration: underline; }
+
 .privacy {
   display: flex;
   justify-content: center;
@@ -370,7 +383,7 @@
   place-items: center;
   background: #f6f0e4;
   color: #405b3d;
-  font: 500 1rem/1.5 "Inter", system-ui, sans-serif;
+  font: 500 1rem/1.5 "DM Sans", Inter, system-ui, sans-serif;
 }
 
 @media (min-width: 720px) {

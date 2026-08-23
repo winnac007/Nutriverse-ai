@@ -1,6 +1,12 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import {
+  clearUserSession,
+  persistUserSession,
+  USER_ACCESS_TOKEN_KEY,
+  USER_REFRESH_TOKEN_KEY,
+} from "./api";
 import api from "./api";
 import { User } from "./types";
 
@@ -21,35 +27,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("nv_token") : null;
-    if (!token) {
+    const hasSession = typeof window !== "undefined"
+      ? Boolean(localStorage.getItem(USER_ACCESS_TOKEN_KEY) || localStorage.getItem(USER_REFRESH_TOKEN_KEY))
+      : false;
+    if (!hasSession) {
       setLoading(false);
       return;
     }
     api.get("/auth/me")
       .then((r) => setUser(r.data))
       .catch(() => {
-        if (typeof window !== "undefined") localStorage.removeItem("nv_token");
+        clearUserSession();
       })
       .finally(() => setLoading(false));
   }, []);
 
   const login = async (email: string, password: string) => {
     const { data } = await api.post("/auth/login", { email, password });
-    if (typeof window !== "undefined") localStorage.setItem("nv_token", data.token);
+    persistUserSession(data);
     setUser(data.user);
     return data.user;
   };
 
   const register = async (email: string, password: string, name: string) => {
     const { data } = await api.post("/auth/register", { email, password, name });
-    if (typeof window !== "undefined") localStorage.setItem("nv_token", data.token);
+    persistUserSession(data);
     setUser(data.user);
     return data.user;
   };
 
   const logout = () => {
-    if (typeof window !== "undefined") localStorage.removeItem("nv_token");
+    clearUserSession();
     setUser(null);
   };
 

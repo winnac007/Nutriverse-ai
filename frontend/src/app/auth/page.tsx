@@ -167,6 +167,10 @@ function AuthContent() {
             {mode === "register" ? "Already have an account? Sign in" : "New to Zenplate? Create an account"}
           </button>
 
+          <Link className={styles.professionalLink} href="/professional">
+            Joining as a consultant or chef? Open the professional portal →
+          </Link>
+
           <p className={styles.privacy}>
             <span aria-hidden="true">♢</span> Your information is safe and private
           </p>

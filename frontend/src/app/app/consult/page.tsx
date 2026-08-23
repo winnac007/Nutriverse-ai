@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import {
   CONSULTANTS,
@@ -67,6 +67,8 @@ export default function ConsultPage() {
   const [selectedMode, setSelectedMode] = useState<ConsultationMode>("video");
   const [search, setSearch] = useState("");
   const [showNotice, setShowNotice] = useState(false);
+  const [selectionFeedback, setSelectionFeedback] = useState("Showing nutritionists below");
+  const recommendationsRef = useRef<HTMLElement>(null);
 
   const recommended = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -85,9 +87,19 @@ export default function ConsultPage() {
     }).sort((left, right) => Number(Boolean(right.topMatch)) - Number(Boolean(left.topMatch)));
   }, [search, selectedConcern, selectedType]);
 
-  const selectConcern = (id: HealthConcernId) => {
-    setSelectedConcern((current) => current === id ? null : id);
+  const revealRecommendations = (message: string) => {
+    setSelectionFeedback(message);
+    window.setTimeout(() => {
+      recommendationsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      recommendationsRef.current?.focus({ preventScroll: true });
+    }, 80);
+  };
+
+  const selectConcern = (id: HealthConcernId, label: string) => {
+    const clearing = selectedConcern === id;
+    setSelectedConcern(clearing ? null : id);
     setSelectedType(null);
+    revealRecommendations(clearing ? "Showing all consultants below" : `Showing experts for ${label} below`);
   };
 
   return (
@@ -134,8 +146,10 @@ export default function ConsultPage() {
                 className={active ? styles.activeType : ""}
                 aria-pressed={active}
                 onClick={() => {
-                  setSelectedType((current) => current === expertType.id ? null : expertType.id);
+                  const clearing = selectedType === expertType.id;
+                  setSelectedType(clearing ? null : expertType.id);
                   setSelectedConcern(null);
+                  revealRecommendations(clearing ? "Showing all consultants below" : `Showing ${expertType.label.toLowerCase()}s below`);
                 }}
               >
                 <span className={styles.typeIcon}><Icon aria-hidden="true" /></span>
@@ -145,6 +159,9 @@ export default function ConsultPage() {
             );
           })}
         </div>
+        <button className={styles.selectionFeedback} type="button" onClick={() => revealRecommendations(selectionFeedback)} aria-live="polite">
+          <Sprout aria-hidden="true" /> {selectionFeedback} <span>View matches ↓</span>
+        </button>
       </section>
 
       <label className={styles.searchBox}>
@@ -189,6 +206,7 @@ export default function ConsultPage() {
             onClick={() => {
               setSelectedConcern(null);
               setSelectedType(null);
+              revealRecommendations("Showing all consultants below");
             }}
           >
             See all
@@ -204,7 +222,7 @@ export default function ConsultPage() {
                 type="button"
                 className={active ? styles.activeConcern : ""}
                 aria-pressed={active}
-                onClick={() => selectConcern(concern.id)}
+                onClick={() => selectConcern(concern.id, concern.label)}
               >
                 <Icon aria-hidden="true" />
                 <span>{concern.label}</span>
@@ -214,7 +232,7 @@ export default function ConsultPage() {
         </div>
       </section>
 
-      <section className={styles.recommendations} aria-labelledby="recommended-title">
+      <section ref={recommendationsRef} tabIndex={-1} className={styles.recommendations} aria-labelledby="recommended-title">
         <div className={styles.sectionHeading}>
           <h2 id="recommended-title"><Sprout aria-hidden="true" /> Recommended for you</h2>
           <span>{recommended.length}</span>

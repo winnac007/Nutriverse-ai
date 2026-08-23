@@ -153,8 +153,19 @@ async def list_recipes(
             }
         ]
 
-    if tier and tier != "all":
-        normalized = [r for r in normalized if r.get("tier") == tier]
+    if tier == "budget":
+        normalized = [
+            recipe
+            for recipe in normalized
+            if recipe.get("tier") in (None, "free", "budget")
+            and not recipe.get("is_premium")
+        ]
+    elif tier == "premium":
+        normalized = [
+            recipe
+            for recipe in normalized
+            if recipe.get("tier") == "premium" or recipe.get("is_premium")
+        ]
 
     # Non-diet tags filtered locally
     if tag and tag.lower() not in DIET_TAGS:
@@ -196,9 +207,11 @@ async def list_recipes(
             category=category if category and category != "all" else None,
             diet=diet_tag,
             tag=content_tag,
-            tier=tier,
+            tier=None if tier == "budget" else tier,
             max_calories=calorie_cap,
         )
+        if tier == "budget":
+            curated = [recipe for recipe in curated if not recipe.get("is_premium")]
 
     # For an explicit culinary search, surface matching editorial recipes first;
     # otherwise keep live/database ordering and use curated recipes as fallbacks.

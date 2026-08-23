@@ -29,6 +29,7 @@ type NutritionTotals = {
 type RecipeSummary = {
   id: string;
   title: string;
+  href?: string;
   image?: string;
   is_premium?: boolean;
   cook_time?: number;
@@ -78,7 +79,7 @@ const CHAPTERS: Chapter[] = [
     overline: "Discover",
     title: "Travel the Plate",
     description: "Global cuisines, gently adapted to how you live.",
-    href: "/app/story-map",
+    href: "/app/explore",
     image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=1200&q=85",
     variant: "dark",
     icon: Globe2,
@@ -101,6 +102,45 @@ const METRICS: Array<{ key: keyof NutritionTotals; label: string }> = [
   { key: "protein", label: "protein g" },
   { key: "carbs", label: "carbs g" },
   { key: "fat", label: "fat g" },
+];
+
+const FEATURED_FALLBACKS: RecipeSummary[] = [
+  {
+    id: "featured-lentil-dal",
+    title: "Turmeric Ginger Lentil Dal",
+    href: "/app/meals?search=lentil",
+    image: "https://images.unsplash.com/photo-1604152135912-04a022e23696?w=900&q=85",
+    country: "India",
+    cook_time: 30,
+    nutrition: { calories: 245 },
+  },
+  {
+    id: "featured-salmon",
+    title: "Baked Salmon with Steamed Broccoli",
+    href: "/app/meals?search=salmon",
+    image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=900&q=85",
+    country: "USA",
+    cook_time: 35,
+    nutrition: { calories: 420 },
+  },
+  {
+    id: "featured-quinoa",
+    title: "Quinoa Veggie Bowl for Kidney Health",
+    href: "/app/meals?search=quinoa",
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=900&q=85",
+    country: "Peru",
+    cook_time: 25,
+    nutrition: { calories: 390 },
+  },
+  {
+    id: "featured-tofu-bowl",
+    title: "Sesame Tofu Harvest Bowl",
+    href: "/app/meals?search=tofu",
+    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=900&q=85",
+    country: "Korea",
+    cook_time: 30,
+    nutrition: { calories: 460 },
+  },
 ];
 
 function LeafBranch() {
@@ -203,7 +243,7 @@ function ChapterCard({ chapter, index }: { chapter: Chapter; index: number }) {
 function FeaturedRecipe({ recipe }: { recipe: RecipeSummary }) {
   const label = recipe.country || recipe.category;
   return (
-    <Link className={styles.recipeCard} href={recipe.is_premium ? "/app/profile" : `/app/recipe/${recipe.id}`}>
+    <Link className={styles.recipeCard} href={recipe.href || (recipe.is_premium ? "/app/profile" : `/app/recipe/${recipe.id}`)}>
       <span className={styles.recipeImage}>
         <img
           src={recipe.image || "https://images.unsplash.com/photo-1547592180-85f173990554?w=720&q=80"}
@@ -248,7 +288,14 @@ export default function Home() {
       ]);
 
       if (!active) return;
-      if (recipesResult.status === "fulfilled") setFeatured(recipesResult.value.data.slice(0, 4));
+      if (recipesResult.status === "fulfilled") {
+        const liveRecipes = recipesResult.value.data.slice(0, 4);
+        const liveIds = new Set(liveRecipes.map((recipe) => recipe.id));
+        const filled = [...liveRecipes, ...FEATURED_FALLBACKS.filter((recipe) => !liveIds.has(recipe.id))].slice(0, 4);
+        setFeatured(filled);
+      } else {
+        setFeatured(FEATURED_FALLBACKS);
+      }
       if (nutritionResult.status === "fulfilled") setTotals(nutritionResult.value.data.totals || {});
     };
 
@@ -307,17 +354,15 @@ export default function Home() {
         <Link href="/app/meal-plan">Open →</Link>
       </section>
 
-      {featured.length > 0 ? (
-        <section className={styles.featured}>
-          <div className={styles.sectionHeading}>
-            <h2>Featured for you</h2>
-            <Link href="/app/explore">View all</Link>
-          </div>
-          <div className={styles.recipeRail}>
-            {featured.map((recipe) => <FeaturedRecipe key={recipe.id} recipe={recipe} />)}
-          </div>
-        </section>
-      ) : null}
+      <section className={styles.featured}>
+        <div className={styles.sectionHeading}>
+          <h2>Featured for you</h2>
+          <Link href="/app/meals">View all</Link>
+        </div>
+        <div className={styles.recipeRail}>
+          {(featured.length ? featured : FEATURED_FALLBACKS).map((recipe) => <FeaturedRecipe key={recipe.id} recipe={recipe} />)}
+        </div>
+      </section>
     </div>
   );
 }

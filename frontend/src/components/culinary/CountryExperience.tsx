@@ -146,12 +146,12 @@ export default function CountryExperience({ slug }: { slug: string }) {
     return (
       <CulinaryPage>
         <CulinaryShell narrow>
-          <ScreenHeader title="Destination" backHref="/app/story-map" />
+          <ScreenHeader title="Destination" backHref="/app/explore#countries" />
           <div className={styles.notFound}>
             <EmptyState
               title="This destination is not in the guide yet"
-              message="Return to the world map and choose one of the available culinary journeys."
-              action={<PrimaryLink href="/app/story-map">Open world map</PrimaryLink>}
+              message="Return to the country catalogue and choose one of the available culinary journeys."
+              action={<PrimaryLink href="/app/explore#countries">Browse countries</PrimaryLink>}
             />
           </div>
         </CulinaryShell>
@@ -190,7 +190,7 @@ export default function CountryExperience({ slug }: { slug: string }) {
   return (
     <CulinaryPage>
       <CulinaryShell>
-        <ScreenHeader title={destination.name} backHref="/app/story-map" />
+        <ScreenHeader title={destination.name} backHref="/app/explore#countries" />
 
         <main>
           <section className={styles.hero}>

@@ -12,13 +12,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const isEbook = pathname?.startsWith("/app/ebook");
   const isCulinary = [
     "/app/culinary",
-    "/app/explore",
     "/app/passport",
     "/app/recipe",
     "/app/story-map",
-  ].some((prefix) => pathname?.startsWith(prefix));
+  ].some((prefix) => pathname?.startsWith(prefix)) || Boolean(pathname?.startsWith("/app/explore/"));
   const hideBottomNav = isEbook || pathname === "/app/culinary" || pathname === "/app/explore/welcome";
-  const usesReferenceShell = pathname === "/app" || pathname?.startsWith("/app/healthcare");
+  const usesReferenceShell = pathname === "/app" || pathname === "/app/explore" || pathname?.startsWith("/app/healthcare") || pathname?.startsWith("/app/meals");
 
   useEffect(() => {
     if (!loading) {

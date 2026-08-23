@@ -4,7 +4,7 @@
   overflow: hidden;
   background: #f7f1e5;
   color: #263f2c;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: "DM Sans", Inter, system-ui, sans-serif;
 }
 
 .botanical {
@@ -39,7 +39,7 @@
   border: 0;
   background: transparent;
   color: #405c40;
-  font: 500 .9rem/1 "Inter", system-ui, sans-serif;
+  font: 500 .9rem/1 "DM Sans", Inter, system-ui, sans-serif;
   cursor: pointer;
 }
 
@@ -64,7 +64,7 @@
   max-width: 560px;
   margin: 0;
   color: #2f5034;
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: clamp(2.45rem, 11vw, 3.3rem);
   font-weight: 500;
   line-height: .98;
@@ -134,7 +134,7 @@
 .panelTitle p {
   margin: 0;
   color: #315033;
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: 1.65rem;
   font-weight: 600;
   line-height: 1;
@@ -212,7 +212,7 @@
   border-radius: 999px;
   background: #3f603a;
   color: #fffdf7;
-  font: 600 .96rem/1 "Inter", system-ui, sans-serif;
+  font: 600 .96rem/1 "DM Sans", Inter, system-ui, sans-serif;
   box-shadow: 0 11px 26px rgba(47, 78, 46, .22);
   cursor: pointer;
   transition: transform .18s ease, background .18s ease;

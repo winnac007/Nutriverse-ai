@@ -10,6 +10,9 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str = Field(min_length=20)
+
 class ProfileUpdate(BaseModel):
     name: Optional[str] = None
     category: Optional[str] = None

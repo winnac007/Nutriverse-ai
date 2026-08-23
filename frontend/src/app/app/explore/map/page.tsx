@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function CulinaryMapAliasPage() {
-  redirect("/app/story-map");
+  redirect("/app/explore#countries");
 }

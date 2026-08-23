@@ -187,6 +187,8 @@ async def search_recipes(
         mongo_query["nutrition.calories"] = {"$lte": 500} # Simple heuristic
     elif type == "fitness":
         mongo_query["nutrition.protein"] = {"$gte": 20}
+    elif type:
+        mongo_query["category"] = type
     
     try:
         # Featured (TheMealDB, real photos) surface first; Food.com long-tail after.

@@ -3,7 +3,7 @@
   display: grid;
   background: #f7f1e5;
   color: #2d4530;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: "DM Sans", Inter, system-ui, sans-serif;
 }
 
 .rail { display: none; }
@@ -78,7 +78,7 @@
   max-width: 680px;
   margin: 0;
   color: #2d4b31;
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: clamp(2.35rem, 10vw, 3.1rem);
   font-weight: 500;
   line-height: .98;
@@ -178,7 +178,7 @@
   outline: none;
   background: rgba(255, 253, 248, .9);
   color: #2d4530;
-  font: 500 1.05rem/1.2 "Inter", system-ui, sans-serif;
+  font: 500 1.05rem/1.2 "DM Sans", Inter, system-ui, sans-serif;
 }
 
 .inputWithUnit { padding-right: 3.7rem; }
@@ -225,7 +225,7 @@
   border-radius: 999px;
   background: #3f603a;
   color: #fff;
-  font: 700 .88rem/1 "Inter", system-ui, sans-serif;
+  font: 700 .88rem/1 "DM Sans", Inter, system-ui, sans-serif;
   box-shadow: 0 10px 24px rgba(52, 82, 50, .2);
   cursor: pointer;
   transition: background .18s ease, transform .18s ease;
@@ -246,7 +246,7 @@
 }
 
 .generatingIcon { width: 76px; height: 76px; display: grid; place-items: center; margin-bottom: 1.5rem; border-radius: 50%; background: #e7e7d7; }
-.generating h2 { margin: 0; color: #2d4530; font-family: "Cormorant Garamond", Georgia, serif; font-size: 2rem; font-weight: 500; }
+.generating h2 { margin: 0; color: #2d4530; font-family: "Playfair Display", Georgia, serif; font-size: 2rem; font-weight: 500; }
 .generating > p { max-width: 360px; margin: .75rem 0 0; color: #6f806f; font-size: .8rem; line-height: 1.65; }
 .generatingError { margin-top: 1.4rem; padding: .9rem 1rem; border: 1px solid #e6b9a7; border-radius: 14px; background: #f7e4dc; color: #8f3e28; font-size: .76rem; }
 .generatingError button { display: block; margin: .75rem auto 0; padding: .55rem 1rem; border: 0; border-radius: 999px; background: #3f603a; color: #fff; cursor: pointer; }
@@ -276,10 +276,10 @@
   .railWash { position: absolute; inset: 0; z-index: -2; background: linear-gradient(180deg, rgba(243, 237, 223, .88) 0%, rgba(243, 237, 223, .62) 48%, rgba(243, 237, 223, .06) 78%, rgba(36, 60, 37, .24)); }
   .railBotanical { position: absolute; left: -58px; bottom: -76px; z-index: -1; width: 280px; height: 390px; opacity: .62; background: url("/app-ui/botanical-vase.webp") center / contain no-repeat; }
   .railCopy { width: min(430px, 76%); margin: 0 auto; padding-top: clamp(5rem, 11vh, 8rem); text-align: center; }
-  .railBrand { margin: 0; color: #355037; font-family: "Cormorant Garamond", Georgia, serif; font-size: 1.05rem; font-weight: 600; letter-spacing: .2em; }
+  .railBrand { margin: 0; color: #355037; font-family: "Playfair Display", Georgia, serif; font-size: 1.05rem; font-weight: 600; letter-spacing: .2em; }
   .railRule { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: .75rem; width: 150px; margin: 1.25rem auto; color: #b68e48; font-size: .7rem; }
   .railRule::before, .railRule::after { content: ""; height: 1px; background: #ba9855; }
-  .railCopy h2 { margin: 0; color: #2f4c32; font-family: "Cormorant Garamond", Georgia, serif; font-size: clamp(3.2rem, 4.5vw, 4.8rem); font-weight: 500; line-height: .94; }
+  .railCopy h2 { margin: 0; color: #2f4c32; font-family: "Playfair Display", Georgia, serif; font-size: clamp(3.2rem, 4.5vw, 4.8rem); font-weight: 500; line-height: .94; }
   .railCopy > p:last-child { max-width: 380px; margin: 1.2rem auto 0; color: #60715f; font-size: .82rem; line-height: 1.7; }
 
   .shell { width: min(100%, 820px); }

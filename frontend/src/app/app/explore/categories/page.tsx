@@ -13,7 +13,7 @@ const categories = [
   {
     title: "Explore by Country",
     subtitle: "Discover foods around the world",
-    href: "/app/story-map",
+    href: "/app/explore#countries",
     image: "/landing/map-dark.jpg",
   },
   {

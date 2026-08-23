@@ -1,0 +1,529 @@
+.page {
+  --professional-ivory: #f4f1e8;
+  --professional-paper: #faf7ee;
+  --professional-ink: #2e2a26;
+  --professional-olive: #5e6b55;
+  --professional-olive-deep: #46523f;
+  --professional-gold: #b59b5a;
+  --professional-border: #ddd6c9;
+  min-height: 100dvh;
+  padding: clamp(1rem, 4vw, 2.5rem);
+  color: var(--professional-ink);
+  background:
+    radial-gradient(circle at 90% 0%, rgba(181, 155, 90, 0.13), transparent 24rem),
+    var(--professional-ivory);
+  font-family: "DM Sans", Inter, sans-serif;
+}
+
+.shell {
+  width: min(100%, 72rem);
+  margin: 0 auto;
+}
+
+.topbar,
+.topActions,
+.roleLinks,
+.dashboardHeader,
+.statusRow,
+.fieldRow,
+.formActions,
+.recipeMeta,
+.recipeActions {
+  display: flex;
+  align-items: center;
+}
+
+.topbar,
+.dashboardHeader {
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--professional-ink);
+  text-decoration: none;
+}
+
+.brand svg {
+  width: 1.2rem;
+  color: var(--professional-olive);
+}
+
+.brand span {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.backLink,
+.textLink {
+  color: var(--professional-olive);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.portalIntro {
+  max-width: 48rem;
+  margin: clamp(3.5rem, 10vw, 7rem) 0 2rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.8rem;
+  color: #8a6e3a;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.portalIntro h1,
+.authCopy h1,
+.dashboardHeader h1,
+.panel h2,
+.roleCard h2,
+.emptyState h3,
+.recipeCard h3 {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.portalIntro h1 {
+  font-size: clamp(2.8rem, 10vw, 5.5rem);
+  line-height: 0.96;
+}
+
+.portalIntro > p:last-child,
+.authCopy > p,
+.dashboardHeader p {
+  color: #6b6258;
+  line-height: 1.65;
+}
+
+.roleGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.roleCard {
+  position: relative;
+  display: grid;
+  min-height: 19rem;
+  gap: 1rem;
+  padding: 1.5rem;
+  overflow: hidden;
+  border: 1px solid var(--professional-border);
+  border-radius: 1.5rem;
+  color: var(--professional-ink);
+  background: #eef0e6;
+}
+
+.roleCard:last-child {
+  background: #ead8be;
+}
+
+.roleIcon {
+  display: grid;
+  width: 3.25rem;
+  height: 3.25rem;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--professional-olive);
+  background: white;
+}
+
+.roleCard h2 {
+  font-size: 2rem;
+}
+
+.roleCard p {
+  max-width: 31rem;
+  margin: 0;
+  color: #625b52;
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.roleLinks {
+  align-self: end;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.primaryLink,
+.secondaryLink,
+.primaryButton,
+.secondaryButton {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1rem;
+  border-radius: 999px;
+  font: 650 0.78rem/1 "DM Sans", Inter, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.primaryLink,
+.primaryButton {
+  border: 1px solid var(--professional-olive);
+  color: white;
+  background: var(--professional-olive);
+}
+
+.secondaryLink,
+.secondaryButton {
+  border: 1px solid rgba(94, 107, 85, 0.4);
+  color: var(--professional-olive-deep);
+  background: rgba(250, 247, 238, 0.76);
+}
+
+.primaryLink:hover,
+.secondaryLink:hover,
+.primaryButton:hover,
+.secondaryButton:hover {
+  transform: translateY(-1px);
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled {
+  opacity: 0.58;
+  cursor: wait;
+  transform: none;
+}
+
+.authLayout {
+  display: grid;
+  gap: 1rem;
+  margin-top: clamp(2rem, 7vw, 5rem);
+}
+
+.authCopy,
+.authCard,
+.panel,
+.metricCard,
+.recipeCard,
+.emptyState {
+  border: 1px solid var(--professional-border);
+  border-radius: 1.5rem;
+  background: rgba(250, 247, 238, 0.9);
+}
+
+.authCopy {
+  min-height: 18rem;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  background:
+    linear-gradient(120deg, rgba(238, 240, 230, 0.96), rgba(238, 240, 230, 0.74)),
+    url("/landing/olive-branch.png") right center / 16rem auto no-repeat;
+}
+
+.authCopy h1 {
+  max-width: 35rem;
+  font-size: clamp(2.5rem, 8vw, 4.6rem);
+  line-height: 0.98;
+}
+
+.authCard,
+.panel {
+  padding: clamp(1.15rem, 4vw, 2rem);
+}
+
+.form {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.field,
+.textareaField {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.field > span,
+.textareaField > span {
+  color: #746b61;
+  font-size: 0.64rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.field input,
+.field select,
+.textareaField textarea {
+  width: 100%;
+  min-height: 3.2rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid #d8d0c2;
+  border-radius: 0.9rem;
+  outline: 0;
+  color: var(--professional-ink);
+  background: #fffdf7;
+  font: 0.82rem "DM Sans", Inter, sans-serif;
+}
+
+.textareaField textarea {
+  min-height: 7rem;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.field input:focus,
+.field select:focus,
+.textareaField textarea:focus {
+  border-color: var(--professional-olive);
+  box-shadow: 0 0 0 3px rgba(94, 107, 85, 0.12);
+}
+
+.fieldRow {
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.fieldRow > * {
+  min-width: 0;
+  flex: 1;
+}
+
+.error,
+.success {
+  margin: 0;
+  padding: 0.75rem 0.85rem;
+  border-radius: 0.8rem;
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.error {
+  color: #8d4d3d;
+  background: #f7e6df;
+}
+
+.success {
+  color: #405b41;
+  background: #e7ede1;
+}
+
+.formFoot {
+  margin: 1rem 0 0;
+  color: #756d64;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.dashboardHeader {
+  align-items: flex-end;
+  margin: clamp(2.5rem, 7vw, 5rem) 0 1.4rem;
+}
+
+.dashboardHeader h1 {
+  font-size: clamp(2.4rem, 8vw, 4.5rem);
+  line-height: 0.95;
+}
+
+.topActions {
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.metricCard {
+  padding: 1rem;
+}
+
+.metricCard span {
+  color: #766e64;
+  font-size: 0.68rem;
+}
+
+.metricCard strong {
+  display: block;
+  margin-top: 0.4rem;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.dashboardGrid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.panel h2 {
+  font-size: 1.6rem;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.panelHeader p {
+  margin: 0.35rem 0 0;
+  color: #756d64;
+  font-size: 0.75rem;
+}
+
+.statusRow {
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid #e6dfd3;
+  color: #6b6258;
+  font-size: 0.77rem;
+}
+
+.statusPill {
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  color: #465b45;
+  background: #e7ecdf;
+  font-size: 0.66rem;
+  font-weight: 650;
+  text-transform: capitalize;
+}
+
+.toggleButton {
+  min-width: 6.4rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #d4ccbe;
+  border-radius: 999px;
+  color: var(--professional-olive-deep);
+  background: #fffdf7;
+  font: 650 0.68rem "DM Sans", sans-serif;
+  cursor: pointer;
+}
+
+.emptyState {
+  display: grid;
+  min-height: 11rem;
+  gap: 0.55rem;
+  padding: 1.5rem;
+  place-items: center;
+  text-align: center;
+}
+
+.emptyState svg {
+  color: var(--professional-olive);
+}
+
+.emptyState p {
+  max-width: 28rem;
+  margin: 0;
+  color: #756d64;
+  font-size: 0.75rem;
+  line-height: 1.55;
+}
+
+.recipeList {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.recipeCard {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  gap: 0.85rem;
+  padding: 0.75rem;
+}
+
+.recipeCard img {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 1rem;
+  object-fit: cover;
+  background: #e7e0d5;
+}
+
+.recipeCard h3 {
+  font-size: 1.1rem;
+}
+
+.recipeMeta {
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+  flex-wrap: wrap;
+  color: #776e64;
+  font-size: 0.66rem;
+}
+
+.recipeActions {
+  gap: 0.6rem;
+  margin-top: 0.55rem;
+}
+
+.recipeActions a {
+  color: var(--professional-olive);
+  font-size: 0.7rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.loading {
+  display: grid;
+  min-height: 60dvh;
+  place-items: center;
+  color: #6b6258;
+}
+
+@media (min-width: 720px) {
+  .roleGrid,
+  .authLayout,
+  .dashboardGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .authCopy {
+    position: sticky;
+    top: 1.5rem;
+    min-height: 35rem;
+  }
+
+  .metricGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .chefDashboardGrid {
+    grid-template-columns: minmax(20rem, 0.9fr) minmax(24rem, 1.1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .fieldRow,
+  .dashboardHeader {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .topActions {
+    justify-content: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primaryLink,
+  .secondaryLink,
+  .primaryButton,
+  .secondaryButton {
+    transition: none;
+  }
+}
