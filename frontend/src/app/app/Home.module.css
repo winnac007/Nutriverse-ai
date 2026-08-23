@@ -1,5 +1,7 @@
 .page {
   display: grid;
+  width: 100%;
+  min-width: 0;
   gap: 2rem;
   padding-bottom: 0.5rem;
   color: #2e2a26;
@@ -506,6 +508,10 @@
   margin-bottom: 1rem;
 }
 
+.featured {
+  min-width: 0;
+}
+
 .sectionHeading h2 {
   margin: 0;
   font-size: 1.45rem;
@@ -520,10 +526,13 @@
 
 .recipeRail {
   display: flex;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   gap: 1rem;
-  margin-inline: -1rem;
-  padding: 0 1rem 0.5rem;
+  padding: 0 0 0.5rem;
   overflow-x: auto;
+  overscroll-behavior-inline: contain;
   scrollbar-width: none;
 }
 
@@ -618,7 +627,6 @@
   .chapterCopy { width: 52%; padding: 1.55rem; }
   .chapterCopy p { font-size: 0.9rem; }
   .chapterCard { min-height: 14.5rem; }
-  .recipeRail { margin-inline: -1.5rem; padding-inline: 1.5rem; }
 }
 
 @media (max-width: 440px) {
