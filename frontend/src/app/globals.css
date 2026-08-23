@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 @import "tailwindcss" source(none);
 @source "..";
 @import "tw-animate-css";
@@ -88,9 +88,9 @@
 
 /* Scoped to the light wellness app. Culinary and ebook surfaces keep their own systems. */
 .core-app {
-  --core-canvas: #f7f1e5;
-  --core-paper: #fffdf7;
-  --core-ink: #1f2e1f;
+  --core-canvas: #f4f1e8;
+  --core-paper: #faf7ee;
+  --core-ink: #2e2a26;
   --core-forest: #2d4530;
   --core-action: #3d5c3e;
   --core-sage: #8d9e8d;
@@ -98,10 +98,10 @@
   --core-gold: #caaa70;
   --core-border: #e5ddd0;
   --core-coral: #d8775c;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "DM Sans", Inter, sans-serif;
   color: var(--core-ink);
-  background:
-    radial-gradient(circle at 12% 0%, rgba(202, 170, 112, 0.09), transparent 25rem),
-    var(--core-canvas);
+  background: var(--core-canvas);
   font-family: var(--font-sans);
 }
 

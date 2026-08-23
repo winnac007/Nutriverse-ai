@@ -21,7 +21,7 @@
 .time { bottom: 0.7rem; left: 0.7rem; }
 .copy { padding: 1rem; }
 .eyebrow { margin: 0 0 0.35rem; color: #6c8068; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; }
-.title { margin: 0; color: #1e3022; font: 500 1.45rem/1.05 "Cormorant Garamond", Georgia, serif; letter-spacing: -0.02em; }
+.title { margin: 0; color: #1e3022; font: 600 1.28rem/1.12 "Playfair Display", Georgia, serif; letter-spacing: -0.02em; }
 .meta { display: flex; align-items: center; justify-content: space-between; min-height: 2rem; margin-top: 0.6rem; color: #768278; font-size: 0.66rem; }
 .meta > span { display: inline-flex; align-items: center; gap: 0.3rem; }
 .arrow { display: grid !important; place-items: center; width: 1.9rem; height: 1.9rem; border: 1px solid #ded4c2; border-radius: 999px; color: #405a42; }

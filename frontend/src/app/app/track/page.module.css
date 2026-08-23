@@ -5,7 +5,7 @@
   background:
     radial-gradient(circle at 92% 0%, rgba(180, 194, 159, 0.3), transparent 20rem),
     linear-gradient(180deg, #f7f1e5, #fbf8f1 58%, #f6efe2);
-  font-family: Inter, system-ui, sans-serif;
+  font-family: "DM Sans", Inter, system-ui, sans-serif;
 }
 
 .hero,
@@ -103,7 +103,7 @@
 .stateCard h1,
 .emptyState h3 {
   margin: 0;
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-weight: 500;
   letter-spacing: -0.025em;
 }
@@ -138,7 +138,7 @@
 
 .heroTotal span,
 .heroTotal small { display: block; color: #7f8b7b; font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.1em; }
-.heroTotal strong { display: block; margin: 0.12rem 0; font: 500 2rem/1 "Cormorant Garamond", serif; }
+.heroTotal strong { display: block; margin: 0.12rem 0; font: 600 1.8rem/1 "Playfair Display", serif; }
 
 .contentGrid,
 .primaryColumn,
@@ -207,7 +207,7 @@
   background: #faf6ed;
 }
 
-.profilePrompt strong { font: 600 1rem "Cormorant Garamond", serif; }
+.profilePrompt strong { font: 600 0.95rem "Playfair Display", serif; }
 .profilePrompt p { margin: 0.25rem 0 0; color: #7d8879; font-size: 0.63rem; line-height: 1.5; }
 .profilePrompt a { display: inline-flex; align-items: center; gap: 0.2rem; color: #3d5c3e; font-size: 0.67rem; font-weight: 700; text-decoration: none; }
 
@@ -244,7 +244,7 @@
   justify-content: center;
   gap: 0.4rem;
   border-radius: 999px;
-  font: 700 0.72rem Inter, sans-serif;
+  font: 700 0.72rem "DM Sans", Inter, sans-serif;
   text-decoration: none;
 }
 
@@ -304,7 +304,7 @@
 .quickLog strong {
   grid-column: 1;
   overflow: hidden;
-  font: 600 0.92rem/1.1 "Cormorant Garamond", serif;
+  font: 600 0.88rem/1.15 "Playfair Display", serif;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -337,7 +337,7 @@
 .mealGlyph { width: 2.15rem; height: 2.15rem; }
 .logCopy { min-width: 0; }
 .logCopy > span { color: #a1703a; font-size: 0.54rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
-.logCopy h3 { overflow: hidden; margin: 0.1rem 0 0.2rem; font: 500 1rem "Cormorant Garamond", serif; text-overflow: ellipsis; white-space: nowrap; }
+.logCopy h3 { overflow: hidden; margin: 0.1rem 0 0.2rem; font: 600 0.95rem "Playfair Display", serif; text-overflow: ellipsis; white-space: nowrap; }
 .logCopy p { margin: 0; color: #849080; font-size: 0.61rem; }
 .deleteButton { display: grid; width: 2.25rem; height: 2.25rem; padding: 0; place-items: center; border: 1px solid transparent; border-radius: 50%; color: #9a695b; background: transparent; cursor: pointer; }
 .deleteButton:hover { border-color: #ead4cc; background: #fbefeb; }
@@ -354,7 +354,7 @@
 .quoteCard { position: relative; overflow: hidden; margin: 0; padding: 1.25rem; background: linear-gradient(135deg, #e9eee3, #fffaf1 68%); }
 .quoteCard::after { position: absolute; right: -2rem; bottom: -3rem; width: 8rem; height: 8rem; border-radius: 50%; background: rgba(196, 151, 74, 0.11); content: ""; }
 .quoteCard svg { color: #b57e39; }
-.quoteCard p { position: relative; z-index: 1; max-width: 20rem; margin: 0.65rem 0 0; font: italic 500 1.15rem/1.4 "Cormorant Garamond", serif; }
+.quoteCard p { position: relative; z-index: 1; max-width: 20rem; margin: 0.65rem 0 0; font: italic 500 1.05rem/1.45 "Playfair Display", serif; }
 
 .stateCard {
   display: flex;

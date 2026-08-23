@@ -135,11 +135,11 @@ export default function BottomNav() {
         activeSurface: "rgba(163, 161, 80, 0.16)",
       }
     : {
-        background: "rgba(255, 255, 255, 0.9)",
-        border: "#E5DDD0",
-        active: "#3D5C3E",
-        inactive: "#A8B8A8",
-        activeSurface: "rgba(61, 92, 62, 0.1)",
+        background: "rgba(250, 247, 238, 0.9)",
+        border: "#DDD6C9",
+        active: "#5E6B55",
+        inactive: "#6B6258",
+        activeSurface: "transparent",
       };
 
   const tabs = culinaryTheme ? culinaryTabs : wellnessTabs;
@@ -172,7 +172,7 @@ export default function BottomNav() {
             >
               <span className={styles.iconFrame}>
                 {tab.icon}
-                {isActive ? <span className={styles.dot} /> : null}
+                {isActive && culinaryTheme ? <span className={styles.dot} /> : null}
               </span>
               <span className={styles.label}>{tab.label}</span>
             </Link>

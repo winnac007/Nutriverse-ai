@@ -18,6 +18,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     "/app/story-map",
   ].some((prefix) => pathname?.startsWith(prefix));
   const hideBottomNav = isEbook || pathname === "/app/culinary" || pathname === "/app/explore/welcome";
+  const usesReferenceShell = pathname === "/app" || pathname?.startsWith("/app/healthcare");
 
   useEffect(() => {
     if (!loading) {
@@ -44,7 +45,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <path d="M12 24 L28 24 Q28 34 20 36 Q12 34 12 24 Z" fill="#3D5C3E" opacity="0.9" />
           <ellipse cx="20" cy="24" rx="8" ry="2" fill="#2D4530" />
         </svg>
-        <p style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: 13, color: "#8D9E8D" }}>Loading…</p>
+        <p style={{ fontFamily: "DM Sans, system-ui, sans-serif", fontSize: 13, color: "#8D9E8D" }}>Loading…</p>
       </div>
     );
   }
@@ -54,11 +55,19 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       className={isEbook ? "" : isCulinary ? "" : "core-app"}
       style={{
         minHeight: isEbook || isCulinary ? "100vh" : "100dvh",
-        background: isEbook ? "#0A0D16" : isCulinary ? "#090B09" : "#F7F1E5",
+        background: isEbook ? "#0A0D16" : isCulinary ? "#090B09" : "#F4F1E8",
       }}
     >
       <main
-        className={isEbook ? "" : isCulinary ? "max-w-md md:max-w-3xl lg:max-w-6xl mx-auto" : "w-full max-w-[78rem] mx-auto min-h-[100dvh]"}
+        className={
+          isEbook
+            ? ""
+            : isCulinary
+              ? "max-w-md md:max-w-3xl lg:max-w-6xl mx-auto"
+              : usesReferenceShell
+                ? "w-full max-w-3xl mx-auto min-h-[100dvh] px-4 sm:px-6 pt-6"
+                : "w-full max-w-[78rem] mx-auto min-h-[100dvh]"
+        }
         style={hideBottomNav ? {} : {
           paddingBottom: `calc(var(--app-bottom-nav-height) + env(safe-area-inset-bottom, 0px) + ${isCulinary ? "1rem" : "2rem"} + 1px)`,
         }}

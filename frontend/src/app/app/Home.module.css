@@ -1,778 +1,648 @@
 .page {
-  position: relative;
-  min-height: 100dvh;
-  overflow: clip;
+  display: grid;
+  gap: 2rem;
+  padding-bottom: 0.5rem;
+  color: #2e2a26;
+  font-family: "DM Sans", Inter, sans-serif;
 }
 
-.header {
-  position: relative;
-  min-height: 13.5rem;
-  padding: calc(env(safe-area-inset-top, 0px) + 1.45rem) 1.25rem 2rem;
-  overflow: hidden;
-  background: linear-gradient(145deg, rgba(255, 253, 247, 0.9), rgba(236, 233, 217, 0.86));
-  border-bottom: 1px solid rgba(229, 221, 208, 0.8);
+.appBar,
+.appActions,
+.focusHeading,
+.chapterLabel,
+.guideCard,
+.sectionHeading,
+.recipeMeta {
+  display: flex;
+  align-items: center;
 }
 
-.header::after {
-  position: absolute;
-  right: -3rem;
-  bottom: -4rem;
-  width: 16rem;
-  height: 16rem;
-  border-radius: 50%;
-  background: rgba(202, 170, 112, 0.09);
-  content: "";
+.appBar {
+  justify-content: space-between;
 }
 
-.headerCopy {
-  position: relative;
-  z-index: 2;
-  max-width: 22rem;
-  padding-top: 1rem;
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: #2e2a26;
+  text-decoration: none;
 }
 
-.eyebrow,
-.sectionLabel {
-  margin: 0;
-  color: var(--core-sage);
-  font-size: 0.65rem;
-  font-weight: 650;
-  letter-spacing: 0.16em;
-  line-height: 1.3;
+.wordmark svg {
+  width: 1.25rem;
+  color: #5e6b55;
+}
+
+.wordmark span {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
 }
 
-.header h1 {
-  max-width: 19rem;
-  margin: 0.5rem 0 0.25rem;
-  font-size: clamp(2.15rem, 11vw, 3.5rem);
-  line-height: 0.93;
-  letter-spacing: -0.045em;
-}
-
-.header h1 span {
-  color: var(--core-action);
-}
-
-.headerCopy > p {
-  margin: 0.7rem 0 0;
-  color: #687668;
-  font-size: 0.83rem;
-}
-
-.headerActions {
-  position: absolute;
-  z-index: 4;
-  top: calc(env(safe-area-inset-top, 0px) + 1rem);
-  right: 1.15rem;
-  display: flex;
-  align-items: center;
+.appActions {
   gap: 0.55rem;
 }
 
-.notificationWrap {
-  position: relative;
-}
-
-.iconButton,
-.avatar {
-  display: grid;
-  width: 2.65rem;
-  height: 2.65rem;
-  flex: 0 0 auto;
-  place-items: center;
-  border: 1px solid rgba(229, 221, 208, 0.9);
-  border-radius: 50%;
-  color: var(--core-action);
-  background: rgba(255, 253, 247, 0.84);
-  box-shadow: 0 8px 24px rgba(45, 69, 48, 0.08);
-}
-
-.iconButton {
-  position: relative;
-  cursor: pointer;
-}
-
-.iconButton svg {
-  width: 1.15rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.notificationDot {
-  position: absolute;
-  top: 0.42rem;
-  right: 0.45rem;
-  width: 0.38rem;
-  height: 0.38rem;
-  border: 2px solid var(--core-paper);
-  border-radius: 50%;
-  background: var(--core-action);
-}
-
-.avatar {
-  color: #fff;
-  background: var(--core-action);
-  font-size: 0.82rem;
-  font-weight: 650;
-  text-decoration: none;
-}
-
-.notice {
-  position: absolute;
-  top: 3.25rem;
-  right: -3.2rem;
-  display: grid;
-  width: min(17rem, calc(100vw - 2.5rem));
-  gap: 0.18rem;
-  padding: 0.9rem 1rem;
-  border: 1px solid var(--core-border);
-  border-radius: 1rem;
-  color: var(--core-ink);
-  background: rgba(255, 253, 247, 0.97);
-  box-shadow: 0 18px 45px rgba(45, 69, 48, 0.16);
-}
-
-.notice strong {
-  font-family: var(--font-serif);
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.notice span {
-  color: #6b786b;
-  font-size: 0.72rem;
-  line-height: 1.45;
-}
-
-.headerBotanical {
-  position: absolute;
-  z-index: 1;
-  right: -2.6rem;
-  bottom: -5.6rem;
-  width: 12rem;
-  height: auto;
-  opacity: 0.72;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-}
-
-.content {
-  display: grid;
-  gap: 1rem;
-  padding: 1rem 1rem 0;
-}
-
-.errorBanner {
-  display: flex;
+.premiumPill,
+.startedPill {
+  display: inline-flex;
+  min-height: 2rem;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.85rem 1rem;
-  border: 1px solid rgba(216, 119, 92, 0.25);
-  border-radius: 1rem;
-  color: #6b3c31;
-  background: rgba(216, 119, 92, 0.09);
-}
-
-.errorBanner div {
-  display: grid;
-  gap: 0.12rem;
-}
-
-.errorBanner strong {
-  font-family: var(--font-serif);
-  font-size: 0.95rem;
-}
-
-.errorBanner span {
-  font-size: 0.67rem;
-}
-
-.errorBanner button {
-  flex: 0 0 auto;
-  padding: 0.55rem 0.8rem;
-  border: 0;
+  padding: 0.42rem 1rem;
   border-radius: 999px;
-  color: #fff;
-  background: var(--core-action);
-  font-size: 0.67rem;
-  font-weight: 650;
-  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
 }
 
-.focusCard,
-.waterCard,
-.rhythmCard,
-.streakCard,
-.guidelinesCard,
-.pathwayCard {
-  border: 1px solid var(--core-border);
-  border-radius: 1.25rem;
-  background: rgba(255, 253, 247, 0.88);
-  box-shadow: 0 10px 32px rgba(45, 69, 48, 0.055);
+.premiumPill {
+  color: #2e2a26;
+  background: #b59b5a;
+}
+
+.startedPill {
+  color: #f4f1e8;
+  background: #5e6b55;
+}
+
+.menuButton {
+  display: grid;
+  width: 2.3rem;
+  height: 2.3rem;
+  place-items: center;
+  border: 1px solid #ddd6c4;
+  border-radius: 50%;
+  color: #2e2a26;
+  text-decoration: none;
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.menuButton:hover {
+  background: #fffdf7;
+  transform: translateY(-1px);
+}
+
+.menuButton svg {
+  width: 1rem;
+}
+
+.greeting h1,
+.focusCard h2,
+.chapterCopy h2,
+.guideCard h2,
+.sectionHeading h2,
+.recipeCopy strong {
+  font-family: "Playfair Display", Georgia, serif;
+}
+
+.greeting h1 {
+  margin: 0;
+  font-size: clamp(2.1rem, 8vw, 2.9rem);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.06;
+}
+
+.greeting p {
+  margin: 0.45rem 0 0;
+  color: #6b6258;
+  font-size: 0.9rem;
 }
 
 .focusCard {
-  display: flex;
-  min-height: 5.6rem;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem 1.15rem;
-  background:
-    linear-gradient(90deg, rgba(255, 253, 247, 0.92), rgba(239, 236, 219, 0.9)),
-    var(--core-paper);
+  padding: 1.55rem;
+  border: 1px solid #dccaa3;
+  border-radius: 1.7rem;
+  background: #f0e7d0;
+  box-shadow: 0 12px 30px rgba(60, 50, 30, 0.06);
 }
 
-.focusCard h2 {
-  margin: 0.25rem 0 0;
-  font-size: 1.12rem;
-  line-height: 1.25;
-}
-
-.leafSeal,
-.pathwayIcon {
-  display: grid;
-  width: 2.75rem;
-  height: 2.75rem;
-  flex: 0 0 auto;
-  place-items: center;
-  border-radius: 50%;
-  color: var(--core-action);
-  background: rgba(255, 253, 247, 0.76);
-}
-
-.leafSeal svg,
-.pathwayIcon svg,
-.rhythmLeaf svg {
-  width: 1.35rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.55;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.dashboardGrid,
-.primaryColumn,
-.rail {
-  display: grid;
-  gap: 1rem;
-}
-
-.mealsSection {
-  min-width: 0;
-}
-
-.sectionHeading,
-.cardHeading,
-.streakHeader {
-  display: flex;
-  align-items: center;
+.focusHeading {
   justify-content: space-between;
   gap: 1rem;
 }
 
-.sectionHeading {
-  margin-bottom: 0.75rem;
+.focusHeading h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
-.sectionHeading h2 {
-  margin: 0.12rem 0 0;
-  font-size: clamp(1.5rem, 7vw, 2rem);
-  line-height: 1;
-}
-
-.sectionHeading a,
-.tipCard span,
-.guidelinesCard a {
+.focusHeading a {
   display: inline-flex;
   align-items: center;
-  gap: 0.18rem;
-  color: var(--core-action);
+  gap: 0.25rem;
+  color: #5e6b55;
   font-size: 0.72rem;
-  font-weight: 600;
   text-decoration: none;
 }
 
-.sectionHeading svg,
-.tipCard svg,
-.guidelinesCard svg,
-.pathwayCard > svg,
-.rhythmCard > svg,
-.streakHeader svg {
-  width: 0.9rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.focusHeading svg {
+  width: 0.82rem;
 }
 
-.mealGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.55rem;
+.focusCard > p {
+  margin: 1.1rem 0 1.5rem;
+  color: #6b6258;
+  font-size: 0.95rem;
+  font-style: italic;
 }
 
-.mealCard {
+.metrics {
   display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.metrics div {
   min-width: 0;
-  gap: 0.5rem;
-  color: var(--core-ink);
-  text-decoration: none;
+  text-align: center;
 }
 
-.mealImage {
-  position: relative;
+.metrics strong {
   display: block;
-  aspect-ratio: 1 / 1.06;
-  overflow: hidden;
-  border: 1px solid var(--core-border);
-  border-radius: 1rem;
-  background: #e8e4d8;
-}
-
-.mealImage img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 450ms cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.mealCard:hover .mealImage img {
-  transform: scale(1.035);
-}
-
-.mealMeta {
-  display: flex;
-  min-width: 0;
-  align-items: flex-start;
-  gap: 0.36rem;
-}
-
-.mealMeta > span:last-child {
-  display: grid;
-  min-width: 0;
-  gap: 0.05rem;
-}
-
-.mealMeta strong {
-  font-family: var(--font-serif);
-  font-size: 0.86rem;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.55rem;
   font-weight: 600;
-  line-height: 1.1;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
-.mealMeta small {
+.metrics span {
+  display: block;
+  margin-top: 0.55rem;
   overflow: hidden;
-  color: #829082;
-  font-size: 0.55rem;
-  line-height: 1.3;
+  color: #8a6e3a;
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
   text-overflow: ellipsis;
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
-.mealSymbol {
-  color: var(--core-action);
-  font-size: 0.82rem;
-  line-height: 1;
+.chapters {
+  display: grid;
+  gap: 1.25rem;
 }
 
-.tipCard {
+.chapterEntrance {
+  animation: chapter-in 520ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--chapter-delay, 0ms);
+}
+
+@keyframes chapter-in {
+  from { opacity: 0; transform: translateY(0.9rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chapterCard {
+  --chapter-bg: #eef0e6;
+  --chapter-border: #dfdbcb;
+  --chapter-accent: #5e6b55;
+  --chapter-number: #8a6e3a;
+  --chapter-title: #2e2a26;
+  --chapter-copy: #5b554d;
+  --chapter-leaf: #8a9576;
+  --chapter-chip: #fff;
   position: relative;
-  display: grid;
-  min-height: 9.5rem;
-  overflow: hidden;
-  align-items: center;
-  padding: 1.1rem;
-  border: 1px solid var(--core-border);
-  border-radius: 1.25rem;
-  color: var(--core-ink);
-  background:
-    linear-gradient(90deg, rgba(255, 253, 247, 0.98) 0%, rgba(255, 253, 247, 0.82) 48%, rgba(255, 253, 247, 0.08) 76%),
-    url("/app-ui/wellness-landscape.webp") center / cover;
-  box-shadow: 0 12px 36px rgba(45, 69, 48, 0.07);
-  text-decoration: none;
-}
-
-.tipCard > div {
-  position: relative;
-  z-index: 1;
-  max-width: 14rem;
-}
-
-.tipCard h2 {
-  margin: 0.35rem 0 0.85rem;
-  font-size: 1.15rem;
-  font-style: italic;
-  line-height: 1.28;
-}
-
-.waterCard,
-.streakCard {
-  padding: 1rem;
-}
-
-.cardHeading h2,
-.rhythmCard h2,
-.streakHeader h2 {
-  margin: 0.15rem 0 0;
-  color: var(--core-forest);
-  font-size: 1.65rem;
-  line-height: 1;
-}
-
-.cardHeading h2 span,
-.rhythmCard h2 span,
-.streakHeader h2 span {
-  color: #7f8b7f;
-  font-family: var(--font-sans);
-  font-size: 0.65rem;
-  font-weight: 450;
-  letter-spacing: 0;
-}
-
-.addWater {
-  display: grid;
-  width: 2rem;
-  height: 2rem;
-  place-items: center;
-  border: 1px solid var(--core-border);
-  border-radius: 50%;
-  color: var(--core-action);
-  background: var(--core-paper);
-  font-size: 1.15rem;
-  cursor: pointer;
-}
-
-.glasses {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 0.24rem;
-  margin-top: 0.9rem;
-}
-
-.glasses span {
-  position: relative;
-  height: 1.45rem;
-  overflow: hidden;
-  border: 1px solid #d6d4c8;
-  border-radius: 0.15rem 0.15rem 0.28rem 0.28rem;
-  background: #eeece3;
-}
-
-.glasses span::after {
-  position: absolute;
-  right: 0.1rem;
-  bottom: 0.1rem;
-  left: 0.1rem;
-  height: 0;
-  border-radius: 0.08rem 0.08rem 0.2rem 0.2rem;
-  background: #6f936f;
-  content: "";
-  transition: height 220ms ease;
-}
-
-.glasses .filledGlass::after {
-  height: 68%;
-}
-
-.rhythmCard {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 1rem;
-  color: var(--core-ink);
-  text-decoration: none;
-}
-
-.rhythmLeaf {
-  color: var(--core-action);
-}
-
-.streakHeader a {
-  display: grid;
-  width: 2rem;
-  height: 2rem;
-  place-items: center;
-  border-radius: 50%;
-  color: var(--core-action);
-  background: var(--core-sage-soft);
-}
-
-.week {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 0.25rem;
-  margin-top: 1rem;
-}
-
-.week > span {
-  display: grid;
-  justify-items: center;
-  gap: 0.25rem;
-}
-
-.week i {
-  display: grid;
-  width: 1.55rem;
-  height: 1.55rem;
-  place-items: center;
-  border: 1px solid var(--core-border);
-  border-radius: 50%;
-  color: white;
-  background: #efede5;
-  font-size: 0.65rem;
-  font-style: normal;
-}
-
-.week .completeDay {
-  border-color: var(--core-action);
-  background: var(--core-action);
-}
-
-.week small {
-  color: #7f8b7f;
-  font-size: 0.56rem;
-}
-
-.pathways {
-  display: grid;
-  gap: 0.85rem;
-}
-
-.pathwayCard {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 0.85rem;
-  min-height: 6rem;
-  padding: 1rem;
-  color: var(--core-ink);
-  text-decoration: none;
-}
-
-.pathwayCard > div {
-  min-width: 0;
-}
-
-.pathwayCard h2,
-.guidelinesCard h2 {
-  margin: 0.12rem 0;
-  font-size: 1.15rem;
-  line-height: 1.15;
-}
-
-.pathwayCard div > span {
   display: block;
-  color: #778477;
-  font-size: 0.66rem;
-  line-height: 1.4;
+  min-height: 13.75rem;
+  overflow: hidden;
+  border: 1px solid var(--chapter-border);
+  border-radius: 1.7rem;
+  color: var(--chapter-title);
+  background: var(--chapter-bg);
+  box-shadow: 0 12px 30px rgba(60, 50, 30, 0.06);
+  text-decoration: none;
+  transition: transform 220ms ease, box-shadow 220ms ease;
 }
 
-.pathwayIcon {
-  background: var(--core-sage-soft);
-  font-family: var(--font-serif);
-  font-size: 1.1rem;
+.chapterCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 17px 38px rgba(60, 50, 30, 0.1);
 }
 
-.discoverCard {
-  color: #f9f4e8;
-  border-color: rgba(202, 170, 112, 0.35);
-  background: #182118;
+.cream {
+  --chapter-bg: #f0e7d0;
+  --chapter-border: #dccaa3;
+  --chapter-accent: #8a6e3a;
+  --chapter-leaf: #b59b5a;
 }
 
-.discoverCard h2,
-.discoverCard .sectionLabel {
-  color: #f3e9d3;
+.warm {
+  --chapter-bg: #ead8be;
+  --chapter-border: #d9c8a3;
+  --chapter-accent: #8a6e3a;
+  --chapter-leaf: #b59b5a;
 }
 
-.discoverCard div > span {
-  color: #a9b1a0;
+.dark {
+  --chapter-bg: #23211d;
+  --chapter-border: #3a342f;
+  --chapter-accent: #d9c189;
+  --chapter-number: #d9c189;
+  --chapter-title: #f4f1e8;
+  --chapter-copy: #d4cab8;
+  --chapter-leaf: #d9c189;
+  --chapter-chip: rgba(217, 193, 137, 0.16);
 }
 
-.discoverCard .pathwayIcon {
-  color: #caaa70;
-  background: rgba(202, 170, 112, 0.12);
-}
-
-.guidelinesCard {
-  padding: 1.1rem;
-}
-
-.guidelinesCard ul {
-  display: grid;
-  gap: 0.4rem;
-  margin: 0.8rem 0;
-  padding: 0;
-  list-style: none;
-}
-
-.guidelinesCard li {
-  position: relative;
-  padding-left: 0.9rem;
-  color: #667566;
-  font-size: 0.72rem;
-  line-height: 1.4;
-}
-
-.guidelinesCard li::before {
+.leafBranch {
   position: absolute;
-  top: 0.48rem;
-  left: 0;
-  width: 0.28rem;
-  height: 0.28rem;
+  z-index: 1;
+  top: 1.5rem;
+  left: -0.5rem;
+  width: 8rem;
+  height: 12rem;
+  color: var(--chapter-leaf);
+  opacity: 0.22;
+  pointer-events: none;
+}
+
+.leafStem {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+}
+
+.leafShape {
+  fill: currentColor;
+}
+
+.sprig {
+  position: absolute;
+  top: 1rem;
+  right: 0.75rem;
+  width: 4rem;
+  height: 2rem;
+  color: var(--chapter-leaf);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.sprig path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+}
+
+.sprig ellipse {
+  fill: currentColor;
+}
+
+.dotMap {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: #d9c189;
+  pointer-events: none;
+}
+
+.dotMap pattern circle,
+.mapPins circle {
+  fill: currentColor;
+}
+
+.mapLand path {
+  fill: url(#zenplate-dot-map);
+}
+
+.mapPins {
+  opacity: 0.95;
+}
+
+.chapterImage {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 58%;
+}
+
+.chapterImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 520ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.chapterCard:hover .chapterImage img {
+  transform: scale(1.025);
+}
+
+.imageFade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--chapter-bg) 0%, color-mix(in srgb, var(--chapter-bg) 80%, transparent) 22%, transparent 58%);
+}
+
+.dark .imageFade {
+  background:
+    linear-gradient(180deg, rgba(35, 33, 29, 0.15), rgba(35, 33, 29, 0.4)),
+    linear-gradient(90deg, #23211d 0%, rgba(35, 33, 29, 0.8) 22%, transparent 58%);
+}
+
+.chapterCopy {
+  position: relative;
+  z-index: 2;
+  width: 51%;
+  min-width: 13.5rem;
+  padding: 1.45rem;
+}
+
+.chapterLabel {
+  gap: 0.75rem;
+  margin-bottom: 0.8rem;
+}
+
+.chapterNumber {
+  color: var(--chapter-number);
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.chapterOverline {
+  color: var(--chapter-accent);
+  font-size: 0.63rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.chapterCopy h2 {
+  margin: 0;
+  color: var(--chapter-title);
+  font-size: clamp(1.55rem, 6vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+
+.divider {
+  display: block;
+  width: 2.5rem;
+  height: 1px;
+  margin: 0.75rem 0;
+  background: var(--chapter-accent);
+  opacity: 0.62;
+}
+
+.chapterCopy p {
+  margin: 0;
+  color: var(--chapter-copy);
+  font-size: 0.8rem;
+  line-height: 1.65;
+}
+
+.chapterIcon,
+.chapterArrow,
+.guideIcon {
+  display: grid;
+  place-items: center;
   border-radius: 50%;
-  background: var(--core-action);
-  content: "";
+}
+
+.chapterIcon {
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-top: 1.35rem;
+  color: var(--chapter-accent);
+  background: var(--chapter-chip);
+  box-shadow: 0 2px 6px rgba(60, 50, 30, 0.06);
+}
+
+.dark .chapterIcon {
+  border: 1px solid rgba(217, 193, 137, 0.4);
+  box-shadow: none;
+}
+
+.chapterIcon svg {
+  width: 1.2rem;
+}
+
+.chapterArrow {
+  position: absolute;
+  z-index: 3;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: #5e6b55;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(60, 50, 30, 0.08);
+}
+
+.dark .chapterArrow {
+  border: 1.5px solid #d9c189;
+  color: #d9c189;
+  background: transparent;
+  box-shadow: none;
+}
+
+.chapterArrow svg {
+  width: 1rem;
+}
+
+.guideCard {
+  gap: 1rem;
+  padding: 1.3rem;
+  border: 1px solid #dfdbcb;
+  border-radius: 1.7rem;
+  background: #eef0e6;
+  box-shadow: 0 12px 30px rgba(60, 50, 30, 0.06);
+}
+
+.guideIcon {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: 0 0 auto;
+  color: #5e6b55;
+  background: #fff;
+}
+
+.guideIcon svg {
+  width: 1.2rem;
+}
+
+.guideCard > div {
+  min-width: 0;
+  flex: 1;
+}
+
+.guideCard h2 {
+  margin: 0;
+  font-size: 1.12rem;
+  font-weight: 600;
+}
+
+.guideCard p {
+  margin: 0.2rem 0 0;
+  color: #6b6258;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.guideCard > a {
+  flex: 0 0 auto;
+  color: #5e6b55;
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.sectionHeading {
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.sectionHeading h2 {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 600;
+}
+
+.sectionHeading a {
+  color: #5e6b55;
+  font-size: 0.72rem;
+  text-decoration: none;
+}
+
+.recipeRail {
+  display: flex;
+  gap: 1rem;
+  margin-inline: -1rem;
+  padding: 0 1rem 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.recipeRail::-webkit-scrollbar {
+  display: none;
+}
+
+.recipeCard {
+  display: block;
+  width: 16rem;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border: 1px solid #ddd6c9;
+  border-radius: 1.25rem;
+  color: #2e2a26;
+  background: #faf7ee;
+  text-decoration: none;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.recipeCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(60, 50, 30, 0.1);
+}
+
+.recipeImage {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #e8e2d5;
+}
+
+.recipeImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 420ms ease;
+}
+
+.recipeCard:hover .recipeImage img {
+  transform: scale(1.035);
+}
+
+.recipeLabel {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid rgba(94, 107, 85, 0.25);
+  border-radius: 999px;
+  color: #5e6b55;
+  background: rgba(238, 240, 230, 0.92);
+  font-size: 0.64rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  backdrop-filter: blur(8px);
+}
+
+.recipeCopy {
+  display: block;
+  padding: 1rem;
+}
+
+.recipeCopy strong {
+  display: block;
+  min-height: 2.65rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.18;
+}
+
+.recipeMeta {
+  gap: 1rem;
+  margin-top: 0.75rem;
+  color: #6b6258;
+  font-size: 0.7rem;
+}
+
+.recipeMeta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+}
+
+.recipeMeta svg {
+  width: 0.85rem;
 }
 
 @media (min-width: 640px) {
-  .header,
-  .content {
-    padding-inline: clamp(1.5rem, 5vw, 3.5rem);
-  }
-
-  .header {
-    min-height: 15rem;
-  }
-
-  .headerBotanical {
-    right: 1rem;
-    bottom: -8rem;
-    width: 19rem;
-  }
-
-  .headerActions {
-    right: clamp(1.5rem, 5vw, 3.5rem);
-  }
-
-  .mealGrid {
-    gap: 1rem;
-  }
-
-  .mealImage {
-    aspect-ratio: 1.45 / 1;
-  }
-
-  .mealMeta strong {
-    font-size: 1rem;
-  }
-
-  .mealMeta small {
-    font-size: 0.64rem;
-  }
-
-  .pathways {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .pathways > :last-child:nth-child(odd) {
-    grid-column: 1 / -1;
-  }
+  .chapterImage { width: 55%; }
+  .chapterCopy { width: 52%; padding: 1.55rem; }
+  .chapterCopy p { font-size: 0.9rem; }
+  .chapterCard { min-height: 14.5rem; }
+  .recipeRail { margin-inline: -1.5rem; padding-inline: 1.5rem; }
 }
 
-@media (min-width: 960px) {
-  .header {
-    min-height: 17rem;
-    padding-top: 3rem;
-  }
-
-  .headerCopy {
-    max-width: 45rem;
-    padding-top: 1rem;
-  }
-
-  .header h1 {
-    max-width: none;
-    font-size: clamp(3.6rem, 5.5vw, 5.2rem);
-  }
-
-  .headerCopy > p {
-    font-size: 1rem;
-  }
-
-  .headerActions {
-    top: 2.25rem;
-  }
-
-  .headerBotanical {
-    right: 5%;
-    bottom: -13rem;
-    width: 26rem;
-    opacity: 0.62;
-  }
-
-  .content {
-    gap: 1.4rem;
-    padding-top: 1.5rem;
-  }
-
-  .focusCard {
-    padding: 1.2rem 1.5rem;
-  }
-
-  .focusCard h2 {
-    font-size: 1.4rem;
-  }
-
-  .dashboardGrid {
-    grid-template-columns: minmax(0, 1.72fr) minmax(18rem, 0.82fr);
-    align-items: start;
-    gap: 1.35rem;
-  }
-
-  .primaryColumn,
-  .rail {
-    gap: 1.35rem;
-  }
-
-  .mealImage {
-    aspect-ratio: 1.55 / 1;
-  }
-
-  .mealMeta strong {
-    font-size: 1.12rem;
-  }
-
-  .tipCard {
-    min-height: 11.5rem;
-    padding: 1.5rem;
-  }
-
-  .tipCard > div {
-    max-width: 19rem;
-  }
-
-  .tipCard h2 {
-    font-size: 1.5rem;
-  }
-
-  .waterCard,
-  .streakCard,
-  .rhythmCard {
-    padding: 1.2rem;
-  }
-
-  .pathways {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.1rem;
-  }
-
-  .pathways > :last-child:nth-child(odd) {
-    grid-column: auto;
-  }
+@media (max-width: 440px) {
+  .wordmark span { font-size: 0.86rem; letter-spacing: 0.19em; }
+  .premiumPill, .startedPill { padding-inline: 0.78rem; font-size: 0.59rem; }
+  .focusCard { padding-inline: 1.05rem; }
+  .metrics { gap: 0.35rem; }
+  .metrics strong { font-size: 1.35rem; }
+  .metrics span { font-size: 0.5rem; letter-spacing: 0.16em; }
+  .chapterCard { min-height: 13rem; }
+  .chapterCopy { width: 56%; min-width: 0; padding: 1.15rem; }
+  .chapterCopy h2 { font-size: 1.5rem; }
+  .chapterCopy p { font-size: 0.7rem; line-height: 1.5; }
+  .chapterIcon { margin-top: 1rem; }
+  .chapterArrow { top: 0.9rem; right: 0.9rem; }
+  .guideCard { align-items: flex-start; flex-wrap: wrap; }
+  .guideCard > a { margin-left: 3.75rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mealImage img,
-  .glasses span::after {
-    transition: none;
-  }
+  .chapterEntrance { animation: none; }
+  .chapterCard,
+  .chapterImage img,
+  .menuButton,
+  .recipeCard,
+  .recipeImage img { transition: none; }
 }

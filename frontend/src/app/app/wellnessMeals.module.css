@@ -7,7 +7,7 @@
     radial-gradient(circle at 50% -10%, rgba(255, 255, 255, 0.95), transparent 32rem),
     #f7f1e5;
   color: #233626;
-  font-family: Inter, system-ui, sans-serif;
+  font-family: "DM Sans", Inter, system-ui, sans-serif;
 }
 
 .page::before,
@@ -43,7 +43,7 @@
   display: none;
   align-items: center;
   gap: 0.5rem;
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: 1.45rem;
   color: #223526;
 }
@@ -97,7 +97,7 @@
 .title,
 .sectionTitle,
 .cardTitle {
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-weight: 500;
   letter-spacing: -0.025em;
 }
@@ -123,7 +123,7 @@
   border-radius: 999px;
   background: transparent;
   color: #415345;
-  font: 500 clamp(0.72rem, 1.6vw, 0.88rem)/1 Inter, sans-serif;
+  font: 500 clamp(0.72rem, 1.6vw, 0.88rem)/1 "DM Sans", Inter, sans-serif;
   cursor: pointer;
   transition: color 180ms ease, background 180ms ease, box-shadow 180ms ease;
 }
@@ -152,7 +152,7 @@
 }
 
 .recipeCopy { min-width: 0; padding: 1rem clamp(1rem, 3vw, 1.8rem); }
-.recipeTitle { margin: 0; overflow-wrap: anywhere; color: #17231a; font: 500 clamp(1.3rem, 2.5vw, 1.75rem)/1.05 "Cormorant Garamond", Georgia, serif; }
+.recipeTitle { margin: 0; overflow-wrap: anywhere; color: #17231a; font: 600 clamp(1.18rem, 2.3vw, 1.55rem)/1.12 "Playfair Display", Georgia, serif; }
 .recipeTags { margin: 0.38rem 0 0.62rem; color: #446045; font-size: 0.8rem; }
 .meta { display: flex; align-items: center; gap: 0.4rem; color: #66736a; font-size: 0.75rem; }
 .chevron { color: #3d5c3e; transition: transform 180ms ease; }
@@ -185,7 +185,7 @@
 
 .featureIcon { background: #fffaf0; color: #58724f; box-shadow: 0 2px 8px rgba(45, 69, 48, 0.08); }
 .roundArrow { background: #365632; color: #fff; }
-.featureTitle { margin: 0; color: #344f34; font: 500 1.35rem/1 "Cormorant Garamond", Georgia, serif; }
+.featureTitle { margin: 0; color: #344f34; font: 600 1.2rem/1.08 "Playfair Display", Georgia, serif; }
 .featureText { margin: 0.22rem 0 0; color: #68766b; font-size: 0.74rem; }
 
 .landscape {
@@ -213,7 +213,7 @@
   text-align: center;
 }
 .stateIcon { display: grid; place-items: center; width: 3rem; height: 3rem; margin: 0 auto 0.8rem; border-radius: 999px; background: #e8ecdf; color: #3d5c3e; }
-.stateTitle { margin: 0; color: #223526; font: 500 1.45rem/1.15 "Cormorant Garamond", Georgia, serif; }
+.stateTitle { margin: 0; color: #223526; font: 600 1.3rem/1.18 "Playfair Display", Georgia, serif; }
 .stateText { max-width: 28rem; margin: 0.45rem auto 1rem; color: #68766b; font-size: 0.78rem; line-height: 1.6; }
 .skeleton { width: 100%; max-width: 40rem; height: 5rem; border-radius: 1rem; background: linear-gradient(90deg, #eee6d8, #faf6ed, #eee6d8); background-size: 220% 100%; animation: shimmer 1.6s infinite linear; }
 @keyframes shimmer { to { background-position: -220% 0; } }
@@ -227,7 +227,7 @@
   min-height: 2.75rem;
   padding: 0.75rem 1.25rem;
   border-radius: 999px;
-  font: 600 0.78rem/1 Inter, sans-serif;
+  font: 600 0.78rem/1 "DM Sans", Inter, sans-serif;
   cursor: pointer;
   transition: transform 160ms ease, background 160ms ease;
 }
@@ -269,9 +269,9 @@
 .sectionLabel { margin: 0 0 0.8rem; color: #80917e; font-size: 0.64rem; font-weight: 700; letter-spacing: 0.17em; text-transform: uppercase; }
 .metricGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.55rem; }
 .metric { padding: 0.75rem; border-radius: 0.9rem; background: #f3eddf; text-align: center; }
-.metricValue { margin: 0; color: #365632; font: 500 1.3rem/1 "Cormorant Garamond", Georgia, serif; }
+.metricValue { margin: 0; color: #365632; font: 600 1.2rem/1 "Playfair Display", Georgia, serif; }
 .metricLabel { margin: 0.25rem 0 0; color: #879286; font-size: 0.57rem; letter-spacing: 0.11em; text-transform: uppercase; }
-.analysis { margin: 0.9rem 0 0; color: #607064; font: italic 500 0.98rem/1.5 "Cormorant Garamond", Georgia, serif; }
+.analysis { margin: 0.9rem 0 0; color: #607064; font: italic 500 0.92rem/1.55 "Playfair Display", Georgia, serif; }
 
 .premiumCard { padding: 1.4rem; border-radius: 1.35rem; background: #2d4530; color: #f8f3e8; }
 .premiumCard .sectionLabel { color: #d2aa6c; }
@@ -294,21 +294,21 @@
 .todayPill { display: inline-flex; align-items: center; justify-content: center; min-height: 1.6rem; border-radius: 999px; background: #365632; color: #fff; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 .dayName { color: #6d7a70; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
 .dayImage { width: 4.7rem; height: 4.7rem; border-radius: 0.9rem; object-fit: cover; background: #eee6d8; }
-.dayTitle { margin: 0; color: #223526; font: 500 1.15rem/1.15 "Cormorant Garamond", Georgia, serif; }
+.dayTitle { margin: 0; color: #223526; font: 600 1.05rem/1.18 "Playfair Display", Georgia, serif; }
 .dayMeta { margin: 0.25rem 0 0; color: #768278; font-size: 0.67rem; }
 .emptySlot { opacity: 0.72; }
 .disclaimer { display: flex; gap: 0.6rem; padding: 1rem 0; border-top: 1px solid #e5ddd0; color: #758178; font-size: 0.68rem; line-height: 1.6; }
 
 .groceryHead { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin: 1rem 0 1.2rem; }
-.leftTitle { margin: 0; color: #29422c; font: 500 clamp(2.6rem, 6vw, 4.4rem)/0.95 "Cormorant Garamond", Georgia, serif; letter-spacing: -0.035em; }
+.leftTitle { margin: 0; color: #29422c; font: 600 clamp(2.3rem, 5.6vw, 3.8rem)/1 "Playfair Display", Georgia, serif; letter-spacing: -0.035em; }
 .weekLabel { margin: 0.55rem 0 0; color: #435246; font-size: 0.84rem; }
 .searchBox { display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 0.8rem 1rem; border: 1px solid #ded4c2; border-radius: 999px; background: rgba(255,253,248,0.78); }
-.textInput { width: 100%; border: 0; outline: 0; background: transparent; color: #263a2a; font: 400 0.82rem/1 Inter, sans-serif; }
+.textInput { width: 100%; border: 0; outline: 0; background: transparent; color: #263a2a; font: 400 0.82rem/1 "DM Sans", Inter, sans-serif; }
 .textInput::placeholder { color: #9c9d96; }
 .categoryGrid { display: grid; gap: 0.9rem; margin-top: 1.2rem; }
 .groceryCategory { overflow: hidden; border: 1px solid #e5ddd0; border-radius: 1.35rem; background: rgba(255,253,248,0.73); }
 .categoryToggle { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 3.6rem; padding: 0.8rem 1rem; border: 0; background: transparent; color: #2b452f; cursor: pointer; }
-.categoryName { font: 500 1.45rem/1 "Cormorant Garamond", Georgia, serif; }
+.categoryName { font: 600 1.3rem/1.08 "Playfair Display", Georgia, serif; }
 .categoryCount { display: flex; align-items: center; gap: 0.6rem; color: #657267; font-size: 0.7rem; }
 .groceryItems { display: grid; grid-template-columns: repeat(auto-fit, minmax(5.3rem, 1fr)); gap: 0.75rem; padding: 0 1rem 1rem; }
 .groceryItem { position: relative; display: grid; justify-items: center; gap: 0.42rem; min-width: 0; }

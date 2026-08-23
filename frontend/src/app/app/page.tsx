@@ -1,355 +1,323 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  ChefHat,
+  Clock3,
+  Dumbbell,
+  Flame,
+  Globe2,
+  Menu,
+  Sparkles,
+  Sprout,
+  type LucideIcon,
+} from "lucide-react";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import styles from "./Home.module.css";
 
-type MealPlanItem = {
-  day: string;
-  meal_type?: string;
-  recipe_id: string;
-};
-
-type MealPlan = {
-  items?: MealPlanItem[];
+type NutritionTotals = {
+  calories?: number;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
 };
 
 type RecipeSummary = {
-  id?: string;
-  title?: string;
+  id: string;
+  title: string;
   image?: string;
+  is_premium?: boolean;
+  cook_time?: number;
+  category?: string;
+  country?: string;
+  nutrition?: { calories?: number };
 };
 
-const WEEK_DAYS = ["M", "T", "W", "T", "F", "S", "S"];
-const MEALS = [
-  { label: "Breakfast", fallback: "/landing/hero-bowl.jpg", symbol: "sunrise" },
-  { label: "Lunch", fallback: "/landing/dish-india.jpg", symbol: "sun" },
-  { label: "Dinner", fallback: "/landing/healthcare-bowl.jpg", symbol: "moon" },
-] as const;
+type Chapter = {
+  id: string;
+  number: string;
+  overline: string;
+  title: string;
+  description: string;
+  href: string;
+  image: string;
+  variant: "sage" | "cream" | "dark" | "warm";
+  icon: LucideIcon;
+};
 
-function getGreeting() {
-  const hour = new Date().getHours();
+const CHAPTERS: Chapter[] = [
+  {
+    id: "healthcare",
+    number: "01",
+    overline: "Healthcare",
+    title: "Heal & Restore",
+    description: "PCOS, diabetes, thyroid, gut — translated to everyday meals.",
+    href: "/app/healthcare",
+    image: "https://images.unsplash.com/photo-1604152135912-04a022e23696?w=1200&q=85",
+    variant: "sage",
+    icon: Sprout,
+  },
+  {
+    id: "fitness",
+    number: "02",
+    overline: "Fitness",
+    title: "Strength & Fuel",
+    description: "High protein and balanced macros that fit your week.",
+    href: "/app/category/fitness",
+    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1200&q=85",
+    variant: "cream",
+    icon: Dumbbell,
+  },
+  {
+    id: "discover",
+    number: "03",
+    overline: "Discover",
+    title: "Travel the Plate",
+    description: "Global cuisines, gently adapted to how you live.",
+    href: "/app/story-map",
+    image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=1200&q=85",
+    variant: "dark",
+    icon: Globe2,
+  },
+  {
+    id: "chef-special",
+    number: "04",
+    overline: "Indulgence",
+    title: "Chef Specials",
+    description: "Mindful desserts & bakery — moments worth slowing for.",
+    href: "/app/category/chef-special",
+    image: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=1200&q=85",
+    variant: "warm",
+    icon: ChefHat,
+  },
+];
+
+const METRICS: Array<{ key: keyof NutritionTotals; label: string }> = [
+  { key: "calories", label: "kcal" },
+  { key: "protein", label: "protein g" },
+  { key: "carbs", label: "carbs g" },
+  { key: "fat", label: "fat g" },
+];
+
+function LeafBranch() {
+  return (
+    <svg viewBox="0 0 220 320" className={styles.leafBranch} aria-hidden="true">
+      <path className={styles.leafStem} d="M105 10 Q60 60 70 130 Q80 200 50 280" />
+      {Array.from({ length: 11 }, (_, index) => {
+        const progress = index / 10;
+        const x = 105 - Math.sin(progress * 3) * 30 - progress * 50;
+        const y = 10 + progress * 270;
+        const rotation = (index % 2 === 0 ? 35 : -35) - progress * 20;
+        return (
+          <path
+            key={index}
+            className={styles.leafShape}
+            d="M0 0 Q14 -10 28 0 Q14 12 0 0 Z"
+            transform={`translate(${x} ${y}) rotate(${rotation})`}
+          />
+        );
+      })}
+    </svg>
+  );
+}
+
+function Sprig() {
+  return (
+    <svg viewBox="0 0 80 40" className={styles.sprig} aria-hidden="true">
+      <path d="M5 25 Q30 5 75 18" />
+      {Array.from({ length: 7 }, (_, index) => {
+        const x = 12 + index * 9;
+        const y = 22 - Math.sin(index / 2) * 6;
+        return <ellipse key={index} cx={x} cy={y} rx="3.5" ry="1.6" transform={`rotate(${index * 9} ${x} ${y})`} />;
+      })}
+    </svg>
+  );
+}
+
+function DotMap() {
+  return (
+    <svg viewBox="0 0 1000 500" className={styles.dotMap} preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <pattern id="zenplate-dot-map" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
+          <circle cx="6" cy="6" r="1.1" />
+        </pattern>
+      </defs>
+      <g className={styles.mapLand}>
+        <path d="M120 130 Q180 100 240 120 Q280 130 290 170 Q260 210 220 230 Q170 240 130 220 Q100 190 120 130 Z" />
+        <path d="M250 270 Q280 260 300 290 Q320 340 300 400 Q280 440 260 430 Q240 400 240 350 Q240 300 250 270 Z" />
+        <path d="M460 130 Q500 110 540 130 Q560 160 540 190 Q500 200 470 180 Q450 160 460 130 Z" />
+        <path d="M470 220 Q510 210 540 240 Q560 290 540 350 Q510 390 480 380 Q450 340 450 280 Q450 240 470 220 Z" />
+        <path d="M580 140 Q680 110 780 140 Q830 170 820 220 Q780 250 700 240 Q620 230 590 200 Q570 170 580 140 Z" />
+        <path d="M730 260 Q780 250 810 280 Q800 310 760 310 Q720 300 720 280 Z" />
+        <path d="M820 340 Q870 330 900 360 Q890 390 850 395 Q810 385 810 360 Z" />
+      </g>
+      <g className={styles.mapPins}>
+        <circle cx="230" cy="210" r="3.5" />
+        <circle cx="530" cy="220" r="3.5" />
+        <circle cx="720" cy="275" r="3.5" />
+        <circle cx="800" cy="240" r="3.5" />
+        <circle cx="880" cy="220" r="3.5" />
+        <circle cx="300" cy="350" r="3.5" />
+      </g>
+    </svg>
+  );
+}
+
+function ChapterCard({ chapter, index }: { chapter: Chapter; index: number }) {
+  const Icon = chapter.icon;
+  const isDark = chapter.variant === "dark";
+  const animationStyle = { "--chapter-delay": `${index * 80}ms` } as CSSProperties;
+
+  return (
+    <article className={styles.chapterEntrance} style={animationStyle}>
+      <Link className={`${styles.chapterCard} ${styles[chapter.variant]}`} href={chapter.href}>
+        {isDark ? <DotMap /> : <LeafBranch />}
+
+        <div className={styles.chapterImage}>
+          <img src={chapter.image} alt="" loading={index === 0 ? "eager" : "lazy"} />
+          <span className={styles.imageFade} />
+        </div>
+
+        <div className={styles.chapterCopy}>
+          {!isDark ? <Sprig /> : null}
+          <div className={styles.chapterLabel}>
+            <span className={styles.chapterNumber}>{chapter.number}</span>
+            <span className={styles.chapterOverline}>{chapter.overline}</span>
+          </div>
+          <h2>{chapter.title}</h2>
+          <span className={styles.divider} />
+          <p>{chapter.description}</p>
+          <span className={styles.chapterIcon}><Icon aria-hidden="true" /></span>
+        </div>
+
+        <span className={styles.chapterArrow} aria-hidden="true"><ArrowUpRight /></span>
+      </Link>
+    </article>
+  );
+}
+
+function FeaturedRecipe({ recipe }: { recipe: RecipeSummary }) {
+  const label = recipe.country || recipe.category;
+  return (
+    <Link className={styles.recipeCard} href={recipe.is_premium ? "/app/profile" : `/app/recipe/${recipe.id}`}>
+      <span className={styles.recipeImage}>
+        <img
+          src={recipe.image || "https://images.unsplash.com/photo-1547592180-85f173990554?w=720&q=80"}
+          alt=""
+          loading="lazy"
+        />
+        {label ? <span className={styles.recipeLabel}>{label}</span> : null}
+      </span>
+      <span className={styles.recipeCopy}>
+        <strong>{recipe.title}</strong>
+        <span className={styles.recipeMeta}>
+          <span><Clock3 /> {recipe.cook_time || 30}m</span>
+          <span><Flame /> {recipe.nutrition?.calories || 0} kcal</span>
+        </span>
+      </span>
+    </Link>
+  );
+}
+
+function greetingForHour(hour: number) {
   if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
+  if (hour < 18) return "Good afternoon";
   return "Good evening";
-}
-
-function ArrowIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m9 18 6-6-6-6" />
-    </svg>
-  );
-}
-
-function LeafIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 21V10" />
-      <path d="M12 14C7 14 4 10 4 5c5 0 8 3 8 8" />
-      <path d="M12 10c0-4 3-7 8-7 0 5-3 9-8 9" />
-    </svg>
-  );
 }
 
 export default function Home() {
   const { user } = useAuth();
-  const [mealPlan, setMealPlan] = useState<MealPlan | null>(null);
-  const [planRecipes, setPlanRecipes] = useState<Record<string, RecipeSummary>>({});
-  const [streak, setStreak] = useState(0);
-  const [water, setWater] = useState(6);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
-  const [showNotice, setShowNotice] = useState(false);
-
-  const loadDashboard = useCallback(async () => {
-    if (!user?.id) return;
-    setStatus("loading");
-
-    const [planResult, streakResult] = await Promise.allSettled([
-      api.get("/meal-plan"),
-      api.get("/healthcare/streak"),
-    ]);
-
-    if (planResult.status === "fulfilled") {
-      setMealPlan(planResult.value.data as MealPlan);
-    }
-
-    if (streakResult.status === "fulfilled") {
-      setStreak(streakResult.value.data?.current_streak_days ?? 0);
-    }
-
-    setStatus(
-      planResult.status === "rejected" && streakResult.status === "rejected"
-        ? "error"
-        : "ready",
-    );
-  }, [user?.id]);
+  const [greeting, setGreeting] = useState("Good morning");
+  const [totals, setTotals] = useState<NutritionTotals>({});
+  const [featured, setFeatured] = useState<RecipeSummary[]>([]);
 
   useEffect(() => {
-    void loadDashboard();
-  }, [loadDashboard]);
-
-  useEffect(() => {
-    const stored = window.localStorage.getItem("zenplate-water-glasses");
-    if (stored) setWater(Math.min(8, Math.max(0, Number(stored) || 0)));
+    setGreeting(greetingForHour(new Date().getHours()));
   }, []);
 
   useEffect(() => {
-    if (!mealPlan?.items?.length) return;
     let active = true;
-    const today = new Date().toLocaleDateString("en-US", { weekday: "short" });
-    const ids = [...new Set(
-      mealPlan.items.filter((item) => item.day === today).map((item) => item.recipe_id),
-    )];
+    const loadHome = async () => {
+      const [recipesResult, nutritionResult] = await Promise.allSettled([
+        api.get<RecipeSummary[]>("/recipes", { params: { category: user?.category } }),
+        api.get<{ totals?: NutritionTotals }>("/nutrition/today"),
+      ]);
 
-    void Promise.all(ids.map(async (id) => {
-      try {
-        const response = await api.get(`/recipes/${id}`);
-        return [id, response.data as RecipeSummary] as const;
-      } catch {
-        return null;
-      }
-    })).then((results) => {
       if (!active) return;
-      setPlanRecipes(Object.fromEntries(results.filter((entry): entry is readonly [string, RecipeSummary] => Boolean(entry))));
-    });
-
-    return () => {
-      active = false;
+      if (recipesResult.status === "fulfilled") setFeatured(recipesResult.value.data.slice(0, 4));
+      if (nutritionResult.status === "fulfilled") setTotals(nutritionResult.value.data.totals || {});
     };
-  }, [mealPlan]);
 
-  const todayMeals = useMemo(() => {
-    const today = new Date().toLocaleDateString("en-US", { weekday: "short" });
-    return mealPlan?.items?.filter((item) => item.day === today).slice(0, 3) ?? [];
-  }, [mealPlan]);
+    void loadHome();
+    return () => { active = false; };
+  }, [user?.category]);
 
-  const firstName = user?.name?.split(" ")[0] || "Friend";
-  const completedDays = Math.min(7, streak > 0 ? streak % 7 || 7 : 0);
-
-  const updateWater = (next: number) => {
-    const value = Math.min(8, Math.max(0, next));
-    setWater(value);
-    window.localStorage.setItem("zenplate-water-glasses", String(value));
-  };
+  const firstName = user?.name?.split(" ")[0] || "there";
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.headerCopy}>
-          <span className={styles.eyebrow}>Your daily ritual</span>
-          <h1>{getGreeting()}, {firstName}<span aria-hidden="true">.</span></h1>
-          <p>Today is a fresh start.</p>
-        </div>
-
-        <div className={styles.headerActions}>
-          <div className={styles.notificationWrap}>
-            <button
-              className={styles.iconButton}
-              type="button"
-              aria-label="Show today’s update"
-              aria-expanded={showNotice}
-              onClick={() => setShowNotice((visible) => !visible)}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M14 21h-4" />
-              </svg>
-              <span className={styles.notificationDot} />
-            </button>
-            {showNotice ? (
-              <div className={styles.notice} role="status">
-                <strong>Your day is ready.</strong>
-                <span>Meals, hydration and your mindful rhythm are waiting below.</span>
-              </div>
-            ) : null}
-          </div>
-          <Link href="/app/profile" className={styles.avatar} aria-label="Open profile">
-            {firstName.charAt(0).toUpperCase()}
+      <header className={styles.appBar}>
+        <Link className={styles.wordmark} href="/app" aria-label="Zenplato home">
+          <Sprout />
+          <span>Zenplato</span>
+        </Link>
+        <div className={styles.appActions}>
+          <Link className={user?.is_premium ? styles.premiumPill : styles.startedPill} href="/app/profile">
+            {user?.is_premium ? "Premium" : "Get started"}
           </Link>
+          <Link className={styles.menuButton} href="/app/profile" aria-label="Open profile menu"><Menu /></Link>
         </div>
-
-        <Image
-          className={styles.headerBotanical}
-          src="/app-ui/botanical-vase.webp"
-          alt=""
-          width={1122}
-          height={1402}
-          priority
-        />
       </header>
 
-      <main className={styles.content} aria-busy={status === "loading"}>
-        {status === "error" ? (
-          <div className={styles.errorBanner} role="alert">
-            <div>
-              <strong>We couldn’t refresh your day.</strong>
-              <span>Your saved links are still available.</span>
-            </div>
-            <button type="button" onClick={() => void loadDashboard()}>Try again</button>
-          </div>
-        ) : null}
+      <section className={styles.greeting}>
+        <h1>{greeting},<br />{firstName}.</h1>
+        <p>Today is a new beginning.</p>
+      </section>
 
-        <section className={styles.focusCard} aria-labelledby="focus-title">
-          <div>
-            <p className={styles.sectionLabel}>Today’s focus</p>
-            <h2 id="focus-title">Eat mindfully and stay hydrated</h2>
-          </div>
-          <span className={styles.leafSeal}><LeafIcon /></span>
-        </section>
-
-        <div className={styles.dashboardGrid}>
-          <div className={styles.primaryColumn}>
-            <section className={styles.mealsSection} aria-labelledby="meals-title">
-              <div className={styles.sectionHeading}>
-                <div>
-                  <p className={styles.sectionLabel}>Made for today</p>
-                  <h2 id="meals-title">Today’s meals</h2>
-                </div>
-                <Link href="/app/daily-plan">View plan <ArrowIcon /></Link>
-              </div>
-
-              <div className={styles.mealGrid}>
-                {MEALS.map((meal, index) => {
-                  const planItem = todayMeals[index];
-                  const recipe = planItem ? planRecipes[planItem.recipe_id] : undefined;
-                  return (
-                    <Link className={styles.mealCard} href="/app/daily-plan" key={meal.label}>
-                      <span className={styles.mealImage}>
-                        <img
-                          src={recipe?.image || meal.fallback}
-                          alt={recipe?.title || `${meal.label} meal`}
-                          onError={(event) => {
-                            event.currentTarget.src = meal.fallback;
-                          }}
-                        />
-                      </span>
-                      <span className={styles.mealMeta}>
-                        <span className={styles.mealSymbol} aria-hidden="true">
-                          {meal.symbol === "moon" ? "☾" : "☼"}
-                        </span>
-                        <span>
-                          <strong>{meal.label}</strong>
-                          <small>{recipe?.title || (status === "loading" ? "Preparing your pick…" : "Personalized pick")}</small>
-                        </span>
-                      </span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </section>
-
-            <Link className={styles.tipCard} href="/app/food-guidelines">
-              <div>
-                <p className={styles.sectionLabel}>Tip of the day</p>
-                <h2>Chew slowly. Your body listens to every bite.</h2>
-                <span>Explore your food guidelines <ArrowIcon /></span>
-              </div>
-            </Link>
-          </div>
-
-          <aside className={styles.rail} aria-label="Daily wellness summary">
-            <section className={styles.waterCard}>
-              <div className={styles.cardHeading}>
-                <div>
-                  <p className={styles.sectionLabel}>Water</p>
-                  <h2>{water}<span> / 8 glasses</span></h2>
-                </div>
-                <button
-                  type="button"
-                  className={styles.addWater}
-                  onClick={() => updateWater(water === 8 ? 0 : water + 1)}
-                  aria-label={water === 8 ? "Reset water tracker" : "Add one glass of water"}
-                >
-                  {water === 8 ? "↻" : "+"}
-                </button>
-              </div>
-              <div className={styles.glasses} aria-label={`${water} of 8 glasses completed`}>
-                {Array.from({ length: 8 }, (_, index) => (
-                  <span className={index < water ? styles.filledGlass : ""} key={index} />
-                ))}
-              </div>
-            </section>
-
-            <Link className={styles.rhythmCard} href="/app/progress">
-              <div>
-                <p className={styles.sectionLabel}>Daily rhythm</p>
-                <h2>{streak}<span> days</span></h2>
-              </div>
-              <span className={styles.rhythmLeaf}><LeafIcon /></span>
-              <ArrowIcon />
-            </Link>
-
-            <section className={styles.streakCard} aria-labelledby="streak-title">
-              <div className={styles.streakHeader}>
-                <div>
-                  <p className={styles.sectionLabel}>Mindful streak</p>
-                  <h2 id="streak-title">{streak}<span> days in a row</span></h2>
-                </div>
-                <Link href="/app/progress" aria-label="View progress"><ArrowIcon /></Link>
-              </div>
-              <div className={styles.week}>
-                {WEEK_DAYS.map((day, index) => (
-                  <span key={`${day}-${index}`}>
-                    <i className={index < completedDays ? styles.completeDay : ""}>
-                      {index < completedDays ? "✓" : ""}
-                    </i>
-                    <small>{day}</small>
-                  </span>
-                ))}
-              </div>
-            </section>
-          </aside>
+      <section className={styles.focusCard} aria-labelledby="focus-heading">
+        <div className={styles.focusHeading}>
+          <h2 id="focus-heading">Today&apos;s focus</h2>
+          <Link href="/app/track">See all <ArrowRight /></Link>
         </div>
-
-        <section className={styles.pathways} aria-label="More from ZenPlate">
-          {user?.health_plan?.food_rules?.length ? (
-            <div className={styles.guidelinesCard}>
-              <div>
-                <p className={styles.sectionLabel}>Your health plan</p>
-                <h2>Food guidance built around you</h2>
-              </div>
-              <ul>
-                {(user.health_plan.food_rules as string[]).slice(0, 3).map((rule) => <li key={rule}>{rule}</li>)}
-              </ul>
-              <Link href="/app/food-guidelines">View food guidelines <ArrowIcon /></Link>
+        <p>Nourish your body. Calm your mind.</p>
+        <div className={styles.metrics}>
+          {METRICS.map((metric) => (
+            <div key={metric.key}>
+              <strong>{Math.round(totals[metric.key] || 0)}</strong>
+              <span>{metric.label}</span>
             </div>
-          ) : (
-            <Link className={styles.pathwayCard} href="/app/food-guidelines">
-              <span className={styles.pathwayIcon}><LeafIcon /></span>
-              <div>
-                <p className={styles.sectionLabel}>Your health plan</p>
-                <h2>Personalized food guidance</h2>
-                <span>See gentle, practical recommendations.</span>
-              </div>
-              <ArrowIcon />
-            </Link>
-          )}
+          ))}
+        </div>
+      </section>
 
-          <Link className={styles.pathwayCard} href="/app/ebook">
-            <span className={styles.pathwayIcon} aria-hidden="true">✦</span>
-            <div>
-              <p className={styles.sectionLabel}>Clinical guide</p>
-              <h2>Your health guide</h2>
-              <span>Read the guide personalized to your condition.</span>
-            </div>
-            <ArrowIcon />
-          </Link>
+      <section className={styles.chapters} aria-label="Wellness paths">
+        {CHAPTERS.map((chapter, index) => <ChapterCard key={chapter.id} chapter={chapter} index={index} />)}
+      </section>
 
-          <Link className={`${styles.pathwayCard} ${styles.discoverCard}`} href="/app/explore/welcome">
-            <span className={styles.pathwayIcon} aria-hidden="true">◎</span>
-            <div>
-              <p className={styles.sectionLabel}>A separate culinary journey</p>
-              <h2>Discover the Plate</h2>
-              <span>Travel through recipes, regions and food traditions.</span>
-            </div>
-            <ArrowIcon />
-          </Link>
+      <section className={styles.guideCard}>
+        <span className={styles.guideIcon}><Sparkles /></span>
+        <div>
+          <h2>Your AI nutrition guide</h2>
+          <p>A 7-day plan, grocery list, and adaptive coach — tuned to you.</p>
+        </div>
+        <Link href="/app/meal-plan">Open →</Link>
+      </section>
+
+      {featured.length > 0 ? (
+        <section className={styles.featured}>
+          <div className={styles.sectionHeading}>
+            <h2>Featured for you</h2>
+            <Link href="/app/explore">View all</Link>
+          </div>
+          <div className={styles.recipeRail}>
+            {featured.map((recipe) => <FeaturedRecipe key={recipe.id} recipe={recipe} />)}
+          </div>
         </section>
-      </main>
+      ) : null}
     </div>
   );
 }

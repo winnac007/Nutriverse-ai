@@ -5,7 +5,7 @@
   background:
     radial-gradient(circle at 88% 4%, rgba(181, 194, 160, 0.26), transparent 21rem),
     linear-gradient(180deg, #f7f1e5 0%, #fbf7ef 52%, #f7f1e5 100%);
-  font-family: Inter, system-ui, sans-serif;
+  font-family: "DM Sans", Inter, system-ui, sans-serif;
 }
 
 .hero,
@@ -107,7 +107,7 @@
 .insightCard h2,
 .stateCard h1 {
   margin: 0;
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-weight: 500;
   letter-spacing: -0.025em;
 }
@@ -168,7 +168,7 @@
   padding: 0.62rem 1rem;
   border: 1px solid transparent;
   border-radius: 999px;
-  font: 600 0.76rem Inter, sans-serif;
+  font: 600 0.76rem "DM Sans", Inter, sans-serif;
   white-space: nowrap;
   cursor: pointer;
 }
@@ -226,7 +226,7 @@
 }
 
 .ringLabel strong {
-  font: 500 1.45rem/1 "Cormorant Garamond", Georgia, serif;
+  font: 600 1.3rem/1.08 "Playfair Display", Georgia, serif;
 }
 
 .ringLabel span {
@@ -314,7 +314,7 @@
 }
 
 .emptyState svg { color: #9aa78d; }
-.emptyState h3 { margin: 0.7rem 0 0.25rem; font: 500 1.25rem "Cormorant Garamond", serif; color: #2d4530; }
+.emptyState h3 { margin: 0.7rem 0 0.25rem; font: 600 1.15rem "Playfair Display", serif; color: #2d4530; }
 .emptyState p { max-width: 20rem; margin: 0; font-size: 0.72rem; line-height: 1.55; }
 
 .secondaryButton,
@@ -324,7 +324,7 @@
   justify-content: center;
   gap: 0.45rem;
   border-radius: 999px;
-  font: 700 0.75rem Inter, sans-serif;
+  font: 700 0.75rem "DM Sans", Inter, sans-serif;
   text-decoration: none;
 }
 
@@ -383,7 +383,7 @@
   font-weight: 700;
 }
 
-.timeline h3 { margin: 0.08rem 0 0.25rem; font: 500 1.07rem "Cormorant Garamond", serif; }
+.timeline h3 { margin: 0.08rem 0 0.25rem; font: 600 1rem "Playfair Display", serif; }
 .timeline p { margin: 0; color: #899486; font-size: 0.65rem; }
 .timeline .mealType { color: #a2713b; font-size: 0.57rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
 
@@ -436,7 +436,7 @@
 
 .quoteCard::after { position: absolute; right: -1.5rem; bottom: -3rem; width: 8rem; height: 8rem; border-radius: 50%; background: rgba(196, 151, 74, 0.1); content: ""; }
 .quoteCard svg { color: #b57e39; }
-.quoteCard p { position: relative; z-index: 1; max-width: 22rem; margin: 0.7rem 0 0; font: italic 500 1.14rem/1.35 "Cormorant Garamond", serif; }
+.quoteCard p { position: relative; z-index: 1; max-width: 22rem; margin: 0.7rem 0 0; font: italic 500 1.04rem/1.45 "Playfair Display", serif; }
 
 .stateCard {
   display: flex;
