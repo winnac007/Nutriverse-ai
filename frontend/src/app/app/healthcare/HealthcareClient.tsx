@@ -2,23 +2,35 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import {
   Activity,
   ArrowLeft,
   ArrowRightLeft,
+  Bone,
   BookOpen,
+  Brain,
   CalendarDays,
+  Check,
+  Droplets,
+  FileText,
+  FileUp,
   Flag,
   Flower2,
   Gauge,
   Heart,
   Leaf,
   MessageCircle,
+  Plus,
+  Scale,
   Search,
   Shield,
+  ShieldOff,
   Sparkles,
+  Stethoscope,
+  Sun,
   Trophy,
+  X,
   Zap,
   Clock3,
   Flame,
@@ -32,6 +44,8 @@ type Condition = {
   id: string;
   label: string;
   blurb: string;
+  category?: string;
+  keywords?: string[];
   icon?: string;
   recipe_count?: number;
 };
@@ -67,13 +81,36 @@ type ViewMode = "browse" | "day-plan";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Activity,
+  Bone,
+  Brain,
+  Droplets,
   Flower2,
   Gauge,
   Heart,
   Leaf,
+  Scale,
   Shield,
+  ShieldOff,
   Sparkles,
+  Sun,
 };
+
+const CATEGORY_LABELS: Record<string, string> = {
+  metabolic: "Metabolic",
+  cardiovascular: "Heart",
+  digestive: "Digestive",
+  "kidney-liver": "Kidney & liver",
+  deficiency: "Deficiencies",
+  allergy: "Allergies",
+  hormonal: "Hormonal",
+  autoimmune: "Autoimmune",
+  mental: "Mental wellbeing",
+  other: "Other needs",
+};
+
+const MAX_DOCUMENT_SIZE = 10 * 1024 * 1024;
+const ACCEPTED_DOCUMENT_TYPES = ["application/pdf", "image/jpeg", "image/png", "image/webp", "image/heic"];
+const ACCEPTED_DOCUMENT_EXTENSIONS = ["pdf", "jpg", "jpeg", "png", "webp", "heic"];
 
 const MEAL_TYPES: MealFilter[] = ["all", "breakfast", "lunch", "dinner", "snack"];
 const MEAL_ORDER: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
@@ -99,17 +136,189 @@ function HealthScoreBadge({ score }: { score: string }) {
   return <span className={styles.healthBadge} style={badgeStyle}><Icon /> {score.replaceAll("-", " ")}</span>;
 }
 
-function ConditionPicker({ conditions, onPick }: { conditions: Condition[]; onPick: (condition: Condition) => void }) {
+function HealthIntake({ onContinue }: { onContinue: () => void }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [document, setDocument] = useState<File | null>(null);
+  const [documentError, setDocumentError] = useState("");
+
+  const chooseDocument = (file: File | undefined) => {
+    setDocumentError("");
+    if (!file) return;
+    const extension = file.name.split(".").pop()?.toLowerCase() || "";
+    if (!ACCEPTED_DOCUMENT_TYPES.includes(file.type) && !ACCEPTED_DOCUMENT_EXTENSIONS.includes(extension)) {
+      setDocumentError("Choose a PDF, JPG, PNG, WEBP or HEIC file.");
+      return;
+    }
+    if (file.size > MAX_DOCUMENT_SIZE) {
+      setDocumentError("Choose a file smaller than 10 MB.");
+      return;
+    }
+    setDocument(file);
+  };
+
+  const clearDocument = () => {
+    setDocument(null);
+    setDocumentError("");
+    if (inputRef.current) inputRef.current.value = "";
+  };
+
+  return (
+    <section className={styles.intake} aria-labelledby="health-intake-title">
+      <header className={styles.intakeHeader}>
+        <p className={styles.overline}>Personalise your care</p>
+        <h1 id="health-intake-title">Start with what you know</h1>
+        <p>Add a report, diagnosis or other health document if you have one. This step is optional.</p>
+      </header>
+
+      <div className={styles.intakeLayout}>
+        <div className={styles.documentPanel}>
+          <div className={styles.documentHeading}>
+            <span><FileText aria-hidden="true" /></span>
+            <div>
+              <h2>Share a health document</h2>
+              <p>Lab report, prescription, diagnosis or discharge summary</p>
+            </div>
+            <small>Optional</small>
+          </div>
+
+          {document ? (
+            <div className={styles.selectedDocument}>
+              <span><Check aria-hidden="true" /></span>
+              <div>
+                <strong>{document.name}</strong>
+                <small>{(document.size / 1024 / 1024).toFixed(1)} MB selected</small>
+              </div>
+              <button type="button" onClick={clearDocument} aria-label={`Remove ${document.name}`}>
+                <X aria-hidden="true" />
+              </button>
+            </div>
+          ) : (
+            <label className={styles.documentPicker}>
+              <FileUp aria-hidden="true" />
+              <span>
+                <strong>Choose a document</strong>
+                <small>PDF or image, up to 10 MB</small>
+              </span>
+              <input
+                ref={inputRef}
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,application/pdf,image/jpeg,image/png,image/webp,image/heic"
+                onChange={(event) => chooseDocument(event.target.files?.[0])}
+                aria-describedby={documentError ? "document-privacy document-error" : "document-privacy"}
+                aria-invalid={Boolean(documentError)}
+              />
+            </label>
+          )}
+
+          <p className={styles.documentPrivacy} id="document-privacy">
+            Your file stays on this device for now. It is not uploaded or stored by Nutriverse.
+          </p>
+          {documentError ? <p className={styles.documentError} id="document-error" role="alert">{documentError}</p> : null}
+
+          <button className={styles.continueButton} type="button" onClick={onContinue}>
+            Continue to conditions <span>→</span>
+          </button>
+        </div>
+
+        <aside className={styles.diagnosisHelp}>
+          <span className={styles.diagnosisIcon}><Stethoscope aria-hidden="true" /></span>
+          <p className={styles.overline}>Not sure of the diagnosis?</p>
+          <h2>Get clarity from a professional</h2>
+          <p>A consultant can review your symptoms and guide you toward the right next step.</p>
+          <Link href="/app/consult?category=healthcare&reason=diagnosis">
+            Find a consultant <span>→</span>
+          </Link>
+        </aside>
+      </div>
+    </section>
+  );
+}
+
+function ConditionPicker({
+  conditions,
+  onPick,
+  onPickCustom,
+  onBack,
+}: {
+  conditions: Condition[];
+  onPick: (condition: Condition) => void;
+  onPickCustom: (condition: string) => void;
+  onBack: () => void;
+}) {
+  const [conditionSearch, setConditionSearch] = useState("");
+  const [category, setCategory] = useState("all");
+  const [customCondition, setCustomCondition] = useState("");
+
+  const categories = useMemo(
+    () => Array.from(new Set(conditions.map((condition) => condition.category).filter((value): value is string => Boolean(value)))),
+    [conditions],
+  );
+
+  const filteredConditions = useMemo(() => {
+    const query = conditionSearch.trim().toLowerCase();
+    return conditions.filter((condition) => {
+      const matchesCategory = category === "all" || condition.category === category;
+      const searchable = [condition.label, condition.blurb, condition.category, ...(condition.keywords || [])]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return matchesCategory && (!query || searchable.includes(query));
+    });
+  }, [category, conditionSearch, conditions]);
+
+  const submitCustomCondition = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const value = customCondition.trim();
+    if (value) onPickCustom(value);
+  };
+
   return (
     <section className={styles.picker}>
       <header className={styles.pageHeader}>
+        <button className={styles.changeCondition} type="button" onClick={onBack}>← Back to health details</button>
         <p className={styles.overline}>Recommended for</p>
         <h1>Pick your focus</h1>
-        <p>Every meal we suggest will be tailored to your selected condition — with the science of why it works.</p>
+        <p>Search for a condition or browse by health area. We will tailor meals to the focus you choose.</p>
       </header>
 
-      <div className={styles.conditionGrid}>
-        {conditions.map((condition, index) => {
+      <div className={styles.conditionTools}>
+        <div className={styles.conditionSearch}>
+          <Search aria-hidden="true" />
+          <input
+            type="search"
+            value={conditionSearch}
+            onChange={(event) => setConditionSearch(event.target.value)}
+            placeholder="Search diabetes, thyroid, blood pressure..."
+            aria-label="Search health conditions"
+          />
+          {conditionSearch ? (
+            <button type="button" onClick={() => setConditionSearch("")} aria-label="Clear condition search"><X aria-hidden="true" /></button>
+          ) : null}
+        </div>
+
+        <div className={styles.categoryFilters} aria-label="Filter conditions by health area">
+          <button type="button" className={category === "all" ? styles.activeCategory : ""} aria-pressed={category === "all"} onClick={() => setCategory("all")}>All</button>
+          {categories.map((item) => (
+            <button
+              key={item}
+              type="button"
+              className={category === item ? styles.activeCategory : ""}
+              aria-pressed={category === item}
+              onClick={() => setCategory(item)}
+            >
+              {CATEGORY_LABELS[item] || item.replaceAll("-", " ")}
+            </button>
+          ))}
+        </div>
+
+        <p className={styles.resultCount} aria-live="polite">
+          {filteredConditions.length} {filteredConditions.length === 1 ? "condition" : "conditions"}
+        </p>
+      </div>
+
+      {filteredConditions.length ? (
+        <div className={styles.conditionGrid}>
+          {filteredConditions.map((condition, index) => {
           const Icon = ICON_MAP[condition.icon || ""] || Heart;
           const entranceStyle = { "--condition-delay": `${index * 40}ms` } as CSSProperties;
           return (
@@ -126,8 +335,34 @@ function ConditionPicker({ conditions, onPick }: { conditions: Condition[]; onPi
               <span className={styles.recipeCount}>{condition.recipe_count || 0} recipes</span>
             </button>
           );
-        })}
-      </div>
+          })}
+        </div>
+      ) : (
+        <div className={styles.conditionEmpty}>
+          <Search aria-hidden="true" />
+          <strong>No listed condition matches “{conditionSearch}”</strong>
+          <p>You can enter the diagnosis yourself below.</p>
+        </div>
+      )}
+
+      <form className={styles.otherCondition} onSubmit={submitCustomCondition}>
+        <span className={styles.otherIcon}><Plus aria-hidden="true" /></span>
+        <div>
+          <p className={styles.overline}>Something else?</p>
+          <h2>Enter another condition</h2>
+          <p>If your diagnosis is not listed, type it exactly as it appears in your report.</p>
+        </div>
+        <div className={styles.otherField}>
+          <input
+            value={customCondition}
+            onChange={(event) => setCustomCondition(event.target.value)}
+            placeholder="Type your condition"
+            maxLength={80}
+            aria-label="Other condition or diagnosis"
+          />
+          <button type="submit" disabled={!customCondition.trim()}>Use this condition</button>
+        </div>
+      </form>
     </section>
   );
 }
@@ -211,6 +446,7 @@ export default function HealthcareClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const conditionId = searchParams.get("c");
+  const customConditionName = searchParams.get("name")?.trim() || "";
   const [conditions, setConditions] = useState<Condition[]>([]);
   const [recipes, setRecipes] = useState<HealthcareRecipe[]>([]);
   const [swaps, setSwaps] = useState<Swap[]>([]);
@@ -220,17 +456,20 @@ export default function HealthcareClient() {
   const [view, setView] = useState<ViewMode>("browse");
   const [quick, setQuick] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [intakeComplete, setIntakeComplete] = useState(Boolean(conditionId));
 
   const condition = useMemo(
-    () => conditions.find((item) => item.id === conditionId),
-    [conditions, conditionId],
+    () => conditionId === "custom" && customConditionName
+      ? { id: "custom", label: customConditionName, blurb: "Thoughtful recipes selected around the condition you shared." }
+      : conditions.find((item) => item.id === conditionId),
+    [conditions, conditionId, customConditionName],
   );
 
   useEffect(() => {
     let active = true;
     const loadOverview = async () => {
       const [conditionsResult, streakResult] = await Promise.allSettled([
-        api.get<Condition[]>("/healthcare/conditions"),
+        api.get<Condition[]>("/healthcare/conditions/all"),
         user ? api.get<Streak>("/healthcare/streak") : Promise.resolve(null),
       ]);
       if (!active) return;
@@ -252,14 +491,14 @@ export default function HealthcareClient() {
     let active = true;
     const loadCondition = async () => {
       setLoading(true);
-      const params: Record<string, string | boolean> = { condition: conditionId };
+      const params: Record<string, string | boolean> = { condition: customConditionName || conditionId };
       if (mealType !== "all") params.meal_type = mealType;
       if (search.trim()) params.search = search.trim();
       if (quick) params.quick = true;
 
       const [recipesResult, swapsResult] = await Promise.allSettled([
         api.get<HealthcareRecipe[]>("/healthcare/recipes", { params }),
-        api.get<Swap[]>("/healthcare/swaps", { params: { condition: conditionId } }),
+        api.get<Swap[]>("/healthcare/swaps", { params: { condition: customConditionName || conditionId } }),
       ]);
       if (!active) return;
       setRecipes(recipesResult.status === "fulfilled" ? recipesResult.value.data : []);
@@ -272,7 +511,7 @@ export default function HealthcareClient() {
       active = false;
       window.clearTimeout(timeout);
     };
-  }, [conditionId, mealType, quick, search]);
+  }, [conditionId, customConditionName, mealType, quick, search]);
 
   const grouped = useMemo(() => {
     const groups: Record<MealType, HealthcareRecipe[]> = { breakfast: [], lunch: [], dinner: [], snack: [] };
@@ -286,6 +525,12 @@ export default function HealthcareClient() {
     router.replace(`/app/healthcare?c=${encodeURIComponent(next.id)}`, { scroll: false });
   };
 
+  const pickCustomCondition = (name: string) => {
+    setMealType("all");
+    setSearch("");
+    router.replace(`/app/healthcare?c=custom&name=${encodeURIComponent(name)}`, { scroll: false });
+  };
+
   const clearCondition = () => {
     setMealType("all");
     setSearch("");
@@ -296,9 +541,20 @@ export default function HealthcareClient() {
     <div className={styles.page}>
       <Link className={styles.backLink} href="/app"><ArrowLeft /> Home</Link>
 
-      {!conditionId ? (
+      {!conditionId && !intakeComplete ? (
+        <HealthIntake onContinue={() => setIntakeComplete(true)} />
+      ) : !conditionId ? (
         <>
-          {loading ? <div className={styles.loadingState}>Preparing your health library…</div> : <ConditionPicker conditions={conditions} onPick={pickCondition} />}
+          {loading ? (
+            <div className={styles.loadingState}>Preparing your health library…</div>
+          ) : (
+            <ConditionPicker
+              conditions={conditions}
+              onPick={pickCondition}
+              onPickCustom={pickCustomCondition}
+              onBack={() => setIntakeComplete(false)}
+            />
+          )}
           {streak && (streak.meals_this_week || 0) > 0 ? <StreakCard streak={streak} /> : null}
         </>
       ) : (

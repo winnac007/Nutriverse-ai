@@ -17,6 +17,12 @@
   gap: 1.5rem;
 }
 
+.intake {
+  display: grid;
+  gap: 1.75rem;
+  padding-bottom: 1rem;
+}
+
 .backLink {
   display: inline-flex;
   width: max-content;
@@ -38,6 +44,10 @@
 }
 
 .pageHeader h1,
+.intakeHeader h1,
+.documentHeading h2,
+.diagnosisHelp h2,
+.otherCondition h2,
 .conditionCard strong,
 .streakCard strong,
 .recipeBody > strong,
@@ -46,6 +56,312 @@
 .cardTitle h2,
 .consultCard strong {
   font-family: "Playfair Display", Georgia, serif;
+}
+
+.intakeHeader {
+  max-width: 38rem;
+}
+
+.intakeHeader h1 {
+  max-width: 10ch;
+  margin: 0.3rem 0 0;
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+}
+
+.intakeHeader > p:last-child {
+  max-width: 34rem;
+  margin: 0.8rem 0 0;
+  color: var(--core-ink);
+  opacity: 0.7;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.intakeLayout {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.documentPanel,
+.diagnosisHelp {
+  border: 1px solid var(--core-border);
+  border-radius: 1.4rem;
+}
+
+.documentPanel {
+  padding: clamp(1rem, 4vw, 1.5rem);
+  background: var(--core-paper);
+  box-shadow: 0 18px 44px rgba(45, 69, 48, 0.07);
+}
+
+.documentHeading {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.documentHeading > span,
+.diagnosisIcon,
+.otherIcon {
+  display: grid;
+  place-items: center;
+  color: var(--core-action);
+  background: var(--core-sage-soft);
+}
+
+.documentHeading > span {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.9rem;
+}
+
+.documentHeading svg,
+.otherIcon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  stroke-width: 1.7;
+}
+
+.documentHeading h2,
+.documentHeading p,
+.diagnosisHelp h2,
+.diagnosisHelp > p,
+.otherCondition h2,
+.otherCondition > div > p {
+  margin: 0;
+}
+
+.documentHeading h2 {
+  font-size: 1.08rem;
+  font-weight: 600;
+}
+
+.documentHeading p {
+  margin-top: 0.18rem;
+  color: color-mix(in oklch, var(--core-ink) 66%, transparent);
+  font-size: 0.67rem;
+  line-height: 1.45;
+}
+
+.documentHeading > small {
+  padding: 0.3rem 0.55rem;
+  border-radius: 999px;
+  color: var(--core-action);
+  background: var(--core-sage-soft);
+  font-size: 0.58rem;
+  font-weight: 650;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.documentPicker,
+.selectedDocument {
+  display: flex;
+  min-height: 6rem;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border: 1px dashed color-mix(in oklch, var(--core-action) 40%, var(--core-border));
+  border-radius: 1rem;
+  background: color-mix(in oklch, var(--core-sage-soft) 38%, var(--core-paper));
+}
+
+.documentPicker {
+  justify-content: center;
+  color: var(--core-action);
+  cursor: pointer;
+  transition: border-color 180ms cubic-bezier(0.16, 1, 0.3, 1), background 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.documentPicker:hover {
+  border-color: var(--core-action);
+  background: color-mix(in oklch, var(--core-sage-soft) 66%, var(--core-paper));
+}
+
+.documentPicker:focus-within {
+  outline: 2px solid var(--core-action);
+  outline-offset: 3px;
+}
+
+.documentPicker > svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  flex: 0 0 auto;
+  stroke-width: 1.6;
+}
+
+.documentPicker > span,
+.selectedDocument > div {
+  display: grid;
+  min-width: 0;
+  gap: 0.2rem;
+}
+
+.documentPicker strong,
+.selectedDocument strong {
+  overflow: hidden;
+  font-size: 0.76rem;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.documentPicker small,
+.selectedDocument small {
+  color: color-mix(in oklch, var(--core-ink) 62%, transparent);
+  font-size: 0.63rem;
+}
+
+.documentPicker input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.selectedDocument {
+  border-style: solid;
+}
+
+.selectedDocument > span {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--core-paper);
+  background: var(--core-action);
+}
+
+.selectedDocument > span svg,
+.selectedDocument > button svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.selectedDocument > div {
+  flex: 1;
+}
+
+.selectedDocument > button {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  color: color-mix(in oklch, var(--core-ink) 64%, transparent);
+  background: transparent;
+  cursor: pointer;
+}
+
+.selectedDocument > button:hover {
+  color: var(--core-ink);
+  background: color-mix(in oklch, var(--core-ink) 7%, transparent);
+}
+
+.documentPrivacy,
+.documentError {
+  margin: 0.65rem 0 0;
+  font-size: 0.61rem;
+  line-height: 1.5;
+}
+
+.documentPrivacy {
+  color: color-mix(in oklch, var(--core-ink) 58%, transparent);
+}
+
+.documentError {
+  color: oklch(0.48 0.14 28);
+}
+
+.continueButton {
+  width: 100%;
+  min-height: 3rem;
+  border-radius: 999px;
+  font-family: "DM Sans", Inter, sans-serif;
+  font-size: 0.74rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.continueButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1.25rem;
+  padding: 0.75rem 1.1rem;
+  border: 1px solid var(--core-action);
+  color: var(--core-paper);
+  background: var(--core-action);
+  transition: background 180ms cubic-bezier(0.16, 1, 0.3, 1), transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.continueButton:hover {
+  background: var(--core-forest);
+  transform: translateY(-1px);
+}
+
+.diagnosisHelp {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(1.2rem, 4vw, 1.6rem);
+  background: color-mix(in oklch, var(--core-sage-soft) 74%, var(--core-paper));
+}
+
+.diagnosisIcon {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1.5rem;
+  border-radius: 50%;
+  background: var(--core-paper);
+}
+
+.diagnosisIcon svg {
+  width: 1.3rem;
+  height: 1.3rem;
+  stroke-width: 1.6;
+}
+
+.diagnosisHelp h2 {
+  max-width: 14ch;
+  margin-top: 0.45rem;
+  font-size: 1.55rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+
+.diagnosisHelp > p:not(.overline) {
+  margin-top: 0.7rem;
+  color: color-mix(in oklch, var(--core-ink) 70%, transparent);
+  font-size: 0.73rem;
+  line-height: 1.55;
+}
+
+.diagnosisHelp > a {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 1.5rem;
+  color: var(--core-action);
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 .pageHeader {
@@ -78,10 +394,219 @@
   line-height: 1.6;
 }
 
+.conditionTools {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.conditionSearch {
+  position: relative;
+  display: flex;
+  min-height: 3.35rem;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0 0.6rem 0 1rem;
+  border: 1px solid var(--core-border);
+  border-radius: 999px;
+  background: var(--core-paper);
+  box-shadow: 0 10px 28px rgba(45, 69, 48, 0.05);
+}
+
+.conditionSearch > svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: 0 0 auto;
+  color: color-mix(in oklch, var(--core-ink) 58%, transparent);
+  stroke-width: 1.7;
+}
+
+.conditionSearch input {
+  width: 100%;
+  min-width: 0;
+  height: 3.2rem;
+  border: 0;
+  outline: 0;
+  color: var(--core-ink);
+  background: transparent;
+  font: 400 0.8rem/1 "DM Sans", Inter, sans-serif;
+}
+
+.conditionSearch input::placeholder {
+  color: color-mix(in oklch, var(--core-ink) 48%, transparent);
+}
+
+.conditionSearch > button {
+  display: grid;
+  width: 2.2rem;
+  height: 2.2rem;
+  flex: 0 0 auto;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  color: color-mix(in oklch, var(--core-ink) 62%, transparent);
+  background: transparent;
+  cursor: pointer;
+}
+
+.conditionSearch > button:hover {
+  color: var(--core-ink);
+  background: color-mix(in oklch, var(--core-ink) 7%, transparent);
+}
+
+.conditionSearch > button svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.categoryFilters {
+  display: flex;
+  width: 100%;
+  gap: 0.45rem;
+  padding: 0.1rem 0 0.35rem;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+}
+
+.categoryFilters::-webkit-scrollbar {
+  display: none;
+}
+
+.categoryFilters button {
+  min-height: 2.15rem;
+  flex: 0 0 auto;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--core-border);
+  border-radius: 999px;
+  color: color-mix(in oklch, var(--core-ink) 72%, transparent);
+  background: color-mix(in oklch, var(--core-paper) 76%, transparent);
+  font: 600 0.63rem/1 "DM Sans", Inter, sans-serif;
+  text-transform: capitalize;
+  cursor: pointer;
+  transition: color 180ms cubic-bezier(0.16, 1, 0.3, 1), border-color 180ms cubic-bezier(0.16, 1, 0.3, 1), background 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.categoryFilters button:hover {
+  border-color: color-mix(in oklch, var(--core-action) 55%, var(--core-border));
+}
+
+.categoryFilters .activeCategory {
+  border-color: var(--core-action);
+  color: var(--core-paper);
+  background: var(--core-action);
+}
+
+.resultCount {
+  margin: -0.2rem 0 0;
+  color: color-mix(in oklch, var(--core-ink) 55%, transparent);
+  font-size: 0.61rem;
+}
+
 .conditionGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
+}
+
+.conditionEmpty {
+  display: grid;
+  min-height: 9rem;
+  place-items: center;
+  padding: 1.4rem;
+  border: 1px solid var(--core-border);
+  border-radius: 1.2rem;
+  color: color-mix(in oklch, var(--core-ink) 68%, transparent);
+  background: color-mix(in oklch, var(--core-paper) 76%, transparent);
+  text-align: center;
+}
+
+.conditionEmpty svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-bottom: 0.35rem;
+  color: var(--core-action);
+}
+
+.conditionEmpty strong {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1rem;
+}
+
+.conditionEmpty p {
+  margin: 0.25rem 0 0;
+  font-size: 0.67rem;
+}
+
+.otherCondition {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.85rem;
+  padding: clamp(1rem, 4vw, 1.35rem);
+  border: 1px solid color-mix(in oklch, var(--core-action) 26%, var(--core-border));
+  border-radius: 1.25rem;
+  background: color-mix(in oklch, var(--core-sage-soft) 54%, var(--core-paper));
+}
+
+.otherIcon {
+  width: 2.65rem;
+  height: 2.65rem;
+  border-radius: 50%;
+  background: var(--core-paper);
+}
+
+.otherCondition h2 {
+  margin-top: 0.22rem;
+  font-size: 1.12rem;
+  font-weight: 600;
+}
+
+.otherCondition > div > p:last-child {
+  margin-top: 0.3rem;
+  color: color-mix(in oklch, var(--core-ink) 67%, transparent);
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.otherField {
+  display: flex;
+  grid-column: 1 / -1;
+  gap: 0.5rem;
+}
+
+.otherCondition input {
+  width: 100%;
+  min-width: 0;
+  height: 2.8rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--core-border);
+  border-radius: 0.85rem;
+  color: var(--core-ink);
+  background: var(--core-paper);
+  font: 400 0.76rem/1 "DM Sans", Inter, sans-serif;
+}
+
+.otherCondition input::placeholder {
+  color: color-mix(in oklch, var(--core-ink) 46%, transparent);
+}
+
+.otherCondition button {
+  min-height: 2.8rem;
+  flex: 0 0 auto;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--core-action);
+  border-radius: 0.85rem;
+  color: var(--core-paper);
+  background: var(--core-action);
+  font: 650 0.68rem/1 "DM Sans", Inter, sans-serif;
+  cursor: pointer;
+}
+
+.otherCondition button:disabled {
+  border-color: color-mix(in oklch, var(--core-ink) 12%, var(--core-border));
+  color: color-mix(in oklch, var(--core-ink) 42%, transparent);
+  background: color-mix(in oklch, var(--core-ink) 7%, var(--core-paper));
+  cursor: not-allowed;
 }
 
 .conditionCard {
@@ -651,6 +1176,7 @@
 }
 
 @media (min-width: 640px) {
+  .intakeLayout { grid-template-columns: minmax(0, 1.55fr) minmax(14rem, 0.8fr); }
   .conditionGrid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .conditionCard { min-height: 13rem; }
   .recipeGrid,
@@ -659,6 +1185,10 @@
 }
 
 @media (max-width: 480px) {
+  .documentHeading { grid-template-columns: auto minmax(0, 1fr); }
+  .documentHeading > small { grid-column: 2; width: max-content; }
+  .otherField { flex-direction: column; }
+  .otherCondition button { width: 100%; }
   .filters { align-items: stretch; }
   .viewToggle { width: 100%; }
   .viewToggle button { min-width: 0; flex: 1; padding-inline: 0.5rem; }
