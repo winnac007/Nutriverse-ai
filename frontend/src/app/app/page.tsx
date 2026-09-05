@@ -1,18 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
-  ArrowUpRight,
-  ChefHat,
   Clock3,
-  Dumbbell,
   Flame,
-  Globe2,
-  Menu,
-  Sparkles,
   Sprout,
+  Dumbbell,
+  Globe2,
+  ChefHat,
+  Bookmark,
+  Moon,
+  Heart,
   type LucideIcon,
 } from "lucide-react";
 import api from "@/lib/api";
@@ -38,15 +38,25 @@ type RecipeSummary = {
   nutrition?: { calories?: number };
 };
 
+type MetricItem = {
+  id: string;
+  label: string;
+  value: string;
+  denominator?: string;
+  percent: number;
+  color: string;
+  icon: LucideIcon;
+  iconColor: string;
+};
+
 type Chapter = {
   id: string;
   number: string;
   overline: string;
   title: string;
-  description: string;
+  tags: string;
   href: string;
   image: string;
-  variant: "sage" | "cream" | "dark" | "warm";
   icon: LucideIcon;
 };
 
@@ -55,53 +65,42 @@ const CHAPTERS: Chapter[] = [
     id: "healthcare",
     number: "01",
     overline: "Healthcare",
-    title: "Heal & Restore",
-    description: "PCOS, diabetes, thyroid, gut — translated to everyday meals.",
+    title: "Heal &\nRestore",
+    tags: "PCOS · Diabetes ·\nThyroid · Gut",
     href: "/app/healthcare",
-    image: "https://images.unsplash.com/photo-1604152135912-04a022e23696?w=1200&q=85",
-    variant: "sage",
+    image: "/app-ui/dish-ch1.png",
     icon: Sprout,
   },
   {
     id: "fitness",
     number: "02",
     overline: "Fitness",
-    title: "Strength & Fuel",
-    description: "High protein and balanced macros that fit your week.",
+    title: "Strength &\nFuel",
+    tags: "Protein ·\nPerformance ·\nBalance",
     href: "/app/category/fitness",
-    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1200&q=85",
-    variant: "cream",
+    image: "/app-ui/dish-ch2.png",
     icon: Dumbbell,
   },
   {
     id: "discover",
     number: "03",
     overline: "Discover",
-    title: "Travel the Plate",
-    description: "Global cuisines, gently adapted to how you live.",
+    title: "Travel the\nPlate",
+    tags: "Cuisines from\naround the\nworld",
     href: "/app/explore",
-    image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=1200&q=85",
-    variant: "dark",
+    image: "/app-ui/dish-ch3.png",
     icon: Globe2,
   },
   {
-    id: "chef-special",
+    id: "indulgence",
     number: "04",
     overline: "Indulgence",
-    title: "Chef Specials",
-    description: "Mindful desserts & bakery — moments worth slowing for.",
+    title: "Chef\nSpecials",
+    tags: "Desserts ·\nBakery ·\nMindful treats",
     href: "/app/category/chef-special",
-    image: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=1200&q=85",
-    variant: "warm",
+    image: "/app-ui/dish-ch4.png",
     icon: ChefHat,
   },
-];
-
-const METRICS: Array<{ key: keyof NutritionTotals; label: string }> = [
-  { key: "calories", label: "kcal" },
-  { key: "protein", label: "protein g" },
-  { key: "carbs", label: "carbs g" },
-  { key: "fat", label: "fat g" },
 ];
 
 const FEATURED_FALLBACKS: RecipeSummary[] = [
@@ -109,157 +108,86 @@ const FEATURED_FALLBACKS: RecipeSummary[] = [
     id: "featured-lentil-dal",
     title: "Turmeric Ginger Lentil Dal",
     href: "/app/meals?search=lentil",
-    image: "https://images.unsplash.com/photo-1604152135912-04a022e23696?w=900&q=85",
+    image: "/app-ui/recipe1-crop.png",
     country: "India",
     cook_time: 30,
     nutrition: { calories: 245 },
   },
   {
     id: "featured-salmon",
-    title: "Baked Salmon with Steamed Broccoli",
+    title: "Baked Salmon Broccoli",
     href: "/app/meals?search=salmon",
-    image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=900&q=85",
+    image: "/app-ui/recipe2-crop.png",
     country: "USA",
-    cook_time: 35,
-    nutrition: { calories: 420 },
-  },
-  {
-    id: "featured-quinoa",
-    title: "Quinoa Veggie Bowl for Kidney Health",
-    href: "/app/meals?search=quinoa",
-    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=900&q=85",
-    country: "Peru",
     cook_time: 25,
-    nutrition: { calories: 390 },
-  },
-  {
-    id: "featured-tofu-bowl",
-    title: "Sesame Tofu Harvest Bowl",
-    href: "/app/meals?search=tofu",
-    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=900&q=85",
-    country: "Korea",
-    cook_time: 30,
-    nutrition: { calories: 460 },
+    nutrition: { calories: 320 },
   },
 ];
 
-function LeafBranch() {
+function NameSprig() {
   return (
-    <svg viewBox="0 0 220 320" className={styles.leafBranch} aria-hidden="true">
-      <path className={styles.leafStem} d="M105 10 Q60 60 70 130 Q80 200 50 280" />
-      {Array.from({ length: 11 }, (_, index) => {
-        const progress = index / 10;
-        const x = 105 - Math.sin(progress * 3) * 30 - progress * 50;
-        const y = 10 + progress * 270;
-        const rotation = (index % 2 === 0 ? 35 : -35) - progress * 20;
-        return (
-          <path
-            key={index}
-            className={styles.leafShape}
-            d="M0 0 Q14 -10 28 0 Q14 12 0 0 Z"
-            transform={`translate(${x} ${y}) rotate(${rotation})`}
-          />
-        );
-      })}
+    <svg viewBox="0 0 32 32" className={styles.nameSprig} fill="none" aria-hidden="true">
+      <path d="M7 26C11 20 15 15 26 5" stroke="#78886D" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M26 5C20.5 5 17 9 18 13.5C19.5 11 23 8.5 26 5Z" fill="#88987D" />
+      <path d="M18 13.5C14 13.5 11.5 16 12.5 19.5C14 17 17 15.5 18 13.5Z" fill="#99A88E" />
+      <path d="M21 9C19 8 16.5 9 15.5 11.5C17 10.5 19.5 9.5 21 9Z" fill="#99A88E" />
     </svg>
   );
 }
 
-function Sprig() {
+function GuideSparkle() {
   return (
-    <svg viewBox="0 0 80 40" className={styles.sprig} aria-hidden="true">
-      <path d="M5 25 Q30 5 75 18" />
-      {Array.from({ length: 7 }, (_, index) => {
-        const x = 12 + index * 9;
-        const y = 22 - Math.sin(index / 2) * 6;
-        return <ellipse key={index} cx={x} cy={y} rx="3.5" ry="1.6" transform={`rotate(${index * 9} ${x} ${y})`} />;
-      })}
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z" fill="currentColor" fillOpacity="0.12" />
+      <circle cx="18" cy="5.5" r="1.1" fill="currentColor" stroke="none" />
+      <circle cx="5.5" cy="18.5" r="0.9" fill="currentColor" stroke="none" />
     </svg>
   );
 }
 
-function DotMap() {
-  return (
-    <svg viewBox="0 0 1000 500" className={styles.dotMap} preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <defs>
-        <pattern id="zenplate-dot-map" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
-          <circle cx="6" cy="6" r="1.1" />
-        </pattern>
-      </defs>
-      <g className={styles.mapLand}>
-        <path d="M120 130 Q180 100 240 120 Q280 130 290 170 Q260 210 220 230 Q170 240 130 220 Q100 190 120 130 Z" />
-        <path d="M250 270 Q280 260 300 290 Q320 340 300 400 Q280 440 260 430 Q240 400 240 350 Q240 300 250 270 Z" />
-        <path d="M460 130 Q500 110 540 130 Q560 160 540 190 Q500 200 470 180 Q450 160 460 130 Z" />
-        <path d="M470 220 Q510 210 540 240 Q560 290 540 350 Q510 390 480 380 Q450 340 450 280 Q450 240 470 220 Z" />
-        <path d="M580 140 Q680 110 780 140 Q830 170 820 220 Q780 250 700 240 Q620 230 590 200 Q570 170 580 140 Z" />
-        <path d="M730 260 Q780 250 810 280 Q800 310 760 310 Q720 300 720 280 Z" />
-        <path d="M820 340 Q870 330 900 360 Q890 390 850 395 Q810 385 810 360 Z" />
-      </g>
-      <g className={styles.mapPins}>
-        <circle cx="230" cy="210" r="3.5" />
-        <circle cx="530" cy="220" r="3.5" />
-        <circle cx="720" cy="275" r="3.5" />
-        <circle cx="800" cy="240" r="3.5" />
-        <circle cx="880" cy="220" r="3.5" />
-        <circle cx="300" cy="350" r="3.5" />
-      </g>
-    </svg>
-  );
-}
-
-function ChapterCard({ chapter, index }: { chapter: Chapter; index: number }) {
-  const Icon = chapter.icon;
-  const isDark = chapter.variant === "dark";
-  const animationStyle = { "--chapter-delay": `${index * 80}ms` } as CSSProperties;
+function FeaturedRecipeCard({ recipe }: { recipe: RecipeSummary }) {
+  const [saved, setSaved] = useState(false);
+  const country = recipe.country || recipe.category || "Global";
 
   return (
-    <article className={styles.chapterEntrance} style={animationStyle}>
-      <Link className={`${styles.chapterCard} ${styles[chapter.variant]}`} href={chapter.href}>
-        {isDark ? <DotMap /> : <LeafBranch />}
-
-        <div className={styles.chapterImage}>
-          <img src={chapter.image} alt="" loading={index === 0 ? "eager" : "lazy"} />
-          <span className={styles.imageFade} />
-        </div>
-
-        <div className={styles.chapterCopy}>
-          {!isDark ? <Sprig /> : null}
-          <div className={styles.chapterLabel}>
-            <span className={styles.chapterNumber}>{chapter.number}</span>
-            <span className={styles.chapterOverline}>{chapter.overline}</span>
-          </div>
-          <h2>{chapter.title}</h2>
-          <span className={styles.divider} />
-          <p>{chapter.description}</p>
-          <span className={styles.chapterIcon}><Icon aria-hidden="true" /></span>
-        </div>
-
-        <span className={styles.chapterArrow} aria-hidden="true"><ArrowUpRight /></span>
-      </Link>
-    </article>
-  );
-}
-
-function FeaturedRecipe({ recipe }: { recipe: RecipeSummary }) {
-  const label = recipe.country || recipe.category;
-  return (
-    <Link className={styles.recipeCard} href={recipe.href || (recipe.is_premium ? "/app/profile" : `/app/recipe/${recipe.id}`)}>
-      <span className={styles.recipeImage}>
+    <div className={styles.featuredCard}>
+      <Link href={recipe.href || `/app/recipe/${recipe.id}`} className={styles.featuredImageWrapper}>
         <img
-          src={recipe.image || "https://images.unsplash.com/photo-1547592180-85f173990554?w=720&q=80"}
-          alt=""
+          src={recipe.image || "/app-ui/recipe1-crop.png"}
+          alt={recipe.title}
+          className={styles.featuredImage}
           loading="lazy"
         />
-        {label ? <span className={styles.recipeLabel}>{label}</span> : null}
-      </span>
-      <span className={styles.recipeCopy}>
-        <strong>{recipe.title}</strong>
-        <span className={styles.recipeMeta}>
-          <span><Clock3 /> {recipe.cook_time || 30}m</span>
-          <span><Flame /> {recipe.nutrition?.calories || 0} kcal</span>
-        </span>
-      </span>
-    </Link>
+        <span className={styles.countryBadge}>{country}</span>
+      </Link>
+      <div className={styles.featuredCopy}>
+        <Link href={recipe.href || `/app/recipe/${recipe.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+          <h3 className={styles.featuredTitle}>{recipe.title}</h3>
+        </Link>
+        <div className={styles.featuredBottomRow}>
+          <div className={styles.featuredMeta}>
+            <span className={styles.featuredMetaItem}>
+              <Clock3 /> {recipe.cook_time || 30}m
+            </span>
+            <span className={styles.featuredMetaItem}>
+              <Flame /> {recipe.nutrition?.calories || 250} kcal
+            </span>
+          </div>
+          <button
+            type="button"
+            className={`${styles.bookmarkBtn} ${saved ? styles.bookmarkBtnActive : ""}`}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setSaved((prev) => !prev);
+            }}
+            aria-label={saved ? "Remove bookmark" : "Bookmark recipe"}
+          >
+            <Bookmark fill={saved ? "currentColor" : "none"} />
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -272,8 +200,8 @@ function greetingForHour(hour: number) {
 export default function Home() {
   const { user } = useAuth();
   const [greeting, setGreeting] = useState("Good morning");
-  const [totals, setTotals] = useState<NutritionTotals>({});
-  const [featured, setFeatured] = useState<RecipeSummary[]>([]);
+  const [, setTotals] = useState<NutritionTotals>({});
+  const [featured, setFeatured] = useState<RecipeSummary[]>(FEATURED_FALLBACKS);
 
   useEffect(() => {
     setGreeting(greetingForHour(new Date().getHours()));
@@ -288,80 +216,223 @@ export default function Home() {
       ]);
 
       if (!active) return;
-      if (recipesResult.status === "fulfilled") {
-        const liveRecipes = recipesResult.value.data.slice(0, 4);
-        const liveIds = new Set(liveRecipes.map((recipe) => recipe.id));
-        const filled = [...liveRecipes, ...FEATURED_FALLBACKS.filter((recipe) => !liveIds.has(recipe.id))].slice(0, 4);
+      if (recipesResult.status === "fulfilled" && Array.isArray(recipesResult.value.data) && recipesResult.value.data.length > 0) {
+        const liveRecipes = recipesResult.value.data.slice(0, 2);
+        const filled = [
+          ...liveRecipes,
+          ...FEATURED_FALLBACKS.filter((recipe) => !liveRecipes.some((lr) => lr.id === recipe.id)),
+        ].slice(0, 2);
         setFeatured(filled);
       } else {
         setFeatured(FEATURED_FALLBACKS);
       }
-      if (nutritionResult.status === "fulfilled") setTotals(nutritionResult.value.data.totals || {});
+      if (nutritionResult.status === "fulfilled" && nutritionResult.value.data?.totals) {
+        setTotals(nutritionResult.value.data.totals);
+      }
     };
 
     void loadHome();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [user?.category]);
 
-  const firstName = user?.name?.split(" ")[0] || "there";
+  const firstName = user?.name ? user.name.trim().split(" ")[0] : "Aditi";
+
+  const metrics: MetricItem[] = [
+    {
+      id: "water",
+      label: "Water",
+      value: "5",
+      denominator: "/ 8 cups",
+      percent: 62.5,
+      color: "#627555",
+      icon: Sprout,
+      iconColor: "#5E7252",
+    },
+    {
+      id: "sleep",
+      label: "Sleep",
+      value: "7h 20m",
+      percent: 85,
+      color: "#8071B8",
+      icon: Moon,
+      iconColor: "#6A5D9E",
+    },
+    {
+      id: "movement",
+      label: "Movement",
+      value: "30",
+      denominator: "/ 45 min",
+      percent: 66.7,
+      color: "#E36F3C",
+      icon: Flame,
+      iconColor: "#E06A3B",
+    },
+    {
+      id: "meals",
+      label: "Mindful meals",
+      value: "2",
+      denominator: "/ 3",
+      percent: 66.7,
+      color: "#DE6E6E",
+      icon: Heart,
+      iconColor: "#DE6B6B",
+    },
+  ];
 
   return (
     <div className={styles.page}>
-      <header className={styles.appBar}>
-        <Link className={styles.wordmark} href="/app" aria-label="Zenplato home">
-          <Sprout />
-          <span>Zenplato</span>
-        </Link>
-        <div className={styles.appActions}>
-          <Link className={user?.is_premium ? styles.premiumPill : styles.startedPill} href="/app/profile">
-            {user?.is_premium ? "Premium" : "Get started"}
-          </Link>
-          <Link className={styles.menuButton} href="/app/profile" aria-label="Open profile menu"><Menu /></Link>
+      {/* 1. Hero & Greeting with Top-Right Botanical Visual */}
+      <section className={styles.hero} aria-label="Greeting">
+        <div className={styles.heroContent}>
+          <h1 className={styles.greetingTitle}>
+            {greeting},<br />
+            <span className={styles.nameRow}>
+              {firstName}
+              <NameSprig />
+            </span>
+          </h1>
+          <p className={styles.heroSubtitle}>
+            Let&apos;s nourish your body and mind,
+            <br />
+            one plate at a time.
+          </p>
         </div>
-      </header>
-
-      <section className={styles.greeting}>
-        <h1>{greeting},<br />{firstName}.</h1>
-        <p>Today is a new beginning.</p>
+        <div className={styles.heroPlantWrapper} aria-hidden="true">
+          <img
+            src="/app-ui/hero-plant-blended.png"
+            alt=""
+            className={styles.heroPlant}
+            loading="eager"
+          />
+        </div>
       </section>
 
-      <section className={styles.focusCard} aria-labelledby="focus-heading">
-        <div className={styles.focusHeading}>
-          <h2 id="focus-heading">Today&apos;s focus</h2>
-          <Link href="/app/track">See all <ArrowRight /></Link>
+      {/* 2. Your AI Nutrition Guide Card */}
+      <Link href="/app/meal-plan" className={styles.guideCard} aria-label="Your AI nutrition guide">
+        <span className={styles.guideBadge} aria-hidden="true">
+          <GuideSparkle />
+        </span>
+        <div className={styles.guideText}>
+          <h2>Your AI nutrition guide</h2>
+          <p>A 7-day plan, grocery list, and adaptive coach — tuned to you.</p>
         </div>
-        <p>Nourish your body. Calm your mind.</p>
-        <div className={styles.metrics}>
-          {METRICS.map((metric) => (
-            <div key={metric.key}>
-              <strong>{Math.round(totals[metric.key] || 0)}</strong>
-              <span>{metric.label}</span>
-            </div>
+        <span className={styles.guideOpen}>
+          Open <ArrowRight size={16} />
+        </span>
+      </Link>
+
+      {/* 3. Today at a Glance (4 Progress Metrics) */}
+      <section className={styles.glanceSection} aria-label="Today at a glance">
+        <div className={styles.sectionHeader}>
+          <h2>Today at a glance</h2>
+          <Link href="/app/progress" className={styles.sectionAction}>
+            See insights <ArrowRight />
+          </Link>
+        </div>
+        <div className={styles.metricsGrid}>
+          {metrics.map((metric) => {
+            const Icon = metric.icon;
+            return (
+              <div key={metric.id} className={styles.metricCard}>
+                <div className={styles.metricTop}>
+                  <Icon className={styles.metricIcon} style={{ color: metric.iconColor }} />
+                  <span className={styles.metricLabel}>{metric.label}</span>
+                </div>
+                <div className={styles.metricValue}>
+                  {metric.value}
+                  {metric.denominator && (
+                    <span className={styles.metricDenominator}> {metric.denominator}</span>
+                  )}
+                </div>
+                <div className={styles.metricProgressTrack}>
+                  <div
+                    className={styles.metricProgressBar}
+                    style={{
+                      width: `${metric.percent}%`,
+                      backgroundColor: metric.color,
+                    }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 4. Explore Your Plate (2x2 Chapter Grid) */}
+      <section className={styles.chaptersSection} aria-label="Explore your plate">
+        <div className={styles.sectionHeader}>
+          <h2>Explore your plate</h2>
+          <Link href="/app/explore" className={styles.sectionAction}>
+            See all <ArrowRight />
+          </Link>
+        </div>
+        <div className={styles.chaptersGrid}>
+          {CHAPTERS.map((chapter) => {
+            const Icon = chapter.icon;
+            return (
+              <Link key={chapter.id} href={chapter.href} className={styles.chapterCard}>
+                <div className={styles.chapterContent}>
+                  <div className={styles.chapterOverlineRow}>
+                    <span className={styles.chapterNumber}>{chapter.number}</span>
+                    <span className={styles.chapterOverline}>{chapter.overline}</span>
+                  </div>
+                  <h3 className={styles.chapterTitle}>{chapter.title}</h3>
+                  <div className={styles.chapterLine} />
+                  <p className={styles.chapterTags}>{chapter.tags}</p>
+                  <div className={styles.chapterBadge}>
+                    <Icon />
+                  </div>
+                </div>
+                <div className={styles.chapterDishWrapper} aria-hidden="true">
+                  <img
+                    src={chapter.image}
+                    alt=""
+                    className={styles.chapterDishImg}
+                    loading="lazy"
+                  />
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 5. Featured For You */}
+      <section className={styles.featuredSection} aria-label="Featured recipes">
+        <div className={styles.sectionHeader}>
+          <h2>Featured for you</h2>
+          <Link href="/app/meals" className={styles.sectionAction}>
+            View all <ArrowRight />
+          </Link>
+        </div>
+        <div className={styles.featuredGrid}>
+          {featured.slice(0, 2).map((recipe) => (
+            <FeaturedRecipeCard key={recipe.id} recipe={recipe} />
           ))}
         </div>
       </section>
 
-      <section className={styles.chapters} aria-label="Wellness paths">
-        {CHAPTERS.map((chapter, index) => <ChapterCard key={chapter.id} chapter={chapter} index={index} />)}
-      </section>
-
-      <section className={styles.guideCard}>
-        <span className={styles.guideIcon}><Sparkles /></span>
-        <div>
-          <h2>Your AI nutrition guide</h2>
-          <p>A 7-day plan, grocery list, and adaptive coach — tuned to you.</p>
+      {/* 6. Motivational Bottom Action Banner */}
+      <section className={styles.bottomBanner} aria-label="Motivational prompt">
+        <div className={styles.bannerLeft}>
+          <img
+            src="/app-ui/botanical-branch-icon.png"
+            alt=""
+            className={styles.bannerIcon}
+            loading="lazy"
+          />
+          <p className={styles.bannerCopy}>
+            <span>Small choices today,</span>
+            <span>powerful changes tomorrow.</span>
+          </p>
         </div>
-        <Link href="/app/meal-plan">Open →</Link>
-      </section>
-
-      <section className={styles.featured}>
-        <div className={styles.sectionHeading}>
-          <h2>Featured for you</h2>
-          <Link href="/app/meals">View all</Link>
-        </div>
-        <div className={styles.recipeRail}>
-          {(featured.length ? featured : FEATURED_FALLBACKS).map((recipe) => <FeaturedRecipe key={recipe.id} recipe={recipe} />)}
-        </div>
+        <Link href="/app/track" className={styles.logMealBtn}>
+          <span>Log your meal</span>
+          <Sprout />
+        </Link>
       </section>
     </div>
   );

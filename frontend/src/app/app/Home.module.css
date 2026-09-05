@@ -1,656 +1,680 @@
 .page {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   min-width: 0;
-  gap: 2rem;
-  padding-bottom: 0.5rem;
-  color: #2e2a26;
-  font-family: "DM Sans", Inter, sans-serif;
+  gap: 1.4rem;
+  padding-bottom: 2rem;
+  color: #1d1b18;
+  font-family: "DM Sans", Inter, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-.appBar,
-.appActions,
-.focusHeading,
-.chapterLabel,
-.guideCard,
-.sectionHeading,
-.recipeMeta {
+/* ==========================================================================
+   Hero & Greeting
+   ========================================================================== */
+.hero {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-top: 0.5rem;
+  padding-bottom: 0.25rem;
+  min-height: 125px;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 68%;
+}
+
+.greetingTitle {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.85rem, 5.5vw, 2.5rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+  color: #1d1b18;
+}
+
+.nameRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.nameSprig {
+  width: 1.35rem;
+  height: 1.35rem;
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.heroSubtitle {
+  margin: 0.65rem 0 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #726b60;
+  font-weight: 400;
+}
+
+.heroPlantWrapper {
+  position: absolute;
+  top: -1.2rem;
+  right: -0.8rem;
+  width: clamp(155px, 36%, 225px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.heroPlant {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 18px rgba(60, 50, 30, 0.04));
+}
+
+/* ==========================================================================
+   AI Nutrition Guide Card
+   ========================================================================== */
+.guideCard {
   display: flex;
   align-items: center;
-}
-
-.appBar {
-  justify-content: space-between;
-}
-
-.wordmark {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.65rem;
-  color: #2e2a26;
-  text-decoration: none;
-}
-
-.wordmark svg {
-  width: 1.25rem;
-  color: #5e6b55;
-}
-
-.wordmark span {
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-}
-
-.appActions {
-  gap: 0.55rem;
-}
-
-.premiumPill,
-.startedPill {
-  display: inline-flex;
-  min-height: 2rem;
-  align-items: center;
-  padding: 0.42rem 1rem;
-  border-radius: 999px;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-decoration: none;
-  text-transform: uppercase;
-}
-
-.premiumPill {
-  color: #2e2a26;
-  background: #b59b5a;
-}
-
-.startedPill {
-  color: #f4f1e8;
-  background: #5e6b55;
-}
-
-.menuButton {
-  display: grid;
-  width: 2.3rem;
-  height: 2.3rem;
-  place-items: center;
-  border: 1px solid #ddd6c4;
-  border-radius: 50%;
-  color: #2e2a26;
-  text-decoration: none;
-  transition: background 180ms ease, transform 180ms ease;
-}
-
-.menuButton:hover {
-  background: #fffdf7;
-  transform: translateY(-1px);
-}
-
-.menuButton svg {
-  width: 1rem;
-}
-
-.greeting h1,
-.focusCard h2,
-.chapterCopy h2,
-.guideCard h2,
-.sectionHeading h2,
-.recipeCopy strong {
-  font-family: "Playfair Display", Georgia, serif;
-}
-
-.greeting h1 {
-  margin: 0;
-  font-size: clamp(2.1rem, 8vw, 2.9rem);
-  font-weight: 600;
-  letter-spacing: -0.035em;
-  line-height: 1.06;
-}
-
-.greeting p {
-  margin: 0.45rem 0 0;
-  color: #6b6258;
-  font-size: 0.9rem;
-}
-
-.focusCard {
-  padding: 1.55rem;
-  border: 1px solid #dccaa3;
-  border-radius: 1.5rem;
-  background: #f0e7d0;
-  box-shadow: 0 12px 30px rgba(60, 50, 30, 0.06);
-}
-
-.focusHeading {
   justify-content: space-between;
   gap: 1rem;
+  padding: 1.15rem 1.35rem;
+  background: #f1ece2;
+  border: 1px solid #e5dfd4;
+  border-radius: 1.25rem;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+  box-shadow: 0 4px 14px rgba(60, 50, 30, 0.03);
 }
 
-.focusHeading h2 {
+.guideCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(60, 50, 30, 0.06);
+}
+
+.guideBadge {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  background: #ffffff;
+  border-radius: 50%;
+  color: #55644c;
+  box-shadow: 0 2px 8px rgba(50, 45, 35, 0.05);
+}
+
+.guideBadge svg {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.guideText {
+  flex: 1;
+  min-width: 0;
+}
+
+.guideText h2 {
   margin: 0;
-  font-size: 1.25rem;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.12rem;
   font-weight: 600;
+  color: #1d1b18;
+  letter-spacing: -0.01em;
 }
 
-.focusHeading a {
+.guideText p {
+  margin: 0.22rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #726b60;
+}
+
+.guideOpen {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #38342e;
+  white-space: nowrap;
+  transition: transform 180ms ease, color 180ms ease;
+}
+
+.guideCard:hover .guideOpen {
+  color: #1d1b18;
+  transform: translateX(2px);
+}
+
+/* ==========================================================================
+   Section Headers
+   ========================================================================== */
+.sectionHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.28rem;
+  font-weight: 600;
+  color: #1d1b18;
+  letter-spacing: -0.015em;
+}
+
+.sectionAction {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  color: #5e6b55;
-  font-size: 0.72rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #726b60;
   text-decoration: none;
+  transition: color 180ms ease, transform 180ms ease;
 }
 
-.focusHeading svg {
+.sectionAction:hover {
+  color: #1d1b18;
+  transform: translateX(1px);
+}
+
+.sectionAction svg {
   width: 0.82rem;
+  height: 0.82rem;
 }
 
-.focusCard > p {
-  margin: 1.1rem 0 1.5rem;
-  color: #6b6258;
-  font-size: 0.95rem;
-  font-style: italic;
+/* ==========================================================================
+   Today at a glance (4 metrics)
+   ========================================================================== */
+.glanceSection {
+  margin-top: 0.2rem;
 }
 
-.metrics {
+.metricsGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.75rem;
+  gap: 0.65rem;
 }
 
-.metrics div {
-  min-width: 0;
-  text-align: center;
+.metricCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.45rem;
+  padding: 0.75rem 0.8rem;
+  background: #fbf9f4;
+  border: 1px solid #ebe5d9;
+  border-radius: 0.95rem;
+  box-shadow: 0 2px 8px rgba(60, 50, 30, 0.02);
 }
 
-.metrics strong {
-  display: block;
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 1.55rem;
-  font-weight: 600;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
+.metricTop {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
-.metrics span {
-  display: block;
-  margin-top: 0.55rem;
-  overflow: hidden;
-  color: #8a6e3a;
-  font-size: 0.62rem;
+.metricIcon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+.metricLabel {
+  font-size: 0.68rem;
   font-weight: 500;
-  letter-spacing: 0.25em;
-  text-overflow: ellipsis;
-  text-transform: uppercase;
+  color: #686156;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.chapters {
+.metricValue {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #1d1b18;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.metricDenominator {
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: #686156;
+}
+
+.metricProgressTrack {
+  width: 100%;
+  height: 3.5px;
+  background: #ebe5d8;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.metricProgressBar {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 400ms ease;
+}
+
+/* ==========================================================================
+   Explore your plate (2x2 Chapter Grid)
+   ========================================================================== */
+.chaptersSection {
+  margin-top: 0.3rem;
+}
+
+.chaptersGrid {
   display: grid;
-  gap: 1.25rem;
-}
-
-.chapterEntrance {
-  animation: chapter-in 520ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  animation-delay: var(--chapter-delay, 0ms);
-}
-
-@keyframes chapter-in {
-  from { opacity: 0; transform: translateY(0.9rem); }
-  to { opacity: 1; transform: translateY(0); }
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
 }
 
 .chapterCard {
-  --chapter-bg: #eef0e6;
-  --chapter-border: #dfdbcb;
-  --chapter-accent: #5e6b55;
-  --chapter-number: #8a6e3a;
-  --chapter-title: #2e2a26;
-  --chapter-copy: #5b554d;
-  --chapter-leaf: #8a9576;
-  --chapter-chip: #fff;
   position: relative;
-  display: block;
-  min-height: 13.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 14.8rem;
+  padding: 1.15rem 1.15rem;
+  background: #f4eee4;
+  border: 1px solid #e5ded2;
+  border-radius: 1.25rem;
   overflow: hidden;
-  border: 1px solid var(--chapter-border);
-  border-radius: 1.5rem;
-  color: var(--chapter-title);
-  background: var(--chapter-bg);
-  box-shadow: 0 12px 30px rgba(60, 50, 30, 0.06);
   text-decoration: none;
+  color: #1d1b18;
+  box-shadow: 0 4px 16px rgba(60, 50, 30, 0.04);
   transition: transform 220ms ease, box-shadow 220ms ease;
 }
 
 .chapterCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 17px 38px rgba(60, 50, 30, 0.1);
+  box-shadow: 0 10px 26px rgba(60, 50, 30, 0.08);
 }
 
-.cream {
-  --chapter-bg: #f0e7d0;
-  --chapter-border: #dccaa3;
-  --chapter-accent: #8a6e3a;
-  --chapter-leaf: #b59b5a;
-}
-
-.warm {
-  --chapter-bg: #ead8be;
-  --chapter-border: #d9c8a3;
-  --chapter-accent: #8a6e3a;
-  --chapter-leaf: #b59b5a;
-}
-
-.dark {
-  --chapter-bg: #23211d;
-  --chapter-border: #3a342f;
-  --chapter-accent: #d9c189;
-  --chapter-number: #d9c189;
-  --chapter-title: #f4f1e8;
-  --chapter-copy: #d4cab8;
-  --chapter-leaf: #d9c189;
-  --chapter-chip: rgba(217, 193, 137, 0.16);
-}
-
-.leafBranch {
-  position: absolute;
-  z-index: 1;
-  top: 1.5rem;
-  left: -0.5rem;
-  width: 8rem;
-  height: 12rem;
-  color: var(--chapter-leaf);
-  opacity: 0.22;
-  pointer-events: none;
-}
-
-.leafStem {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.2;
-}
-
-.leafShape {
-  fill: currentColor;
-}
-
-.sprig {
-  position: absolute;
-  top: 1rem;
-  right: 0.75rem;
-  width: 4rem;
-  height: 2rem;
-  color: var(--chapter-leaf);
-  opacity: 0.55;
-  pointer-events: none;
-}
-
-.sprig path {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1;
-}
-
-.sprig ellipse {
-  fill: currentColor;
-}
-
-.dotMap {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  color: #d9c189;
-  pointer-events: none;
-}
-
-.dotMap pattern circle,
-.mapPins circle {
-  fill: currentColor;
-}
-
-.mapLand path {
-  fill: url(#zenplate-dot-map);
-}
-
-.mapPins {
-  opacity: 0.95;
-}
-
-.chapterImage {
-  position: absolute;
-  z-index: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 58%;
-}
-
-.chapterImage img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 520ms cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-
-.chapterCard:hover .chapterImage img {
-  transform: scale(1.025);
-}
-
-.imageFade {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, var(--chapter-bg) 0%, color-mix(in srgb, var(--chapter-bg) 80%, transparent) 22%, transparent 58%);
-}
-
-.dark .imageFade {
-  background:
-    linear-gradient(180deg, rgba(35, 33, 29, 0.15), rgba(35, 33, 29, 0.4)),
-    linear-gradient(90deg, #23211d 0%, rgba(35, 33, 29, 0.8) 22%, transparent 58%);
-}
-
-.chapterCopy {
+.chapterContent {
   position: relative;
   z-index: 2;
-  width: 51%;
-  min-width: 13.5rem;
-  padding: 1.45rem;
+  max-width: 58%;
+  display: flex;
+  flex-direction: column;
 }
 
-.chapterLabel {
-  gap: 0.75rem;
-  margin-bottom: 0.8rem;
+.chapterOverlineRow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin-bottom: 0.45rem;
 }
 
 .chapterNumber {
-  color: var(--chapter-number);
   font-family: "Playfair Display", Georgia, serif;
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #7e7364;
 }
 
 .chapterOverline {
-  color: var(--chapter-accent);
-  font-size: 0.63rem;
-  font-weight: 500;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-}
-
-.chapterCopy h2 {
-  margin: 0;
-  color: var(--chapter-title);
-  font-size: clamp(1.55rem, 6vw, 2rem);
+  font-size: 0.62rem;
   font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.05;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7e7364;
 }
 
-.divider {
-  display: block;
-  width: 2.5rem;
-  height: 1px;
-  margin: 0.75rem 0;
-  background: var(--chapter-accent);
-  opacity: 0.62;
-}
-
-.chapterCopy p {
+.chapterTitle {
   margin: 0;
-  color: var(--chapter-copy);
-  font-size: 0.8rem;
-  line-height: 1.65;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.2rem, 3.2vw, 1.45rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: #1d1b18;
+  white-space: pre-line;
 }
 
-.chapterIcon,
-.chapterArrow,
-.guideIcon {
+.chapterLine {
+  width: 1.65rem;
+  height: 1px;
+  background: #b5a999;
+  margin: 0.65rem 0;
+}
+
+.chapterTags {
+  margin: 0;
+  font-size: 0.73rem;
+  line-height: 1.45;
+  color: #6a6256;
+  white-space: pre-line;
+}
+
+.chapterBadge {
+  position: relative;
+  z-index: 2;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 8px rgba(60, 50, 30, 0.06);
   display: grid;
   place-items: center;
-  border-radius: 50%;
+  color: #55644c;
+  margin-top: 1rem;
 }
 
-.chapterIcon {
-  width: 2.75rem;
-  height: 2.75rem;
-  margin-top: 1.35rem;
-  color: var(--chapter-accent);
-  background: var(--chapter-chip);
-  box-shadow: 0 2px 6px rgba(60, 50, 30, 0.06);
+.chapterBadge svg {
+  width: 1.05rem;
+  height: 1.05rem;
 }
 
-.dark .chapterIcon {
-  border: 1px solid rgba(217, 193, 137, 0.4);
-  box-shadow: none;
-}
-
-.chapterIcon svg {
-  width: 1.2rem;
-}
-
-.chapterArrow {
+.chapterDishWrapper {
   position: absolute;
-  z-index: 3;
-  top: 1.25rem;
-  right: 1.25rem;
-  width: 2.5rem;
-  height: 2.5rem;
-  color: #5e6b55;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(60, 50, 30, 0.08);
-}
-
-.dark .chapterArrow {
-  border: 1.5px solid #d9c189;
-  color: #d9c189;
-  background: transparent;
-  box-shadow: none;
-}
-
-.chapterArrow svg {
-  width: 1rem;
-}
-
-.guideCard {
-  gap: 1rem;
-  padding: 1.3rem;
-  border: 1px solid #dfdbcb;
-  border-radius: 1.5rem;
-  background: #eef0e6;
-  box-shadow: 0 12px 30px rgba(60, 50, 30, 0.06);
-}
-
-.guideIcon {
-  width: 2.75rem;
-  height: 2.75rem;
-  flex: 0 0 auto;
-  color: #5e6b55;
-  background: #fff;
-}
-
-.guideIcon svg {
-  width: 1.2rem;
-}
-
-.guideCard > div {
-  min-width: 0;
-  flex: 1;
-}
-
-.guideCard h2 {
-  margin: 0;
-  font-size: 1.12rem;
-  font-weight: 600;
-}
-
-.guideCard p {
-  margin: 0.2rem 0 0;
-  color: #6b6258;
-  font-size: 0.78rem;
-  line-height: 1.45;
-}
-
-.guideCard > a {
-  flex: 0 0 auto;
-  color: #5e6b55;
-  font-size: 0.78rem;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.sectionHeading {
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.featured {
-  min-width: 0;
-}
-
-.sectionHeading h2 {
-  margin: 0;
-  font-size: 1.45rem;
-  font-weight: 600;
-}
-
-.sectionHeading a {
-  color: #5e6b55;
-  font-size: 0.72rem;
-  text-decoration: none;
-}
-
-.recipeRail {
-  display: flex;
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-  gap: 1rem;
-  padding: 0 0 0.5rem;
-  overflow-x: auto;
-  overscroll-behavior-inline: contain;
-  scrollbar-width: none;
-}
-
-.recipeRail::-webkit-scrollbar {
-  display: none;
-}
-
-.recipeCard {
-  display: block;
-  width: 16rem;
-  flex: 0 0 auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 56%;
   overflow: hidden;
-  border: 1px solid #ddd6c9;
-  border-radius: 1.25rem;
-  color: #2e2a26;
-  background: #faf7ee;
-  text-decoration: none;
-  transition: transform 200ms ease, box-shadow 200ms ease;
+  pointer-events: none;
 }
 
-.recipeCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(60, 50, 30, 0.1);
-}
-
-.recipeImage {
-  position: relative;
-  display: block;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  background: #e8e2d5;
-}
-
-.recipeImage img {
+.chapterDishImg {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: right center;
   transition: transform 420ms ease;
 }
 
-.recipeCard:hover .recipeImage img {
-  transform: scale(1.035);
+.chapterCard:hover .chapterDishImg {
+  transform: scale(1.04);
 }
 
-.recipeLabel {
+/* ==========================================================================
+   Featured for you
+   ========================================================================== */
+.featuredSection {
+  margin-top: 0.3rem;
+}
+
+.featuredGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.featuredCard {
+  display: flex;
+  flex-direction: row;
+  background: #fbf9f4;
+  border: 1px solid #ebe5d9;
+  border-radius: 1.15rem;
+  overflow: hidden;
+  text-decoration: none;
+  color: #1d1b18;
+  box-shadow: 0 3px 12px rgba(60, 50, 30, 0.03);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.featuredCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(60, 50, 30, 0.07);
+}
+
+.featuredImageWrapper {
+  position: relative;
+  width: 44%;
+  min-width: 96px;
+  background: #ebe5d8;
+  flex-shrink: 0;
+}
+
+.featuredImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.countryBadge {
   position: absolute;
-  top: 0.75rem;
-  left: 0.75rem;
-  padding: 0.3rem 0.7rem;
-  border: 1px solid rgba(94, 107, 85, 0.25);
-  border-radius: 999px;
-  color: #5e6b55;
-  background: rgba(238, 240, 230, 0.92);
+  top: 0.5rem;
+  left: 0.5rem;
+  background: rgba(188, 233, 226, 0.88);
+  color: #175247;
+  border: 1px solid rgba(23, 82, 71, 0.16);
+  border-radius: 9999px;
+  padding: 0.16rem 0.55rem;
   font-size: 0.64rem;
-  font-weight: 500;
-  text-transform: capitalize;
-  backdrop-filter: blur(8px);
-}
-
-.recipeCopy {
-  display: block;
-  padding: 1rem;
-}
-
-.recipeCopy strong {
-  display: block;
-  min-height: 2.65rem;
-  font-size: 1.1rem;
   font-weight: 600;
-  line-height: 1.18;
+  backdrop-filter: blur(4px);
+  letter-spacing: 0.02em;
 }
 
-.recipeMeta {
-  gap: 1rem;
-  margin-top: 0.75rem;
-  color: #6b6258;
+.featuredCopy {
+  flex: 1;
+  min-width: 0;
+  padding: 0.75rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.featuredTitle {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #1d1b18;
+}
+
+.featuredBottomRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+.featuredMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
   font-size: 0.7rem;
+  color: #726b60;
+  flex-wrap: wrap;
 }
 
-.recipeMeta span {
+.featuredMetaItem {
   display: inline-flex;
   align-items: center;
-  gap: 0.28rem;
+  gap: 0.22rem;
 }
 
-.recipeMeta svg {
+.featuredMetaItem svg {
+  width: 0.78rem;
+  height: 0.78rem;
+  color: #8c8273;
+}
+
+.bookmarkBtn {
+  display: grid;
+  place-items: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  background: #ffffff;
+  border: 1px solid #ddd6c8;
+  border-radius: 0.45rem;
+  color: #686156;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 180ms ease;
+}
+
+.bookmarkBtn:hover {
+  background: #f7f4ec;
+  color: #1d1b18;
+  border-color: #beb6a5;
+}
+
+.bookmarkBtnActive {
+  background: #55644c;
+  color: #ffffff;
+  border-color: #55644c;
+}
+
+.bookmarkBtn svg {
   width: 0.85rem;
+  height: 0.85rem;
 }
 
-@media (min-width: 640px) {
-  .chapterImage { width: 55%; }
-  .chapterCopy { width: 52%; padding: 1.55rem; }
-  .chapterCopy p { font-size: 0.9rem; }
-  .chapterCard { min-height: 14.5rem; }
+/* ==========================================================================
+   Bottom Action Banner
+   ========================================================================== */
+.bottomBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  padding: 0.95rem 1.25rem;
+  background: #f4eee4;
+  border: 1px solid #e5ded2;
+  border-radius: 1.25rem;
+  margin-top: 0.2rem;
+  box-shadow: 0 3px 12px rgba(60, 50, 30, 0.03);
 }
 
-@media (max-width: 440px) {
-  .wordmark span { font-size: 0.86rem; letter-spacing: 0.19em; }
-  .premiumPill, .startedPill { padding-inline: 0.78rem; font-size: 0.59rem; }
-  .focusCard { padding-inline: 1.05rem; }
-  .metrics { gap: 0.35rem; }
-  .metrics strong { font-size: 1.35rem; }
-  .metrics span { font-size: 0.5rem; letter-spacing: 0.16em; }
-  .chapterCard { min-height: 13rem; }
-  .chapterCopy { width: 56%; min-width: 0; padding: 1.15rem; }
-  .chapterCopy h2 { font-size: 1.5rem; }
-  .chapterCopy p { font-size: 0.7rem; line-height: 1.5; }
-  .chapterIcon { margin-top: 1rem; }
-  .chapterArrow { top: 0.9rem; right: 0.9rem; }
-  .guideCard { align-items: flex-start; flex-wrap: wrap; }
-  .guideCard > a { margin-left: 3.75rem; }
+.bannerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .chapterEntrance { animation: none; }
-  .chapterCard,
-  .chapterImage img,
-  .menuButton,
-  .recipeCard,
-  .recipeImage img { transition: none; }
+.bannerIcon {
+  width: 2.75rem;
+  height: 2.75rem;
+  object-fit: contain;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.bannerCopy {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #1d1b18;
+}
+
+.bannerCopy span {
+  display: block;
+}
+
+.logMealBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.62rem 1.15rem;
+  background: #5e6b54;
+  color: #faf7f2;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(94, 107, 84, 0.25);
+  transition: background 180ms ease, transform 180ms ease;
+  flex-shrink: 0;
+}
+
+.logMealBtn:hover {
+  background: #4f5b46;
+  transform: translateY(-1px);
+}
+
+.logMealBtn svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+@media (max-width: 540px) {
+  .heroContent {
+    max-width: 62%;
+  }
+
+  .heroPlantWrapper {
+    width: 148px;
+    right: -0.5rem;
+    top: -0.8rem;
+  }
+
+  .metricsGrid {
+    gap: 0.45rem;
+  }
+
+  .metricCard {
+    padding: 0.65rem 0.5rem;
+  }
+
+  .metricLabel {
+    font-size: 0.62rem;
+  }
+
+  .metricValue {
+    font-size: 0.76rem;
+  }
+
+  .chapterContent {
+    max-width: 60%;
+  }
+
+  .chapterCard {
+    padding: 0.95rem 0.85rem;
+    min-height: 13.8rem;
+  }
+
+  .chapterTitle {
+    font-size: 1.15rem;
+  }
+
+  .chapterTags {
+    font-size: 0.68rem;
+  }
+
+  .chapterDishWrapper {
+    width: 54%;
+  }
+
+  .featuredGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .featuredImageWrapper {
+    width: 38%;
+  }
+
+  .bottomBanner {
+    flex-wrap: wrap;
+    padding: 0.85rem 1rem;
+  }
+
+  .logMealBtn {
+    width: 100%;
+    justify-content: center;
+  }
 }

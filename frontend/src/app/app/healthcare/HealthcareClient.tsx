@@ -6,7 +6,9 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEven
 import {
   Activity,
   ArrowLeft,
+  ArrowRight,
   ArrowRightLeft,
+  Bookmark,
   Bone,
   BookOpen,
   Brain,
@@ -27,6 +29,7 @@ import {
   Shield,
   ShieldOff,
   Sparkles,
+  Sprout,
   Stethoscope,
   Sun,
   Trophy,
@@ -441,6 +444,154 @@ function SwapsCard({ swaps }: { swaps: Swap[] }) {
   );
 }
 
+function FocusSprig() {
+  return (
+    <svg viewBox="0 0 24 24" className={styles.focusSprig} fill="none" aria-hidden="true">
+      <path d="M4 20C8 15 12 11 20 4" stroke="#8A987D" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="14" cy="9" r="2.2" fill="#99A88E" />
+      <circle cx="17" cy="6" r="2.2" fill="#88987D" />
+      <circle cx="10" cy="13" r="2" fill="#AAB99F" />
+    </svg>
+  );
+}
+
+function GuideSparkle() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z" fill="currentColor" fillOpacity="0.12" />
+      <circle cx="18" cy="5.5" r="1.1" fill="currentColor" stroke="none" />
+      <circle cx="5.5" cy="18.5" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+type FocusCardConfig = {
+  id: string;
+  conditionKey: string;
+  title: string;
+  blurb: string;
+  count: string;
+  icon: LucideIcon;
+  image: string;
+};
+
+const FOCUS_CARDS: FocusCardConfig[] = [
+  {
+    id: "cholesterol",
+    conditionKey: "high-cholesterol",
+    title: "Cholesterol",
+    blurb: "Heart health & lipid balance.",
+    count: "6 recipes",
+    icon: Heart,
+    image: "/app-ui/focus-cholesterol.png",
+  },
+  {
+    id: "diabetes",
+    conditionKey: "diabetes",
+    title: "Diabetes",
+    blurb: "Stable blood sugar & better control.",
+    count: "5 recipes",
+    icon: Activity,
+    image: "/app-ui/focus-diabetes.png",
+  },
+  {
+    id: "thyroid",
+    conditionKey: "thyroid",
+    title: "Thyroid",
+    blurb: "Support metabolism & energy.",
+    count: "4 recipes",
+    icon: Sparkles,
+    image: "/app-ui/focus-thyroid.png",
+  },
+  {
+    id: "pcos",
+    conditionKey: "pcos",
+    title: "PCOS",
+    blurb: "Hormonal balance & menstrual health.",
+    count: "3 recipes",
+    icon: Flower2,
+    image: "/app-ui/focus-pcos.png",
+  },
+];
+
+type PopularRecipe = {
+  id: string;
+  title: string;
+  time: string;
+  calories: number;
+  image: string;
+  href: string;
+};
+
+const POPULAR_HEALTHCARE_RECIPES: PopularRecipe[] = [
+  {
+    id: "pop-dal",
+    title: "Turmeric Ginger Lentil Dal",
+    time: "10 min",
+    calories: 220,
+    image: "/app-ui/pop-dal.png",
+    href: "/app/meals?search=lentil",
+  },
+  {
+    id: "pop-salmon",
+    title: "Lemon Herb Grilled Salmon",
+    time: "15 min",
+    calories: 320,
+    image: "/app-ui/pop-salmon.png",
+    href: "/app/meals?search=salmon",
+  },
+  {
+    id: "pop-bowl",
+    title: "Quinoa Power Bowl",
+    time: "12 min",
+    calories: 280,
+    image: "/app-ui/pop-bowl.png",
+    href: "/app/meals?search=quinoa",
+  },
+];
+
+function PopularRecipeCard({ recipe }: { recipe: PopularRecipe }) {
+  const [saved, setSaved] = useState(false);
+
+  return (
+    <div className={styles.popCard}>
+      <Link href={recipe.href} className={styles.popImageWrapper}>
+        <img src={recipe.image} alt={recipe.title} className={styles.popImage} loading="lazy" />
+        <span className={styles.popTimeBadge}>
+          <Zap /> {recipe.time}
+        </span>
+      </Link>
+      <div className={styles.popBody}>
+        <Link href={recipe.href} style={{ textDecoration: "none", color: "inherit" }}>
+          <h4 className={styles.popTitle}>{recipe.title}</h4>
+        </Link>
+        <div className={styles.popBottomRow}>
+          <div className={styles.popMeta}>
+            <span className={styles.popMetaItem}>
+              <Clock3 /> {recipe.time.replace(" min", "m")}
+            </span>
+            <span className={styles.popMetaItem}>
+              <Flame /> {recipe.calories} kcal
+            </span>
+          </div>
+          <button
+            type="button"
+            className={`${styles.popBookmarkBtn} ${saved ? styles.popBookmarkBtnActive : ""}`}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setSaved((prev) => !prev);
+            }}
+            aria-label={saved ? "Remove bookmark" : "Bookmark recipe"}
+          >
+            <Bookmark fill={saved ? "currentColor" : "none"} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function HealthcareClient() {
   const { user } = useAuth();
   const router = useRouter();
@@ -456,7 +607,8 @@ export default function HealthcareClient() {
   const [view, setView] = useState<ViewMode>("browse");
   const [quick, setQuick] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [intakeComplete, setIntakeComplete] = useState(Boolean(conditionId));
+  const [showAllPicker, setShowAllPicker] = useState(false);
+  const [showIntake, setShowIntake] = useState(false);
 
   const condition = useMemo(
     () => conditionId === "custom" && customConditionName
@@ -541,10 +693,18 @@ export default function HealthcareClient() {
     <div className={styles.page}>
       <Link className={styles.backLink} href="/app"><ArrowLeft /> Home</Link>
 
-      {!conditionId && !intakeComplete ? (
-        <HealthIntake onContinue={() => setIntakeComplete(true)} />
-      ) : !conditionId ? (
+      {!conditionId && showIntake ? (
+        <HealthIntake onContinue={() => { setShowIntake(false); setShowAllPicker(true); }} />
+      ) : !conditionId && showAllPicker ? (
         <>
+          <button
+            type="button"
+            className={styles.backLink}
+            style={{ border: "none", background: "none", cursor: "pointer", padding: 0 }}
+            onClick={() => setShowAllPicker(false)}
+          >
+            <ArrowLeft /> Back to recommended focus
+          </button>
           {loading ? (
             <div className={styles.loadingState}>Preparing your health library…</div>
           ) : (
@@ -552,10 +712,145 @@ export default function HealthcareClient() {
               conditions={conditions}
               onPick={pickCondition}
               onPickCustom={pickCustomCondition}
-              onBack={() => setIntakeComplete(false)}
+              onBack={() => setShowAllPicker(false)}
             />
           )}
           {streak && (streak.meals_this_week || 0) > 0 ? <StreakCard streak={streak} /> : null}
+        </>
+      ) : !conditionId ? (
+        <>
+          {/* 1. Hero with Top-Right Botanical Visual */}
+          <section className={styles.hero} aria-label="Pick your focus">
+            <div className={styles.heroContent}>
+              <span className={styles.overline}>RECOMMENDED FOR YOU</span>
+              <h1 className={styles.heroTitle}>Pick your focus</h1>
+              <p className={styles.heroSubtitle}>
+                Every meal we suggest will be tailored to your selected condition — with the science of why it works.
+              </p>
+            </div>
+            <div className={styles.heroPlantWrapper} aria-hidden="true">
+              <img
+                src="/app-ui/hero-plant-blended.png"
+                alt=""
+                className={styles.heroPlant}
+                loading="eager"
+              />
+            </div>
+          </section>
+
+          {/* 2. Condition Focus Cards (2x2 Grid) */}
+          <div className={styles.focusGrid}>
+            {FOCUS_CARDS.map((item) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={item.id}
+                  className={styles.focusCard}
+                  onClick={() => {
+                    const matched = conditions.find(
+                      (c) =>
+                        c.id === item.conditionKey ||
+                        c.id === item.id ||
+                        c.label.toLowerCase().includes(item.id)
+                    );
+                    pickCondition(
+                      matched || {
+                        id: item.conditionKey,
+                        label: item.title,
+                        blurb: item.blurb,
+                      }
+                    );
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      const matched = conditions.find(
+                        (c) =>
+                          c.id === item.conditionKey ||
+                          c.id === item.id ||
+                          c.label.toLowerCase().includes(item.id)
+                      );
+                      pickCondition(
+                        matched || {
+                          id: item.conditionKey,
+                          label: item.title,
+                          blurb: item.blurb,
+                        }
+                      );
+                    }
+                  }}
+                >
+                  <div className={styles.focusContent}>
+                    <div className={styles.focusTopRow}>
+                      <span className={styles.focusIconBadge}>
+                        <Icon />
+                      </span>
+                      <FocusSprig />
+                    </div>
+                    <h3 className={styles.focusTitle}>{item.title}</h3>
+                    <p className={styles.focusBlurb}>{item.blurb}</p>
+                    <div className={styles.focusDivider} />
+                    <span className={styles.focusCount}>{item.count}</span>
+                  </div>
+                  <div className={styles.focusDishWrapper} aria-hidden="true">
+                    <img src={item.image} alt="" className={styles.focusDishImg} loading="lazy" />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* 3. Quiz Banner */}
+          <div className={styles.quizCard}>
+            <span className={styles.quizBadge} aria-hidden="true">
+              <GuideSparkle />
+            </span>
+            <div className={styles.quizText}>
+              <h3>Not sure what to choose?</h3>
+              <p>Take our quick quiz and let Zenplato suggest what fits you best.</p>
+            </div>
+            <Link href="/onboarding/conditions" className={styles.quizBtn}>
+              <span>Take quiz</span>
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          {/* 4. Popular Right Now (3-Card Rail) */}
+          <section className={styles.popularSection} aria-label="Popular recipes">
+            <div className={styles.sectionHeader}>
+              <h2>Popular right now</h2>
+              <Link href="/app/meals" className={styles.sectionAction}>
+                View all <ArrowRight />
+              </Link>
+            </div>
+            <div className={styles.popularGrid}>
+              {POPULAR_HEALTHCARE_RECIPES.map((recipe) => (
+                <PopularRecipeCard key={recipe.id} recipe={recipe} />
+              ))}
+            </div>
+          </section>
+
+          {/* 5. Motivational Bottom Action Banner */}
+          <section className={styles.bottomBanner} aria-label="Motivational prompt">
+            <div className={styles.bannerLeft}>
+              <img
+                src="/app-ui/botanical-branch-icon.png"
+                alt=""
+                className={styles.bannerIcon}
+                loading="lazy"
+              />
+              <p className={styles.bannerCopy}>
+                <span>Small choices today,</span>
+                <span>powerful changes tomorrow.</span>
+              </p>
+            </div>
+            <Link href="/app/track" className={styles.logMealBtn}>
+              <span>Log your meal</span>
+              <Sprout />
+            </Link>
+          </section>
         </>
       ) : (
         <div className={styles.conditionHub}>
