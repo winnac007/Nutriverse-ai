@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, RefreshCw, Sprout } from "lucide-react";
 import api from "@/lib/api";
 import RecipeCard from "@/components/RecipeCard";
+import FitnessClient from "@/app/app/fitness/FitnessClient";
 import styles from "../../wellnessMeals.module.css";
 
 type Recipe = { id: string; title: string; [key: string]: unknown };
@@ -14,8 +15,7 @@ const CATEGORY_COPY: Record<string, { label: string; eyebrow: string; intro: str
   cultural: { label: "Cultural", eyebrow: "Tradition at the table", intro: "Recipes rooted in place, memory, and the food traditions that make nourishment feel like home." },
 };
 
-export default function Category({ params }: { params: Promise<{ cat: string }> }) {
-  const { cat } = use(params);
+function GenericCategoryView({ cat }: { cat: string }) {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -62,4 +62,12 @@ export default function Category({ params }: { params: Promise<{ cat: string }> 
       </div>
     </main>
   );
+}
+
+export default function Category({ params }: { params: Promise<{ cat: string }> }) {
+  const { cat } = use(params);
+  if (cat === "fitness") {
+    return <FitnessClient />;
+  }
+  return <GenericCategoryView cat={cat} />;
 }

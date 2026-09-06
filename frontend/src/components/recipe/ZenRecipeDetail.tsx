@@ -4,9 +4,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   ArrowLeft,
+  BicepsFlexed,
   Bookmark,
+  Calendar,
+  CheckCircle2,
   ChevronDown,
   Clock3,
+  Droplets,
   Flame,
   Heart,
   Leaf,
@@ -20,6 +24,7 @@ import {
   Star,
   Sun,
   User,
+  Wheat,
   X,
   Zap,
 } from "lucide-react";
@@ -66,6 +71,29 @@ function renderInstruction(text: string, highlightWords?: string[]) {
     }
     return part;
   });
+}
+
+function AvocadoIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 2C8.5 2 6 7 6 13a6 6 0 0 0 12 0c0-6-2.5-11-6-11z" />
+      <circle cx="12" cy="14" r="3.2" strokeWidth="1.8" />
+    </svg>
+  );
+}
+
+function SaltIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M9 3h6v3H9z" />
+      <path d="M8 6h8l1.5 15H6.5L8 6z" />
+      <circle cx="10" cy="11" r="0.6" fill="currentColor" />
+      <circle cx="14" cy="11" r="0.6" fill="currentColor" />
+      <circle cx="12" cy="14" r="0.6" fill="currentColor" />
+      <circle cx="10" cy="17" r="0.6" fill="currentColor" />
+      <circle cx="14" cy="17" r="0.6" fill="currentColor" />
+    </svg>
+  );
 }
 
 export type ChefTip = {
@@ -1107,77 +1135,331 @@ export default function ZenRecipeDetail({
           NUTRITION TAB ACTIVE
           ========================================================================= */}
       {activeTab === "nutrition" && (
-        <section className={styles.nutritionCard} aria-label="Detailed nutrition breakdown">
-          <h2 className={styles.nutritionHeader}>Nutrition (per serving)</h2>
-          <div className={styles.nutritionGrid}>
-            <div className={styles.nutritionMetric}>
-              <span className={styles.nutritionValue}>{recipe.nutrition.calories}</span>
-              <span className={styles.nutritionLabel}>CALORIES</span>
-            </div>
-            <div className={styles.nutritionMetric}>
-              <span className={styles.nutritionValue}>{recipe.nutrition.protein}</span>
-              <span className={styles.nutritionLabel}>PROTEIN</span>
-            </div>
-            <div className={styles.nutritionMetric}>
-              <span className={styles.nutritionValue}>{recipe.nutrition.carbs}</span>
-              <span className={styles.nutritionLabel}>CARBS</span>
+        <div className={styles.nutritionFullSection}>
+          {/* 1. Nutrition (per serving) with 6 Metrics & Donut Chart */}
+          <section className={styles.nutritionMacroCard} aria-label="Detailed nutrition breakdown">
+            <div className={styles.nutrHeaderRow}>
+              <span className={styles.nutrSproutBadge}>
+                <Leaf />
+              </span>
+              <h2 className={styles.nutrMainTitle}>Nutrition (per serving)</h2>
             </div>
 
-            <div className={styles.nutritionDivider} aria-hidden="true" />
-
-            <div className={styles.nutritionMetric}>
-              <span className={styles.nutritionValue}>{recipe.nutrition.fat}</span>
-              <span className={styles.nutritionLabel}>FAT</span>
-            </div>
-            <div className={styles.nutritionMetric}>
-              <span className={styles.nutritionValue}>{recipe.nutrition.fiber}</span>
-              <span className={styles.nutritionLabel}>FIBER</span>
-            </div>
-            <div className={styles.nutritionMetric}>
-              <span className={styles.nutritionValue}>{recipe.nutrition.sodium}</span>
-              <span className={styles.nutritionLabel}>SODIUM</span>
-            </div>
-          </div>
-
-          <div
-            style={{
-              marginTop: "1.25rem",
-              paddingTop: "1rem",
-              borderTop: "1px solid #ece6da",
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.5rem",
-            }}
-          >
-            <h4
-              style={{
-                margin: 0,
-                fontSize: "0.85rem",
-                color: "#1d1b18",
-                fontWeight: 700,
-              }}
-            >
-              Functional Benefits
-            </h4>
-            <div className={styles.badgeRow}>
-              {recipe.badges.map((b) => (
-                <span
-                  key={b.label}
-                  className={`${styles.badgePill} ${
-                    b.type === "heart"
-                      ? styles.badgeHeart
-                      : b.type === "thyroid"
-                      ? styles.badgeThyroid
-                      : styles.badgeNeutral
-                  }`}
-                >
-                  {b.type === "heart" ? <Heart /> : b.type === "thyroid" ? <Sparkles /> : null}
-                  <span>{b.label}</span>
+            {/* 6 Metric Cells with Custom Icons */}
+            <div className={styles.nutrGrid6}>
+              <div className={styles.nutrMetricCell}>
+                <span className={styles.nutrCellIcon}>
+                  <Flame />
                 </span>
-              ))}
+                <strong className={styles.nutrCellValue}>{recipe.nutrition.calories}</strong>
+                <span className={styles.nutrCellLabel}>Calories</span>
+              </div>
+              <div className={styles.nutrMetricCell}>
+                <span className={styles.nutrCellIcon}>
+                  <BicepsFlexed />
+                </span>
+                <strong className={styles.nutrCellValue}>{recipe.nutrition.protein}</strong>
+                <span className={styles.nutrCellLabel}>Protein</span>
+              </div>
+              <div className={styles.nutrMetricCell}>
+                <span className={styles.nutrCellIcon}>
+                  <Wheat />
+                </span>
+                <strong className={styles.nutrCellValue}>{recipe.nutrition.carbs}</strong>
+                <span className={styles.nutrCellLabel}>Carbs</span>
+              </div>
+              <div className={styles.nutrMetricCell}>
+                <span className={styles.nutrCellIcon}>
+                  <AvocadoIcon />
+                </span>
+                <strong className={styles.nutrCellValue}>{recipe.nutrition.fat}</strong>
+                <span className={styles.nutrCellLabel}>Fat</span>
+              </div>
+              <div className={styles.nutrMetricCell}>
+                <span className={styles.nutrCellIcon}>
+                  <Leaf />
+                </span>
+                <strong className={styles.nutrCellValue}>{recipe.nutrition.fiber}</strong>
+                <span className={styles.nutrCellLabel}>Fiber</span>
+              </div>
+              <div className={styles.nutrMetricCell}>
+                <span className={styles.nutrCellIcon}>
+                  <SaltIcon />
+                </span>
+                <strong className={styles.nutrCellValue}>{recipe.nutrition.sodium}</strong>
+                <span className={styles.nutrCellLabel}>Sodium</span>
+              </div>
+            </div>
+
+            {/* Donut Ring Chart & Legend Table */}
+            <div className={styles.nutrDonutRow}>
+              <div className={styles.donutChartWrapper}>
+                <svg className={styles.donutSvg} viewBox="0 0 120 120" aria-label="Macronutrient breakdown donut chart">
+                  <circle cx="60" cy="60" r="48" fill="transparent" stroke="#F4EFE6" strokeWidth="11" />
+                  {/* Protein: 29% -> 87.5px */}
+                  <circle
+                    cx="60"
+                    cy="60"
+                    r="48"
+                    fill="transparent"
+                    stroke="#4B8A68"
+                    strokeWidth="11"
+                    strokeDasharray="87.5 214.1"
+                    strokeDashoffset="0"
+                  />
+                  {/* Fat: 61% -> 183.9px */}
+                  <circle
+                    cx="60"
+                    cy="60"
+                    r="48"
+                    fill="transparent"
+                    stroke="#E5A93B"
+                    strokeWidth="11"
+                    strokeDasharray="183.9 117.7"
+                    strokeDashoffset="-87.5"
+                  />
+                  {/* Carbs: 7% -> 21.1px */}
+                  <circle
+                    cx="60"
+                    cy="60"
+                    r="48"
+                    fill="transparent"
+                    stroke="#E06D53"
+                    strokeWidth="11"
+                    strokeDasharray="21.1 280.5"
+                    strokeDashoffset="-271.4"
+                  />
+                  {/* Fiber: 3% -> 9.0px */}
+                  <circle
+                    cx="60"
+                    cy="60"
+                    r="48"
+                    fill="transparent"
+                    stroke="#D1C2A5"
+                    strokeWidth="11"
+                    strokeDasharray="9.0 292.6"
+                    strokeDashoffset="-292.5"
+                  />
+                </svg>
+                <div className={styles.donutCenterText}>
+                  <span className={styles.donutKcalVal}>{recipe.nutrition.calories}</span>
+                  <span className={styles.donutKcalUnit}>kcal</span>
+                </div>
+              </div>
+
+              <div className={styles.donutLegendTable}>
+                <div className={styles.legendItemRow}>
+                  <span className={styles.legendLeft}>
+                    <span className={styles.legendDot} style={{ background: "#4B8A68" }} />
+                    <span className={styles.legendName}>Protein</span>
+                  </span>
+                  <span className={styles.legendPercent}>29%</span>
+                  <span className={styles.legendGrams}>{recipe.nutrition.protein}</span>
+                </div>
+                <div className={styles.legendItemRow}>
+                  <span className={styles.legendLeft}>
+                    <span className={styles.legendDot} style={{ background: "#E5A93B" }} />
+                    <span className={styles.legendName}>Fat</span>
+                  </span>
+                  <span className={styles.legendPercent}>61%</span>
+                  <span className={styles.legendGrams}>{recipe.nutrition.fat}</span>
+                </div>
+                <div className={styles.legendItemRow}>
+                  <span className={styles.legendLeft}>
+                    <span className={styles.legendDot} style={{ background: "#E06D53" }} />
+                    <span className={styles.legendName}>Carbs</span>
+                  </span>
+                  <span className={styles.legendPercent}>7%</span>
+                  <span className={styles.legendGrams}>{recipe.nutrition.carbs}</span>
+                </div>
+                <div className={styles.legendItemRow}>
+                  <span className={styles.legendLeft}>
+                    <span className={styles.legendDot} style={{ background: "#D1C2A5" }} />
+                    <span className={styles.legendName}>Fiber</span>
+                  </span>
+                  <span className={styles.legendPercent}>3%</span>
+                  <span className={styles.legendGrams}>{recipe.nutrition.fiber}</span>
+                </div>
+              </div>
+            </div>
+
+            <p className={styles.nutrFooterNote}>Values are approximate and may vary.</p>
+          </section>
+
+          {/* 2. Good for your heart Card */}
+          <section className={styles.heartConditionCard} aria-label="Heart health card">
+            <div className={styles.heartCardLeft}>
+              <div className={styles.heartIconCircle}>
+                <Heart />
+              </div>
+              <div className={styles.heartCardBody}>
+                <h3 className={styles.heartCardTitle}>Good for your heart</h3>
+                <p className={styles.heartCardDesc}>
+                  This meal is rich in healthy fats, low in saturated fat, and high in protein and fiber — ideal for cholesterol management.
+                </p>
+              </div>
+            </div>
+            <img
+              src="/app-ui/nutr-heart-ecg.png"
+              alt="Heart health illustration"
+              className={styles.heartCardImg}
+            />
+          </section>
+
+          {/* 3. Key benefits Card */}
+          <section className={styles.keyBenefitsSection} aria-label="Key health benefits">
+            <h3 className={styles.keyBenefitsTitle}>Key benefits</h3>
+            <div className={styles.benefitsGrid4}>
+              <div className={styles.benefitCard}>
+                <div className={`${styles.benefitIconCircle} ${styles.benefitCirclePink}`}>
+                  <Heart fill="#C4556F" />
+                </div>
+                <p className={styles.benefitText}>Supports heart health</p>
+              </div>
+              <div className={styles.benefitCard}>
+                <div className={`${styles.benefitIconCircle} ${styles.benefitCirclePurple}`}>
+                  <Droplets fill="#8C65D3" />
+                </div>
+                <p className={styles.benefitText}>Helps manage cholesterol</p>
+              </div>
+              <div className={styles.benefitCard}>
+                <div className={`${styles.benefitIconCircle} ${styles.benefitCircleAmber}`}>
+                  <Zap fill="#E5A93B" />
+                </div>
+                <p className={styles.benefitText}>High in protein for sustained energy</p>
+              </div>
+              <div className={styles.benefitCard}>
+                <div className={`${styles.benefitIconCircle} ${styles.benefitCircleMint}`}>
+                  <Leaf fill="#4B8A68" />
+                </div>
+                <p className={styles.benefitText}>Rich in iron &amp; folate</p>
+              </div>
+            </div>
+          </section>
+
+          {/* 4. Two-Column Split: Meal fit & How it helps */}
+          <div className={styles.twoColFitRow}>
+            {/* Meal fit */}
+            <div className={styles.fitCard}>
+              <h4 className={styles.fitHeader}>
+                <Calendar />
+                <span>Meal fit</span>
+              </h4>
+              <div className={styles.fitRow}>
+                <span className={styles.fitLabel}>Best time</span>
+                <span className={styles.fitValue}>
+                  <Sun />
+                  <span>Breakfast</span>
+                </span>
+              </div>
+              <div className={styles.fitRow}>
+                <span className={styles.fitLabel}>Meal type</span>
+                <span className={styles.fitValue}>High-protein</span>
+              </div>
+              <div className={styles.fitRow}>
+                <span className={styles.fitLabel}>Diet tags</span>
+                <div className={styles.fitTagsRow}>
+                  <span className={styles.fitTagGreen}>High-protein</span>
+                  <span className={styles.fitTagBlue}>Low-carb</span>
+                </div>
+              </div>
+            </div>
+
+            {/* How it helps */}
+            <div className={styles.fitCard}>
+              <h4 className={styles.fitHeader}>
+                <Sparkles />
+                <span>How it helps</span>
+              </h4>
+              <div className={styles.helpsList}>
+                <div className={styles.helpsItem}>
+                  <CheckCircle2 className={styles.helpsCheck} />
+                  <span>Eggs provide high-quality protein.</span>
+                </div>
+                <div className={styles.helpsItem}>
+                  <CheckCircle2 className={styles.helpsCheck} />
+                  <span>Spinach adds iron, folate &amp; antioxidants.</span>
+                </div>
+                <div className={styles.helpsItem}>
+                  <CheckCircle2 className={styles.helpsCheck} />
+                  <span>Olive oil provides heart-healthy fats.</span>
+                </div>
+                <div className={styles.helpsItem}>
+                  <CheckCircle2 className={styles.helpsCheck} />
+                  <span>Low sodium and cholesterol friendly.</span>
+                </div>
+              </div>
             </div>
           </div>
-        </section>
+
+          {/* 5. Watch Full Recipe Banner Card */}
+          <div
+            className={styles.watchFullRecipeBanner}
+            onClick={() => setShowVideoModal(true)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setShowVideoModal(true);
+              }
+            }}
+            aria-label="Watch full recipe tutorial"
+          >
+            <div className={styles.watchBannerLeft}>
+              <span className={styles.watchPlayCircle}>
+                <Play />
+              </span>
+              <div className={styles.watchText}>
+                <h3 className={styles.watchTitle}>Watch full recipe</h3>
+                <p className={styles.watchSubtitle}>
+                  Step-by-step video with chef tips and delicious variations.
+                </p>
+              </div>
+            </div>
+            <div className={styles.watchImgWrapper}>
+              <img
+                src={recipe.thumbImage || recipe.image}
+                alt={recipe.title}
+                className={styles.watchBannerImg}
+              />
+              <span className={styles.watchImgPlayBadge}>
+                <Play />
+              </span>
+            </div>
+          </div>
+
+          {/* 6. Log this meal Card */}
+          <section className={styles.logMealCard} aria-label="Log this meal">
+            <div className={styles.logMealLeft}>
+              <h3 className={styles.logMealTitle}>Log this meal</h3>
+              <div className={styles.mealSelectWrapper}>
+                <Sun className={styles.mealSelectSun} />
+                <select
+                  className={styles.mealSelect}
+                  value={selectedMealType}
+                  onChange={(e) => setSelectedMealType(e.target.value)}
+                  aria-label="Select meal slot"
+                >
+                  <option value="Breakfast">Breakfast</option>
+                  <option value="Lunch">Lunch</option>
+                  <option value="Dinner">Dinner</option>
+                  <option value="Snack">Snack</option>
+                </select>
+                <ChevronDown className={styles.mealSelectChevron} />
+              </div>
+            </div>
+            <button
+              type="button"
+              className={styles.logMealBtn}
+              onClick={handleLogMeal}
+              disabled={logging}
+            >
+              <Plus />
+              <span>{logging ? "Logging…" : "Log meal"}</span>
+            </button>
+          </section>
+        </div>
       )}
 
       {/* Video / Cooking Modal */}

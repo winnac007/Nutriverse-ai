@@ -1,0 +1,984 @@
+/* Warm Linen Palette & Typography */
+.container {
+  min-height: 100vh;
+  background-color: #f4f1e8;
+  color: #1d1b18;
+  font-family: "DM Sans", Inter, -apple-system, sans-serif;
+  padding: 1rem 1.15rem 6.5rem;
+  max-width: 48rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+/* 1. Top Navigation */
+.topNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem 0;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: none;
+  border: none;
+  font-family: "DM Sans", Inter, sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #2d2823;
+  cursor: pointer;
+  padding: 0.4rem 0.2rem;
+  transition: transform 180ms ease, color 180ms ease;
+}
+
+.backBtn:hover {
+  transform: translateX(-2px);
+  color: #1d1b18;
+}
+
+.backBtn svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.iconBtn {
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 50%;
+  border: 1px solid #e5ded2;
+  background: #faf7f2;
+  display: grid;
+  place-items: center;
+  color: #555047;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.iconBtn:hover {
+  background: #ffffff;
+  color: #1d1b18;
+  border-color: #d8cebf;
+}
+
+.iconBtn svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.bookmarkActive {
+  color: #c4556f !important;
+  background: #fdf0f3 !important;
+  border-color: #f7d2db !important;
+}
+
+/* 2. Hero Header */
+.heroHeader {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.25rem 0 0.5rem;
+}
+
+.heroLeft {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.overline {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #756c62;
+  margin: 0;
+}
+
+.heroTitle {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.85rem, 5.2vw, 2.35rem);
+  font-weight: 700;
+  color: #1d1b18;
+  line-height: 1.12;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.heroSubtitle {
+  font-size: 0.86rem;
+  color: #555047;
+  line-height: 1.45;
+  margin: 0.25rem 0 0;
+  max-width: 22rem;
+}
+
+.heroRight {
+  flex-shrink: 0;
+  width: 175px;
+  height: 125px;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.heroImg {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(60, 50, 30, 0.08));
+}
+
+/* 3. Goal Filter Pills */
+.goalFilterRow {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  overflow-x: auto;
+  padding: 0.15rem 0 0.35rem;
+  scrollbar-width: none;
+}
+
+.goalFilterRow::-webkit-scrollbar {
+  display: none;
+}
+
+.goalPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.46rem 0.95rem;
+  background: #faf7f2;
+  border: 1px solid #e5ded2;
+  border-radius: 9999px;
+  font-family: "DM Sans", Inter, sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #555047;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 180ms ease;
+  flex-shrink: 0;
+}
+
+.goalPill:hover {
+  background: #ffffff;
+  color: #1d1b18;
+  border-color: #d8cebf;
+}
+
+.goalPillActive {
+  background: #46573e !important;
+  color: #ffffff !important;
+  border-color: #46573e !important;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(70, 87, 62, 0.25);
+}
+
+.goalPill svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+/* 4. Set Your Goal Banner Card */
+.setGoalCard {
+  background: #faf7f2;
+  border: 1px solid #e5ded2;
+  border-radius: 1.25rem;
+  padding: 0.95rem 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-shadow: 0 3px 12px rgba(60, 50, 30, 0.03);
+}
+
+.setGoalLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex: 1;
+}
+
+.setGoalIconCircle {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  background: #e8efe5;
+  color: #374b33;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.setGoalIconCircle svg {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.setGoalText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.setGoalTitle {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #1d1b18;
+  margin: 0;
+}
+
+.setGoalDesc {
+  font-size: 0.77rem;
+  color: #555047;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.setGoalBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 1.05rem;
+  background: #46573e;
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  font-family: "DM Sans", Inter, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(70, 87, 62, 0.25);
+  transition: all 180ms ease;
+  flex-shrink: 0;
+}
+
+.setGoalBtn:hover {
+  background: #374730;
+  transform: translateY(-1px);
+}
+
+/* 5. Daily Fuel Target Card */
+.fuelTargetCard {
+  background: #ffffff;
+  border: 1px solid #ebe4d8;
+  border-radius: 1.25rem;
+  padding: 1rem 1.15rem;
+  box-shadow: 0 2px 8px rgba(60, 50, 30, 0.03);
+}
+
+.targetCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.targetHeaderLeft {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: #1d1b18;
+}
+
+.targetHeaderLeft svg {
+  width: 0.85rem;
+  height: 0.85rem;
+  color: #8b8276;
+}
+
+.editTargetsLink {
+  background: none;
+  border: none;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #555047;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0;
+}
+
+.targetMetricsStrip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.65rem;
+}
+
+.targetCell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.targetCellTop {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.targetIconBadge {
+  width: 1.95rem;
+  height: 1.95rem;
+  border-radius: 50%;
+  background: #eef3eb;
+  color: #46573e;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.targetIconBadge svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.targetCellMeta {
+  display: flex;
+  flex-direction: column;
+}
+
+.targetCellLabel {
+  font-size: 0.7rem;
+  color: #756c62;
+  font-weight: 500;
+}
+
+.targetCellValue {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1d1b18;
+  line-height: 1.1;
+}
+
+.targetCellDenom {
+  font-size: 0.72rem;
+  color: #756c62;
+  font-weight: 500;
+}
+
+.targetProgressBar {
+  width: 100%;
+  height: 3px;
+  background: #ece6da;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-top: 0.2rem;
+}
+
+.targetProgressFill {
+  height: 100%;
+  background: #46573e;
+  border-radius: 9999px;
+}
+
+/* 6. Fuel Around Your Workout Section */
+.workoutSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sectionTitle {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1d1b18;
+  margin: 0;
+}
+
+.sectionHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.viewAllLink {
+  background: none;
+  border: none;
+  font-family: "DM Sans", Inter, sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6b6258;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.viewAllLink:hover {
+  color: #1d1b18;
+  transform: translateX(2px);
+}
+
+.timingFilterRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: #faf7f2;
+  border: 1px solid #e5ded2;
+  border-radius: 9999px;
+  padding: 0.25rem;
+  gap: 0.2rem;
+}
+
+.timingBtn {
+  background: transparent;
+  border: none;
+  border-radius: 9999px;
+  padding: 0.42rem 0.4rem;
+  font-family: "DM Sans", Inter, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #555047;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  transition: all 180ms ease;
+}
+
+.timingBtn:hover {
+  color: #1d1b18;
+}
+
+.timingBtnActive {
+  background: #46573e !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(70, 87, 62, 0.25);
+}
+
+.mealsHorizontalRail {
+  display: grid;
+  grid-template-columns: repeat(4, 155px);
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scrollbar-width: none;
+}
+
+.mealsHorizontalRail::-webkit-scrollbar {
+  display: none;
+}
+
+.mealFuelCard {
+  background: #ffffff;
+  border: 1px solid #ebe4d8;
+  border-radius: 1.15rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 8px rgba(60, 50, 30, 0.03);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.mealFuelCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(60, 50, 30, 0.07);
+}
+
+.mealFuelImg {
+  width: 100%;
+  height: 98px;
+  object-fit: cover;
+  display: block;
+}
+
+.mealFuelBody {
+  padding: 0.65rem 0.65rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+}
+
+.mealFuelTitle {
+  font-family: "DM Sans", Inter, sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #1d1b18;
+  line-height: 1.25;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.1rem;
+}
+
+.mealFuelSubtitle {
+  font-size: 0.72rem;
+  color: #756c62;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mealFuelMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.7rem;
+  color: #8b8276;
+  margin-top: 0.35rem;
+}
+
+.viewMoreMealsCard {
+  background: #f0f4ec;
+  border: 1px dashed #ced8c6;
+  border-radius: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.25rem 0.85rem;
+  gap: 0.65rem;
+  cursor: pointer;
+  transition: all 180ms ease;
+  min-height: 160px;
+}
+
+.viewMoreMealsCard:hover {
+  background: #e6ede0;
+  transform: translateY(-2px);
+}
+
+.viewMoreIcon {
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #46573e;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 6px rgba(70, 87, 62, 0.15);
+}
+
+.viewMoreText {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #374b33;
+  line-height: 1.3;
+}
+
+.viewMoreArrow {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: #46573e;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+}
+
+.viewMoreArrow svg {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+/* 7. Today's Strength Plan Banner Card */
+.strengthPlanCard {
+  background: #faf7f2;
+  border: 1px solid #e5ded2;
+  border-radius: 1.25rem;
+  padding: 0.95rem 1.15rem;
+  box-shadow: 0 2px 8px rgba(60, 50, 30, 0.03);
+}
+
+.planCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.planHeaderLeft {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #1d1b18;
+}
+
+.planIconCircle {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: #f7ede8;
+  color: #b8623b;
+  display: grid;
+  place-items: center;
+}
+
+.planIconCircle svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.planSlotsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.planSlotItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.25rem;
+  position: relative;
+}
+
+.planSlotName {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #1d1b18;
+}
+
+.planSlotType {
+  font-size: 0.68rem;
+  color: #756c62;
+  font-weight: 500;
+}
+
+.planThumbWrapper {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0.25rem 0 0.2rem;
+  background: #f0ebe0;
+  border: 1px solid #e0d8ca;
+}
+
+.planThumbImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.slotStatusCircle {
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.65rem;
+}
+
+.slotDone {
+  background: #46573e;
+  color: #ffffff;
+}
+
+.slotPending {
+  border: 1.5px solid #d4ccbe;
+  background: #ffffff;
+}
+
+/* 8. Recommended For You Section */
+.recGridRail {
+  display: grid;
+  grid-template-columns: repeat(4, 155px);
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scrollbar-width: none;
+}
+
+.recGridRail::-webkit-scrollbar {
+  display: none;
+}
+
+.recRecipeCard {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #ebe4d8;
+  border-radius: 1.15rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 8px rgba(60, 50, 30, 0.03);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.recRecipeCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(60, 50, 30, 0.07);
+}
+
+.recImgWrapper {
+  position: relative;
+  width: 100%;
+  height: 102px;
+}
+
+.recImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.recTagPill {
+  position: absolute;
+  top: 0.45rem;
+  left: 0.45rem;
+  padding: 0.18rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.tagOrange {
+  background: #fbeee4;
+  color: #b8623b;
+}
+
+.tagGreen {
+  background: #eaf3e6;
+  color: #3f6e32;
+}
+
+.tagBlue {
+  background: #eaf0f8;
+  color: #3562a0;
+}
+
+.tagLime {
+  background: #f0f6e6;
+  color: #55792c;
+}
+
+.recBookmarkBtn {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.45rem;
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
+  border: none;
+  display: grid;
+  place-items: center;
+  color: #2d2823;
+  cursor: pointer;
+  z-index: 2;
+  transition: all 180ms ease;
+}
+
+.recBookmarkBtn:hover {
+  background: #ffffff;
+  color: #c4556f;
+  transform: scale(1.1);
+}
+
+.recBookmarkActive {
+  color: #c4556f !important;
+  background: #ffffff !important;
+}
+
+.recBody {
+  padding: 0.65rem 0.65rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+}
+
+.recTitle {
+  font-family: "DM Sans", Inter, sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #1d1b18;
+  line-height: 1.25;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.1rem;
+}
+
+.recMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.7rem;
+  color: #8b8276;
+  margin-top: 0.35rem;
+}
+
+/* 9. Talk to a Sports Nutritionist Banner */
+.nutritionistBanner {
+  background: #faf7f2;
+  border: 1px solid #e5ded2;
+  border-radius: 1.25rem;
+  padding: 0.95rem 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(60, 50, 30, 0.03);
+}
+
+.nutritionistLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex: 1;
+}
+
+.nutritionistIconCircle {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: #eef3eb;
+  color: #46573e;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.nutritionistIconCircle svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.nutritionistText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.nutritionistTitle {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #1d1b18;
+  margin: 0;
+}
+
+.nutritionistDesc {
+  font-size: 0.76rem;
+  color: #555047;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.nutritionistRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.45rem;
+  flex-shrink: 0;
+}
+
+.consultBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 1.05rem;
+  background: #46573e;
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  font-family: "DM Sans", Inter, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(70, 87, 62, 0.25);
+  transition: all 180ms ease;
+  text-decoration: none;
+}
+
+.consultBtn:hover {
+  background: #374730;
+  transform: translateY(-1px);
+}
+
+.expertRatingStack {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.expertAvatarsImg {
+  height: 20px;
+  object-fit: contain;
+}
+
+/* Responsive queries */
+@media (max-width: 640px) {
+  .heroHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .heroRight {
+    align-self: center;
+    width: 140px;
+    height: 100px;
+  }
+
+  .setGoalCard {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .setGoalBtn {
+    justify-content: center;
+  }
+
+  .targetMetricsStrip {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 0.85rem;
+  }
+
+  .nutritionistBanner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+  }
+
+  .nutritionistRight {
+    align-items: stretch;
+  }
+
+  .consultBtn {
+    justify-content: center;
+  }
+}

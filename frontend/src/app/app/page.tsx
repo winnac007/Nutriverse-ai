@@ -77,7 +77,7 @@ const CHAPTERS: Chapter[] = [
     overline: "Fitness",
     title: "Strength &\nFuel",
     tags: "Protein ·\nPerformance ·\nBalance",
-    href: "/app/category/fitness",
+    href: "/app/fitness",
     image: "/app-ui/dish-ch2.png",
     icon: Dumbbell,
   },

@@ -1519,5 +1519,467 @@
   .stepTipPill {
     font-size: 0.67rem;
   }
+
+  .twoColFitRow {
+    grid-template-columns: 1fr;
+  }
+
+  .benefitsGrid4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .nutrDonutRow {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .nutrGrid6 {
+    grid-template-columns: repeat(3, 1fr) !important;
+    row-gap: 0.75rem;
+  }
 }
+
+/* ==========================================================================
+   Screen 7: Nutrition Page Styles (Macro Donut, Benefits, Meal Fit & Helps)
+   ========================================================================== */
+
+.nutritionFullSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 0.45rem;
+}
+
+.nutritionMacroCard {
+  background: #ffffff;
+  border: 1px solid #ebe4d8;
+  border-radius: 1.15rem;
+  padding: 1.1rem 1.15rem;
+  box-shadow: 0 2px 8px rgba(60, 50, 30, 0.03);
+}
+
+.nutrHeaderRow {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.95rem;
+}
+
+.nutrSproutBadge {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: #e2eadf;
+  display: grid;
+  place-items: center;
+  color: #46573e;
+}
+
+.nutrSproutBadge svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.nutrMainTitle {
+  font-family: "DM Sans", Inter, sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #2d2823;
+  margin: 0;
+}
+
+.nutrGrid6 {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.35rem;
+  text-align: center;
+  padding-bottom: 0.85rem;
+}
+
+.nutrMetricCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.nutrCellIcon {
+  width: 1.55rem;
+  height: 1.55rem;
+  display: grid;
+  place-items: center;
+  color: #555047;
+}
+
+.nutrCellIcon svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.nutrCellValue {
+  font-family: "DM Sans", Inter, sans-serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #1d1b18;
+  line-height: 1.1;
+}
+
+.nutrCellLabel {
+  font-size: 0.68rem;
+  color: #756c62;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.nutrDonutRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.35rem;
+  margin-top: 0.85rem;
+  padding-top: 0.95rem;
+  border-top: 1px solid #f0eae0;
+}
+
+.donutChartWrapper {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  flex-shrink: 0;
+}
+
+.donutSvg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.donutCenterText {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+
+.donutKcalVal {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #1d1b18;
+  line-height: 1;
+}
+
+.donutKcalUnit {
+  font-size: 0.72rem;
+  color: #756c62;
+  font-weight: 500;
+}
+
+.donutLegendTable {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.legendItemRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  gap: 0.4rem;
+}
+
+.legendLeft {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 5.5rem;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legendName {
+  font-weight: 600;
+  color: #2d2823;
+}
+
+.legendPercent {
+  color: #756c62;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.legendGrams {
+  font-weight: 700;
+  color: #1d1b18;
+  text-align: right;
+  min-width: 2.2rem;
+}
+
+.nutrFooterNote {
+  margin: 0.85rem 0 0;
+  font-size: 0.68rem;
+  color: #8e867a;
+  text-align: left;
+}
+
+/* Good for your heart Card */
+.heartConditionCard {
+  background: #faf7f2;
+  border: 1px solid #e5ded2;
+  border-radius: 1.15rem;
+  padding: 0.95rem 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  box-shadow: 0 2px 8px rgba(60, 50, 30, 0.03);
+}
+
+.heartCardLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.heartIconCircle {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: #e8efe5;
+  color: #374b33;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.heartIconCircle svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.heartCardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.heartCardTitle {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1d1b18;
+  margin: 0;
+}
+
+.heartCardDesc {
+  font-size: 0.76rem;
+  color: #555e50;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.heartCardImg {
+  width: 104px;
+  height: 72px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* Key benefits Section */
+.keyBenefitsSection {
+  background: #ffffff;
+  border: 1px solid #ebe4d8;
+  border-radius: 1.15rem;
+  padding: 1rem 1.15rem;
+  box-shadow: 0 2px 8px rgba(60, 50, 30, 0.03);
+}
+
+.keyBenefitsTitle {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1d1b18;
+  margin: 0 0 0.85rem;
+}
+
+.benefitsGrid4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+}
+
+.benefitCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.2rem;
+}
+
+.benefitIconCircle {
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.benefitIconCircle svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.benefitCirclePink {
+  background: #fdf0f3;
+  color: #c4556f;
+}
+
+.benefitCirclePurple {
+  background: #f4eefc;
+  color: #8c65d3;
+}
+
+.benefitCircleAmber {
+  background: #fef8ec;
+  color: #e5a93b;
+}
+
+.benefitCircleMint {
+  background: #eff7f2;
+  color: #4b8a68;
+}
+
+.benefitText {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #2d2823;
+  line-height: 1.25;
+  margin: 0;
+}
+
+/* Two Column Split: Meal fit & How it helps */
+.twoColFitRow {
+  display: grid;
+  grid-template-columns: 1fr 1.18fr;
+  gap: 0.75rem;
+}
+
+.fitCard {
+  background: #faf7f2;
+  border: 1px solid #e5ded2;
+  border-radius: 1.15rem;
+  padding: 0.95rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  box-shadow: 0 2px 8px rgba(60, 50, 30, 0.03);
+}
+
+.fitHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1d1b18;
+  margin: 0 0 0.15rem;
+}
+
+.fitHeader svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  color: #46573e;
+}
+
+.fitRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+}
+
+.fitLabel {
+  color: #756c62;
+  font-weight: 500;
+}
+
+.fitValue {
+  font-weight: 600;
+  color: #1d1b18;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+}
+
+.fitValue svg {
+  width: 0.85rem;
+  height: 0.85rem;
+  color: #e5a93b;
+}
+
+.fitTagsRow {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.fitTagGreen {
+  background: #e7efe5;
+  color: #374b33;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.fitTagBlue {
+  background: #e6eefa;
+  color: #2f528f;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.helpsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.helpsItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-size: 0.74rem;
+  color: #333a30;
+  line-height: 1.35;
+}
+
+.helpsCheck {
+  color: #46573e;
+  width: 0.92rem;
+  height: 0.92rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
 
