@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   ArrowLeft,
@@ -9,11 +9,13 @@ import {
   Clock3,
   Flame,
   Heart,
+  Lightbulb,
   MoreVertical,
   Play,
   Plus,
   ShoppingBag,
   Sparkles,
+  Sun,
   User,
   X,
   Zap,
@@ -23,16 +25,31 @@ import api from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import styles from "./ZenRecipeDetail.module.css";
 
-type IngredientItem = {
+export type RecipeTab = "overview" | "ingredients" | "method" | "nutrition";
+
+export type IngredientItem = {
   name: string;
   amount: string;
   image: string;
 };
 
-type ZenRecipe = {
+export type MethodStep = {
+  stepNumber: number;
+  instruction: string;
+  illustration: string;
+  cookingPhoto: string;
+};
+
+export type ChefTip = {
+  text: string;
+  image: string;
+};
+
+export type ZenRecipe = {
   id: string;
   title: string;
   image: string;
+  thumbImage?: string;
   prepMinutes: number;
   servings: number;
   calories: number;
@@ -50,6 +67,8 @@ type ZenRecipe = {
   };
   ingredients: IngredientItem[];
   steps?: string[];
+  methodSteps: MethodStep[];
+  chefTip?: ChefTip;
 };
 
 // Preset Curated Recipes
@@ -58,6 +77,7 @@ const PRESET_RECIPES: Record<string, ZenRecipe> = {
     id: "spinach-egg-scramble",
     title: "Spinach & Egg Scramble",
     image: "/app-ui/recipe-hero-toast.png",
+    thumbImage: "/app-ui/method-thumb-toast.png",
     prepMinutes: 8,
     servings: 1,
     calories: 220,
@@ -85,16 +105,47 @@ const PRESET_RECIPES: Record<string, ZenRecipe> = {
       { name: "Black pepper", amount: "1/4 tsp", image: "/app-ui/ing-black-pepper.png" },
     ],
     steps: [
-      "Lightly toast sourdough bread until golden and crisp.",
-      "Heat olive oil in a skillet over medium heat. Sauté garlic and baby spinach for 1 minute until wilted.",
-      "Fry or scramble eggs sunny-side up with a soft yolk.",
-      "Assemble on toast with fresh avocado spread, black pepper, and chili flakes.",
+      "Heat 1 tsp olive oil in a non-stick pan.",
+      "Saute garlic 20 sec, add spinach, wilt 1 min.",
+      "Whisk eggs with pepper, pour over spinach.",
+      "Stir gently until curds form, 2 min. Serve.",
     ],
+    methodSteps: [
+      {
+        stepNumber: 1,
+        instruction: "Heat 1 tsp olive oil in a non-stick pan.",
+        illustration: "/app-ui/method-ill1.png",
+        cookingPhoto: "/app-ui/method-p1.png",
+      },
+      {
+        stepNumber: 2,
+        instruction: "Saute garlic 20 sec, add spinach, wilt 1 min.",
+        illustration: "/app-ui/method-ill2.png",
+        cookingPhoto: "/app-ui/method-p2.png",
+      },
+      {
+        stepNumber: 3,
+        instruction: "Whisk eggs with pepper, pour over spinach.",
+        illustration: "/app-ui/method-ill3.png",
+        cookingPhoto: "/app-ui/method-p3.png",
+      },
+      {
+        stepNumber: 4,
+        instruction: "Stir gently until curds form, 2 min. Serve.",
+        illustration: "/app-ui/method-ill4.png",
+        cookingPhoto: "/app-ui/method-p4.png",
+      },
+    ],
+    chefTip: {
+      text: "A pinch of black pepper enhances nutrient absorption and brings out flavor.",
+      image: "/app-ui/method-tip-peppercorn.png",
+    },
   },
   "hub-rec-toast": {
     id: "hub-rec-toast",
     title: "Avocado Egg Toast with Flax Seeds",
     image: "/app-ui/recipe-hero-toast.png",
+    thumbImage: "/app-ui/method-thumb-toast.png",
     prepMinutes: 8,
     servings: 1,
     calories: 210,
@@ -127,11 +178,42 @@ const PRESET_RECIPES: Record<string, ZenRecipe> = {
       "Fry or poach the egg to a soft yolk consistency.",
       "Layer avocado and eggs onto toast and sprinkle cracked black pepper.",
     ],
+    methodSteps: [
+      {
+        stepNumber: 1,
+        instruction: "Toast artisanal sourdough slice until golden brown.",
+        illustration: "/app-ui/method-ill1.png",
+        cookingPhoto: "/app-ui/method-p1.png",
+      },
+      {
+        stepNumber: 2,
+        instruction: "Mash avocado with lemon and crushed golden flax seeds.",
+        illustration: "/app-ui/method-ill2.png",
+        cookingPhoto: "/app-ui/method-p2.png",
+      },
+      {
+        stepNumber: 3,
+        instruction: "Poach fresh egg in simmering water for 3 minutes.",
+        illustration: "/app-ui/method-ill3.png",
+        cookingPhoto: "/app-ui/method-p3.png",
+      },
+      {
+        stepNumber: 4,
+        instruction: "Plate toast, spread avocado, top with egg & pepper.",
+        illustration: "/app-ui/method-ill4.png",
+        cookingPhoto: "/app-ui/method-p4.png",
+      },
+    ],
+    chefTip: {
+      text: "Adding freshly milled flax seeds right before serving preserves delicate omega-3 oils.",
+      image: "/app-ui/method-tip-peppercorn.png",
+    },
   },
   "hub-rec-khichdi": {
     id: "hub-rec-khichdi",
     title: "Moong Dal Khichdi with Vegetables",
     image: "/app-ui/hub-khichdi.png",
+    thumbImage: "/app-ui/hub-khichdi.png",
     prepMinutes: 15,
     servings: 2,
     calories: 280,
@@ -164,11 +246,42 @@ const PRESET_RECIPES: Record<string, ZenRecipe> = {
       "Add vegetables, dal, rice, and water. Simmer until tender and creamy.",
       "Garnish with fresh cilantro and a dollop of Greek yogurt.",
     ],
+    methodSteps: [
+      {
+        stepNumber: 1,
+        instruction: "Rinse moong dal and rice thoroughly under cold running water.",
+        illustration: "/app-ui/method-ill1.png",
+        cookingPhoto: "/app-ui/method-p1.png",
+      },
+      {
+        stepNumber: 2,
+        instruction: "Sauté cumin, grated ginger, and turmeric in olive oil for 30 seconds.",
+        illustration: "/app-ui/method-ill2.png",
+        cookingPhoto: "/app-ui/method-p2.png",
+      },
+      {
+        stepNumber: 3,
+        instruction: "Add chopped vegetables, dal, rice, and 3 cups of water.",
+        illustration: "/app-ui/method-ill3.png",
+        cookingPhoto: "/app-ui/method-p3.png",
+      },
+      {
+        stepNumber: 4,
+        instruction: "Simmer on low heat until creamy and velvety, then fold in spinach.",
+        illustration: "/app-ui/method-ill4.png",
+        cookingPhoto: "/app-ui/method-p4.png",
+      },
+    ],
+    chefTip: {
+      text: "A dash of freshly ground cumin and black pepper enhances digestive fire and nutrient uptake.",
+      image: "/app-ui/method-tip-peppercorn.png",
+    },
   },
   "hub-rec-salmon": {
     id: "hub-rec-salmon",
     title: "Lemon Herb Grilled Salmon",
     image: "/app-ui/hub-salmon.png",
+    thumbImage: "/app-ui/hub-salmon.png",
     prepMinutes: 12,
     servings: 1,
     calories: 320,
@@ -201,12 +314,60 @@ const PRESET_RECIPES: Record<string, ZenRecipe> = {
       "Flip gently and cook for an additional 3 minutes until tender and flaky.",
       "Serve hot with sautéed garlic greens and lemon wedges.",
     ],
+    methodSteps: [
+      {
+        stepNumber: 1,
+        instruction: "Heat 1 tsp olive oil in a heavy cast-iron or non-stick skillet.",
+        illustration: "/app-ui/method-ill1.png",
+        cookingPhoto: "/app-ui/method-p1.png",
+      },
+      {
+        stepNumber: 2,
+        instruction: "Season salmon fillet with sea salt, lemon zest, and cracked pepper.",
+        illustration: "/app-ui/method-ill2.png",
+        cookingPhoto: "/app-ui/method-p2.png",
+      },
+      {
+        stepNumber: 3,
+        instruction: "Sear skin-side down for 4 minutes until crisp, then flip gently.",
+        illustration: "/app-ui/method-ill3.png",
+        cookingPhoto: "/app-ui/method-p3.png",
+      },
+      {
+        stepNumber: 4,
+        instruction: "Toss baby spinach with minced garlic in pan juices and serve.",
+        illustration: "/app-ui/method-ill4.png",
+        cookingPhoto: "/app-ui/method-p4.png",
+      },
+    ],
+    chefTip: {
+      text: "Searing salmon skin-down first retains natural juices and preserves tender heart-healthy omega-3s.",
+      image: "/app-ui/method-tip-peppercorn.png",
+    },
   },
 };
 
-export default function ZenRecipeDetail({ recipeId }: { recipeId: string }) {
+export default function ZenRecipeDetail({
+  recipeId,
+  initialTab,
+}: {
+  recipeId: string;
+  initialTab?: RecipeTab;
+}) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useAuth();
+
+  const validTabs: RecipeTab[] = ["overview", "ingredients", "method", "nutrition"];
+  const urlTab = searchParams.get("tab") as RecipeTab | null;
+
+  // Screen 5 is the Method tab; default to "method" if specified or if viewing Screen 5 directly
+  const [activeTab, setActiveTab] = useState<RecipeTab>(() => {
+    if (initialTab && validTabs.includes(initialTab)) return initialTab;
+    if (urlTab && validTabs.includes(urlTab)) return urlTab;
+    return "method";
+  });
+
   const [recipe, setRecipe] = useState<ZenRecipe>(PRESET_RECIPES["spinach-egg-scramble"]);
   const [saved, setSaved] = useState(Boolean(user?.saved_recipes?.includes(recipeId)));
   const [selectedMealType, setSelectedMealType] = useState<string>("Lunch");
@@ -227,48 +388,50 @@ export default function ZenRecipeDetail({ recipeId }: { recipeId: string }) {
       .then(({ data }) => {
         if (!active || !data) return;
         const d = data.recipe || data;
+        const defaultPreset = PRESET_RECIPES["spinach-egg-scramble"];
         const mapped: ZenRecipe = {
           id: d.id || recipeId,
-          title: d.title || "Spinach & Egg Scramble",
-          image: d.image || "/app-ui/recipe-hero-toast.png",
-          prepMinutes: d.prep_minutes || d.prepMinutes || 8,
-          servings: d.servings || 1,
-          calories: d.nutrition?.calories || d.calories || 220,
-          blurb: d.description || "Nutritious meal tailored for your health priorities.",
-          videoPreview: d.image || "/app-ui/recipe-video-preview.png",
-          badges: [
-            { label: "heart friendly", type: "heart" },
-            { label: "thyroid supportive", type: "thyroid" },
-            { label: "high-protein", type: "neutral" },
-            { label: "iron-rich", type: "neutral" },
-          ],
+          title: d.title || defaultPreset.title,
+          image: d.image || defaultPreset.image,
+          thumbImage: d.image || defaultPreset.thumbImage,
+          prepMinutes: d.prep_minutes || d.prepMinutes || defaultPreset.prepMinutes,
+          servings: d.servings || defaultPreset.servings,
+          calories: d.nutrition?.calories || d.calories || defaultPreset.calories,
+          blurb: d.description || defaultPreset.blurb,
+          videoPreview: d.image || defaultPreset.videoPreview,
+          badges: defaultPreset.badges,
           nutrition: {
-            calories: d.nutrition?.calories || d.calories || 220,
+            calories: d.nutrition?.calories || d.calories || defaultPreset.calories,
             protein: `${d.nutrition?.protein || 16}g`,
             carbs: `${d.nutrition?.carbs || 4}g`,
             fat: `${d.nutrition?.fat || 15}g`,
             fiber: `${d.nutrition?.fiber || 2}g`,
             sodium: `${d.nutrition?.sodium || 160}mg`,
           },
-          ingredients: Array.isArray(d.ingredients) && d.ingredients.length > 0
-            ? d.ingredients.map((ing: any, i: number) => ({
-                name: typeof ing === "string" ? ing : ing.name || "Ingredient",
-                amount: typeof ing === "object" ? `${ing.amount || ""} ${ing.unit || ""}`.trim() : "To taste",
-                image: [
-                  "/app-ui/ing-eggs.png",
-                  "/app-ui/ing-spinach.png",
-                  "/app-ui/ing-olive-oil.png",
-                  "/app-ui/ing-garlic.png",
-                  "/app-ui/ing-black-pepper.png",
-                ][i % 5],
-              }))
-            : PRESET_RECIPES["spinach-egg-scramble"].ingredients,
-          steps: Array.isArray(d.steps) ? d.steps : PRESET_RECIPES["spinach-egg-scramble"].steps,
+          ingredients:
+            Array.isArray(d.ingredients) && d.ingredients.length > 0
+              ? d.ingredients.map((ing: any, i: number) => ({
+                  name: typeof ing === "string" ? ing : ing.name || "Ingredient",
+                  amount:
+                    typeof ing === "object"
+                      ? `${ing.amount || ""} ${ing.unit || ""}`.trim()
+                      : "To taste",
+                  image: [
+                    "/app-ui/ing-eggs.png",
+                    "/app-ui/ing-spinach.png",
+                    "/app-ui/ing-olive-oil.png",
+                    "/app-ui/ing-garlic.png",
+                    "/app-ui/ing-black-pepper.png",
+                  ][i % 5],
+                }))
+              : defaultPreset.ingredients,
+          steps: Array.isArray(d.steps) && d.steps.length > 0 ? d.steps : defaultPreset.steps,
+          methodSteps: defaultPreset.methodSteps,
+          chefTip: defaultPreset.chefTip,
         };
         setRecipe(mapped);
       })
       .catch(() => {
-        // Fallback to default
         setRecipe(PRESET_RECIPES["spinach-egg-scramble"]);
       });
 
@@ -276,6 +439,16 @@ export default function ZenRecipeDetail({ recipeId }: { recipeId: string }) {
       active = false;
     };
   }, [recipeId]);
+
+  // Handle Tab Change with URL sync
+  const handleTabChange = (tab: RecipeTab) => {
+    setActiveTab(tab);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("tab", tab);
+      window.history.replaceState(null, "", url.toString());
+    }
+  };
 
   // Handle Back
   const handleBack = () => {
@@ -299,14 +472,16 @@ export default function ZenRecipeDetail({ recipeId }: { recipeId: string }) {
   const handleLogMeal = async () => {
     setLogging(true);
     try {
-      await api.post("/track/meal", {
-        meal_type: selectedMealType.toLowerCase(),
-        recipe_id: recipe.id,
-        recipe_title: recipe.title,
-        calories: recipe.calories,
-      }).catch(() => {
-        // graceful offline fallback
-      });
+      await api
+        .post("/track/meal", {
+          meal_type: selectedMealType.toLowerCase(),
+          recipe_id: recipe.id,
+          recipe_title: recipe.title,
+          calories: recipe.calories,
+        })
+        .catch(() => {
+          // offline fallback
+        });
       toast.success(`Logged as ${selectedMealType}! 🥗`);
     } catch {
       toast.success(`Logged as ${selectedMealType}! 🥗`);
@@ -354,67 +529,154 @@ export default function ZenRecipeDetail({ recipeId }: { recipeId: string }) {
         </div>
       </nav>
 
-      {/* 2. Main Hero Card */}
-      <article className={styles.heroCard}>
-        <div className={styles.heroImageContainer}>
-          <img src={recipe.image} alt={recipe.title} className={styles.heroImage} />
-          <span className={styles.timeBadge}>
-            <Zap />
-            <span>{recipe.prepMinutes}-min</span>
-          </span>
-        </div>
+      {/* 2. Header Area:
+          - In Method / Ingredients / Nutrition tabs: Compact header matching Screen 5 mockup
+          - In Overview tab: Large Hero Card matching Screen 4 mockup
+      */}
+      {activeTab !== "overview" && (
+        <header className={styles.compactHeader} aria-label="Recipe summary">
+          <img
+            src={recipe.thumbImage || recipe.image}
+            alt={recipe.title}
+            className={styles.compactThumb}
+          />
+          <div className={styles.compactInfo}>
+            <h1 className={styles.compactTitle}>{recipe.title}</h1>
+            <div className={styles.compactMeta}>
+              <span className={styles.compactMetaItem}>
+                <Clock3 />
+                <span>{recipe.prepMinutes} min</span>
+              </span>
+              <span className={styles.compactMetaItem}>
+                <User />
+                <span>{recipe.servings} serving</span>
+              </span>
+              <span className={styles.compactMetaItem}>
+                <Flame />
+                <span>{recipe.calories} kcal</span>
+              </span>
+            </div>
+          </div>
+        </header>
+      )}
 
-        <div className={styles.heroBody}>
-          <div className={styles.titleRow}>
-            <h1 className={styles.recipeTitle}>{recipe.title}</h1>
+      {/* 3. Segmented Tabs Pill Bar: [ Overview | Ingredients | Method | Nutrition ] */}
+      <nav className={styles.segmentedTabs} aria-label="Recipe tabs">
+        <button
+          type="button"
+          className={`${styles.tabBtn} ${activeTab === "overview" ? styles.tabBtnActive : ""}`}
+          onClick={() => handleTabChange("overview")}
+        >
+          Overview
+        </button>
+        <button
+          type="button"
+          className={`${styles.tabBtn} ${activeTab === "ingredients" ? styles.tabBtnActive : ""}`}
+          onClick={() => handleTabChange("ingredients")}
+        >
+          Ingredients
+        </button>
+        <button
+          type="button"
+          className={`${styles.tabBtn} ${activeTab === "method" ? styles.tabBtnActive : ""}`}
+          onClick={() => handleTabChange("method")}
+        >
+          Method
+        </button>
+        <button
+          type="button"
+          className={`${styles.tabBtn} ${activeTab === "nutrition" ? styles.tabBtnActive : ""}`}
+          onClick={() => handleTabChange("nutrition")}
+        >
+          Nutrition
+        </button>
+      </nav>
+
+      {/* =========================================================================
+          SCREEN 5 VIEW: METHOD TAB ACTIVE
+          ========================================================================= */}
+      {activeTab === "method" && (
+        <>
+          {/* Step-by-Step Cooking Timeline */}
+          <section className={styles.methodTimeline} aria-label="Step-by-step preparation method">
+            {recipe.methodSteps.map((step) => (
+              <div key={step.stepNumber} className={styles.stepItem}>
+                <span className={styles.stepBadge}>{step.stepNumber}</span>
+                <article className={styles.stepCard}>
+                  <div className={styles.stepIllWrapper}>
+                    <img
+                      src={step.illustration}
+                      alt={`Step ${step.stepNumber} illustration`}
+                      className={styles.stepIll}
+                    />
+                  </div>
+                  <p className={styles.stepText}>{step.instruction}</p>
+                  <div className={styles.stepPhotoWrapper}>
+                    <img
+                      src={step.cookingPhoto}
+                      alt={`Step ${step.stepNumber} cooking photo`}
+                      className={styles.stepPhoto}
+                    />
+                  </div>
+                </article>
+              </div>
+            ))}
+          </section>
+
+          {/* Chef's Tip Card */}
+          {recipe.chefTip && (
+            <aside className={styles.chefTipCard} aria-label="Chef tip">
+              <div className={styles.chefTipLeft}>
+                <div className={styles.chefTipIconBadge}>
+                  <Lightbulb />
+                </div>
+                <div className={styles.chefTipBody}>
+                  <h4 className={styles.chefTipTitle}>Chef&apos;s tip</h4>
+                  <p className={styles.chefTipText}>{recipe.chefTip.text}</p>
+                </div>
+              </div>
+              <img
+                src={recipe.chefTip.image}
+                alt="Chef's spice tip"
+                className={styles.chefTipImg}
+              />
+            </aside>
+          )}
+
+          {/* Log this meal Card */}
+          <section className={styles.logMealCard} aria-label="Log this meal">
+            <div className={styles.logMealLeft}>
+              <h3 className={styles.logMealTitle}>Log this meal</h3>
+              <div className={styles.mealSelectWrapper}>
+                <Sun className={styles.mealSelectSun} />
+                <select
+                  className={styles.mealSelect}
+                  value={selectedMealType}
+                  onChange={(e) => setSelectedMealType(e.target.value)}
+                  aria-label="Select meal slot"
+                >
+                  <option value="Breakfast">Breakfast</option>
+                  <option value="Lunch">Lunch</option>
+                  <option value="Dinner">Dinner</option>
+                  <option value="Snack">Snack</option>
+                </select>
+                <ChevronDown className={styles.mealSelectChevron} />
+              </div>
+            </div>
             <button
               type="button"
-              className={styles.heroBookmarkBtn}
-              onClick={handleToggleSave}
-              aria-label={saved ? "Remove bookmark" : "Bookmark recipe"}
+              className={styles.logMealBtn}
+              onClick={handleLogMeal}
+              disabled={logging}
             >
-              <Bookmark fill={saved ? "currentColor" : "none"} />
+              <Plus />
+              <span>{logging ? "Logging…" : "Log meal"}</span>
             </button>
-          </div>
+          </section>
 
-          <div className={styles.metaRow}>
-            <span className={styles.metaItem}>
-              <Clock3 />
-              <span>{recipe.prepMinutes} min</span>
-            </span>
-            <span className={styles.metaItem}>
-              <User />
-              <span>{recipe.servings} serving</span>
-            </span>
-            <span className={styles.metaItem}>
-              <Flame />
-              <span>{recipe.calories} kcal</span>
-            </span>
-          </div>
-
-          <div className={styles.badgeRow}>
-            {recipe.badges.map((b) => (
-              <span
-                key={b.label}
-                className={`${styles.badgePill} ${
-                  b.type === "heart"
-                    ? styles.badgeHeart
-                    : b.type === "thyroid"
-                    ? styles.badgeThyroid
-                    : styles.badgeNeutral
-                }`}
-              >
-                {b.type === "heart" ? <Heart /> : b.type === "thyroid" ? <Sparkles /> : null}
-                <span>{b.label}</span>
-              </span>
-            ))}
-          </div>
-
-          <p className={styles.recipeBlurb}>{recipe.blurb}</p>
-
-          {/* Video / Tutorial Banner */}
+          {/* Watch Full Recipe Banner Card */}
           <div
-            className={styles.videoCard}
+            className={styles.watchFullRecipeBanner}
             onClick={() => setShowVideoModal(true)}
             role="button"
             tabIndex={0}
@@ -424,110 +686,366 @@ export default function ZenRecipeDetail({ recipeId }: { recipeId: string }) {
                 setShowVideoModal(true);
               }
             }}
-            aria-label="Watch cooking tutorial"
+            aria-label="Watch full recipe tutorial"
           >
-            <img
-              src={recipe.videoPreview}
-              alt=""
-              className={styles.videoBgImg}
-              aria-hidden="true"
-            />
-            <div className={styles.videoOverlayContent}>
-              <span className={styles.playButtonCircle}>
+            <div className={styles.watchBannerLeft}>
+              <span className={styles.watchPlayCircle}>
                 <Play />
               </span>
-              <span className={styles.videoLabel}>How to cook • Watch tutorial</span>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      {/* 3. Nutrition (per serving) Card */}
-      <section className={styles.nutritionCard} aria-label="Nutrition information">
-        <h2 className={styles.nutritionHeader}>Nutrition (per serving)</h2>
-        <div className={styles.nutritionGrid}>
-          <div className={styles.nutritionMetric}>
-            <span className={styles.nutritionValue}>{recipe.nutrition.calories}</span>
-            <span className={styles.nutritionLabel}>CALORIES</span>
-          </div>
-          <div className={styles.nutritionMetric}>
-            <span className={styles.nutritionValue}>{recipe.nutrition.protein}</span>
-            <span className={styles.nutritionLabel}>PROTEIN</span>
-          </div>
-          <div className={styles.nutritionMetric}>
-            <span className={styles.nutritionValue}>{recipe.nutrition.carbs}</span>
-            <span className={styles.nutritionLabel}>CARBS</span>
-          </div>
-
-          <div className={styles.nutritionDivider} aria-hidden="true" />
-
-          <div className={styles.nutritionMetric}>
-            <span className={styles.nutritionValue}>{recipe.nutrition.fat}</span>
-            <span className={styles.nutritionLabel}>FAT</span>
-          </div>
-          <div className={styles.nutritionMetric}>
-            <span className={styles.nutritionValue}>{recipe.nutrition.fiber}</span>
-            <span className={styles.nutritionLabel}>FIBER</span>
-          </div>
-          <div className={styles.nutritionMetric}>
-            <span className={styles.nutritionValue}>{recipe.nutrition.sodium}</span>
-            <span className={styles.nutritionLabel}>SODIUM</span>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. Log this meal Card */}
-      <section className={styles.logMealCard} aria-label="Log this meal">
-        <div className={styles.logMealLeft}>
-          <h3 className={styles.logMealTitle}>Log this meal</h3>
-          <div className={styles.mealSelectWrapper}>
-            <select
-              className={styles.mealSelect}
-              value={selectedMealType}
-              onChange={(e) => setSelectedMealType(e.target.value)}
-              aria-label="Select meal slot"
-            >
-              <option value="Breakfast">Breakfast</option>
-              <option value="Lunch">Lunch</option>
-              <option value="Dinner">Dinner</option>
-              <option value="Snack">Snack</option>
-            </select>
-            <ChevronDown className={styles.mealSelectChevron} />
-          </div>
-        </div>
-        <button
-          type="button"
-          className={styles.logMealBtn}
-          onClick={handleLogMeal}
-          disabled={logging}
-        >
-          <Plus />
-          <span>{logging ? "Logging…" : "Log meal"}</span>
-        </button>
-      </section>
-
-      {/* 5. Ingredients Section */}
-      <section className={styles.ingredientsSection} aria-label="Ingredients">
-        <div className={styles.ingredientsHeader}>
-          <h2 className={styles.ingredientsTitle}>Ingredients</h2>
-          <button type="button" className={styles.shopAllBtn} onClick={handleShopAll}>
-            <ShoppingBag />
-            <span>Shop all</span>
-          </button>
-        </div>
-
-        <div className={styles.ingredientsRail}>
-          {recipe.ingredients.map((ing) => (
-            <div key={ing.name} className={styles.ingredientCard}>
-              <div className={styles.ingredientImgWrapper}>
-                <img src={ing.image} alt={ing.name} className={styles.ingredientImg} />
+              <div className={styles.watchText}>
+                <h3 className={styles.watchTitle}>Watch full recipe</h3>
+                <p className={styles.watchSubtitle}>
+                  Detailed video with chef tips and delicious variations.
+                </p>
               </div>
-              <strong className={styles.ingredientName}>{ing.name}</strong>
-              <span className={styles.ingredientAmount}>{ing.amount}</span>
             </div>
-          ))}
-        </div>
-      </section>
+            <img
+              src={recipe.thumbImage || recipe.image}
+              alt={recipe.title}
+              className={styles.watchBannerImg}
+            />
+          </div>
+        </>
+      )}
+
+      {/* =========================================================================
+          SCREEN 4 VIEW: OVERVIEW TAB ACTIVE
+          ========================================================================= */}
+      {activeTab === "overview" && (
+        <>
+          {/* Main Hero Card */}
+          <article className={styles.heroCard}>
+            <div className={styles.heroImageContainer}>
+              <img src={recipe.image} alt={recipe.title} className={styles.heroImage} />
+              <span className={styles.timeBadge}>
+                <Zap />
+                <span>{recipe.prepMinutes}-min</span>
+              </span>
+            </div>
+
+            <div className={styles.heroBody}>
+              <div className={styles.titleRow}>
+                <h1 className={styles.recipeTitle}>{recipe.title}</h1>
+                <button
+                  type="button"
+                  className={styles.heroBookmarkBtn}
+                  onClick={handleToggleSave}
+                  aria-label={saved ? "Remove bookmark" : "Bookmark recipe"}
+                >
+                  <Bookmark fill={saved ? "currentColor" : "none"} />
+                </button>
+              </div>
+
+              <div className={styles.metaRow}>
+                <span className={styles.metaItem}>
+                  <Clock3 />
+                  <span>{recipe.prepMinutes} min</span>
+                </span>
+                <span className={styles.metaItem}>
+                  <User />
+                  <span>{recipe.servings} serving</span>
+                </span>
+                <span className={styles.metaItem}>
+                  <Flame />
+                  <span>{recipe.calories} kcal</span>
+                </span>
+              </div>
+
+              <div className={styles.badgeRow}>
+                {recipe.badges.map((b) => (
+                  <span
+                    key={b.label}
+                    className={`${styles.badgePill} ${
+                      b.type === "heart"
+                        ? styles.badgeHeart
+                        : b.type === "thyroid"
+                        ? styles.badgeThyroid
+                        : styles.badgeNeutral
+                    }`}
+                  >
+                    {b.type === "heart" ? <Heart /> : b.type === "thyroid" ? <Sparkles /> : null}
+                    <span>{b.label}</span>
+                  </span>
+                ))}
+              </div>
+
+              <p className={styles.recipeBlurb}>{recipe.blurb}</p>
+
+              {/* Video / Tutorial Banner -> switches to Method */}
+              <div
+                className={styles.videoCard}
+                onClick={() => handleTabChange("method")}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleTabChange("method");
+                  }
+                }}
+                aria-label="View cooking method and tutorial"
+              >
+                <img
+                  src={recipe.videoPreview}
+                  alt=""
+                  className={styles.videoBgImg}
+                  aria-hidden="true"
+                />
+                <div className={styles.videoOverlayContent}>
+                  <span className={styles.playButtonCircle}>
+                    <Play />
+                  </span>
+                  <span className={styles.videoLabel}>How to cook • Watch tutorial</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          {/* Nutrition (per serving) Card */}
+          <section className={styles.nutritionCard} aria-label="Nutrition information">
+            <h2 className={styles.nutritionHeader}>Nutrition (per serving)</h2>
+            <div className={styles.nutritionGrid}>
+              <div className={styles.nutritionMetric}>
+                <span className={styles.nutritionValue}>{recipe.nutrition.calories}</span>
+                <span className={styles.nutritionLabel}>CALORIES</span>
+              </div>
+              <div className={styles.nutritionMetric}>
+                <span className={styles.nutritionValue}>{recipe.nutrition.protein}</span>
+                <span className={styles.nutritionLabel}>PROTEIN</span>
+              </div>
+              <div className={styles.nutritionMetric}>
+                <span className={styles.nutritionValue}>{recipe.nutrition.carbs}</span>
+                <span className={styles.nutritionLabel}>CARBS</span>
+              </div>
+
+              <div className={styles.nutritionDivider} aria-hidden="true" />
+
+              <div className={styles.nutritionMetric}>
+                <span className={styles.nutritionValue}>{recipe.nutrition.fat}</span>
+                <span className={styles.nutritionLabel}>FAT</span>
+              </div>
+              <div className={styles.nutritionMetric}>
+                <span className={styles.nutritionValue}>{recipe.nutrition.fiber}</span>
+                <span className={styles.nutritionLabel}>FIBER</span>
+              </div>
+              <div className={styles.nutritionMetric}>
+                <span className={styles.nutritionValue}>{recipe.nutrition.sodium}</span>
+                <span className={styles.nutritionLabel}>SODIUM</span>
+              </div>
+            </div>
+          </section>
+
+          {/* Log this meal Card */}
+          <section className={styles.logMealCard} aria-label="Log this meal">
+            <div className={styles.logMealLeft}>
+              <h3 className={styles.logMealTitle}>Log this meal</h3>
+              <div className={styles.mealSelectWrapper}>
+                <Sun className={styles.mealSelectSun} />
+                <select
+                  className={styles.mealSelect}
+                  value={selectedMealType}
+                  onChange={(e) => setSelectedMealType(e.target.value)}
+                  aria-label="Select meal slot"
+                >
+                  <option value="Breakfast">Breakfast</option>
+                  <option value="Lunch">Lunch</option>
+                  <option value="Dinner">Dinner</option>
+                  <option value="Snack">Snack</option>
+                </select>
+                <ChevronDown className={styles.mealSelectChevron} />
+              </div>
+            </div>
+            <button
+              type="button"
+              className={styles.logMealBtn}
+              onClick={handleLogMeal}
+              disabled={logging}
+            >
+              <Plus />
+              <span>{logging ? "Logging…" : "Log meal"}</span>
+            </button>
+          </section>
+
+          {/* Ingredients Section */}
+          <section className={styles.ingredientsSection} aria-label="Ingredients">
+            <div className={styles.ingredientsHeader}>
+              <h2 className={styles.ingredientsTitle}>Ingredients</h2>
+              <button type="button" className={styles.shopAllBtn} onClick={handleShopAll}>
+                <ShoppingBag />
+                <span>Shop all</span>
+              </button>
+            </div>
+
+            <div className={styles.ingredientsRail}>
+              {recipe.ingredients.map((ing) => (
+                <div key={ing.name} className={styles.ingredientCard}>
+                  <div className={styles.ingredientImgWrapper}>
+                    <img src={ing.image} alt={ing.name} className={styles.ingredientImg} />
+                  </div>
+                  <strong className={styles.ingredientName}>{ing.name}</strong>
+                  <span className={styles.ingredientAmount}>{ing.amount}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* =========================================================================
+          INGREDIENTS TAB ACTIVE
+          ========================================================================= */}
+      {activeTab === "ingredients" && (
+        <section className={styles.ingredientsSection} aria-label="Ingredients Checklist">
+          <div className={styles.ingredientsHeader}>
+            <h2 className={styles.ingredientsTitle}>All Ingredients ({recipe.ingredients.length})</h2>
+            <button type="button" className={styles.shopAllBtn} onClick={handleShopAll}>
+              <ShoppingBag />
+              <span>Shop all 🛍</span>
+            </button>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.65rem",
+              marginTop: "0.5rem",
+            }}
+          >
+            {recipe.ingredients.map((ing) => (
+              <div
+                key={ing.name}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  background: "#ffffff",
+                  border: "1px solid #e8e2d6",
+                  borderRadius: "1rem",
+                  padding: "0.75rem 1rem",
+                  boxShadow: "0 2px 8px rgba(60,50,30,0.03)",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
+                  <img
+                    src={ing.image}
+                    alt={ing.name}
+                    style={{
+                      width: "44px",
+                      height: "44px",
+                      objectFit: "contain",
+                    }}
+                  />
+                  <div>
+                    <h4
+                      style={{
+                        margin: 0,
+                        fontSize: "0.92rem",
+                        fontWeight: 600,
+                        color: "#1d1b18",
+                      }}
+                    >
+                      {ing.name}
+                    </h4>
+                    <span style={{ fontSize: "0.78rem", color: "#756c62" }}>
+                      Quality pantry staple
+                    </span>
+                  </div>
+                </div>
+                <span
+                  style={{
+                    fontSize: "0.86rem",
+                    fontWeight: 600,
+                    color: "#46573e",
+                    background: "#f0f4ec",
+                    padding: "0.3rem 0.75rem",
+                    borderRadius: "9999px",
+                  }}
+                >
+                  {ing.amount}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* =========================================================================
+          NUTRITION TAB ACTIVE
+          ========================================================================= */}
+      {activeTab === "nutrition" && (
+        <section className={styles.nutritionCard} aria-label="Detailed nutrition breakdown">
+          <h2 className={styles.nutritionHeader}>Nutrition (per serving)</h2>
+          <div className={styles.nutritionGrid}>
+            <div className={styles.nutritionMetric}>
+              <span className={styles.nutritionValue}>{recipe.nutrition.calories}</span>
+              <span className={styles.nutritionLabel}>CALORIES</span>
+            </div>
+            <div className={styles.nutritionMetric}>
+              <span className={styles.nutritionValue}>{recipe.nutrition.protein}</span>
+              <span className={styles.nutritionLabel}>PROTEIN</span>
+            </div>
+            <div className={styles.nutritionMetric}>
+              <span className={styles.nutritionValue}>{recipe.nutrition.carbs}</span>
+              <span className={styles.nutritionLabel}>CARBS</span>
+            </div>
+
+            <div className={styles.nutritionDivider} aria-hidden="true" />
+
+            <div className={styles.nutritionMetric}>
+              <span className={styles.nutritionValue}>{recipe.nutrition.fat}</span>
+              <span className={styles.nutritionLabel}>FAT</span>
+            </div>
+            <div className={styles.nutritionMetric}>
+              <span className={styles.nutritionValue}>{recipe.nutrition.fiber}</span>
+              <span className={styles.nutritionLabel}>FIBER</span>
+            </div>
+            <div className={styles.nutritionMetric}>
+              <span className={styles.nutritionValue}>{recipe.nutrition.sodium}</span>
+              <span className={styles.nutritionLabel}>SODIUM</span>
+            </div>
+          </div>
+
+          <div
+            style={{
+              marginTop: "1.25rem",
+              paddingTop: "1rem",
+              borderTop: "1px solid #ece6da",
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.5rem",
+            }}
+          >
+            <h4
+              style={{
+                margin: 0,
+                fontSize: "0.85rem",
+                color: "#1d1b18",
+                fontWeight: 700,
+              }}
+            >
+              Functional Benefits
+            </h4>
+            <div className={styles.badgeRow}>
+              {recipe.badges.map((b) => (
+                <span
+                  key={b.label}
+                  className={`${styles.badgePill} ${
+                    b.type === "heart"
+                      ? styles.badgeHeart
+                      : b.type === "thyroid"
+                      ? styles.badgeThyroid
+                      : styles.badgeNeutral
+                  }`}
+                >
+                  {b.type === "heart" ? <Heart /> : b.type === "thyroid" ? <Sparkles /> : null}
+                  <span>{b.label}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Video / Cooking Modal */}
       {showVideoModal && (
@@ -550,9 +1068,19 @@ export default function ZenRecipeDetail({ recipeId }: { recipeId: string }) {
             <div className={styles.videoModalBody}>
               <h3>How to cook {recipe.title}</h3>
               <p>Step-by-step preparation method:</p>
-              <ol style={{ paddingLeft: "1.2rem", margin: 0, display: "grid", gap: "0.6rem" }}>
+              <ol
+                style={{
+                  paddingLeft: "1.2rem",
+                  margin: 0,
+                  display: "grid",
+                  gap: "0.6rem",
+                }}
+              >
                 {(recipe.steps || []).map((step, idx) => (
-                  <li key={idx} style={{ fontSize: "0.85rem", lineHeight: 1.45, color: "#DDD" }}>
+                  <li
+                    key={idx}
+                    style={{ fontSize: "0.85rem", lineHeight: 1.45, color: "#DDD" }}
+                  >
                     {step}
                   </li>
                 ))}
@@ -564,3 +1092,4 @@ export default function ZenRecipeDetail({ recipeId }: { recipeId: string }) {
     </div>
   );
 }
+
