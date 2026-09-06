@@ -14,6 +14,7 @@ import {
   Brain,
   CalendarDays,
   Check,
+  ChevronDown,
   Droplets,
   FileText,
   FileUp,
@@ -22,12 +23,12 @@ import {
   Gauge,
   Heart,
   Leaf,
-  MessageCircle,
   Plus,
   Scale,
   Search,
   Shield,
   ShieldOff,
+  SlidersHorizontal,
   Sparkles,
   Sprout,
   Stethoscope,
@@ -426,24 +427,6 @@ function RecipeCard({ recipe }: { recipe: HealthcareRecipe }) {
   );
 }
 
-function SwapsCard({ swaps }: { swaps: Swap[] }) {
-  if (swaps.length === 0) return null;
-  return (
-    <section className={styles.swapsCard}>
-      <div className={styles.cardTitle}><ArrowRightLeft /><h2>Smart swaps</h2></div>
-      <div className={styles.swapGrid}>
-        {swaps.slice(0, 6).map((swap) => (
-          <div className={styles.swap} key={`${swap.from}-${swap.to}`}>
-            <s>{swap.from}</s>
-            <ArrowRightLeft />
-            <div><strong>{swap.to}</strong><span>{swap.reason}</span></div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 function FocusSprig() {
   return (
     <svg viewBox="0 0 24 24" className={styles.focusSprig} fill="none" aria-hidden="true">
@@ -592,6 +575,119 @@ function PopularRecipeCard({ recipe }: { recipe: PopularRecipe }) {
   );
 }
 
+function HeroSprig() {
+  return (
+    <svg viewBox="0 0 54 32" className={styles.hubTitleSprig} fill="none" aria-hidden="true">
+      <path d="M4 28C16 23 28 16 48 5" stroke="#8A9A7B" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M19 22C17 17 21 14 26 15C25 20 22 22 19 22Z" fill="#99A88E" stroke="#8A9A7B" strokeWidth="1" />
+      <path d="M30 17C30 11 35 9 39 10C38 15 34 17 30 17Z" fill="#99A88E" stroke="#8A9A7B" strokeWidth="1" />
+      <path d="M39 12C38 7 43 4 47 6C46 11 42 13 39 12Z" fill="#88987D" stroke="#8A9A7B" strokeWidth="1" />
+      <circle cx="12" cy="25" r="1.8" fill="#AAB99F" />
+      <circle cx="23" cy="18" r="1.6" fill="#88987D" />
+      <circle cx="34" cy="13" r="1.6" fill="#99A88E" />
+    </svg>
+  );
+}
+
+type BenefitItem = {
+  icon: LucideIcon;
+  line1: string;
+  line2: string;
+};
+
+const CONDITION_BENEFITS: Record<string, BenefitItem[]> = {
+  cholesterol: [
+    { icon: Heart, line1: "Support heart", line2: "health" },
+    { icon: Droplets, line1: "Maintain healthy", line2: "lipid levels" },
+    { icon: Shield, line1: "Reduce risk", line2: "factors" },
+  ],
+  "high-cholesterol": [
+    { icon: Heart, line1: "Support heart", line2: "health" },
+    { icon: Droplets, line1: "Maintain healthy", line2: "lipid levels" },
+    { icon: Shield, line1: "Reduce risk", line2: "factors" },
+  ],
+  diabetes: [
+    { icon: Activity, line1: "Stable blood", line2: "sugar levels" },
+    { icon: Shield, line1: "Low glycemic", line2: "impact meals" },
+    { icon: Zap, line1: "Sustained daily", line2: "energy release" },
+  ],
+  thyroid: [
+    { icon: Sparkles, line1: "Support metabolism", line2: "& energy" },
+    { icon: Droplets, line1: "Selenium & zinc", line2: "rich nutrients" },
+    { icon: Leaf, line1: "Target cellular", line2: "inflammation" },
+  ],
+  pcos: [
+    { icon: Flower2, line1: "Hormonal balance", line2: "& insulin" },
+    { icon: Shield, line1: "Anti-inflammatory", line2: "whole foods" },
+    { icon: Heart, line1: "Support ovarian", line2: "wellness" },
+  ],
+};
+
+const DEFAULT_BENEFITS: BenefitItem[] = [
+  { icon: Heart, line1: "Support overall", line2: "vitality" },
+  { icon: Droplets, line1: "Maintain balanced", line2: "nutrition" },
+  { icon: Shield, line1: "Reduce health", line2: "risk factors" },
+];
+
+type HubCuratedRecipe = {
+  id: string;
+  title: string;
+  image: string;
+  time: string;
+  minutes: number;
+  calories: number;
+  meal_type: MealType;
+  tags: { label: string; type: "heart" | "fiber" | "fat" | "omega" | "default" }[];
+  href: string;
+};
+
+const CURATED_HUB_RECIPES: Record<string, HubCuratedRecipe[]> = {
+  cholesterol: [
+    {
+      id: "hub-rec-toast",
+      title: "Avocado Egg Toast with Flax Seeds",
+      image: "/app-ui/hub-toast.png",
+      time: "8 min",
+      minutes: 8,
+      calories: 210,
+      meal_type: "breakfast",
+      tags: [
+        { label: "heart friendly", type: "heart" },
+        { label: "high-fiber", type: "fiber" },
+      ],
+      href: "/app/meals?search=toast",
+    },
+    {
+      id: "hub-rec-khichdi",
+      title: "Moong Dal Khichdi with Vegetables",
+      image: "/app-ui/hub-khichdi.png",
+      time: "15 min",
+      minutes: 15,
+      calories: 280,
+      meal_type: "lunch",
+      tags: [
+        { label: "low fat", type: "fat" },
+        { label: "high-fiber", type: "fiber" },
+      ],
+      href: "/app/meals?search=khichdi",
+    },
+    {
+      id: "hub-rec-salmon",
+      title: "Lemon Herb Grilled Salmon",
+      image: "/app-ui/hub-salmon.png",
+      time: "12 min",
+      minutes: 12,
+      calories: 320,
+      meal_type: "dinner",
+      tags: [
+        { label: "omega-3 rich", type: "omega" },
+        { label: "heart friendly", type: "heart" },
+      ],
+      href: "/app/meals?search=salmon",
+    },
+  ],
+};
+
 export default function HealthcareClient() {
   const { user } = useAuth();
   const router = useRouter();
@@ -609,6 +705,47 @@ export default function HealthcareClient() {
   const [loading, setLoading] = useState(true);
   const [showAllPicker, setShowAllPicker] = useState(false);
   const [showIntake, setShowIntake] = useState(false);
+  const [savedBookmarks, setSavedBookmarks] = useState<Set<string>>(new Set());
+
+  const toggleBookmark = (id: string) => {
+    setSavedBookmarks((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const conditionKey = conditionId?.toLowerCase() || "";
+  const baseCurated =
+    conditionKey.includes("cholesterol") || !CURATED_HUB_RECIPES[conditionKey]
+      ? CURATED_HUB_RECIPES.cholesterol
+      : CURATED_HUB_RECIPES[conditionKey] || CURATED_HUB_RECIPES.cholesterol;
+
+  const curatedToDisplay = useMemo(() => {
+    return baseCurated.filter((item) => {
+      if (mealType !== "all" && item.meal_type !== mealType) return false;
+      if (quick && item.minutes > 15) return false;
+      if (search.trim()) {
+        const q = search.toLowerCase();
+        const matchesTitle = item.title.toLowerCase().includes(q);
+        const matchesTag = item.tags.some((t) => t.label.toLowerCase().includes(q));
+        if (!matchesTitle && !matchesTag) return false;
+      }
+      return true;
+    });
+  }, [baseCurated, mealType, quick, search]);
+
+  const activeBenefits = useMemo(() => {
+    const key = conditionId?.toLowerCase() || "";
+    if (key.includes("cholesterol")) return CONDITION_BENEFITS.cholesterol;
+    if (CONDITION_BENEFITS[key]) return CONDITION_BENEFITS[key];
+    return DEFAULT_BENEFITS;
+  }, [conditionId]);
+
+  const streakDays = streak?.current_streak_days ?? 2;
+  const streakCircumference = 2 * Math.PI * 30;
+  const streakOffset = streakCircumference * (1 - Math.min(Math.max(streakDays / 7, 0.15), 1));
 
   const condition = useMemo(
     () => conditionId === "custom" && customConditionName
@@ -691,7 +828,9 @@ export default function HealthcareClient() {
 
   return (
     <div className={styles.page}>
-      <Link className={styles.backLink} href="/app"><ArrowLeft /> Home</Link>
+      {!conditionId && (
+        <Link className={styles.backLink} href="/app"><ArrowLeft /> Home</Link>
+      )}
 
       {!conditionId && showIntake ? (
         <HealthIntake onContinue={() => { setShowIntake(false); setShowAllPicker(true); }} />
@@ -854,64 +993,343 @@ export default function HealthcareClient() {
         </>
       ) : (
         <div className={styles.conditionHub}>
-          <header className={styles.pageHeader}>
-            <button className={styles.changeCondition} type="button" onClick={clearCondition}>← Change condition</button>
-            <p className={styles.overline}>Meals recommended for</p>
-            <h1>{condition?.label || "Your focus"}</h1>
-            <p>{condition?.blurb || "Thoughtful recipes selected for your health priorities."}</p>
-          </header>
-
-          <label className={styles.searchBox}>
-            <Search />
-            <span className={styles.srOnly}>Search recipes</span>
-            <input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder={`Search within ${condition?.label?.toLowerCase() || "this focus"}…`}
-            />
-          </label>
-
-          <div className={styles.filters}>
-            <div className={styles.viewToggle}>
-              <button className={view === "browse" ? styles.activeToggle : ""} type="button" onClick={() => setView("browse")}><BookOpen /> Browse recipes</button>
-              <button className={view === "day-plan" ? styles.activeToggle : ""} type="button" onClick={() => setView("day-plan")}><CalendarDays /> Day meal plan</button>
-            </div>
-            <button className={`${styles.quickToggle} ${quick ? styles.quickActive : ""}`} type="button" onClick={() => setQuick((current) => !current)}><Zap /> 15-min quick meals</button>
+          {/* Top Nav: Back & Change condition */}
+          <div className={styles.hubTopNav}>
+            <button className={styles.hubBackBtn} type="button" onClick={clearCondition}>
+              <ArrowLeft />
+              <span>Back</span>
+            </button>
+            <button className={styles.hubChangeBtn} type="button" onClick={clearCondition}>
+              <ArrowRightLeft />
+              <span>Change condition</span>
+            </button>
           </div>
 
-          {streak ? <StreakCard streak={streak} /> : null}
+          {/* Hero: Overline, Title with Sprig, Subtitle, Dish Visual */}
+          <header className={styles.hubHero} aria-label={condition?.label || "Cholesterol"}>
+            <div className={styles.hubHeroContent}>
+              <span className={styles.hubOverline}>MEALS RECOMMENDED FOR</span>
+              <div className={styles.hubTitleRow}>
+                <h1 className={styles.hubTitle}>{condition?.label || "Cholesterol"}</h1>
+                <HeroSprig />
+              </div>
+              <p className={styles.hubSubtitle}>
+                {condition?.blurb || "Heart health & lipid balance."}
+              </p>
+            </div>
+            <div className={styles.hubDishWrapper} aria-hidden="true">
+              <img
+                src="/app-ui/hub-header-dish.png"
+                alt=""
+                className={styles.hubDishImg}
+                loading="eager"
+              />
+            </div>
+          </header>
+
+          {/* 3 Benefit Chips */}
+          <div className={styles.hubBenefitChips} aria-label="Condition benefits">
+            {activeBenefits.map((b, idx) => {
+              const Icon = b.icon;
+              return (
+                <div key={idx} className={styles.hubBenefitChip}>
+                  <div className={styles.benefitIconCircle}>
+                    <Icon />
+                  </div>
+                  <div className={styles.benefitText}>
+                    <span>{b.line1}</span>
+                    <span>{b.line2}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Search Input with Filter Sliders Icon */}
+          <div className={styles.hubSearchContainer}>
+            <Search className={styles.hubSearchIcon} size={18} />
+            <input
+              type="text"
+              className={styles.hubSearchInput}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={`Search within ${condition?.label?.toLowerCase() || "cholesterol"} meals...`}
+              aria-label="Search recipes"
+            />
+            <button
+              type="button"
+              className={styles.hubFilterBtn}
+              aria-label="Filter settings"
+              onClick={() => setQuick((q) => !q)}
+            >
+              <SlidersHorizontal size={15} />
+            </button>
+          </div>
+
+          {/* Filter Toggle Pills: Browse recipes, Day meal plan, 15-min quick meals */}
+          <div className={styles.hubFilterRow} role="toolbar" aria-label="View and filter options">
+            <button
+              type="button"
+              className={`${styles.hubFilterPill} ${view === "browse" ? styles.hubFilterPillActive : ""}`}
+              onClick={() => setView("browse")}
+            >
+              <BookOpen size={14} />
+              <span>Browse recipes</span>
+            </button>
+            <button
+              type="button"
+              className={`${styles.hubFilterPill} ${view === "day-plan" ? styles.hubFilterPillActive : ""}`}
+              onClick={() => setView("day-plan")}
+            >
+              <CalendarDays size={14} />
+              <span>Day meal plan</span>
+            </button>
+            <button
+              type="button"
+              className={`${styles.hubFilterPill} ${quick ? styles.hubFilterPillActive : ""}`}
+              onClick={() => setQuick((prev) => !prev)}
+            >
+              <Zap size={14} />
+              <span>15-min quick meals</span>
+            </button>
+          </div>
+
+          {/* "Your progress" Card */}
+          <section className={styles.hubProgressCard} aria-label="Your progress">
+            <div className={styles.progressDialWrapper}>
+              <svg className={styles.progressDialSvg} viewBox="0 0 76 76" aria-hidden="true">
+                <circle
+                  className={styles.dialTrack}
+                  cx="38"
+                  cy="38"
+                  r="30"
+                  strokeWidth="5.5"
+                />
+                <circle
+                  className={styles.dialProgress}
+                  cx="38"
+                  cy="38"
+                  r="30"
+                  strokeWidth="5.5"
+                  strokeDasharray={streakCircumference}
+                  strokeDashoffset={streakOffset}
+                />
+              </svg>
+              <div className={styles.dialCenter}>
+                <span className={styles.dialValue}>{streak?.current_streak_days ?? 2}</span>
+                <span className={styles.dialLabel}>DAY STREAK</span>
+              </div>
+            </div>
+
+            <div className={styles.progressStatsCol}>
+              <div className={styles.progressStatItem}>
+                <Flag size={14} className={styles.progressStatIcon} />
+                <span className={styles.progressStatValue}>{streak?.meals_this_week ?? 6}</span>
+                <span className={styles.progressStatName}>MEALS THIS WEEK</span>
+              </div>
+              <div className={styles.progressStatItem}>
+                <BookOpen size={14} className={styles.progressStatIcon} />
+                <span className={styles.progressStatValue}>{streak?.distinct_recipes_this_week ?? 8}</span>
+                <span className={styles.progressStatName}>RECIPES TRIED</span>
+              </div>
+            </div>
+
+            <div className={styles.progressDivider} aria-hidden="true" />
+
+            <div className={styles.progressInsightsCol}>
+              <h4 className={styles.progressInsightsTitle}>Your progress</h4>
+              <p className={styles.progressInsightsBlurb}>
+                Great start! Consistency is the key to heart health.
+              </p>
+              <Link href="/app/progress" className={styles.progressInsightsLink}>
+                <span>View insights</span>
+                <ArrowRight size={13} />
+              </Link>
+            </div>
+          </section>
 
           {view === "browse" ? (
             <>
-              <div className={styles.mealTabs} role="tablist" aria-label="Meal type">
-                {MEAL_TYPES.map((type) => (
-                  <button
-                    key={type}
-                    className={mealType === type ? styles.activeMealTab : ""}
-                    type="button"
-                    role="tab"
-                    aria-selected={mealType === type}
-                    onClick={() => setMealType(type)}
-                  >
-                    {type}
+              {/* Category Tabs & Sort Dropdown */}
+              <div className={styles.hubCategoryRow}>
+                <div className={styles.hubCategoryTabs} role="tablist" aria-label="Meal categories">
+                  {MEAL_TYPES.map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      role="tab"
+                      aria-selected={mealType === type}
+                      className={`${styles.hubCategoryPill} ${mealType === type ? styles.hubCategoryPillActive : ""}`}
+                      onClick={() => setMealType(type)}
+                    >
+                      {type === "all" ? "All" : type.charAt(0).toUpperCase() + type.slice(1)}
+                    </button>
+                  ))}
+                </div>
+
+                <div className={styles.hubSortWrapper}>
+                  <button type="button" className={styles.hubSortBtn}>
+                    <span>Latest</span>
+                    <ChevronDown size={14} />
                   </button>
-                ))}
+                </div>
               </div>
 
-              {loading ? (
-                <div className={styles.loadingState}>Finding the right recipes…</div>
-              ) : recipes.length === 0 ? (
-                <div className={styles.emptyState}>No recipes match. Try a different search or meal type.</div>
-              ) : mealType !== "all" ? (
-                <div className={styles.recipeGrid}>{recipes.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} />)}</div>
-              ) : (
-                MEAL_ORDER.map((type) => grouped[type].length > 0 ? (
-                  <section className={styles.mealSection} key={type}>
-                    <h2>{type}</h2>
-                    <div className={styles.recipeGrid}>{grouped[type].map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} />)}</div>
-                  </section>
-                ) : null)
-              )}
+              {/* Recommended For You Section */}
+              <section className={styles.hubRecSection} aria-label="Recommended recipes">
+                <div className={styles.hubSectionHeader}>
+                  <h2>Recommended for you</h2>
+                  <Link href="/app/meals" className={styles.hubViewAllLink}>
+                    <span>View all</span>
+                    <ArrowRight size={14} />
+                  </Link>
+                </div>
+
+                <div className={styles.hubRecGrid}>
+                  {curatedToDisplay.length > 0 ? (
+                    curatedToDisplay.map((recipe) => (
+                      <div key={recipe.id} className={styles.hubRecCard}>
+                        <div className={styles.hubRecImageWrapper}>
+                          <img
+                            src={recipe.image}
+                            alt={recipe.title}
+                            className={styles.hubRecImage}
+                            loading="lazy"
+                          />
+                          <span className={styles.hubRecTimeBadge}>
+                            <Zap size={11} /> {recipe.time}
+                          </span>
+                          <button
+                            type="button"
+                            className={`${styles.hubRecBookmarkBtn} ${savedBookmarks.has(recipe.id) ? styles.hubRecBookmarkActive : ""}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              toggleBookmark(recipe.id);
+                            }}
+                            aria-label={savedBookmarks.has(recipe.id) ? "Remove bookmark" : "Bookmark recipe"}
+                          >
+                            <Bookmark
+                              size={13}
+                              fill={savedBookmarks.has(recipe.id) ? "currentColor" : "none"}
+                            />
+                          </button>
+                        </div>
+                        <div className={styles.hubRecBody}>
+                          <Link href={recipe.href} className={styles.hubRecTitleLink}>
+                            <h3 className={styles.hubRecTitle}>{recipe.title}</h3>
+                          </Link>
+                          <div className={styles.hubRecMeta}>
+                            <span className={styles.hubRecMetaItem}>
+                              <Clock3 size={12} /> {recipe.time}
+                            </span>
+                            <span className={styles.hubRecMetaItem}>
+                              <Flame size={12} /> {recipe.calories} kcal
+                            </span>
+                          </div>
+                          <div className={styles.hubRecTags}>
+                            {recipe.tags.map((tag) => (
+                              <span
+                                key={tag.label}
+                                className={`${styles.hubRecTag} ${
+                                  tag.type === "heart"
+                                    ? styles.hubTagHeart
+                                    : tag.type === "fiber"
+                                    ? styles.hubTagFiber
+                                    : tag.type === "fat"
+                                    ? styles.hubTagFat
+                                    : tag.type === "omega"
+                                    ? styles.hubTagOmega
+                                    : styles.hubTagDefault
+                                }`}
+                              >
+                                {tag.label}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className={styles.emptyState} style={{ gridColumn: "1 / -1" }}>
+                      No recipes found matching your filters. Try clearing search or selecting All.
+                    </div>
+                  )}
+                </div>
+              </section>
+
+              {/* Smart Swaps Card */}
+              <section className={styles.hubSwapsCard} aria-label="Smart swaps">
+                <div className={styles.hubSwapsHeader}>
+                  <div className={styles.hubSwapsHeaderLeft}>
+                    <span className={styles.hubSwapsIconBadge}>
+                      <Leaf size={16} />
+                    </span>
+                    <div>
+                      <h3 className={styles.hubSwapsTitle}>
+                        Smart swaps for {condition?.label?.toLowerCase().includes("cholesterol") ? "heart health" : condition?.label || "wellness"}
+                      </h3>
+                      <p className={styles.hubSwapsSubtitle}>Small swaps. Big impact.</p>
+                    </div>
+                  </div>
+                  <Link href="/app/meals" className={styles.hubSwapsViewAllLink}>
+                    <span>See all swaps</span>
+                    <ArrowRight size={12} />
+                  </Link>
+                </div>
+
+                <div className={styles.hubSwapsItemsRow}>
+                  {/* Swap 1: Butter -> Olive oil */}
+                  <div className={styles.hubSwapItemPair}>
+                    <div className={styles.hubSwapFood}>
+                      <img src="/app-ui/swap-butter.png" alt="Butter" className={styles.hubSwapFoodImg} />
+                      <span className={styles.hubSwapFoodName}>Butter</span>
+                    </div>
+                    <div className={styles.hubSwapArrowWrapper}>
+                      <ArrowRight size={14} />
+                    </div>
+                    <div className={styles.hubSwapFood}>
+                      <img src="/app-ui/swap-oil.png" alt="Olive oil" className={styles.hubSwapFoodImg} />
+                      <span className={styles.hubSwapFoodName}>Olive oil</span>
+                    </div>
+                  </div>
+
+                  <div className={styles.hubSwapItemsDivider} aria-hidden="true" />
+
+                  {/* Swap 2: Cream -> Greek yogurt */}
+                  <div className={styles.hubSwapItemPair}>
+                    <div className={styles.hubSwapFood}>
+                      <img src="/app-ui/swap-cream.png" alt="Cream" className={styles.hubSwapFoodImg} />
+                      <span className={styles.hubSwapFoodName}>Cream</span>
+                    </div>
+                    <div className={styles.hubSwapArrowWrapper}>
+                      <ArrowRight size={14} />
+                    </div>
+                    <div className={styles.hubSwapFood}>
+                      <img src="/app-ui/swap-yogurt.png" alt="Greek yogurt" className={styles.hubSwapFoodImg} />
+                      <span className={styles.hubSwapFoodName}>Greek yogurt</span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Tip of the Day Card */}
+              <section className={styles.hubTipCard} aria-label="Tip of the day">
+                <div className={styles.hubTipLeft}>
+                  <div className={styles.hubTipTitleRow}>
+                    <span className={styles.hubTipIconBadge}>
+                      <FileText size={14} />
+                    </span>
+                    <h4 className={styles.hubTipTitle}>Tip of the day</h4>
+                  </div>
+                  <p className={styles.hubTipCopy}>
+                    Oats, nuts and fatty fish help support healthy cholesterol levels naturally.
+                  </p>
+                </div>
+                <div className={styles.hubTipVisualWrapper} aria-hidden="true">
+                  <img src="/app-ui/tip-oats.png" alt="" className={styles.hubTipImg} />
+                </div>
+              </section>
             </>
           ) : (
             <section className={styles.dayPlan}>
@@ -919,22 +1337,35 @@ export default function HealthcareClient() {
               {DAY_PLAN_ORDER.map((type) => (
                 <div key={type}>
                   <h2>{type}</h2>
-                  {grouped[type][0] ? <RecipeCard recipe={grouped[type][0]} /> : <div className={styles.missingMeal}>No {type} recipe yet for this condition.</div>}
+                  {grouped[type][0] ? (
+                    <RecipeCard recipe={grouped[type][0]} />
+                  ) : (
+                    <div className={styles.missingMeal}>No {type} recipe yet for this condition.</div>
+                  )}
                 </div>
               ))}
             </section>
           )}
 
-          <SwapsCard swaps={swaps} />
-
-          <Link className={styles.consultCard} href="/app/consult?category=healthcare">
-            <span className={styles.consultIcon}><MessageCircle /></span>
-            <span>
-              <strong>Not sure? Talk to a nutritionist.</strong>
-              <small>Certified experts who specialize in {condition?.label}. From ₹700 / session.</small>
-            </span>
-            <b>Consult →</b>
-          </Link>
+          {/* Bottom Consult or Motivational Banner */}
+          <section className={styles.bottomBanner} aria-label="Motivational prompt">
+            <div className={styles.bannerLeft}>
+              <img
+                src="/app-ui/botanical-branch-icon.png"
+                alt=""
+                className={styles.bannerIcon}
+                loading="lazy"
+              />
+              <p className={styles.bannerCopy}>
+                <span>Small choices today,</span>
+                <span>powerful changes tomorrow.</span>
+              </p>
+            </div>
+            <Link href="/app/track" className={styles.logMealBtn}>
+              <span>Log your meal</span>
+              <Sprout />
+            </Link>
+          </section>
         </div>
       )}
     </div>
