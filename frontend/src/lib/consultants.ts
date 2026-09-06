@@ -19,7 +19,9 @@ export type Consultant = {
   name: string;
   title: string;
   type: ExpertTypeId;
+  category?: "Nutrition" | "Fitness" | "Lifestyle" | "Mindfulness";
   photo: string;
+  heroImage?: string;
   rating: number;
   reviewsCount: number;
   yearsExperience: number;
@@ -32,12 +34,13 @@ export type Consultant = {
   location: string;
   about: string;
   areas: string[];
-  education: {
+  education?: {
     degree: string;
     school: string;
   };
+  qualifications?: string[];
   certifications: string[];
-  reviews: ConsultantReview[];
+  reviews: (ConsultantReview & { avatar?: string })[];
   topMatch?: boolean;
 };
 
@@ -92,33 +95,40 @@ export const CONSULTATION_MODES = [
 
 export const CONSULTANTS: Consultant[] = [
   {
-    id: "e-001",
-    name: "Dt. Ananya Sharma",
-    title: "Clinical Nutritionist",
+    id: "dr-neha-sharma",
+    name: "Dr. Neha Sharma",
+    title: "Nutritionist & Dietitian",
     type: "nutritionist",
-    photo: "/app-ui/nutritionist-ananya.webp",
+    category: "Nutrition",
+    photo: "/app-ui/coach-av-neha.png",
+    heroImage: "/app-ui/coach-hero-neha.png",
     rating: 4.9,
     reviewsCount: 120,
     yearsExperience: 8,
-    consultations: 1000,
+    consultations: 1200,
     feeInr: 800,
     sessionMinutes: 45,
     available: true,
-    specialties: ["PCOS", "Hormone Balance", "Weight Management"],
+    specialties: ["PCOS", "Diabetes", "Weight Loss", "Gut Health"],
     languages: ["Hindi", "English"],
     location: "Mumbai, India",
-    about: "Food is powerful medicine. My goal is to help you build a healthy relationship with food and achieve balance in your body and mind.",
-    areas: ["PCOS", "Hormone Balance", "Weight Management", "Gut Health", "Thyroid", "Women's Health", "Lifestyle Nutrition"],
+    about: "Neha believes that food is medicine when used right. She helps her clients build a balanced relationship with food and achieve sustainable results.",
+    areas: ["PCOS", "Diabetes", "Weight Loss", "Gut Health", "Hormonal Balance", "Clinical Nutrition"],
     education: {
-      degree: "M.Sc Clinical Nutrition & Dietetics",
-      school: "SNDT Women's University, Mumbai",
+      degree: "MSc Nutrition & Dietetics",
+      school: "AIIMS Delhi",
     },
-    certifications: ["Certificate in PCOS Nutrition", "Diabetes Educator Certification", "Weight Management Specialist"],
+    qualifications: [
+      "MSc Nutrition & Dietetics",
+      "Certified Diabetes Educator",
+    ],
+    certifications: ["Certified Diabetes Educator", "Clinical Nutrition Specialist"],
     reviews: [
       {
-        by: "Neha S.",
+        by: "Priya S.",
         stars: 5,
-        text: "Ananya is patient and understanding. Her PCOS plan has helped my energy levels and overall health.",
+        text: "Neha ma'am is amazing! Her meal plans are so easy to follow and very effective.",
+        avatar: "/app-ui/coach-client-priya.png",
       },
       {
         by: "Riya P.",
@@ -129,73 +139,285 @@ export const CONSULTANTS: Consultant[] = [
     topMatch: true,
   },
   {
-    id: "e-002",
-    name: "Dt. Meera Iyer",
-    title: "Nutritionist & Diabetes Educator",
-    type: "nutritionist",
-    photo: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&q=80",
+    id: "arjun-mehta",
+    name: "Arjun Mehta",
+    title: "Fitness Coach",
+    type: "fitness-trainer",
+    category: "Fitness",
+    photo: "/app-ui/coach-av-arjun.png",
+    heroImage: "/app-ui/coach-hero-arjun.png",
     rating: 4.8,
-    reviewsCount: 120,
-    yearsExperience: 10,
-    consultations: 800,
-    feeInr: 700,
-    sessionMinutes: 45,
-    available: true,
-    specialties: ["Diabetes", "Thyroid", "Heart Health"],
-    languages: ["Tamil", "English", "Hindi"],
-    location: "Chennai, India",
-    about: "I help people with lifestyle conditions build sustainable, culturally rooted meal habits without giving up flavour.",
-    areas: ["Diabetes", "Thyroid", "Heart Health", "Cholesterol", "Blood Pressure"],
-    education: {
-      degree: "M.Sc Dietetics & Food Service Management",
-      school: "Madras University",
-    },
-    certifications: ["Certified Diabetes Educator", "Cardiac Nutrition Specialist"],
-    reviews: [{ by: "Karthik R.", stars: 5, text: "A practical food-first approach that worked with the meals my family already cooks." }],
-  },
-  {
-    id: "e-003",
-    name: "Dt. Riya Malhotra",
-    title: "Sports & Clinical Nutritionist",
-    type: "nutritionist",
-    photo: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=600&q=80",
-    rating: 4.9,
-    reviewsCount: 76,
-    yearsExperience: 6,
-    consultations: 500,
+    reviewsCount: 98,
+    yearsExperience: 7,
+    consultations: 850,
     feeInr: 900,
     sessionMinutes: 45,
     available: true,
-    specialties: ["Weight Management", "Gut Health", "Active Lifestyle"],
+    specialties: ["Strength", "Fat Loss", "Muscle Gain", "Performance"],
     languages: ["English", "Hindi"],
     location: "Delhi, India",
-    about: "Nutrition for people who train hard and want to feel light. Performance meets balance.",
-    areas: ["Sports Nutrition", "Weight Management", "Gut Health", "Muscle Gain", "Endurance"],
-    education: { degree: "M.Sc Sports Nutrition", school: "IGNOU" },
-    certifications: ["ISSN Certified Sports Nutritionist", "Gut Microbiome Specialist"],
-    reviews: [{ by: "Aarav K.", stars: 5, text: "I became stronger while steadily moving toward my weight goal." }],
+    about: "Arjun helps you move better, get stronger and build a body you feel proud of. Fitness that fits your lifestyle.",
+    areas: ["Strength", "Fat Loss", "Muscle Gain", "Performance", "Endurance"],
+    education: {
+      degree: "B.Sc Exercise Science",
+      school: "Delhi University",
+    },
+    qualifications: [
+      "ACE Certified Personal Trainer",
+      "Strength & Conditioning Specialist",
+    ],
+    certifications: [
+      "ACE Certified Personal Trainer",
+      "Strength & Conditioning Specialist",
+    ],
+    reviews: [
+      {
+        by: "Rohan M.",
+        stars: 5,
+        text: "I've never been this consistent with my workouts. Arjun is the best!",
+        avatar: "/app-ui/coach-client-rohan.png",
+      },
+    ],
+    topMatch: true,
   },
   {
-    id: "e-004",
-    name: "Dr. Priya Sharma",
-    title: "Health Specialist & Diabetologist",
-    type: "health-specialist",
-    photo: "https://images.unsplash.com/photo-1651008376811-b90baee60c1f?w=600&q=80",
+    id: "ritika-malhotra",
+    name: "Ritika Malhotra",
+    title: "Holistic Wellness Coach",
+    type: "wellness-coach",
+    category: "Mindfulness",
+    photo: "/app-ui/coach-av-ritika.png",
+    heroImage: "/app-ui/coach-hero-ritika.png",
+    rating: 4.9,
+    reviewsCount: 86,
+    yearsExperience: 6,
+    consultations: 640,
+    feeInr: 850,
+    sessionMinutes: 50,
+    available: true,
+    specialties: ["Stress Management", "Sleep Wellness", "Hormonal Balance", "Mindfulness"],
+    languages: ["English", "Hindi"],
+    location: "Bangalore, India",
+    about: "Ritika takes a holistic approach to wellness by addressing mind, body and lifestyle together for lasting transformation.",
+    areas: ["Stress Management", "Sleep Wellness", "Hormonal Balance", "Mindfulness", "Emotional Wellness"],
+    education: {
+      degree: "MA Psychology & Mindfulness",
+      school: "Christ University, Bangalore",
+    },
+    qualifications: [
+      "Certified Wellness Coach",
+      "Mindfulness & Stress Reduction Coach",
+    ],
+    certifications: [
+      "Certified Wellness Coach",
+      "Mindfulness & Stress Reduction Coach",
+    ],
+    reviews: [
+      {
+        by: "Ananya P.",
+        stars: 5,
+        text: "Ritika's guidance has helped me manage my stress and sleep so much better.",
+        avatar: "/app-ui/coach-client-ananya.png",
+      },
+    ],
+    topMatch: true,
+  },
+  {
+    id: "dr-kavya-iyer",
+    name: "Dr. Kavya Iyer",
+    title: "Clinical Nutritionist",
+    type: "nutritionist",
+    category: "Nutrition",
+    photo: "/app-ui/coach-av-kavya.png",
+    heroImage: "/app-ui/coach-hero-neha.png",
+    rating: 4.8,
+    reviewsCount: 104,
+    yearsExperience: 5,
+    consultations: 580,
+    feeInr: 750,
+    sessionMinutes: 45,
+    available: true,
+    specialties: ["Thyroid", "Gut Health", "Heart Health"],
+    languages: ["English", "Tamil", "Hindi"],
+    location: "Chennai, India",
+    about: "Dr. Kavya specializes in clinical medical nutrition therapy for thyroid regulation and gastrointestinal harmony.",
+    areas: ["Thyroid", "Gut Health", "Heart Health", "Metabolic Health"],
+    education: {
+      degree: "MD Clinical Nutrition",
+      school: "Madras Medical College",
+    },
+    qualifications: [
+      "MD Clinical Nutrition",
+      "Certified Gut Health Specialist",
+    ],
+    certifications: ["Certified Gut Health Specialist", "Thyroid Care Educator"],
+    reviews: [
+      {
+        by: "Sunita R.",
+        stars: 5,
+        text: "Dr. Kavya's guidance on thyroid nutrition transformed my daily energy.",
+        avatar: "/app-ui/coach-client-priya.png",
+      },
+    ],
+  },
+  {
+    id: "yash-vardhan",
+    name: "Yash Vardhan",
+    title: "Lifestyle & Mindset Coach",
+    type: "wellness-coach",
+    category: "Lifestyle",
+    photo: "/app-ui/coach-av-yash.png",
+    heroImage: "/app-ui/coach-hero-arjun.png",
+    rating: 4.7,
+    reviewsCount: 72,
+    yearsExperience: 5,
+    consultations: 430,
+    feeInr: 700,
+    sessionMinutes: 45,
+    available: true,
+    specialties: ["Mindfulness", "Habits", "Productivity"],
+    languages: ["English", "Hindi"],
+    location: "Pune, India",
+    about: "Yash helps busy professionals construct sustainable lifestyle architectures, combining mindfulness with habit loops.",
+    areas: ["Mindfulness", "Habits", "Productivity", "Time Management", "Sleep"],
+    education: {
+      degree: "B.Sc Behavioral Psychology",
+      school: "Symbiosis Pune",
+    },
+    qualifications: [
+      "Behavioral Change Specialist",
+      "Certified Habit Coach",
+    ],
+    certifications: ["Behavioral Change Specialist", "Certified Habit Coach"],
+    reviews: [
+      {
+        by: "Sameer K.",
+        stars: 5,
+        text: "Yash helped me break self-sabotaging burnout cycles with tiny daily shifts.",
+        avatar: "/app-ui/coach-client-rohan.png",
+      },
+    ],
+  },
+  {
+    id: "e-001",
+    name: "Dr. Neha Sharma",
+    title: "Nutritionist & Dietitian",
+    type: "nutritionist",
+    category: "Nutrition",
+    photo: "/app-ui/coach-av-neha.png",
+    heroImage: "/app-ui/coach-hero-neha.png",
+    rating: 4.9,
+    reviewsCount: 120,
+    yearsExperience: 8,
+    consultations: 1200,
+    feeInr: 800,
+    sessionMinutes: 45,
+    available: true,
+    specialties: ["PCOS", "Diabetes", "Weight Loss", "Gut Health"],
+    languages: ["Hindi", "English"],
+    location: "Mumbai, India",
+    about: "Neha believes that food is medicine when used right. She helps her clients build a balanced relationship with food and achieve sustainable results.",
+    areas: ["PCOS", "Diabetes", "Weight Loss", "Gut Health", "Hormonal Balance", "Clinical Nutrition"],
+    education: {
+      degree: "MSc Nutrition & Dietetics",
+      school: "AIIMS Delhi",
+    },
+    qualifications: [
+      "MSc Nutrition & Dietetics",
+      "Certified Diabetes Educator",
+    ],
+    certifications: ["Certified Diabetes Educator", "Clinical Nutrition Specialist"],
+    reviews: [
+      {
+        by: "Priya S.",
+        stars: 5,
+        text: "Neha ma'am is amazing! Her meal plans are so easy to follow and very effective.",
+        avatar: "/app-ui/coach-client-priya.png",
+      },
+    ],
+    topMatch: true,
+  },
+  {
+    id: "e-002",
+    name: "Arjun Mehta",
+    title: "Fitness Coach",
+    type: "fitness-trainer",
+    category: "Fitness",
+    photo: "/app-ui/coach-av-arjun.png",
+    heroImage: "/app-ui/coach-hero-arjun.png",
     rating: 4.8,
     reviewsCount: 98,
-    yearsExperience: 12,
-    consultations: 1500,
-    feeInr: 1200,
-    sessionMinutes: 30,
-    available: false,
-    specialties: ["Diabetes", "Thyroid", "Weight Wellness"],
-    languages: ["English", "Hindi", "Punjabi"],
+    yearsExperience: 7,
+    consultations: 850,
+    feeInr: 900,
+    sessionMinutes: 45,
+    available: true,
+    specialties: ["Strength", "Fat Loss", "Muscle Gain", "Performance"],
+    languages: ["English", "Hindi"],
     location: "Delhi, India",
-    about: "Medical review paired with a personalized lifestyle plan, especially when laboratory reports need context.",
-    areas: ["Diabetes", "Thyroid", "Cholesterol", "Blood Pressure", "Pre-diabetes"],
-    education: { degree: "MBBS, MD (Internal Medicine)", school: "AIIMS Delhi" },
-    certifications: ["Board Certified Diabetologist", "Advanced Lipidology"],
-    reviews: [{ by: "Vikram J.", stars: 5, text: "My reports were explained clearly and turned into a plan I could actually follow." }],
+    about: "Arjun helps you move better, get stronger and build a body you feel proud of. Fitness that fits your lifestyle.",
+    areas: ["Strength", "Fat Loss", "Muscle Gain", "Performance"],
+    education: {
+      degree: "B.Sc Exercise Science",
+      school: "Delhi University",
+    },
+    qualifications: [
+      "ACE Certified Personal Trainer",
+      "Strength & Conditioning Specialist",
+    ],
+    certifications: [
+      "ACE Certified Personal Trainer",
+      "Strength & Conditioning Specialist",
+    ],
+    reviews: [
+      {
+        by: "Rohan M.",
+        stars: 5,
+        text: "I've never been this consistent with my workouts. Arjun is the best!",
+        avatar: "/app-ui/coach-client-rohan.png",
+      },
+    ],
+  },
+  {
+    id: "e-003",
+    name: "Ritika Malhotra",
+    title: "Holistic Wellness Coach",
+    type: "wellness-coach",
+    category: "Mindfulness",
+    photo: "/app-ui/coach-av-ritika.png",
+    heroImage: "/app-ui/coach-hero-ritika.png",
+    rating: 4.9,
+    reviewsCount: 86,
+    yearsExperience: 6,
+    consultations: 640,
+    feeInr: 850,
+    sessionMinutes: 50,
+    available: true,
+    specialties: ["Stress Management", "Sleep Wellness", "Hormonal Balance", "Mindfulness"],
+    languages: ["English", "Hindi"],
+    location: "Bangalore, India",
+    about: "Ritika takes a holistic approach to wellness by addressing mind, body and lifestyle together for lasting transformation.",
+    areas: ["Stress Management", "Sleep Wellness", "Hormonal Balance", "Mindfulness"],
+    education: {
+      degree: "MA Psychology & Mindfulness",
+      school: "Christ University, Bangalore",
+    },
+    qualifications: [
+      "Certified Wellness Coach",
+      "Mindfulness & Stress Reduction Coach",
+    ],
+    certifications: [
+      "Certified Wellness Coach",
+      "Mindfulness & Stress Reduction Coach",
+    ],
+    reviews: [
+      {
+        by: "Ananya P.",
+        stars: 5,
+        text: "Ritika's guidance has helped me manage my stress and sleep so much better.",
+        avatar: "/app-ui/coach-client-ananya.png",
+      },
+    ],
   },
   {
     id: "e-005",
@@ -324,5 +546,11 @@ export function consultantMatchesConcern(consultant: Consultant, concernId: Heal
 }
 
 export function getConsultant(id: string) {
-  return CONSULTANTS.find((consultant) => consultant.id === id);
+  const normalizedId = id.trim().toLowerCase();
+  return CONSULTANTS.find(
+    (consultant) =>
+      consultant.id.toLowerCase() === normalizedId ||
+      consultant.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") === normalizedId ||
+      consultant.name.toLowerCase().replace(/^dr\.?\s*/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") === normalizedId
+  );
 }

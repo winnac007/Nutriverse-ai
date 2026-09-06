@@ -1,25 +1,28 @@
 import React, { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { CONSULTANTS, getConsultant } from "@/lib/consultants";
-import CoachProfileClient from "@/app/app/coaches/[id]/CoachProfileClient";
+import CoachProfileClient from "./CoachProfileClient";
 
-type ConsultantProfilePageProps = {
+type CoachPageProps = {
   params: Promise<{ id: string }>;
 };
 
 export function generateStaticParams() {
-  return CONSULTANTS.map((consultant) => ({ id: consultant.id }));
+  return CONSULTANTS.map((c) => ({ id: c.id }));
 }
 
-export default async function ConsultantProfilePage({ params }: ConsultantProfilePageProps) {
+export default async function CoachPage({ params }: CoachPageProps) {
   const { id } = await params;
-  const consultant = getConsultant(id);
+  const coach = getConsultant(id);
 
-  if (!consultant) notFound();
+  if (!coach) {
+    notFound();
+  }
 
   return (
     <Suspense fallback={<div className="p-8 text-center text-[#786C56]">Loading coach profile…</div>}>
-      <CoachProfileClient coach={consultant} />
+      <CoachProfileClient coach={coach} />
     </Suspense>
   );
 }
+

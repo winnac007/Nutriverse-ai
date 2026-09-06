@@ -1,0 +1,472 @@
+/* CoachProfile.module.css */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 28px;
+}
+
+/* Top Navigation Bar */
+.topNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0 6px;
+}
+
+.navIconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1px solid #E5DED2;
+  color: #1D1B18;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navIconBtn:hover {
+  background: #F0ECE3;
+}
+
+.navTitle {
+  font-family: var(--font-playfair, "Playfair Display", Georgia, serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #1D1B18;
+  margin: 0;
+  text-align: center;
+}
+
+.rightNavGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Hero Portrait Card */
+.heroCard {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 225 / 165;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #F0EAE1;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.heroImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ratingFloatingPill {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(229, 222, 210, 0.8);
+  backdrop-filter: blur(6px);
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #373229;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.starIcon {
+  color: #E5A93B;
+  fill: #E5A93B;
+}
+
+/* Coach Identity Section */
+.identitySection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.coachName {
+  font-family: var(--font-playfair, "Playfair Display", Georgia, serif);
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #1D1B18;
+  margin: 0;
+}
+
+.verifiedBadge {
+  color: #437140;
+  fill: #437140;
+  flex-shrink: 0;
+}
+
+.coachRole {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #556B4E;
+  margin: 0;
+}
+
+.experienceLabel {
+  font-size: 0.8rem;
+  color: #7A7265;
+  margin: 0;
+}
+
+/* 4 Specialty Badges Grid */
+.specialtiesGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.specialtyCard {
+  background: #FFFFFF;
+  border: 1px solid #ECE6DC;
+  border-radius: 14px;
+  padding: 12px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.specialtyIconWrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #FAF7F2;
+  color: #46573E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.specialtyLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #373229;
+  line-height: 1.25;
+}
+
+/* About Section */
+.sectionBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sectionTitle {
+  font-family: var(--font-playfair, "Playfair Display", Georgia, serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1D1B18;
+  margin: 0;
+}
+
+.bodyText {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #5C554A;
+  margin: 0;
+}
+
+.readMoreBtn {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: #374B33;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 2px;
+  transition: opacity 0.2s;
+}
+
+.readMoreBtn:hover {
+  opacity: 0.75;
+}
+
+/* Qualifications / Certifications Section */
+.bulletList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bulletItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.84rem;
+  color: #4A443B;
+}
+
+.bulletDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #374B33;
+  flex-shrink: 0;
+}
+
+/* Action Buttons Row */
+.actionBtnsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.availabilityBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: #FFFFFF;
+  border: 1px solid #D5CDC0;
+  color: #1D1B18;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.availabilityBtn:hover {
+  background: #F7F3EB;
+}
+
+.bookSessionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: #374B33;
+  color: #FFFFFF;
+  border: none;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(55, 75, 51, 0.2);
+}
+
+.bookSessionBtn:hover {
+  background: #2A3B27;
+  transform: translateY(-1px);
+}
+
+/* What Clients Say Section */
+.reviewsHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.seeAllLink {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #6E675B;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.seeAllLink:hover {
+  color: #1D1B18;
+}
+
+.testimonialCard {
+  background: #FFFFFF;
+  border: 1px solid #ECE6DC;
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.clientAvatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid #E5DED2;
+}
+
+.testimonialContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.clientName {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #1D1B18;
+  margin: 0;
+}
+
+.clientQuote {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: #5C554A;
+  margin: 0;
+}
+
+.reviewStarsRow {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #1D1B18;
+  margin-top: 2px;
+}
+
+/* Interactive Booking Modal / Drawer */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modalSheet {
+  background: #FFFFFF;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  padding: 24px;
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.12);
+  animation: slideUp 0.25s ease-out;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modalTitle {
+  font-family: var(--font-playfair, "Playfair Display", Georgia, serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1D1B18;
+  margin: 0;
+}
+
+.closeModalBtn {
+  background: none;
+  border: none;
+  color: #8C8477;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.slotList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.slotBtn {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #E5DED2;
+  background: #FAF7F2;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #373229;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.slotBtn:hover, .slotBtnSelected {
+  background: #374B33;
+  color: #FFFFFF;
+  border-color: #374B33;
+}
+
+.confirmBookingBtn {
+  padding: 12px;
+  border-radius: 14px;
+  background: #374B33;
+  color: #FFFFFF;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  text-align: center;
+}
+
+.confirmBookingBtn:hover {
+  background: #2A3B27;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Toast Notice */
+.toastNotice {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1D1B18;
+  color: #FAF7F2;
+  padding: 10px 20px;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+}
+

@@ -105,12 +105,13 @@ const wellnessTabs: Tab[] = [
     ),
   },
   {
-    href: "/app/consult",
-    label: "Consult",
-    matches: (pathname) => pathname.startsWith("/app/consult"),
+    href: "/app/coaches",
+    label: "Coaches",
+    matches: (pathname) => pathname.startsWith("/app/consult") || pathname.startsWith("/app/coaches"),
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20 11.5a7.5 7.5 0 0 1-8 7.47 8.7 8.7 0 0 1-3.2-.83L4 20l1.7-4.12A7.5 7.5 0 1 1 20 11.5Z" />
+        <circle cx="12" cy="7" r="4" />
+        <path d="M5.5 21a6.5 6.5 0 0 1 13 0" />
       </svg>
     ),
   },
