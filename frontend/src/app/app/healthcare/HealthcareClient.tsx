@@ -28,6 +28,7 @@ import {
   Search,
   Shield,
   ShieldOff,
+  ShoppingBag,
   SlidersHorizontal,
   Sparkles,
   Sprout,
@@ -952,6 +953,21 @@ export default function HealthcareClient() {
             </div>
             <Link href="/onboarding/conditions" className={styles.quizBtn}>
               <span>Take quiz</span>
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          {/* Marketplace Banner */}
+          <div className={styles.quizCard} style={{ background: "#FAF7F2", borderColor: "#E8E2D6" }}>
+            <span className={styles.quizBadge} style={{ background: "#DCEEE7", color: "#275242" }} aria-hidden="true">
+              <ShoppingBag size={18} />
+            </span>
+            <div className={styles.quizText}>
+              <h3>Healthcare Marketplace</h3>
+              <p>Explore doctor-inspired kits &amp; Ayurvedic essentials for your focus.</p>
+            </div>
+            <Link href="/app/marketplace" className={styles.quizBtn} style={{ background: "#374B33" }}>
+              <span>Shop kits</span>
               <ArrowRight size={14} />
             </Link>
           </div>

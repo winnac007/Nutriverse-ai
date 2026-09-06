@@ -21,7 +21,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     pathname === "/app/explore" ||
     pathname?.startsWith("/app/healthcare") ||
     pathname?.startsWith("/app/meals") ||
-    pathname?.startsWith("/app/recipe");
+    pathname?.startsWith("/app/recipe") ||
+    pathname?.startsWith("/app/fitness") ||
+    pathname?.startsWith("/app/marketplace") ||
+    pathname?.startsWith("/app/chef") ||
+    pathname?.startsWith("/app/category");
 
   useEffect(() => {
     if (!loading) {

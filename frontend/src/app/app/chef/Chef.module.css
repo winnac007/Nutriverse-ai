@@ -1,0 +1,605 @@
+/* Chef.module.css */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding-bottom: 24px;
+}
+
+/* Top Navigation Bar */
+.topNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0 8px;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1px solid #E5DED2;
+  color: #1D1B18;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.backBtn:hover {
+  background: #F0ECE3;
+  transform: translateX(-2px);
+}
+
+.pageTitle {
+  font-family: var(--font-playfair, "Playfair Display", Georgia, serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1D1B18;
+  margin: 0;
+  text-align: center;
+}
+
+.shareBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1px solid #E5DED2;
+  color: #1D1B18;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shareBtn:hover {
+  background: #F0ECE3;
+  transform: scale(1.05);
+}
+
+/* Chef Profile Hero */
+.heroWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sprigDeco {
+  position: absolute;
+  top: -12px;
+  right: -4px;
+  width: 70px;
+  height: auto;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.85;
+}
+
+.chefHeroRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.chefInfoCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chefName {
+  font-family: var(--font-playfair, "Playfair Display", Georgia, serif);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #1D1B18;
+  margin: 0;
+  line-height: 1.15;
+}
+
+.verifiedBadge {
+  color: #437140;
+  fill: #437140;
+  flex-shrink: 0;
+}
+
+.chefTitle {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #556B4E;
+  margin: 0;
+}
+
+.chefBioQuote {
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: #5C554A;
+  margin: 2px 0 6px;
+}
+
+/* 3 Mini Attribute Tags */
+.attrRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.attrItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: #4C463C;
+}
+
+.attrIconLeaf {
+  color: #5B7A52;
+}
+
+.attrIconSprout {
+  color: #437140;
+}
+
+.attrIconHeart {
+  color: #B55B6F;
+}
+
+/* Action Buttons */
+.actionBtnsRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.followBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 22px;
+  border-radius: 12px;
+  background: #374B33;
+  color: #FFFFFF;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.followBtn:hover {
+  background: #2A3B27;
+  transform: translateY(-1px);
+}
+
+.followingActive {
+  background: #E8EFE6;
+  color: #2D5936;
+  border: 1px solid #C9DBC6;
+}
+
+.followingActive:hover {
+  background: #DCE7D9;
+}
+
+.saveChefBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: #FFFFFF;
+  border: 1px solid #D5CDC0;
+  color: #2C2822;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.saveChefBtn:hover {
+  background: #F7F3EB;
+}
+
+.savedChefActive {
+  color: #C4556F;
+  border-color: #E2B6C0;
+  background: #FFF9FA;
+}
+
+/* Chef Portrait Col */
+.chefPortraitCol {
+  flex-shrink: 0;
+  width: 155px;
+  position: relative;
+  z-index: 2;
+}
+
+.portraitCard {
+  width: 100%;
+  aspect-ratio: 178 / 278;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.portraitImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Floating 4-Metric Stats Card */
+.statsCard {
+  background: #FFFFFF;
+  border: 1px solid #ECE6DC;
+  border-radius: 18px;
+  padding: 14px 18px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 3px;
+  position: relative;
+}
+
+.statItem:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 15%;
+  height: 70%;
+  width: 1px;
+  background: #EDE6DC;
+}
+
+.statIconWrap {
+  color: #46573E;
+  margin-bottom: 1px;
+}
+
+.statValue {
+  font-family: var(--font-playfair, "Playfair Display", Georgia, serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1D1B18;
+  line-height: 1.1;
+}
+
+.statLabel {
+  font-size: 0.72rem;
+  color: #7A7265;
+}
+
+/* "About Chef Harshita" Section */
+.aboutSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sectionTitle {
+  font-family: var(--font-playfair, "Playfair Display", Georgia, serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1D1B18;
+  margin: 0;
+}
+
+.aboutBio {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #5C554A;
+  margin: 0;
+}
+
+.readMoreBtn {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #2C2822;
+  cursor: pointer;
+  padding: 6px 12px;
+  margin-top: 2px;
+  transition: color 0.15s;
+}
+
+.readMoreBtn:hover {
+  color: #46573E;
+}
+
+/* "Chef's Specialties" Section */
+.specialtiesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.specialtyGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.specialtyBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 8px;
+  border-radius: 12px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.badgeIndian {
+  background: #EBF2EA;
+  color: #385935;
+}
+
+.badgeProtein {
+  background: #F8F0E2;
+  color: #8A6122;
+}
+
+.badgeGlutenFree {
+  background: #FBF0E6;
+  color: #9C5B28;
+}
+
+.badgeDiabetes {
+  background: #F6F1E6;
+  color: #7B6837;
+}
+
+/* "Featured Recipes" Section */
+.recipesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.recipesHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.viewAllLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #6E675B;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.viewAllLink:hover {
+  color: #1D1B18;
+}
+
+.recipeRail {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  overflow-x: auto;
+}
+
+.recipeCard {
+  background: #FFFFFF;
+  border: 1px solid #ECE6DC;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recipeCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.04);
+}
+
+.recipeMediaWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 135 / 146;
+  background: #F4EFE6;
+  overflow: hidden;
+}
+
+.recipeImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.recipeTagPill {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  background: rgba(235, 242, 234, 0.95);
+  color: #2D5936;
+  font-size: 0.65rem;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+}
+
+.recipeBookmarkBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1px solid #E5DED2;
+  color: #2C2822;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.15s ease;
+}
+
+.recipeBookmarkBtn:hover {
+  transform: scale(1.08);
+  color: #C4556F;
+}
+
+.bookmarkedActive {
+  color: #C4556F;
+}
+
+.recipeCardBody {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.recipeTitle {
+  font-family: var(--font-playfair, "Playfair Display", Georgia, serif);
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: #1D1B18;
+  margin: 0 0 4px;
+}
+
+.recipeDesc {
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: #71695C;
+  margin: 0 0 10px;
+  min-height: 38px;
+}
+
+.recipeMetaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 6px;
+  border-top: 1px solid #F5EFE6;
+  font-size: 0.72rem;
+  color: #7A7265;
+}
+
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Carousel Dots Indicator */
+.carouselDots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #DDD5C7;
+  transition: all 0.2s ease;
+}
+
+.activeDot {
+  width: 8px;
+  height: 8px;
+  background: #46573E;
+}
+
+/* Toast Notice */
+.toastNotice {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1D1B18;
+  color: #FAF7F2;
+  padding: 10px 20px;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Responsive Rules */
+@media (max-width: 640px) {
+  .chefHeroRow {
+    gap: 12px;
+  }
+  .chefPortraitCol {
+    width: 140px;
+  }
+  .specialtyGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .recipeRail {
+    grid-template-columns: repeat(3, minmax(130px, 1fr));
+  }
+}
+

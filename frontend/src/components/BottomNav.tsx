@@ -142,7 +142,51 @@ export default function BottomNav() {
         activeSurface: "transparent",
       };
 
-  const tabs = culinaryTheme ? culinaryTabs : wellnessTabs;
+  const isHealthcareOrMarketplace =
+    pathname.startsWith("/app/healthcare") || pathname.startsWith("/app/marketplace");
+
+  const dynamicWellnessTabs: Tab[] = [
+    wellnessTabs[0],
+    wellnessTabs[1],
+    isHealthcareOrMarketplace
+      ? {
+          href: "/app/marketplace",
+          label: "Healthcare",
+          matches: (p) => p.startsWith("/app/healthcare") || p.startsWith("/app/marketplace"),
+          icon: (
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 24,
+                height: 24,
+                borderRadius: "50%",
+                background: isHealthcareOrMarketplace ? "#374B33" : "transparent",
+                color: isHealthcareOrMarketplace ? "#FFFFFF" : "currentColor",
+                transition: "all 0.2s ease",
+              }}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill={isHealthcareOrMarketplace ? "#FFFFFF" : "none"}
+                stroke="currentColor"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ width: 15, height: 15 }}
+              >
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+              </svg>
+            </span>
+          ),
+        }
+      : wellnessTabs[2],
+    wellnessTabs[3],
+    wellnessTabs[4],
+  ];
+
+  const tabs = culinaryTheme ? culinaryTabs : dynamicWellnessTabs;
   const navigationStyle = {
     "--nav-background": palette.background,
     "--nav-border": palette.border,

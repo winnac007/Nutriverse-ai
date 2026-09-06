@@ -6,6 +6,7 @@ import { ArrowLeft, RefreshCw, Sprout } from "lucide-react";
 import api from "@/lib/api";
 import RecipeCard from "@/components/RecipeCard";
 import FitnessClient from "@/app/app/fitness/FitnessClient";
+import ChefClient from "@/app/app/chef/ChefClient";
 import styles from "../../wellnessMeals.module.css";
 
 type Recipe = { id: string; title: string; [key: string]: unknown };
@@ -68,6 +69,9 @@ export default function Category({ params }: { params: Promise<{ cat: string }> 
   const { cat } = use(params);
   if (cat === "fitness") {
     return <FitnessClient />;
+  }
+  if (cat === "chef-special" || cat === "chef") {
+    return <ChefClient />;
   }
   return <GenericCategoryView cat={cat} />;
 }

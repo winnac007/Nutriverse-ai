@@ -97,7 +97,7 @@ const CHAPTERS: Chapter[] = [
     overline: "Indulgence",
     title: "Chef\nSpecials",
     tags: "Desserts ·\nBakery ·\nMindful treats",
-    href: "/app/category/chef-special",
+    href: "/app/chef",
     image: "/app-ui/dish-ch4.png",
     icon: ChefHat,
   },
