@@ -1,10 +1,13 @@
 "use client";
 
-import { use } from "react";
-
-import RecipeExperience from "@/components/culinary/RecipeExperience";
+import { Suspense, use } from "react";
+import ZenRecipeDetail from "@/components/recipe/ZenRecipeDetail";
 
 export default function RecipeIngredientsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  return <RecipeExperience recipeId={id} view="ingredients" />;
+  return (
+    <Suspense fallback={null}>
+      <ZenRecipeDetail recipeId={id} initialTab="ingredients" />
+    </Suspense>
+  );
 }

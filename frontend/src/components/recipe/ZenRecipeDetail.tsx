@@ -9,12 +9,15 @@ import {
   Clock3,
   Flame,
   Heart,
+  Leaf,
   Lightbulb,
   MoreVertical,
   Play,
   Plus,
   ShoppingBag,
+  ShoppingCart,
   Sparkles,
+  Star,
   Sun,
   User,
   X,
@@ -36,9 +39,34 @@ export type IngredientItem = {
 export type MethodStep = {
   stepNumber: number;
   instruction: string;
-  illustration: string;
+  illustration?: string;
   cookingPhoto: string;
+  highlightWords?: string[];
+  subTip?: {
+    text: string;
+    icon?: "star" | "leaf";
+  };
 };
+
+function renderInstruction(text: string, highlightWords?: string[]) {
+  if (!highlightWords || highlightWords.length === 0) {
+    return text;
+  }
+  const escaped = highlightWords.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const regex = new RegExp(`(${escaped.join("|")})`, "gi");
+  const parts = text.split(regex);
+  return parts.map((part, index) => {
+    const isMatch = highlightWords.some((w) => w.toLowerCase() === part.toLowerCase());
+    if (isMatch) {
+      return (
+        <strong key={index} className={styles.stepHighlightWord}>
+          {part}
+        </strong>
+      );
+    }
+    return part;
+  });
+}
 
 export type ChefTip = {
   text: string;
@@ -98,42 +126,63 @@ const PRESET_RECIPES: Record<string, ZenRecipe> = {
       sodium: "160mg",
     },
     ingredients: [
-      { name: "Eggs", amount: "2 large", image: "/app-ui/ing-eggs.png" },
-      { name: "Baby spinach", amount: "60g", image: "/app-ui/ing-spinach.png" },
-      { name: "Olive oil", amount: "1 tsp", image: "/app-ui/ing-olive-oil.png" },
-      { name: "Garlic minced", amount: "1/2 tsp", image: "/app-ui/ing-garlic.png" },
-      { name: "Black pepper", amount: "1/4 tsp", image: "/app-ui/ing-black-pepper.png" },
+      { name: "Eggs", amount: "2 large", image: "/app-ui/ing-grid-eggs.png" },
+      { name: "Baby spinach", amount: "60g", image: "/app-ui/ing-grid-spinach.png" },
+      { name: "Olive oil", amount: "1 tsp", image: "/app-ui/ing-grid-oil.png" },
+      { name: "Garlic minced", amount: "1/2 tsp", image: "/app-ui/ing-grid-garlic.png" },
+      { name: "Black pepper", amount: "1/4 tsp", image: "/app-ui/ing-grid-pepper.png" },
+      { name: "Salt", amount: "A pinch", image: "/app-ui/ing-grid-salt.png" },
     ],
     steps: [
-      "Heat 1 tsp olive oil in a non-stick pan.",
-      "Saute garlic 20 sec, add spinach, wilt 1 min.",
-      "Whisk eggs with pepper, pour over spinach.",
-      "Stir gently until curds form, 2 min. Serve.",
+      "Heat 1 tsp olive oil in a non-stick pan over medium heat.",
+      "Add minced garlic (20 sec), then toss in baby spinach until wilted (~1 min).",
+      "Pour whisked eggs with black pepper and salt over the spinach.",
+      "Gently stir over low heat until soft curds form (~2 min). Serve warm.",
     ],
     methodSteps: [
       {
         stepNumber: 1,
-        instruction: "Heat 1 tsp olive oil in a non-stick pan.",
+        instruction: "Heat 1 tsp olive oil in a non-stick pan over medium heat.",
         illustration: "/app-ui/method-ill1.png",
-        cookingPhoto: "/app-ui/method-p1.png",
+        cookingPhoto: "/app-ui/meth-step1-pan.png",
+        highlightWords: ["1 tsp olive oil"],
+        subTip: {
+          text: "Use medium heat.",
+          icon: "star",
+        },
       },
       {
         stepNumber: 2,
-        instruction: "Saute garlic 20 sec, add spinach, wilt 1 min.",
+        instruction: "Add minced garlic (20 sec), then toss in baby spinach until wilted (~1 min).",
         illustration: "/app-ui/method-ill2.png",
-        cookingPhoto: "/app-ui/method-p2.png",
+        cookingPhoto: "/app-ui/meth-step2-pan.png",
+        highlightWords: ["baby spinach"],
+        subTip: {
+          text: "Don't overcook spinach.",
+          icon: "leaf",
+        },
       },
       {
         stepNumber: 3,
-        instruction: "Whisk eggs with pepper, pour over spinach.",
+        instruction: "Pour whisked eggs with black pepper and salt over the spinach.",
         illustration: "/app-ui/method-ill3.png",
-        cookingPhoto: "/app-ui/method-p3.png",
+        cookingPhoto: "/app-ui/meth-step3-bowl.png",
+        highlightWords: ["eggs"],
+        subTip: {
+          text: "Whisk well for fluffy eggs.",
+          icon: "star",
+        },
       },
       {
         stepNumber: 4,
-        instruction: "Stir gently until curds form, 2 min. Serve.",
+        instruction: "Gently stir over low heat until soft curds form (~2 min). Serve warm.",
         illustration: "/app-ui/method-ill4.png",
-        cookingPhoto: "/app-ui/method-p4.png",
+        cookingPhoto: "/app-ui/meth-step4-pan.png",
+        highlightWords: ["soft curds"],
+        subTip: {
+          text: "Soft curds = perfect texture.",
+          icon: "star",
+        },
       },
     ],
     chefTip: {
@@ -555,41 +604,31 @@ export default function ZenRecipeDetail({
                 <Flame />
                 <span>{recipe.calories} kcal</span>
               </span>
+              {recipe.badges?.some((b) => b.type === "heart" || b.label.includes("heart")) && (
+                <span className={styles.headerHeartBadge}>
+                  <Heart />
+                  <span>heart friendly</span>
+                </span>
+              )}
             </div>
           </div>
         </header>
       )}
 
-      {/* 3. Segmented Tabs Pill Bar: [ Overview | Ingredients | Method | Nutrition ] */}
-      <nav className={styles.segmentedTabs} aria-label="Recipe tabs">
-        <button
-          type="button"
-          className={`${styles.tabBtn} ${activeTab === "overview" ? styles.tabBtnActive : ""}`}
-          onClick={() => handleTabChange("overview")}
-        >
-          Overview
-        </button>
-        <button
-          type="button"
-          className={`${styles.tabBtn} ${activeTab === "ingredients" ? styles.tabBtnActive : ""}`}
-          onClick={() => handleTabChange("ingredients")}
-        >
-          Ingredients
-        </button>
-        <button
-          type="button"
-          className={`${styles.tabBtn} ${activeTab === "method" ? styles.tabBtnActive : ""}`}
-          onClick={() => handleTabChange("method")}
-        >
-          Method
-        </button>
-        <button
-          type="button"
-          className={`${styles.tabBtn} ${activeTab === "nutrition" ? styles.tabBtnActive : ""}`}
-          onClick={() => handleTabChange("nutrition")}
-        >
-          Nutrition
-        </button>
+      {/* 3. Underline Tab Bar: [ Overview | Ingredients | Method | Nutrition ] */}
+      <nav className={styles.underlineTabBar} aria-label="Recipe tabs">
+        {(["overview", "ingredients", "method", "nutrition"] as RecipeTab[]).map((tab) => (
+          <button
+            key={tab}
+            type="button"
+            className={`${styles.tabUnderlineBtn} ${
+              activeTab === tab ? styles.tabUnderlineActive : ""
+            }`}
+            onClick={() => handleTabChange(tab)}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
       </nav>
 
       {/* =========================================================================
@@ -597,33 +636,7 @@ export default function ZenRecipeDetail({
           ========================================================================= */}
       {activeTab === "method" && (
         <>
-          {/* Step-by-Step Cooking Timeline */}
-          <section className={styles.methodTimeline} aria-label="Step-by-step preparation method">
-            {recipe.methodSteps.map((step) => (
-              <div key={step.stepNumber} className={styles.stepItem}>
-                <span className={styles.stepBadge}>{step.stepNumber}</span>
-                <article className={styles.stepCard}>
-                  <div className={styles.stepIllWrapper}>
-                    <img
-                      src={step.illustration}
-                      alt={`Step ${step.stepNumber} illustration`}
-                      className={styles.stepIll}
-                    />
-                  </div>
-                  <p className={styles.stepText}>{step.instruction}</p>
-                  <div className={styles.stepPhotoWrapper}>
-                    <img
-                      src={step.cookingPhoto}
-                      alt={`Step ${step.stepNumber} cooking photo`}
-                      className={styles.stepPhoto}
-                    />
-                  </div>
-                </article>
-              </div>
-            ))}
-          </section>
-
-          {/* Chef's Tip Card */}
+          {/* Chef's Tip Card (Placed at the Top per Mockup) */}
           {recipe.chefTip && (
             <aside className={styles.chefTipCard} aria-label="Chef tip">
               <div className={styles.chefTipLeft}>
@@ -642,6 +655,43 @@ export default function ZenRecipeDetail({
               />
             </aside>
           )}
+
+          {/* Step-by-Step Cooking Timeline with Dashed Line & Reversed Layout */}
+          <section className={styles.dashedTimeline} aria-label="Step-by-step preparation method">
+            {recipe.methodSteps.map((step) => (
+              <div key={step.stepNumber} className={styles.stepItem}>
+                <span className={styles.stepBadge}>{step.stepNumber}</span>
+                <article className={styles.stepCardReversed}>
+                  <div className={styles.stepLeftPhotoWrapper}>
+                    <img
+                      src={step.cookingPhoto}
+                      alt={`Step ${step.stepNumber} photo`}
+                      className={styles.stepLeftPhoto}
+                    />
+                  </div>
+                  <div className={styles.stepRightBody}>
+                    <p className={styles.stepInstructionText}>
+                      {renderInstruction(step.instruction, step.highlightWords)}
+                    </p>
+                    {step.subTip && (
+                      <span
+                        className={`${styles.stepTipPill} ${
+                          step.subTip.icon === "leaf" ? styles.stepTipPillGreen : ""
+                        }`}
+                      >
+                        {step.subTip.icon === "leaf" ? (
+                          <Leaf />
+                        ) : (
+                          <Star fill="#C8963E" stroke="#C8963E" />
+                        )}
+                        <span>{step.subTip.text}</span>
+                      </span>
+                    )}
+                  </div>
+                </article>
+              </div>
+            ))}
+          </section>
 
           {/* Log this meal Card */}
           <section className={styles.logMealCard} aria-label="Log this meal">
@@ -699,11 +749,16 @@ export default function ZenRecipeDetail({
                 </p>
               </div>
             </div>
-            <img
-              src={recipe.thumbImage || recipe.image}
-              alt={recipe.title}
-              className={styles.watchBannerImg}
-            />
+            <div className={styles.watchImgWrapper}>
+              <img
+                src={recipe.thumbImage || recipe.image}
+                alt={recipe.title}
+                className={styles.watchBannerImg}
+              />
+              <span className={styles.watchImgPlayBadge}>
+                <Play />
+              </span>
+            </div>
           </div>
         </>
       )}
@@ -895,79 +950,157 @@ export default function ZenRecipeDetail({
           INGREDIENTS TAB ACTIVE
           ========================================================================= */}
       {activeTab === "ingredients" && (
-        <section className={styles.ingredientsSection} aria-label="Ingredients Checklist">
-          <div className={styles.ingredientsHeader}>
-            <h2 className={styles.ingredientsTitle}>All Ingredients ({recipe.ingredients.length})</h2>
-            <button type="button" className={styles.shopAllBtn} onClick={handleShopAll}>
-              <ShoppingBag />
-              <span>Shop all 🛍</span>
-            </button>
-          </div>
+        <>
+          {/* 3x2 Photo Grid Section */}
+          <section className={styles.ingredientsGridSection} aria-label="Ingredients Grid">
+            <div className={styles.ingredientsGridHeader}>
+              <h2 className={styles.ingredientsGridTitle}>Ingredients</h2>
+              <button type="button" className={styles.shopAllPill} onClick={handleShopAll}>
+                <ShoppingCart />
+                <span>Shop all ingredients</span>
+              </button>
+            </div>
 
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.65rem",
-              marginTop: "0.5rem",
-            }}
-          >
-            {recipe.ingredients.map((ing) => (
-              <div
-                key={ing.name}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  background: "#ffffff",
-                  border: "1px solid #e8e2d6",
-                  borderRadius: "1rem",
-                  padding: "0.75rem 1rem",
-                  boxShadow: "0 2px 8px rgba(60,50,30,0.03)",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
-                  <img
-                    src={ing.image}
-                    alt={ing.name}
-                    style={{
-                      width: "44px",
-                      height: "44px",
-                      objectFit: "contain",
-                    }}
-                  />
-                  <div>
-                    <h4
-                      style={{
-                        margin: 0,
-                        fontSize: "0.92rem",
-                        fontWeight: 600,
-                        color: "#1d1b18",
-                      }}
-                    >
-                      {ing.name}
-                    </h4>
-                    <span style={{ fontSize: "0.78rem", color: "#756c62" }}>
-                      Quality pantry staple
-                    </span>
+            <div className={styles.ingredientsGrid}>
+              {recipe.ingredients.map((ing) => (
+                <div key={ing.name} className={styles.ingredientGridCard}>
+                  <div className={styles.ingredientPlateHalo}>
+                    <img src={ing.image} alt={ing.name} className={styles.ingredientGridImg} />
                   </div>
+                  <h3 className={styles.ingredientGridName}>{ing.name}</h3>
+                  <span className={styles.ingredientGridAmount}>{ing.amount}</span>
                 </div>
-                <span
-                  style={{
-                    fontSize: "0.86rem",
-                    fontWeight: 600,
-                    color: "#46573e",
-                    background: "#f0f4ec",
-                    padding: "0.3rem 0.75rem",
-                    borderRadius: "9999px",
-                  }}
-                >
-                  {ing.amount}
-                </span>
+              ))}
+            </div>
+          </section>
+
+          {/* Horizontal Nutrition Strip Card */}
+          <section className={styles.horizontalNutritionCard} aria-label="Nutrition Summary">
+            <div className={styles.nutritionHeaderRow}>
+              <span className={styles.nutritionLeafBadge}>
+                <Leaf />
+              </span>
+              <h3 className={styles.nutritionHeaderTitle}>Nutrition (per serving)</h3>
+            </div>
+            <div className={styles.nutritionStatStrip}>
+              <div className={styles.statStripItem}>
+                <span className={styles.statStripValue}>{recipe.nutrition.calories}</span>
+                <span className={styles.statStripLabel}>CALORIES</span>
               </div>
-            ))}
+              <div className={styles.statStripItem}>
+                <span className={styles.statStripValue}>{recipe.nutrition.protein}</span>
+                <span className={styles.statStripLabel}>PROTEIN</span>
+              </div>
+              <div className={styles.statStripItem}>
+                <span className={styles.statStripValue}>{recipe.nutrition.carbs}</span>
+                <span className={styles.statStripLabel}>CARBS</span>
+              </div>
+              <div className={styles.statStripItem}>
+                <span className={styles.statStripValue}>{recipe.nutrition.fat}</span>
+                <span className={styles.statStripLabel}>FAT</span>
+              </div>
+              <div className={styles.statStripItem}>
+                <span className={styles.statStripValue}>{recipe.nutrition.fiber}</span>
+                <span className={styles.statStripLabel}>FIBER</span>
+              </div>
+              <div className={styles.statStripItem}>
+                <span className={styles.statStripValue}>{recipe.nutrition.sodium}</span>
+                <span className={styles.statStripLabel}>SODIUM</span>
+              </div>
+            </div>
+            <p className={styles.nutritionDisclaimer}>
+              Values are approximate based on standard serving sizes.
+            </p>
+          </section>
+
+          {/* Log this meal Card */}
+          <section className={styles.logMealCard} aria-label="Log this meal">
+            <div className={styles.logMealLeft}>
+              <h3 className={styles.logMealTitle}>Log this meal</h3>
+              <div className={styles.mealSelectWrapper}>
+                <Sun className={styles.mealSelectSun} />
+                <select
+                  className={styles.mealSelect}
+                  value={selectedMealType}
+                  onChange={(e) => setSelectedMealType(e.target.value)}
+                  aria-label="Select meal slot"
+                >
+                  <option value="Breakfast">Breakfast</option>
+                  <option value="Lunch">Lunch</option>
+                  <option value="Dinner">Dinner</option>
+                  <option value="Snack">Snack</option>
+                </select>
+                <ChevronDown className={styles.mealSelectChevron} />
+              </div>
+            </div>
+            <button
+              type="button"
+              className={styles.logMealBtn}
+              onClick={handleLogMeal}
+              disabled={logging}
+            >
+              <Plus />
+              <span>{logging ? "Logging…" : "Log meal"}</span>
+            </button>
+          </section>
+
+          {/* Chef's Tip Card */}
+          {recipe.chefTip && (
+            <aside className={styles.chefTipCard} aria-label="Chef tip">
+              <div className={styles.chefTipLeft}>
+                <div className={styles.chefTipIconBadge}>
+                  <Lightbulb />
+                </div>
+                <div className={styles.chefTipBody}>
+                  <h4 className={styles.chefTipTitle}>Chef&apos;s tip</h4>
+                  <p className={styles.chefTipText}>{recipe.chefTip.text}</p>
+                </div>
+              </div>
+              <img
+                src={recipe.chefTip.image}
+                alt="Chef's spice tip"
+                className={styles.chefTipImg}
+              />
+            </aside>
+          )}
+
+          {/* Watch Full Recipe Banner Card */}
+          <div
+            className={styles.watchFullRecipeBanner}
+            onClick={() => setShowVideoModal(true)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setShowVideoModal(true);
+              }
+            }}
+            aria-label="Watch full recipe tutorial"
+          >
+            <div className={styles.watchBannerLeft}>
+              <span className={styles.watchPlayCircle}>
+                <Play />
+              </span>
+              <div className={styles.watchText}>
+                <h3 className={styles.watchTitle}>Watch full recipe</h3>
+                <p className={styles.watchSubtitle}>
+                  Detailed video with chef tips and delicious variations.
+                </p>
+              </div>
+            </div>
+            <div className={styles.watchImgWrapper}>
+              <img
+                src={recipe.thumbImage || recipe.image}
+                alt={recipe.title}
+                className={styles.watchBannerImg}
+              />
+              <span className={styles.watchImgPlayBadge}>
+                <Play />
+              </span>
+            </div>
           </div>
-        </section>
+        </>
       )}
 
       {/* =========================================================================
