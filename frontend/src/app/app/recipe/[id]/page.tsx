@@ -2,9 +2,9 @@
 
 import { use } from "react";
 
-import RecipeExperience from "@/components/culinary/RecipeExperience";
+import ZenRecipeDetail from "@/components/recipe/ZenRecipeDetail";
 
 export default function RecipeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  return <RecipeExperience recipeId={id} view="overview" />;
+  return <ZenRecipeDetail recipeId={id} />;
 }

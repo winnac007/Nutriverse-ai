@@ -655,7 +655,7 @@ const CURATED_HUB_RECIPES: Record<string, HubCuratedRecipe[]> = {
         { label: "heart friendly", type: "heart" },
         { label: "high-fiber", type: "fiber" },
       ],
-      href: "/app/meals?search=toast",
+      href: "/app/recipe/spinach-egg-scramble",
     },
     {
       id: "hub-rec-khichdi",
@@ -669,7 +669,7 @@ const CURATED_HUB_RECIPES: Record<string, HubCuratedRecipe[]> = {
         { label: "low fat", type: "fat" },
         { label: "high-fiber", type: "fiber" },
       ],
-      href: "/app/meals?search=khichdi",
+      href: "/app/recipe/hub-rec-khichdi",
     },
     {
       id: "hub-rec-salmon",
@@ -683,7 +683,7 @@ const CURATED_HUB_RECIPES: Record<string, HubCuratedRecipe[]> = {
         { label: "omega-3 rich", type: "omega" },
         { label: "heart friendly", type: "heart" },
       ],
-      href: "/app/meals?search=salmon",
+      href: "/app/recipe/hub-rec-salmon",
     },
   ],
 };
