@@ -27,6 +27,7 @@ import {
   Scale,
   Search,
   Shield,
+  ShieldCheck,
   ShieldOff,
   ShoppingBag,
   SlidersHorizontal,
@@ -455,8 +456,33 @@ type FocusCardConfig = {
   title: string;
   blurb: string;
   count: string;
+  category: "cardiovascular" | "metabolic" | "hormonal" | "digestive" | "kidney-liver";
+  keywords: string[];
   icon: LucideIcon;
   image: string;
+};
+
+const CONDITION_CATEGORIES = [
+  { id: "all", label: "All Focuses" },
+  { id: "metabolic", label: "Metabolic" },
+  { id: "cardiovascular", label: "Cardiovascular" },
+  { id: "hormonal", label: "Hormonal" },
+  { id: "digestive", label: "Digestive" },
+  { id: "kidney-liver", label: "Liver & Kidney" },
+];
+
+type UploadedReport = {
+  name: string;
+  size: string;
+  uploadedAt: string;
+  type: string;
+};
+
+type Biomarker = {
+  name: string;
+  value: string;
+  status: "high" | "normal" | "borderline";
+  alertText?: string;
 };
 
 const FOCUS_CARDS: FocusCardConfig[] = [
@@ -466,6 +492,8 @@ const FOCUS_CARDS: FocusCardConfig[] = [
     title: "Cholesterol",
     blurb: "Heart health & lipid balance.",
     count: "6 recipes",
+    category: "cardiovascular",
+    keywords: ["heart", "lipid", "cholesterol", "ldl", "hdl", "triglycerides", "cardiac", "artery"],
     icon: Heart,
     image: "/app-ui/focus-cholesterol.png",
   },
@@ -475,6 +503,8 @@ const FOCUS_CARDS: FocusCardConfig[] = [
     title: "Diabetes",
     blurb: "Stable blood sugar & better control.",
     count: "5 recipes",
+    category: "metabolic",
+    keywords: ["blood sugar", "glucose", "insulin", "hba1c", "type 2", "prediabetes", "glycemic"],
     icon: Activity,
     image: "/app-ui/focus-diabetes.png",
   },
@@ -484,6 +514,8 @@ const FOCUS_CARDS: FocusCardConfig[] = [
     title: "Thyroid",
     blurb: "Support metabolism & energy.",
     count: "4 recipes",
+    category: "hormonal",
+    keywords: ["metabolism", "energy", "tsh", "hypothyroid", "hyperthyroid", "t3", "t4", "hashimoto"],
     icon: Sparkles,
     image: "/app-ui/focus-thyroid.png",
   },
@@ -493,8 +525,54 @@ const FOCUS_CARDS: FocusCardConfig[] = [
     title: "PCOS",
     blurb: "Hormonal balance & menstrual health.",
     count: "3 recipes",
+    category: "hormonal",
+    keywords: ["hormones", "menstrual", "pcod", "ovarian", "androgen", "fertility", "insulin resistance"],
     icon: Flower2,
     image: "/app-ui/focus-pcos.png",
+  },
+  {
+    id: "gut-ibs",
+    conditionKey: "ibs",
+    title: "Gut Health & IBS",
+    blurb: "Microbiome balance & soothing foods.",
+    count: "5 recipes",
+    category: "digestive",
+    keywords: ["gut", "ibs", "bloating", "digestion", "acid reflux", "gerd", "stomach", "microbiome", "celiac", "constipation"],
+    icon: Leaf,
+    image: "/app-ui/pop-bowl.png",
+  },
+  {
+    id: "liver-kidney",
+    conditionKey: "fatty-liver",
+    title: "Liver & Kidney",
+    blurb: "Low sodium & hepatic detox support.",
+    count: "4 recipes",
+    category: "kidney-liver",
+    keywords: ["liver", "kidney", "fatty liver", "creatinine", "uric acid", "renal", "sgpt", "sgot", "alt", "ast", "detox"],
+    icon: Gauge,
+    image: "/app-ui/pop-dal.png",
+  },
+  {
+    id: "hypertension",
+    conditionKey: "hypertension",
+    title: "Hypertension",
+    blurb: "DASH-aligned sodium control & calm.",
+    count: "4 recipes",
+    category: "cardiovascular",
+    keywords: ["bp", "blood pressure", "hypertension", "systolic", "diastolic", "sodium", "dash", "cardiac"],
+    icon: Shield,
+    image: "/app-ui/pop-salmon.png",
+  },
+  {
+    id: "metabolic-scale",
+    conditionKey: "weight-management",
+    title: "Metabolic Vitality",
+    blurb: "Lean protein & sustained satiety.",
+    count: "5 recipes",
+    category: "metabolic",
+    keywords: ["weight", "metabolism", "fat loss", "lean", "satiety", "calories", "protein", "energy"],
+    icon: Scale,
+    image: "/app-ui/pop-bowl.png",
   },
 ];
 
@@ -708,6 +786,88 @@ export default function HealthcareClient() {
   const [showIntake, setShowIntake] = useState(false);
   const [savedBookmarks, setSavedBookmarks] = useState<Set<string>>(new Set());
 
+  // Condition Search & Category Filter
+  const [conditionQuery, setConditionQuery] = useState("");
+  const [conditionCategory, setConditionCategory] = useState("all");
+
+  // Blood Report Upload & Clinical AI Analysis
+  const [uploadedReport, setUploadedReport] = useState<UploadedReport | null>(null);
+  const [reportAnalyzing, setReportAnalyzing] = useState(false);
+  const [biomarkers, setBiomarkers] = useState<Biomarker[] | null>(null);
+  const [suggestedFocus, setSuggestedFocus] = useState<{ id: string; label: string } | null>(null);
+  const reportFileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleReportUpload = (file?: File) => {
+    if (!file) return;
+    setReportAnalyzing(true);
+    setUploadedReport({
+      name: file.name,
+      size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
+      uploadedAt: "Just now",
+      type: file.type || "PDF Document",
+    });
+
+    setTimeout(() => {
+      setReportAnalyzing(false);
+      setBiomarkers([
+        { name: "Total Cholesterol", value: "246 mg/dL", status: "high", alertText: "High (Optimal < 200)" },
+        { name: "HbA1c (Glycated Hb)", value: "5.8%", status: "borderline", alertText: "Pre-diabetic range" },
+        { name: "TSH (Thyroid)", value: "4.1 mIU/L", status: "borderline", alertText: "Borderline elevated" },
+        { name: "Triglycerides", value: "182 mg/dL", status: "high", alertText: "Elevated" },
+        { name: "Fasting Glucose", value: "104 mg/dL", status: "borderline", alertText: "Mild elevation" },
+        { name: "Estimated eGFR", value: "94 mL/min", status: "normal", alertText: "Normal kidney function" },
+      ]);
+      setSuggestedFocus({
+        id: "high-cholesterol",
+        label: "Cholesterol & Heart Health",
+      });
+    }, 700);
+  };
+
+  const loadSampleReport = () => {
+    setReportAnalyzing(true);
+    setUploadedReport({
+      name: "Comprehensive_Metabolic_CBC_Report.pdf",
+      size: "1.8 MB",
+      uploadedAt: "Just now",
+      type: "application/pdf",
+    });
+    setTimeout(() => {
+      setReportAnalyzing(false);
+      setBiomarkers([
+        { name: "Total Cholesterol", value: "248 mg/dL", status: "high", alertText: "High (Optimal < 200)" },
+        { name: "HbA1c (Blood Sugar)", value: "5.9%", status: "borderline", alertText: "Pre-diabetic range" },
+        { name: "TSH (Thyroid)", value: "4.2 mIU/L", status: "borderline", alertText: "Borderline elevated" },
+        { name: "Triglycerides", value: "185 mg/dL", status: "high", alertText: "Elevated" },
+        { name: "Fasting Glucose", value: "106 mg/dL", status: "borderline", alertText: "Mild elevation" },
+        { name: "Estimated eGFR", value: "92 mL/min", status: "normal", alertText: "Normal" },
+      ]);
+      setSuggestedFocus({
+        id: "high-cholesterol",
+        label: "Cholesterol & Heart Health",
+      });
+    }, 600);
+  };
+
+  const handleRemoveReport = () => {
+    setUploadedReport(null);
+    setBiomarkers(null);
+    setSuggestedFocus(null);
+    setReportAnalyzing(false);
+    if (reportFileInputRef.current) reportFileInputRef.current.value = "";
+  };
+
+  const filteredFocusCards = useMemo(() => {
+    const q = conditionQuery.trim().toLowerCase();
+    return FOCUS_CARDS.filter((card) => {
+      const matchesCategory = conditionCategory === "all" || card.category === conditionCategory;
+      if (!matchesCategory) return false;
+      if (!q) return true;
+      const searchable = `${card.title} ${card.blurb} ${card.category} ${card.keywords.join(" ")}`.toLowerCase();
+      return searchable.includes(q);
+    });
+  }, [conditionQuery, conditionCategory]);
+
   const toggleBookmark = (id: string) => {
     setSavedBookmarks((prev) => {
       const next = new Set(prev);
@@ -878,34 +1038,69 @@ export default function HealthcareClient() {
             </div>
           </section>
 
-          {/* 2. Condition Focus Cards (2x2 Grid) */}
-          <div className={styles.focusGrid}>
-            {FOCUS_CARDS.map((item) => {
-              const Icon = item.icon;
-              return (
-                <div
-                  key={item.id}
-                  className={styles.focusCard}
-                  onClick={() => {
-                    const matched = conditions.find(
-                      (c) =>
-                        c.id === item.conditionKey ||
-                        c.id === item.id ||
-                        c.label.toLowerCase().includes(item.id)
-                    );
-                    pickCondition(
-                      matched || {
-                        id: item.conditionKey,
-                        label: item.title,
-                        blurb: item.blurb,
-                      }
-                    );
-                  }}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
+          {/* 2. Condition Search & Category Filter Section */}
+          <section className={styles.conditionSearchSection} aria-label="Search and filter conditions">
+            <div className={styles.conditionSearchBar}>
+              <Search className={styles.conditionSearchIcon} size={18} aria-hidden="true" />
+              <input
+                type="text"
+                className={styles.conditionSearchInput}
+                placeholder="Search conditions, symptoms, or markers (e.g. cholesterol, diabetes, thyroid, PCOS)..."
+                value={conditionQuery}
+                onChange={(e) => setConditionQuery(e.target.value)}
+                aria-label="Search health conditions"
+              />
+              {conditionQuery && (
+                <button
+                  type="button"
+                  className={styles.conditionClearBtn}
+                  onClick={() => setConditionQuery("")}
+                  aria-label="Clear search query"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            <div className={styles.conditionCategoryRail} role="tablist" aria-label="Filter conditions by category">
+              {CONDITION_CATEGORIES.map((cat) => {
+                const isActive = conditionCategory === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    className={`${styles.conditionCategoryPill} ${isActive ? styles.conditionCategoryPillActive : ""}`}
+                    onClick={() => setConditionCategory(cat.id)}
+                  >
+                    {cat.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {(conditionQuery || conditionCategory !== "all") && (
+              <div className={styles.conditionSearchStats}>
+                Showing {filteredFocusCards.length} {filteredFocusCards.length === 1 ? "focus" : "focuses"}
+                {conditionCategory !== "all"
+                  ? ` in ${CONDITION_CATEGORIES.find((c) => c.id === conditionCategory)?.label}`
+                  : ""}
+                {conditionQuery ? ` matching "${conditionQuery}"` : ""}
+              </div>
+            )}
+          </section>
+
+          {/* 3. Condition Focus Cards (2x2 Grid or filtered) */}
+          {filteredFocusCards.length > 0 ? (
+            <div className={styles.focusGrid}>
+              {filteredFocusCards.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div
+                    key={item.id}
+                    className={styles.focusCard}
+                    onClick={() => {
                       const matched = conditions.find(
                         (c) =>
                           c.id === item.conditionKey ||
@@ -919,28 +1114,254 @@ export default function HealthcareClient() {
                           blurb: item.blurb,
                         }
                       );
-                    }
-                  }}
-                >
-                  <div className={styles.focusContent}>
-                    <div className={styles.focusTopRow}>
-                      <span className={styles.focusIconBadge}>
-                        <Icon />
-                      </span>
-                      <FocusSprig />
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        const matched = conditions.find(
+                          (c) =>
+                            c.id === item.conditionKey ||
+                            c.id === item.id ||
+                            c.label.toLowerCase().includes(item.id)
+                        );
+                        pickCondition(
+                          matched || {
+                            id: item.conditionKey,
+                            label: item.title,
+                            blurb: item.blurb,
+                          }
+                        );
+                      }
+                    }}
+                  >
+                    <div className={styles.focusContent}>
+                      <div className={styles.focusTopRow}>
+                        <span className={styles.focusIconBadge}>
+                          <Icon />
+                        </span>
+                        <FocusSprig />
+                      </div>
+                      <h3 className={styles.focusTitle}>{item.title}</h3>
+                      <p className={styles.focusBlurb}>{item.blurb}</p>
+                      <div className={styles.focusDivider} />
+                      <span className={styles.focusCount}>{item.count}</span>
                     </div>
-                    <h3 className={styles.focusTitle}>{item.title}</h3>
-                    <p className={styles.focusBlurb}>{item.blurb}</p>
-                    <div className={styles.focusDivider} />
-                    <span className={styles.focusCount}>{item.count}</span>
+                    <div className={styles.focusDishWrapper} aria-hidden="true">
+                      <img src={item.image} alt="" className={styles.focusDishImg} loading="lazy" />
+                    </div>
                   </div>
-                  <div className={styles.focusDishWrapper} aria-hidden="true">
-                    <img src={item.image} alt="" className={styles.focusDishImg} loading="lazy" />
-                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className={styles.conditionEmpty} style={{ margin: "1rem 0 1.5rem" }}>
+              <Search aria-hidden="true" />
+              <strong>No focus cards match “{conditionQuery}”</strong>
+              <p>Upload a blood report below, or browse all conditions in our full clinical index.</p>
+              <button
+                type="button"
+                className={styles.quizBtn}
+                style={{ marginTop: "0.5rem" }}
+                onClick={() => {
+                  setConditionQuery("");
+                  setConditionCategory("all");
+                  setShowAllPicker(true);
+                }}
+              >
+                Browse all clinical conditions
+              </button>
+            </div>
+          )}
+
+          {/* 4. Blood Report Upload & Doctor Consultation UI */}
+          <section className={styles.reportConsultSection} aria-label="Upload blood reports and consult doctor">
+            <div className={styles.reportConsultCard}>
+              <div className={styles.reportCardHeader}>
+                <span className={styles.reportIconBadge} aria-hidden="true">
+                  <FileText />
+                </span>
+                <div className={styles.reportHeaderContent}>
+                  <span className={styles.reportOverline}>Don&apos;t know your condition?</span>
+                  <h2 className={styles.reportTitle}>Upload Blood Reports &amp; Consult a Doctor</h2>
+                  <p className={styles.reportSubtitle}>
+                    Unsure about your exact diagnosis? Upload recent lab reports (CBC, Lipid Panel, HbA1c, Thyroid, LFT).
+                    Our clinical AI extracts key biomarkers and connects you directly with a verified doctor.
+                  </p>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+
+              {/* Upload Dropzone / State */}
+              <div className={styles.reportUploadBox}>
+                <input
+                  ref={reportFileInputRef}
+                  type="file"
+                  style={{ display: "none" }}
+                  accept=".pdf,.jpg,.jpeg,.png,.webp"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleReportUpload(file);
+                  }}
+                />
+
+                {!uploadedReport ? (
+                  <div
+                    className={styles.reportUploadDashed}
+                    onClick={() => reportFileInputRef.current?.click()}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        reportFileInputRef.current?.click();
+                      }
+                    }}
+                  >
+                    <div className={styles.uploadLeftCol}>
+                      <span className={styles.uploadIconCircle}>
+                        <FileUp size={20} />
+                      </span>
+                      <div className={styles.uploadTextGroup}>
+                        <span className={styles.uploadPrompt}>Click to upload or drag &amp; drop lab report</span>
+                        <span className={styles.uploadFormats}>Supports PDF, JPG, PNG up to 15 MB (CBC, Lipid Panel, HbA1c, Thyroid, LFT)</span>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
+                      <button
+                        type="button"
+                        className={styles.browseFilesBtn}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          loadSampleReport();
+                        }}
+                        title="Quick demo with realistic blood test report"
+                      >
+                        <Sparkles size={13} /> Try Sample Report
+                      </button>
+                      <span className={styles.browseFilesBtn}>
+                        Browse Files
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                    <div className={styles.uploadedDocCard}>
+                      <div className={styles.uploadedDocLeft}>
+                        <span className={styles.docIconWrap}>
+                          <FileText size={18} />
+                        </span>
+                        <div className={styles.docMetaCol}>
+                          <span className={styles.docName}>{uploadedReport.name}</span>
+                          <span className={styles.docStatus}>
+                            {reportAnalyzing ? (
+                              <>
+                                <Sparkles size={12} className={styles.spinIcon} /> Analyzing biomarkers with Clinical AI...
+                              </>
+                            ) : (
+                              <>
+                                <Check size={12} /> {uploadedReport.size} • Analyzed successfully
+                              </>
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className={styles.removeDocBtn}
+                        onClick={handleRemoveReport}
+                        aria-label="Remove uploaded report"
+                        title="Remove document"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+
+                    {/* AI Biomarker Results Breakdown */}
+                    {biomarkers && (
+                      <div className={styles.biomarkerAnalysisCard}>
+                        <div className={styles.biomarkerHeader}>
+                          <Sparkles size={16} />
+                          <span>Extracted Biomarkers &amp; Clinical Insights</span>
+                        </div>
+                        <div className={styles.biomarkerGrid}>
+                          {biomarkers.map((m) => (
+                            <div key={m.name} className={styles.biomarkerChip}>
+                              <span className={styles.biomarkerName}>{m.name}</span>
+                              <span className={styles.biomarkerVal}>{m.value}</span>
+                              {m.alertText && (
+                                <span
+                                  className={styles.biomarkerAlert}
+                                  style={{
+                                    color:
+                                      m.status === "high"
+                                        ? "#b54a32"
+                                        : m.status === "borderline"
+                                        ? "#b77900"
+                                        : "#2a5949",
+                                  }}
+                                >
+                                  {m.alertText}
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+
+                        {suggestedFocus && (
+                          <div className={styles.biomarkerSuggestedBanner}>
+                            <span className={styles.suggestedFocusText}>
+                              Suggested nutrition focus: <strong>{suggestedFocus.label}</strong>
+                            </span>
+                            <button
+                              type="button"
+                              className={styles.suggestedPillBtn}
+                              onClick={() => {
+                                const matched = conditions.find((c) => c.id === suggestedFocus.id);
+                                pickCondition(
+                                  matched || {
+                                    id: suggestedFocus.id,
+                                    label: suggestedFocus.label,
+                                    blurb: "Scientifically tailored recipes matching your uploaded biomarker report.",
+                                  }
+                                );
+                              }}
+                            >
+                              Set as Meal Focus <ArrowRight size={13} />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Doctor Consultation and Quiz CTA Row */}
+              <div className={styles.reportActionsRow}>
+                <Link
+                  href="/app/coaches?category=Nutrition&report=attached"
+                  className={styles.consultDoctorPrimaryBtn}
+                >
+                  <Stethoscope size={16} />
+                  <span>Consult a Doctor with Report</span>
+                  <ArrowRight size={14} />
+                </Link>
+                <Link
+                  href="/onboarding/conditions"
+                  className={styles.quizSecondaryBtn}
+                >
+                  <span>Take Symptom Quiz</span>
+                </Link>
+              </div>
+
+              {/* Trust & Medical Privacy Badge */}
+              <div className={styles.reportTrustNotice}>
+                <ShieldCheck size={14} />
+                <span>HIPAA &amp; NDHM compliant • Encrypted end-to-end • Only shared with your selected medical practitioner.</span>
+              </div>
+            </div>
+          </section>
 
           {/* 3. Quiz Banner */}
           <div className={styles.quizCard}>

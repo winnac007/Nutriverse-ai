@@ -2788,3 +2788,551 @@
   }
 }
 
+/* ==========================================================================
+   Condition Search & Category Filter Pills
+   ========================================================================== */
+
+.conditionSearchSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.conditionSearchBar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.conditionSearchIcon {
+  position: absolute;
+  left: 1rem;
+  color: #8c8477;
+  pointer-events: none;
+}
+
+.conditionSearchInput {
+  width: 100%;
+  padding: 0.85rem 2.8rem 0.85rem 2.85rem;
+  border-radius: 1rem;
+  background: #ffffff;
+  border: 1px solid #e5ded2;
+  font-size: 0.88rem;
+  color: #1d1b18;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(60, 50, 30, 0.03);
+}
+
+.conditionSearchInput:focus {
+  border-color: #374b33;
+  box-shadow: 0 4px 14px rgba(55, 75, 51, 0.08);
+}
+
+.conditionSearchInput::placeholder {
+  color: #9c9488;
+}
+
+.conditionClearBtn {
+  position: absolute;
+  right: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: #f0eae1;
+  border: none;
+  color: #6e675c;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.conditionClearBtn:hover {
+  background: #e2d9cd;
+  color: #1d1b18;
+}
+
+.conditionCategoryRail {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+  scrollbar-width: none;
+}
+
+.conditionCategoryRail::-webkit-scrollbar {
+  display: none;
+}
+
+.conditionCategoryPill {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.48rem 1.1rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid #e5ded2;
+  background: #ffffff;
+  color: #4a443b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.conditionCategoryPill:hover {
+  background: #f7f3eb;
+  border-color: #d8cebe;
+}
+
+.conditionCategoryPillActive {
+  background: #374b33;
+  color: #ffffff;
+  border-color: #374b33;
+  box-shadow: 0 2px 8px rgba(55, 75, 51, 0.16);
+}
+
+.conditionCategoryPillActive:hover {
+  background: #2b3b28;
+}
+
+.conditionSearchStats {
+  font-size: 0.78rem;
+  color: #787063;
+  padding: 0 0.25rem;
+}
+
+/* ==========================================================================
+   Blood Report Upload & Doctor Consultation Card
+   ========================================================================== */
+
+.reportConsultSection {
+  margin-top: 1rem;
+}
+
+.reportConsultCard {
+  background: #faf7f2;
+  border: 1px solid #e5ded2;
+  border-radius: 1.4rem;
+  padding: clamp(1.15rem, 3.5vw, 1.65rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  box-shadow: 0 4px 20px rgba(60, 50, 30, 0.04);
+}
+
+.reportCardHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+}
+
+.reportIconBadge {
+  width: 2.85rem;
+  height: 2.85rem;
+  border-radius: 0.9rem;
+  background: #d4ece3;
+  color: #2a5949;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(42, 89, 73, 0.12);
+}
+
+.reportIconBadge svg {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.reportHeaderContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.reportOverline {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+  color: #6e675c;
+}
+
+.reportTitle {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.18rem, 3vw, 1.45rem);
+  font-weight: 600;
+  color: #1d1b18;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.reportSubtitle {
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: #6c6559;
+  margin: 0.1rem 0 0;
+}
+
+/* Upload Dropzone */
+.reportUploadBox {
+  position: relative;
+}
+
+.reportUploadDashed {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem 1.4rem;
+  border: 1.5px dashed #c9bfb0;
+  border-radius: 1.15rem;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reportUploadDashed:hover {
+  border-color: #374b33;
+  background: #fdfbf8;
+  transform: translateY(-1px);
+}
+
+.uploadLeftCol {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.uploadIconCircle {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: #f4efe5;
+  color: #46573e;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.uploadTextGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.uploadPrompt {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1d1b18;
+}
+
+.uploadFormats {
+  font-size: 0.75rem;
+  color: #8c8477;
+}
+
+.browseFilesBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 1rem;
+  border-radius: 9999px;
+  background: #f4efe5;
+  border: 1px solid #dcd4c7;
+  color: #374b33;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Uploaded Document Card */
+.uploadedDocCard {
+  background: #ffffff;
+  border: 1px solid #d4ece3;
+  border-radius: 1.15rem;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  box-shadow: 0 2px 10px rgba(42, 89, 73, 0.05);
+}
+
+.uploadedDocLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.docIconWrap {
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 0.75rem;
+  background: #e8f5ef;
+  color: #2a5949;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.docMetaCol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.docName {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #1d1b18;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.docStatus {
+  font-size: 0.74rem;
+  color: #2a5949;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.removeDocBtn {
+  background: none;
+  border: none;
+  color: #9c9488;
+  cursor: pointer;
+  padding: 0.35rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  transition: all 0.15s ease;
+}
+
+.removeDocBtn:hover {
+  color: #c4556f;
+  background: #fdf0f3;
+}
+
+/* AI Biomarker Extraction Summary Card */
+.biomarkerAnalysisCard {
+  background: #f4efe6;
+  border: 1px solid #e2d8c9;
+  border-radius: 1.15rem;
+  padding: 1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  animation: slideDown 0.25s ease-out;
+}
+
+.biomarkerHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #273822;
+}
+
+.biomarkerGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.biomarkerChip {
+  background: #ffffff;
+  border: 1px solid #dfd5c4;
+  border-radius: 0.75rem;
+  padding: 0.45rem 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.biomarkerName {
+  font-size: 0.72rem;
+  color: #787063;
+}
+
+.biomarkerVal {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #1d1b18;
+}
+
+.biomarkerAlert {
+  color: #b54a32;
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.biomarkerSuggestedBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #dfd5c4;
+  margin-top: 0.2rem;
+}
+
+.suggestedFocusText {
+  font-size: 0.78rem;
+  color: #373229;
+}
+
+.suggestedPillBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 9999px;
+  background: #374b33;
+  color: #ffffff;
+  border: none;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.suggestedPillBtn:hover {
+  background: #273822;
+  transform: translateY(-1px);
+}
+
+/* Action Buttons Row */
+.reportActionsRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.consultDoctorPrimaryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.82rem 1.4rem;
+  border-radius: 9999px;
+  background: #374b33;
+  color: #ffffff;
+  border: none;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(55, 75, 51, 0.2);
+  text-decoration: none;
+}
+
+.consultDoctorPrimaryBtn:hover {
+  background: #273822;
+  transform: translateY(-1px);
+}
+
+.quizSecondaryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.82rem 1.25rem;
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 1px solid #dcd4c7;
+  color: #373229;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.quizSecondaryBtn:hover {
+  background: #f7f3eb;
+  border-color: #b8ada0;
+}
+
+.reportTrustNotice {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  color: #71695c;
+  padding-top: 0.2rem;
+}
+
+.reportTrustNotice svg {
+  color: #46573e;
+  flex-shrink: 0;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinIcon {
+  animation: spin 1s linear infinite;
+}
+
+@media (max-width: 640px) {
+  .reportUploadDashed {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+  .browseFilesBtn {
+    align-self: stretch;
+    justify-content: center;
+  }
+  .biomarkerGrid {
+    grid-template-columns: 1fr;
+  }
+  .biomarkerSuggestedBanner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .suggestedPillBtn {
+    align-self: stretch;
+    justify-content: center;
+  }
+  .reportActionsRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .consultDoctorPrimaryBtn,
+  .quizSecondaryBtn {
+    justify-content: center;
+  }
+}
+
