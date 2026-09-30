@@ -1,680 +1,732 @@
 .page {
   display: flex;
-  flex-direction: column;
   width: 100%;
   min-width: 0;
-  gap: 1.4rem;
-  padding-bottom: 2rem;
-  color: #1d1b18;
-  font-family: "DM Sans", Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  flex-direction: column;
+  gap: 2.25rem;
+  padding: 0 0 2.5rem;
+  color: var(--core-ink, #2e2a26);
+  font-family: "DM Sans", Inter, system-ui, sans-serif;
 }
 
-/* ==========================================================================
-   Hero & Greeting
-   ========================================================================== */
+.header {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 3.25rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.48rem;
+  color: #2d4530;
+  text-decoration: none;
+}
+
+.brand svg {
+  width: 1.45rem;
+  height: 1.45rem;
+  fill: #5e8560;
+  stroke-width: 1.45;
+}
+
+.brand span {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.45rem, 4.7vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.72rem;
+}
+
+.notification,
+.avatar {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.notification {
+  color: #4a4036;
+}
+
+.notification svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  stroke-width: 1.7;
+}
+
+.avatar {
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  background: #e9ecdf;
+  box-shadow: 0 2px 12px rgba(31, 46, 31, 0.08);
+  color: #334e34;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.045em;
+  text-decoration: none;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.avatar:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 18px rgba(31, 46, 31, 0.12);
+}
+
 .hero {
   position: relative;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding-top: 0.5rem;
-  padding-bottom: 0.25rem;
-  min-height: 125px;
+  min-height: 14.75rem;
+  align-items: center;
+  overflow: hidden;
+  margin: -0.35rem -1rem -0.35rem;
+  padding: 1.5rem 1rem;
 }
 
-.heroContent {
+.hero::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: linear-gradient(90deg, #f4f1e8 0%, #f4f1e8 39%, rgba(244, 241, 232, 0.9) 49%, rgba(244, 241, 232, 0.1) 72%);
+  content: "";
+  pointer-events: none;
+}
+
+.heroCopy {
   position: relative;
   z-index: 2;
-  max-width: 68%;
+  width: 59%;
+  max-width: 24rem;
 }
 
-.greetingTitle {
+.heroCopy h1 {
   margin: 0;
   font-family: "Playfair Display", Georgia, serif;
-  font-size: clamp(1.85rem, 5.5vw, 2.5rem);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.12;
-  color: #1d1b18;
+  font-size: clamp(2.45rem, 7.4vw, 4.2rem);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 0.99;
 }
 
-.nameRow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
+.heroCopy h1 span {
+  display: block;
 }
 
-.nameSprig {
-  width: 1.35rem;
-  height: 1.35rem;
-  display: inline-block;
-  vertical-align: middle;
-  flex-shrink: 0;
+.heroCopy p {
+  max-width: 18rem;
+  margin: 1.05rem 0 0;
+  color: #706860;
+  font-size: clamp(0.92rem, 2.5vw, 1.08rem);
+  line-height: 1.55;
 }
 
-.heroSubtitle {
-  margin: 0.65rem 0 0;
-  font-size: 0.88rem;
-  line-height: 1.45;
-  color: #726b60;
-  font-weight: 400;
-}
-
-.heroPlantWrapper {
+.heroMedia {
   position: absolute;
-  top: -1.2rem;
-  right: -0.8rem;
-  width: clamp(155px, 36%, 225px);
-  pointer-events: none;
-  z-index: 1;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 57%;
 }
 
-.heroPlant {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 8px 18px rgba(60, 50, 30, 0.04));
+.heroMedia img {
+  object-fit: cover;
+  object-position: 53% 50%;
+  filter: saturate(0.84) sepia(0.06);
 }
 
-/* ==========================================================================
-   AI Nutrition Guide Card
-   ========================================================================== */
-.guideCard {
+.journeyCard {
+  position: relative;
+  display: grid;
+  min-height: 10.25rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  overflow: hidden;
+  padding: 1.5rem 1.6rem;
+  border: 1px solid #e5ddd0;
+  border-radius: 1.5rem;
+  background: #fdfbf7;
+  box-shadow: 0 8px 30px rgba(31, 46, 31, 0.07);
+  color: inherit;
+  text-decoration: none;
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.journeyCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 13px 36px rgba(31, 46, 31, 0.1);
+}
+
+.journeyCopy {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  max-width: 72%;
+}
+
+.eyebrow {
+  margin: 0 0 0.42rem;
+  color: #738573;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.journeyCopy h2 {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.65rem, 5vw, 2.35rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+.journeyProgressMeta {
   display: flex;
+  max-width: 22rem;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.15rem 1.35rem;
-  background: #f1ece2;
-  border: 1px solid #e5dfd4;
-  border-radius: 1.25rem;
-  text-decoration: none;
-  color: inherit;
-  transition: transform 200ms ease, box-shadow 200ms ease;
-  box-shadow: 0 4px 14px rgba(60, 50, 30, 0.03);
+  margin-top: 1rem;
+  color: #706860;
+  font-size: 0.76rem;
 }
 
-.guideCard:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(60, 50, 30, 0.06);
+.journeyProgressMeta strong {
+  color: #334e34;
+  font-variant-numeric: tabular-nums;
 }
 
-.guideBadge {
-  width: 2.75rem;
-  height: 2.75rem;
-  flex-shrink: 0;
+.progressTrack {
+  width: min(100%, 22rem);
+  height: 0.36rem;
+  overflow: hidden;
+  margin-top: 0.45rem;
+  border-radius: 999px;
+  background: #e5ddd0;
+}
+
+.progressTrack span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8d9e8d, #3d5c3e);
+  transition: width 500ms ease;
+}
+
+.journeyAction {
+  position: relative;
+  z-index: 3;
   display: grid;
+  width: 3rem;
+  height: 3rem;
   place-items: center;
-  background: #ffffff;
   border-radius: 50%;
-  color: #55644c;
-  box-shadow: 0 2px 8px rgba(50, 45, 35, 0.05);
+  background: #3d5c3e;
+  box-shadow: 0 5px 18px rgba(61, 92, 62, 0.22);
+  color: #fff;
+  transition: transform 200ms ease, background 200ms ease;
 }
 
-.guideBadge svg {
-  width: 1.35rem;
-  height: 1.35rem;
+.journeyAction svg {
+  width: 1.15rem;
+  height: 1.15rem;
 }
 
-.guideText {
-  flex: 1;
-  min-width: 0;
-}
-
-.guideText h2 {
-  margin: 0;
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 1.12rem;
-  font-weight: 600;
-  color: #1d1b18;
-  letter-spacing: -0.01em;
-}
-
-.guideText p {
-  margin: 0.22rem 0 0;
-  font-size: 0.8rem;
-  line-height: 1.4;
-  color: #726b60;
-}
-
-.guideOpen {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.92rem;
-  font-weight: 500;
-  color: #38342e;
-  white-space: nowrap;
-  transition: transform 180ms ease, color 180ms ease;
-}
-
-.guideCard:hover .guideOpen {
-  color: #1d1b18;
+.journeyCard:hover .journeyAction {
   transform: translateX(2px);
+  background: #334e34;
 }
 
-/* ==========================================================================
-   Section Headers
-   ========================================================================== */
+.journeyBotanical {
+  position: absolute;
+  right: -4.1rem;
+  bottom: -5.2rem;
+  width: 15.75rem;
+  height: auto;
+  opacity: 0.24;
+  pointer-events: none;
+  transform: rotate(-8deg);
+}
+
+.section {
+  min-width: 0;
+  content-visibility: auto;
+  contain-intrinsic-size: 28rem;
+}
+
 .sectionHeader {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 0.75rem;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .sectionHeader h2 {
   margin: 0;
   font-family: "Playfair Display", Georgia, serif;
-  font-size: 1.28rem;
-  font-weight: 600;
-  color: #1d1b18;
-  letter-spacing: -0.015em;
+  font-size: clamp(1.75rem, 4.9vw, 2.35rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
 }
 
 .sectionAction {
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
-  gap: 0.25rem;
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: #726b60;
+  gap: 0.32rem;
+  color: #5c6b5c;
+  font-size: 0.82rem;
+  font-weight: 600;
   text-decoration: none;
   transition: color 180ms ease, transform 180ms ease;
 }
 
 .sectionAction:hover {
-  color: #1d1b18;
-  transform: translateX(1px);
+  color: #2d4530;
+  transform: translateX(2px);
 }
 
 .sectionAction svg {
-  width: 0.82rem;
-  height: 0.82rem;
+  width: 0.9rem;
+  height: 0.9rem;
 }
 
-/* ==========================================================================
-   Today at a glance (4 metrics)
-   ========================================================================== */
-.glanceSection {
-  margin-top: 0.2rem;
-}
-
-.metricsGrid {
+.exploreGrid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.65rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
 }
 
-.metricCard {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 0.45rem;
-  padding: 0.75rem 0.8rem;
-  background: #fbf9f4;
-  border: 1px solid #ebe5d9;
-  border-radius: 0.95rem;
-  box-shadow: 0 2px 8px rgba(60, 50, 30, 0.02);
-}
-
-.metricTop {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.metricIcon {
-  width: 1rem;
-  height: 1rem;
-  flex-shrink: 0;
-}
-
-.metricLabel {
-  font-size: 0.68rem;
-  font-weight: 500;
-  color: #686156;
-  white-space: nowrap;
+.exploreCard {
+  min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.metricValue {
-  font-size: 0.84rem;
-  font-weight: 700;
-  color: #1d1b18;
-  font-variant-numeric: tabular-nums;
-  line-height: 1.1;
-}
-
-.metricDenominator {
-  font-weight: 400;
-  font-size: 0.75rem;
-  color: #686156;
-}
-
-.metricProgressTrack {
-  width: 100%;
-  height: 3.5px;
-  background: #ebe5d8;
-  border-radius: 9999px;
-  overflow: hidden;
-}
-
-.metricProgressBar {
-  height: 100%;
-  border-radius: 9999px;
-  transition: width 400ms ease;
-}
-
-/* ==========================================================================
-   Explore your plate (2x2 Chapter Grid)
-   ========================================================================== */
-.chaptersSection {
-  margin-top: 0.3rem;
-}
-
-.chaptersGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.85rem;
-}
-
-.chapterCard {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 14.8rem;
-  padding: 1.15rem 1.15rem;
-  background: #f4eee4;
-  border: 1px solid #e5ded2;
-  border-radius: 1.25rem;
-  overflow: hidden;
+  border: 1px solid #e5ddd0;
+  border-radius: 1.2rem;
+  background: #fdfbf7;
+  box-shadow: 0 3px 14px rgba(31, 46, 31, 0.045);
+  color: inherit;
   text-decoration: none;
-  color: #1d1b18;
-  box-shadow: 0 4px 16px rgba(60, 50, 30, 0.04);
-  transition: transform 220ms ease, box-shadow 220ms ease;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
 }
 
-.chapterCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 26px rgba(60, 50, 30, 0.08);
+.exploreCard:hover {
+  transform: translateY(-3px);
+  border-color: #c8bfb0;
+  box-shadow: 0 11px 28px rgba(31, 46, 31, 0.09);
 }
 
-.chapterContent {
+.exploreMedia {
   position: relative;
-  z-index: 2;
-  max-width: 58%;
-  display: flex;
-  flex-direction: column;
-}
-
-.chapterOverlineRow {
-  display: flex;
-  align-items: baseline;
-  gap: 0.4rem;
-  margin-bottom: 0.45rem;
-}
-
-.chapterNumber {
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #7e7364;
-}
-
-.chapterOverline {
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #7e7364;
-}
-
-.chapterTitle {
-  margin: 0;
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: clamp(1.2rem, 3.2vw, 1.45rem);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-  color: #1d1b18;
-  white-space: pre-line;
-}
-
-.chapterLine {
-  width: 1.65rem;
-  height: 1px;
-  background: #b5a999;
-  margin: 0.65rem 0;
-}
-
-.chapterTags {
-  margin: 0;
-  font-size: 0.73rem;
-  line-height: 1.45;
-  color: #6a6256;
-  white-space: pre-line;
-}
-
-.chapterBadge {
-  position: relative;
-  z-index: 2;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  box-shadow: 0 2px 8px rgba(60, 50, 30, 0.06);
-  display: grid;
-  place-items: center;
-  color: #55644c;
-  margin-top: 1rem;
-}
-
-.chapterBadge svg {
-  width: 1.05rem;
-  height: 1.05rem;
-}
-
-.chapterDishWrapper {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 56%;
+  aspect-ratio: 1.45 / 1;
   overflow: hidden;
+  background: #e9ecdf;
+}
+
+.exploreMedia::after {
+  position: absolute;
+  inset: 0;
+  background: rgba(31, 46, 31, 0.035);
+  content: "";
   pointer-events: none;
 }
 
-.chapterDishImg {
-  width: 100%;
-  height: 100%;
+.exploreMedia img {
   object-fit: cover;
-  object-position: right center;
-  transition: transform 420ms ease;
+  transition: transform 500ms ease;
 }
 
-.chapterCard:hover .chapterDishImg {
-  transform: scale(1.04);
+.exploreCard:hover .exploreMedia img {
+  transform: scale(1.035);
 }
 
-/* ==========================================================================
-   Featured for you
-   ========================================================================== */
-.featuredSection {
-  margin-top: 0.3rem;
+.exploreCopy {
+  padding: 0.95rem 1rem 1rem;
 }
 
-.featuredGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.85rem;
+.exploreCopy h3 {
+  min-height: 2.5em;
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1rem, 2.6vw, 1.22rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
 }
 
-.featuredCard {
+.exploreFooter {
   display: flex;
-  flex-direction: row;
-  background: #fbf9f4;
-  border: 1px solid #ebe5d9;
-  border-radius: 1.15rem;
-  overflow: hidden;
+  min-height: 3.25rem;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.55rem;
+  margin-top: 0.45rem;
+}
+
+.exploreFooter p {
+  margin: 0;
+  color: #706860;
+  font-size: 0.74rem;
+  line-height: 1.42;
+}
+
+.exploreFooter span {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: #e9ecdf;
+  color: #334e34;
+}
+
+.exploreFooter svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.progressCard {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(8.4rem, 0.74fr) minmax(0, 1.5fr);
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.45rem 3.15rem 1.45rem 1.5rem;
+  border: 1px solid #d5daca;
+  border-radius: 1.35rem;
+  background: #e9ecdf;
+  color: inherit;
   text-decoration: none;
-  color: #1d1b18;
-  box-shadow: 0 3px 12px rgba(60, 50, 30, 0.03);
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.progressCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(31, 46, 31, 0.08);
+}
+
+.progressRing {
+  position: relative;
+  display: grid;
+  width: 8.25rem;
+  height: 8.25rem;
+  place-items: center;
+  justify-self: center;
+  border-radius: 50%;
+  background: conic-gradient(#3d5c3e var(--progress), rgba(141, 158, 141, 0.22) 0);
+}
+
+.progressRing::before {
+  position: absolute;
+  inset: 0.72rem;
+  border-radius: inherit;
+  background: #f4f6ef;
+  content: "";
+}
+
+.progressRing span {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #2e2a26;
+}
+
+.progressRing strong {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.progressRing small {
+  margin-top: 0.32rem;
+  color: #706860;
+  font-size: 0.68rem;
+}
+
+.progressList {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.68rem;
+}
+
+.progressItem {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 1.1rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.58rem;
+  color: #4a4036;
+  font-size: 0.77rem;
+}
+
+.progressItem svg {
+  width: 1rem;
+  height: 1rem;
+  color: #5e8560;
+  stroke-width: 1.8;
+}
+
+.progressItem span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.progressItem strong {
+  color: #2e2a26;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.progressArrow {
+  position: absolute;
+  top: 50%;
+  right: 1.25rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  color: #334e34;
+  transform: translateY(-50%);
+  transition: transform 200ms ease;
+}
+
+.progressCard:hover .progressArrow {
+  transform: translate(2px, -50%);
+}
+
+.focusGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.focusCard {
+  position: relative;
+  display: grid;
+  min-height: 7.2rem;
+  grid-template-columns: auto 1fr;
+  align-content: start;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border: 1px solid #e5ddd0;
+  border-radius: 1.1rem;
+  background: #fdfbf7;
+  box-shadow: 0 2px 10px rgba(31, 46, 31, 0.035);
+  color: #2e2a26;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.34;
+  text-decoration: none;
   transition: transform 200ms ease, box-shadow 200ms ease;
 }
 
-.featuredCard:hover {
+.focusCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(60, 50, 30, 0.07);
+  box-shadow: 0 9px 22px rgba(31, 46, 31, 0.08);
 }
 
-.featuredImageWrapper {
-  position: relative;
-  width: 44%;
-  min-width: 96px;
-  background: #ebe5d8;
-  flex-shrink: 0;
-}
-
-.featuredImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.countryBadge {
-  position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
-  background: rgba(188, 233, 226, 0.88);
-  color: #175247;
-  border: 1px solid rgba(23, 82, 71, 0.16);
-  border-radius: 9999px;
-  padding: 0.16rem 0.55rem;
-  font-size: 0.64rem;
-  font-weight: 600;
-  backdrop-filter: blur(4px);
-  letter-spacing: 0.02em;
-}
-
-.featuredCopy {
-  flex: 1;
-  min-width: 0;
-  padding: 0.75rem 0.85rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.featuredTitle {
-  margin: 0;
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 0.95rem;
-  font-weight: 600;
-  line-height: 1.25;
-  color: #1d1b18;
-}
-
-.featuredBottomRow {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 0.4rem;
-  margin-top: 0.6rem;
-}
-
-.featuredMeta {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  font-size: 0.7rem;
-  color: #726b60;
-  flex-wrap: wrap;
-}
-
-.featuredMetaItem {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.22rem;
-}
-
-.featuredMetaItem svg {
-  width: 0.78rem;
-  height: 0.78rem;
-  color: #8c8273;
-}
-
-.bookmarkBtn {
+.focusIcon {
   display: grid;
+  width: 2.6rem;
+  height: 2.6rem;
   place-items: center;
-  width: 1.65rem;
-  height: 1.65rem;
-  background: #ffffff;
-  border: 1px solid #ddd6c8;
-  border-radius: 0.45rem;
-  color: #686156;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: all 180ms ease;
+  border-radius: 50%;
 }
 
-.bookmarkBtn:hover {
-  background: #f7f4ec;
-  color: #1d1b18;
-  border-color: #beb6a5;
+.focusIcon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  stroke-width: 1.8;
 }
 
-.bookmarkBtnActive {
-  background: #55644c;
-  color: #ffffff;
-  border-color: #55644c;
+.sage {
+  background: #dde8dd;
+  color: #3d5c3e;
 }
 
-.bookmarkBtn svg {
-  width: 0.85rem;
-  height: 0.85rem;
+.gold {
+  background: #f7f0e0;
+  color: #826030;
 }
 
-/* ==========================================================================
-   Bottom Action Banner
-   ========================================================================== */
-.bottomBanner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.85rem;
-  padding: 0.95rem 1.25rem;
-  background: #f4eee4;
-  border: 1px solid #e5ded2;
-  border-radius: 1.25rem;
-  margin-top: 0.2rem;
-  box-shadow: 0 3px 12px rgba(60, 50, 30, 0.03);
+.forest {
+  background: #e9ecdf;
+  color: #334e34;
 }
 
-.bannerLeft {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
+.paper {
+  background: #f4f1e8;
+  color: #5c6b5c;
 }
 
-.bannerIcon {
-  width: 2.75rem;
-  height: 2.75rem;
-  object-fit: contain;
-  flex-shrink: 0;
-  opacity: 0.85;
+.focusArrow {
+  position: absolute;
+  right: 0.8rem;
+  bottom: 0.75rem;
+  width: 0.92rem;
+  height: 0.92rem;
+  color: #738573;
+  transition: transform 180ms ease;
 }
 
-.bannerCopy {
-  margin: 0;
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 0.92rem;
-  font-weight: 600;
-  line-height: 1.3;
-  color: #1d1b18;
+.focusCard:hover .focusArrow {
+  transform: translateX(2px);
 }
 
-.bannerCopy span {
-  display: block;
-}
-
-.logMealBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.62rem 1.15rem;
-  background: #5e6b54;
-  color: #faf7f2;
-  border-radius: 9999px;
-  font-size: 0.82rem;
-  font-weight: 500;
-  text-decoration: none;
-  white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(94, 107, 84, 0.25);
-  transition: background 180ms ease, transform 180ms ease;
-  flex-shrink: 0;
-}
-
-.logMealBtn:hover {
-  background: #4f5b46;
-  transform: translateY(-1px);
-}
-
-.logMealBtn svg {
-  width: 0.95rem;
-  height: 0.95rem;
-}
-
-/* ==========================================================================
-   Responsive Adjustments
-   ========================================================================== */
-@media (max-width: 540px) {
-  .heroContent {
-    max-width: 62%;
+@media (max-width: 620px) {
+  .page {
+    gap: 2rem;
   }
 
-  .heroPlantWrapper {
-    width: 148px;
-    right: -0.5rem;
-    top: -0.8rem;
+  .hero {
+    min-height: 13rem;
   }
 
-  .metricsGrid {
-    gap: 0.45rem;
+  .heroCopy {
+    width: 62%;
   }
 
-  .metricCard {
-    padding: 0.65rem 0.5rem;
+  .heroMedia {
+    width: 61%;
   }
 
-  .metricLabel {
-    font-size: 0.62rem;
+  .journeyCard {
+    min-height: 10rem;
+    padding: 1.3rem;
   }
 
-  .metricValue {
-    font-size: 0.76rem;
+  .journeyCopy {
+    max-width: 78%;
   }
 
-  .chapterContent {
-    max-width: 60%;
+  .journeyAction {
+    width: 2.7rem;
+    height: 2.7rem;
   }
 
-  .chapterCard {
-    padding: 0.95rem 0.85rem;
-    min-height: 13.8rem;
+  .exploreGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
   }
 
-  .chapterTitle {
-    font-size: 1.15rem;
+  .exploreCopy {
+    padding: 0.82rem 0.82rem 0.9rem;
   }
 
-  .chapterTags {
-    font-size: 0.68rem;
+  .exploreCopy h3 {
+    font-size: 1.04rem;
   }
 
-  .chapterDishWrapper {
-    width: 54%;
+  .progressCard {
+    grid-template-columns: 7.25rem minmax(0, 1fr);
+    gap: 1rem;
+    padding: 1.15rem 2.4rem 1.15rem 1rem;
   }
 
-  .featuredGrid {
+  .progressRing {
+    width: 7rem;
+    height: 7rem;
+  }
+
+  .progressRing strong {
+    font-size: 1.7rem;
+  }
+
+  .progressItem {
+    gap: 0.42rem;
+    font-size: 0.69rem;
+  }
+
+  .progressItem strong {
+    font-size: 0.69rem;
+  }
+
+  .focusGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .focusCard {
+    min-height: 5.8rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .brand span {
+    font-size: 1.35rem;
+  }
+
+  .notification,
+  .avatar {
+    width: 2.45rem;
+    height: 2.45rem;
+  }
+
+  .heroCopy h1 {
+    font-size: 2.22rem;
+  }
+
+  .heroCopy p {
+    font-size: 0.84rem;
+  }
+
+  .journeyCopy {
+    max-width: 82%;
+  }
+
+  .journeyCopy h2 {
+    font-size: 1.48rem;
+  }
+
+  .journeyProgressMeta {
+    font-size: 0.69rem;
+  }
+
+  .sectionAction {
+    font-size: 0.74rem;
+  }
+
+  .progressCard {
     grid-template-columns: 1fr;
+    padding: 1.2rem 2.8rem 1.2rem 1.2rem;
   }
 
-  .featuredImageWrapper {
-    width: 38%;
-  }
-
-  .bottomBanner {
-    flex-wrap: wrap;
-    padding: 0.85rem 1rem;
-  }
-
-  .logMealBtn {
+  .progressList {
     width: 100%;
-    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .avatar,
+  .journeyCard,
+  .journeyAction,
+  .progressTrack span,
+  .sectionAction,
+  .exploreCard,
+  .exploreMedia img,
+  .progressCard,
+  .progressArrow,
+  .focusCard,
+  .focusArrow {
+    transition: none;
   }
 }
