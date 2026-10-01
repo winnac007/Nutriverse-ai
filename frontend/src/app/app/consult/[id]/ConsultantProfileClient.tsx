@@ -96,7 +96,7 @@ export default function ConsultantProfileClient({ consultant, initialBooking, in
     <div className={styles.page}>
       <header className={styles.profileHeader}>
         <Link href="/app/consult" aria-label="Back to consultations"><ArrowLeft aria-hidden="true" /></Link>
-        <h1>Nutritionist Profile</h1>
+        <h1>Expert Profile</h1>
         <div className={styles.menuWrap}>
           <button
             type="button"
@@ -172,8 +172,14 @@ export default function ConsultantProfileClient({ consultant, initialBooking, in
       <div className={styles.credentialsGrid}>
         <section className={styles.infoCard}>
           <h2><GraduationCap aria-hidden="true" /> Education</h2>
-          <strong>{consultant.education.degree}</strong>
-          <p>{consultant.education.school}</p>
+          {consultant.education ? (
+            <>
+              <strong>{consultant.education.degree}</strong>
+              <p>{consultant.education.school}</p>
+            </>
+          ) : (
+            <p>See the listed certifications for this specialist&apos;s catalogue credentials.</p>
+          )}
         </section>
 
         <section className={styles.infoCard}>
@@ -224,7 +230,7 @@ export default function ConsultantProfileClient({ consultant, initialBooking, in
           <small>{consultant.sessionMinutes} mins session</small>
         </div>
         <button type="button" className={styles.chatButton} onClick={() => openBooking("chat")}>
-          <MessageCircle aria-hidden="true" /> Chat Now
+          <MessageCircle aria-hidden="true" /> Prefer chat
         </button>
         <button type="button" className={styles.bookButton} onClick={() => openBooking()}>
           Book Consultation
