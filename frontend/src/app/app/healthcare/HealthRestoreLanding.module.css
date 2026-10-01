@@ -1,0 +1,721 @@
+.page {
+  --health-ink: #2e2a26;
+  --health-green: #3d5c3e;
+  --health-green-deep: #29482f;
+  --health-sage: #e9ecdf;
+  --health-sage-deep: #cad4bd;
+  --health-paper: #faf7ee;
+  --health-gold: #b88745;
+  --health-line: #e5ddd0;
+  display: grid;
+  gap: 2.2rem;
+  color: var(--health-ink);
+  padding: 0.15rem 0 2.5rem;
+}
+
+.topBar,
+.sectionHeading,
+.expertCard,
+.guidanceNote {
+  display: flex;
+  align-items: center;
+}
+
+.topBar {
+  justify-content: space-between;
+}
+
+.iconButton {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgba(61, 92, 62, 0.15);
+  border-radius: 999px;
+  background: rgba(250, 247, 238, 0.74);
+  color: var(--health-ink);
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.iconButton svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.iconButton:hover,
+.iconButton:focus-visible {
+  border-color: rgba(61, 92, 62, 0.38);
+  background: #fffdf7;
+  color: var(--health-green);
+}
+
+.iconButton:active {
+  transform: scale(0.96);
+}
+
+.iconButton.saved {
+  background: var(--health-sage);
+  border-color: var(--health-sage-deep);
+  color: var(--health-green-deep);
+}
+
+.header {
+  max-width: 42rem;
+}
+
+.header h1,
+.sectionHeading h2,
+.journeyContent h2,
+.learnBody h3 {
+  font-family: var(--font-serif), "Playfair Display", Georgia, serif;
+  letter-spacing: -0.035em;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(2.35rem, 6vw, 3.5rem);
+  font-weight: 500;
+  line-height: 0.98;
+}
+
+.header p {
+  max-width: 35rem;
+  margin: 0.9rem 0 0;
+  color: #716d65;
+  font-size: clamp(0.95rem, 2.6vw, 1.08rem);
+  line-height: 1.55;
+}
+
+.conditionRail {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.conditionShortcut {
+  min-height: 6.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.85rem 0.5rem;
+  border: 1px solid var(--health-line);
+  border-radius: 1.1rem;
+  background: rgba(250, 247, 238, 0.82);
+  color: #5d5952;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.77rem;
+  font-weight: 650;
+  line-height: 1.18;
+  text-align: center;
+  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.conditionShortcut svg {
+  width: 1.55rem;
+  height: 1.55rem;
+  stroke-width: 1.65;
+}
+
+.conditionShortcut:hover,
+.conditionShortcut:focus-visible {
+  border-color: #aab99e;
+  color: var(--health-green-deep);
+  transform: translateY(-2px);
+}
+
+.conditionShortcut.activeCondition {
+  border-color: #9eb191;
+  background: var(--health-sage);
+  color: var(--health-green-deep);
+}
+
+.journeyCard {
+  position: relative;
+  min-height: 18rem;
+  overflow: hidden;
+  border: 1px solid rgba(61, 92, 62, 0.16);
+  border-radius: 1.55rem;
+  background: #e6eadb;
+  box-shadow: 0 18px 45px rgba(50, 60, 43, 0.09);
+}
+
+.journeyMedia {
+  position: absolute;
+  inset: 0 0 0 43%;
+}
+
+.journeyMedia::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #e6eadb 0%, rgba(230, 234, 219, 0.84) 13%, rgba(230, 234, 219, 0.04) 55%);
+  content: "";
+}
+
+.journeyMedia img {
+  object-fit: cover;
+  object-position: center;
+}
+
+.journeyLeaves {
+  position: absolute;
+  right: -5rem;
+  bottom: -5rem;
+  width: 18rem;
+  height: auto;
+  opacity: 0.34;
+  transform: rotate(-9deg);
+}
+
+.journeyContent {
+  position: relative;
+  z-index: 1;
+  width: min(59%, 31rem);
+  padding: clamp(1.45rem, 4vw, 2.25rem);
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--health-green);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.journeyContent h2 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.15rem);
+  font-weight: 500;
+  line-height: 0.98;
+}
+
+.journeyContent ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem 0.9rem;
+  margin: 1.1rem 0 1.35rem;
+  padding: 0;
+  list-style: none;
+}
+
+.journeyContent li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #4f514b;
+  font-size: 0.78rem;
+  line-height: 1.3;
+}
+
+.journeyContent li svg {
+  width: 0.94rem;
+  height: 0.94rem;
+  flex: 0 0 auto;
+  padding: 0.14rem;
+  border-radius: 50%;
+  background: var(--health-green);
+  color: white;
+  stroke-width: 3;
+}
+
+.journeyContent > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 2.8rem;
+  padding: 0.7rem 1.05rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--health-green);
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+  box-shadow: 0 8px 20px rgba(41, 72, 47, 0.2);
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.journeyContent > button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.journeyContent > button:hover,
+.journeyContent > button:focus-visible {
+  background: var(--health-green-deep);
+  transform: translateY(-1px);
+}
+
+.section {
+  display: grid;
+  gap: 1rem;
+}
+
+.sectionHeading {
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sectionHeading h2 {
+  margin: 0;
+  font-size: clamp(1.65rem, 4vw, 2.15rem);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.sectionHeading > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #6a665f;
+  font-size: 0.78rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.sectionHeading > a:hover,
+.sectionHeading > a:focus-visible {
+  color: var(--health-green);
+}
+
+.sectionHeading > a svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.learnGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.learnCard {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--health-line);
+  border-radius: 1.15rem;
+  background: rgba(250, 247, 238, 0.82);
+  color: inherit;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.learnCard:hover,
+.learnCard:focus-visible {
+  border-color: #aab99e;
+  box-shadow: 0 12px 28px rgba(50, 60, 43, 0.09);
+  transform: translateY(-3px);
+}
+
+.learnMedia {
+  position: relative;
+  aspect-ratio: 1.55 / 1;
+  overflow: hidden;
+  background: var(--health-sage);
+}
+
+.learnMedia img {
+  object-fit: cover;
+  transition: transform 260ms ease;
+}
+
+.learnCard:hover .learnMedia img {
+  transform: scale(1.025);
+}
+
+.learnBody {
+  padding: 1rem;
+}
+
+.learnBody h3 {
+  min-height: 2.35em;
+  margin: 0;
+  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+  font-weight: 550;
+  line-height: 1.05;
+}
+
+.learnBody > div {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.8rem;
+}
+
+.learnBody p {
+  margin: 0;
+  color: #77726a;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.learnBody span {
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--health-line);
+  border-radius: 50%;
+  background: #fffdf8;
+  color: var(--health-green);
+}
+
+.learnBody span svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.trackGrid,
+.toolsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.trackCard {
+  min-width: 0;
+  min-height: 8.3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1rem;
+  border: 1px solid var(--health-line);
+  border-radius: 1.05rem;
+  background: rgba(250, 247, 238, 0.82);
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.trackCard:hover,
+.trackCard:focus-visible,
+.toolCard:hover,
+.toolCard:focus-visible {
+  border-color: #aab99e;
+  box-shadow: 0 10px 25px rgba(50, 60, 43, 0.08);
+  transform: translateY(-2px);
+}
+
+.trackIcon,
+.toolIcon {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.trackIcon {
+  width: 2.4rem;
+  height: 2.4rem;
+  margin-bottom: 0.85rem;
+}
+
+.trackIcon svg,
+.toolIcon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.sage {
+  background: #dce6d7;
+  color: var(--health-green-deep);
+}
+
+.gold {
+  background: #f2e3ce;
+  color: #936427;
+}
+
+.paper {
+  background: #eee8dc;
+  color: #625d54;
+}
+
+.trackCard strong {
+  font-size: 0.83rem;
+  line-height: 1.25;
+}
+
+.trackCard small,
+.toolCard small,
+.expertCopy small {
+  display: block;
+  margin-top: 0.3rem;
+  color: #77726a;
+  font-size: 0.69rem;
+  line-height: 1.35;
+}
+
+.expertCard {
+  min-height: 7.5rem;
+  gap: 1.15rem;
+  padding: 1.2rem 1.35rem;
+  border: 1px solid rgba(61, 92, 62, 0.15);
+  border-radius: 1.25rem;
+  background: linear-gradient(100deg, #e9ecdf, #f7f4e9);
+  color: inherit;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.expertCard:hover,
+.expertCard:focus-visible {
+  border-color: #9eb191;
+  box-shadow: 0 12px 30px rgba(50, 60, 43, 0.09);
+  transform: translateY(-2px);
+}
+
+.expertAvatars {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.expertAvatars img,
+.expertAvatars > span {
+  width: 3rem;
+  height: 3rem;
+  border: 3px solid #f3f1e7;
+  border-radius: 50%;
+  background: #d9dfd1;
+  object-fit: cover;
+}
+
+.expertAvatars img + img,
+.expertAvatars > span {
+  margin-left: -0.9rem;
+}
+
+.expertAvatars > span {
+  display: grid;
+  place-items: center;
+  color: var(--health-green-deep);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.expertCopy {
+  min-width: 0;
+  flex: 1;
+}
+
+.expertCopy strong {
+  display: block;
+  max-width: 31rem;
+  font-family: var(--font-serif), "Playfair Display", Georgia, serif;
+  font-size: clamp(1.05rem, 2.7vw, 1.35rem);
+  font-weight: 550;
+  line-height: 1.18;
+}
+
+.expertArrow {
+  width: 1.2rem;
+  height: 1.2rem;
+  flex: 0 0 auto;
+  color: var(--health-green);
+}
+
+.toolCard {
+  min-width: 0;
+  min-height: 5.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.9rem;
+  border: 1px solid var(--health-line);
+  border-radius: 1rem;
+  background: rgba(250, 247, 238, 0.82);
+  color: inherit;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.toolIcon {
+  width: 2.65rem;
+  height: 2.65rem;
+  flex: 0 0 auto;
+}
+
+.toolCard strong {
+  display: block;
+  font-size: 0.78rem;
+  line-height: 1.25;
+}
+
+.guidanceNote {
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--health-line);
+  border-radius: 1rem;
+  background: rgba(250, 247, 238, 0.58);
+  color: #69655e;
+}
+
+.guidanceNote > svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: 0 0 auto;
+  color: var(--health-green);
+}
+
+.guidanceNote p {
+  flex: 1;
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.guidanceNote a {
+  width: 2.1rem;
+  height: 2.1rem;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--health-sage);
+  color: var(--health-green-deep);
+}
+
+.guidanceNote a svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+@media (max-width: 760px) {
+  .page {
+    gap: 1.9rem;
+  }
+
+  .conditionRail {
+    margin-inline: -0.2rem;
+    padding: 0.2rem;
+    overflow-x: auto;
+    grid-template-columns: repeat(5, minmax(6.5rem, 1fr));
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+
+  .conditionRail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .conditionShortcut {
+    scroll-snap-align: start;
+  }
+
+  .journeyCard {
+    min-height: 20rem;
+  }
+
+  .journeyMedia {
+    left: 36%;
+  }
+
+  .journeyContent {
+    width: 66%;
+  }
+
+  .journeyContent ul {
+    grid-template-columns: 1fr;
+    gap: 0.38rem;
+  }
+
+  .trackGrid,
+  .toolsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .header h1 {
+    font-size: clamp(2.2rem, 11vw, 3rem);
+  }
+
+  .journeyCard {
+    min-height: 29rem;
+  }
+
+  .journeyMedia {
+    inset: auto 0 0;
+    height: 52%;
+  }
+
+  .journeyMedia::after {
+    background: linear-gradient(180deg, #e6eadb 0%, rgba(230, 234, 219, 0.34) 42%, rgba(230, 234, 219, 0) 72%);
+  }
+
+  .journeyContent {
+    width: 100%;
+    padding: 1.35rem;
+  }
+
+  .journeyContent h2 {
+    font-size: 2rem;
+  }
+
+  .journeyContent ul {
+    width: 70%;
+    margin-block: 0.9rem 1.1rem;
+  }
+
+  .learnGrid {
+    grid-template-columns: repeat(3, minmax(9.4rem, 1fr));
+    padding-bottom: 0.25rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+  }
+
+  .learnGrid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .learnCard {
+    scroll-snap-align: start;
+  }
+
+  .learnBody {
+    padding: 0.8rem;
+  }
+
+  .expertCard {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .expertAvatars img,
+  .expertAvatars > span {
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+
+  .expertCopy {
+    flex-basis: calc(100% - 10rem);
+  }
+
+  .expertArrow {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 380px) {
+  .trackGrid,
+  .toolsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page *,
+  .page *::before,
+  .page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

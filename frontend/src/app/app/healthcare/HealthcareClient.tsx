@@ -44,6 +44,7 @@ import {
 } from "lucide-react";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import HealthRestoreLanding from "./HealthRestoreLanding";
 import styles from "./Healthcare.module.css";
 
 type Condition = {
@@ -986,6 +987,20 @@ export default function HealthcareClient() {
     setSearch("");
     router.replace("/app/healthcare", { scroll: false });
   };
+
+  if (!conditionId && !showIntake && !showAllPicker) {
+    return (
+      <div className={styles.page}>
+        <HealthRestoreLanding
+          conditions={conditions}
+          primaryConditionId={user?.conditions?.[0] || user?.condition || "pcos"}
+          onChooseCondition={pickCondition}
+          onBrowseConditions={() => setShowAllPicker(true)}
+          onPrepareReports={() => setShowIntake(true)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={styles.page}>
