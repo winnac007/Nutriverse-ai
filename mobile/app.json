@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "Zenplato",
+    "slug": "zenplato",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "zenplato",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#FAF7EE"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.zenplato.app"
+    },
+    "android": {
+      "package": "com.zenplato.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#FAF7EE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

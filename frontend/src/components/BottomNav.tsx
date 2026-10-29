@@ -37,7 +37,7 @@ const culinaryTabs: Tab[] = [
     ),
   },
   {
-    href: "/app/daily-plan",
+    href: "/app/meal-plan",
     label: "Plate",
     matches: (pathname) => ["/app/daily-plan", "/app/meal-plan", "/app/recipe", "/app/grocery"].some((prefix) => pathname.startsWith(prefix)),
     icon: (
