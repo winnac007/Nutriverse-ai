@@ -8,7 +8,18 @@ import {
   Image,
 } from 'react-native';
 import { Colors } from '../theme/colors';
-import { ChevronLeftIcon, CheckIcon, SproutIcon } from '../components/Icons';
+import {
+  ChevronLeftIcon,
+  CheckIcon,
+  SproutIcon,
+  LeafIcon,
+  ScaleIcon,
+  DumbbellIcon,
+  ClockIcon,
+  BowlIcon,
+  HeartIcon,
+  PlusIcon,
+} from '../components/Icons';
 
 interface GoalSettingFocusScreenProps {
   initialGoal?: string;
@@ -21,7 +32,6 @@ interface GoalOption {
   title: string;
   subtitle: string;
   pills: string[];
-  emoji: string;
 }
 
 const GOALS: GoalOption[] = [
@@ -30,51 +40,65 @@ const GOALS: GoalOption[] = [
     title: 'Manage PCOS symptoms',
     subtitle: 'Balance hormones, regulate cycles and improve overall wellbeing.',
     pills: ['Hormonal balance', 'Better cycles', 'Clearer skin'],
-    emoji: '⚖️🌿',
   },
   {
     id: 'Weight management',
     title: 'Weight management',
     subtitle: 'Lose, maintain or gain weight in a healthy way.',
     pills: ['Lose weight', 'Maintain weight', 'Healthy gain'],
-    emoji: '⚖️🌱',
   },
   {
     id: 'Improve fitness & strength',
     title: 'Improve fitness & strength',
     subtitle: 'Build stamina, increase energy and feel stronger.',
     pills: ['More energy', 'Build strength', 'Better endurance'],
-    emoji: '👟🌿',
   },
   {
     id: 'Better sleep',
     title: 'Better sleep',
     subtitle: 'Improve sleep quality and daily energy.',
     pills: ['Fall asleep faster', 'Stay asleep longer', 'Feel rested'],
-    emoji: '🌙😴',
   },
   {
     id: 'Better digestion',
     title: 'Better digestion',
     subtitle: 'Reduce bloating, manage acidity and improve gut health.',
     pills: ['Less bloating', 'Regular digestion', 'Gut comfort'],
-    emoji: '🍵🍃',
   },
   {
     id: 'Improve overall health',
     title: 'Improve overall health',
     subtitle: 'Build sustainable healthy habits for long-term wellbeing.',
     pills: ['More energy', 'Stronger immunity', 'Balanced lifestyle'],
-    emoji: '❤️🌱',
   },
   {
     id: 'Other goal',
     title: 'Other goal',
     subtitle: 'Tell us your specific goal.',
     pills: [],
-    emoji: '➕',
   },
 ];
+
+const renderGoalIcon = (goalId: string, isSelected: boolean) => {
+  const iconColor = isSelected ? '#FFFFFF' : '#3D5C3E';
+  switch (goalId) {
+    case 'Manage PCOS symptoms':
+      return <LeafIcon size={20} color={iconColor} />;
+    case 'Weight management':
+      return <ScaleIcon size={20} color={iconColor} />;
+    case 'Improve fitness & strength':
+      return <DumbbellIcon size={20} color={iconColor} />;
+    case 'Better sleep':
+      return <ClockIcon size={20} color={iconColor} />;
+    case 'Better digestion':
+      return <BowlIcon size={20} color={iconColor} />;
+    case 'Improve overall health':
+      return <HeartIcon size={20} color={iconColor} />;
+    case 'Other goal':
+    default:
+      return <PlusIcon size={20} color={iconColor} />;
+  }
+};
 
 export const GoalSettingFocusScreen: React.FC<GoalSettingFocusScreenProps> = ({
   initialGoal = 'Manage PCOS symptoms',
@@ -98,7 +122,7 @@ export const GoalSettingFocusScreen: React.FC<GoalSettingFocusScreenProps> = ({
         </TouchableOpacity>
 
         <View style={styles.brandCenter}>
-          <Text style={{ fontSize: 16, marginRight: 4 }}>🌱</Text>
+          <SproutIcon size={18} color="#3D5C3E" style={{ marginRight: 6 }} />
           <Text style={styles.brandTitle}>Zenplato</Text>
         </View>
 
@@ -129,7 +153,7 @@ export const GoalSettingFocusScreen: React.FC<GoalSettingFocusScreenProps> = ({
         {/* Personalized Banner */}
         <View style={styles.bannerCard}>
           <View style={styles.bannerIconCircle}>
-            <Text style={{ fontSize: 18 }}>🌱</Text>
+            <SproutIcon size={18} color="#3D5C3E" />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.bannerTitle}>Your goal helps us create a personalized plan</Text>
@@ -156,8 +180,8 @@ export const GoalSettingFocusScreen: React.FC<GoalSettingFocusScreenProps> = ({
                 activeOpacity={0.88}
               >
                 {/* Artwork Graphic */}
-                <View style={styles.goalArtCircle}>
-                  <Text style={{ fontSize: 24 }}>{goal.emoji}</Text>
+                <View style={[styles.goalArtCircle, isSelected && { backgroundColor: '#3D5C3E' }]}>
+                  {renderGoalIcon(goal.id, isSelected)}
                 </View>
 
                 {/* Content */}

@@ -17,6 +17,10 @@ import {
   LeafIcon,
   ChefHatIcon,
   TargetIcon,
+  HeartIcon,
+  CalendarIcon,
+  FlameIcon,
+  CompassIcon,
 } from '../components/Icons';
 
 interface MealPlansScreenProps {
@@ -62,7 +66,7 @@ export const MealPlansScreen: React.FC<MealPlansScreenProps> = ({
 
   const handleUsePlan = () => {
     Alert.alert(
-      'Plan Activated! 🌿',
+      'Plan Activated',
       'Today’s meal schedule is connected with your health targets, notifications, and grocery list.'
     );
   };
@@ -150,7 +154,7 @@ export const MealPlansScreen: React.FC<MealPlansScreenProps> = ({
                 <Text style={styles.heroBadgeText}>Easy to cook</Text>
               </View>
               <View style={styles.heroBadge}>
-                <Text style={{ fontSize: 11 }}>❤️</Text>
+                <HeartIcon size={12} color="#466647" />
                 <Text style={styles.heroBadgeText}>Culturally familiar</Text>
               </View>
             </View>
@@ -179,7 +183,7 @@ export const MealPlansScreen: React.FC<MealPlansScreenProps> = ({
               </TouchableOpacity>
             </View>
             <TouchableOpacity style={styles.calendarIconBtn}>
-              <Text style={{ fontSize: 16 }}>📅</Text>
+              <CalendarIcon size={16} color="#4A4E46" />
             </TouchableOpacity>
           </View>
         </View>
@@ -204,7 +208,7 @@ export const MealPlansScreen: React.FC<MealPlansScreenProps> = ({
                   <Text style={styles.timeCalText}>15 mins</Text>
                 </View>
                 <View style={[styles.inlineIconText, { marginLeft: 8 }]}>
-                  <Text style={{ fontSize: 10 }}>📊</Text>
+                  <FlameIcon size={11} color="#D97706" />
                   <Text style={styles.timeCalText}>350 kcal</Text>
                 </View>
               </View>
@@ -249,7 +253,7 @@ export const MealPlansScreen: React.FC<MealPlansScreenProps> = ({
                   <Text style={styles.timeCalText}>5 mins</Text>
                 </View>
                 <View style={[styles.inlineIconText, { marginLeft: 8 }]}>
-                  <Text style={{ fontSize: 10 }}>📊</Text>
+                  <FlameIcon size={11} color="#D97706" />
                   <Text style={styles.timeCalText}>200 kcal</Text>
                 </View>
               </View>
@@ -294,7 +298,7 @@ export const MealPlansScreen: React.FC<MealPlansScreenProps> = ({
                   <Text style={styles.timeCalText}>20 mins</Text>
                 </View>
                 <View style={[styles.inlineIconText, { marginLeft: 8 }]}>
-                  <Text style={{ fontSize: 10 }}>📊</Text>
+                  <FlameIcon size={11} color="#D97706" />
                   <Text style={styles.timeCalText}>420 kcal</Text>
                 </View>
               </View>
@@ -339,7 +343,7 @@ export const MealPlansScreen: React.FC<MealPlansScreenProps> = ({
                   <Text style={styles.timeCalText}>5 mins</Text>
                 </View>
                 <View style={[styles.inlineIconText, { marginLeft: 8 }]}>
-                  <Text style={{ fontSize: 10 }}>📊</Text>
+                  <FlameIcon size={11} color="#D97706" />
                   <Text style={styles.timeCalText}>120 kcal</Text>
                 </View>
               </View>
@@ -384,7 +388,7 @@ export const MealPlansScreen: React.FC<MealPlansScreenProps> = ({
                   <Text style={styles.timeCalText}>20 mins</Text>
                 </View>
                 <View style={[styles.inlineIconText, { marginLeft: 8 }]}>
-                  <Text style={{ fontSize: 10 }}>📊</Text>
+                  <FlameIcon size={11} color="#D97706" />
                   <Text style={styles.timeCalText}>400 kcal</Text>
                 </View>
               </View>
@@ -416,7 +420,7 @@ export const MealPlansScreen: React.FC<MealPlansScreenProps> = ({
         <View style={styles.summaryCard}>
           <View style={styles.summaryTop}>
             <View style={styles.summaryIconCircle}>
-              <Text style={{ fontSize: 14 }}>🎯</Text>
+              <TargetIcon size={14} color="#3D5C3E" />
             </View>
             <Text style={styles.summaryHeading}>Daily nutrition summary</Text>
           </View>
@@ -464,7 +468,7 @@ export const MealPlansScreen: React.FC<MealPlansScreenProps> = ({
             onPress={onCustomizePlan}
             activeOpacity={0.8}
           >
-            <Text style={{ fontSize: 14, marginRight: 6 }}>⚙️</Text>
+            <CompassIcon size={14} color="#3D5C3E" style={{ marginRight: 6 }} />
             <Text style={styles.customizeBtnText}>Customize my plan</Text>
           </TouchableOpacity>
 

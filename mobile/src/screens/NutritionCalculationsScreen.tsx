@@ -18,6 +18,7 @@ import {
   UserIcon,
   HeightIcon,
   WeightIcon,
+  ScaleIcon,
   ActivityIcon,
   TargetIcon,
   BmiIcon,
@@ -28,6 +29,7 @@ import {
   WheatIcon,
   DropIcon,
   ClockIcon,
+  CheckIcon,
 } from '../components/Icons';
 import { EditProfileModal } from '../components/EditProfileModal';
 import { AboutBmiModal } from '../components/AboutBmiModal';
@@ -69,7 +71,7 @@ export const NutritionCalculationsScreen: React.FC<NutritionCalculationsScreenPr
   const handleRequestReview = () => {
     setReviewRequested(true);
     Alert.alert(
-      'Review Requested! 🌿',
+      'Review Requested',
       'Dr. Ananya and your care team will review your targets and adapt them to your hormonal health markers within 24 hours.'
     );
   };
@@ -79,7 +81,7 @@ export const NutritionCalculationsScreen: React.FC<NutritionCalculationsScreenPr
       onNavigateToMealPlan();
     } else {
       Alert.alert(
-        'Targets Applied! 🍽️',
+        'Targets Applied',
         `Your personalized target of ${nutrition.dailyCalories} kcal (${nutrition.proteinGrams}g Protein, ${nutrition.carbsGrams}g Carbs, ${nutrition.fatGrams}g Fat) has been linked to your daily meal plan.`
       );
     }
@@ -266,7 +268,7 @@ export const NutritionCalculationsScreen: React.FC<NutritionCalculationsScreenPr
 
             {/* Subtle botanical corner decoration */}
             <View style={styles.subtleCornerArt}>
-              <Text style={{ fontSize: 32, opacity: 0.18 }}>🌿</Text>
+              <LeafIcon size={28} color="#3D5C3E" style={{ opacity: 0.15 }} />
             </View>
           </TouchableOpacity>
 
@@ -290,7 +292,7 @@ export const NutritionCalculationsScreen: React.FC<NutritionCalculationsScreenPr
             <Text style={styles.metricDesc}>Based on your activity level</Text>
 
             <View style={styles.subtleCornerArt}>
-              <Text style={{ fontSize: 30, opacity: 0.15 }}>〰️</Text>
+              <FlameIcon size={28} color="#D97706" style={{ opacity: 0.14 }} />
             </View>
           </TouchableOpacity>
 
@@ -314,7 +316,7 @@ export const NutritionCalculationsScreen: React.FC<NutritionCalculationsScreenPr
             <Text style={styles.metricDesc}>Healthy weight range for your height</Text>
 
             <View style={styles.subtleCornerArt}>
-              <Text style={{ fontSize: 32, opacity: 0.18 }}>🥣</Text>
+              <ScaleIcon size={26} color="#3D5C3E" style={{ opacity: 0.15 }} />
             </View>
           </TouchableOpacity>
         </View>
@@ -412,8 +414,13 @@ export const NutritionCalculationsScreen: React.FC<NutritionCalculationsScreenPr
               onPress={handleRequestReview}
               activeOpacity={0.8}
             >
+              {reviewRequested && (
+                <View style={{ marginRight: 6 }}>
+                  <CheckIcon size={12} color="#FFFFFF" />
+                </View>
+              )}
               <Text style={[styles.expertActionText, reviewRequested && styles.expertActionTextActive]}>
-                {reviewRequested ? '✓ Request Submitted' : 'Request consultant review'}
+                {reviewRequested ? 'Request Submitted' : 'Request consultant review'}
               </Text>
             </TouchableOpacity>
           </View>

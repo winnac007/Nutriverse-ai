@@ -2,7 +2,13 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { Colors } from '../theme/colors';
 import { RootTab } from '../types';
-import { PlusIcon } from './Icons';
+import {
+  HomeIcon,
+  CompassIcon,
+  PlusIcon,
+  PlanIcon,
+  UserIcon,
+} from './Icons';
 
 interface BottomNavProps {
   activeTab: RootTab;
@@ -23,8 +29,13 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         onPress={() => onSelectTab('Home')}
         activeOpacity={0.7}
       >
-        <Text style={[styles.tabIcon, activeTab === 'Home' && styles.activeTabIcon]}>⌂</Text>
-        <Text style={[styles.tabLabel, activeTab === 'Home' && styles.activeTabLabel]}>Home</Text>
+        <HomeIcon
+          size={20}
+          color={activeTab === 'Home' ? '#3D5C3E' : '#8D9188'}
+        />
+        <Text style={[styles.tabLabel, activeTab === 'Home' && styles.activeTabLabel]}>
+          Home
+        </Text>
       </TouchableOpacity>
 
       {/* Explore */}
@@ -33,8 +44,13 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         onPress={() => onSelectTab('Explore')}
         activeOpacity={0.7}
       >
-        <Text style={[styles.tabIcon, activeTab === 'Explore' && styles.activeTabIcon]}>🧭</Text>
-        <Text style={[styles.tabLabel, activeTab === 'Explore' && styles.activeTabLabel]}>Explore</Text>
+        <CompassIcon
+          size={20}
+          color={activeTab === 'Explore' ? '#3D5C3E' : '#8D9188'}
+        />
+        <Text style={[styles.tabLabel, activeTab === 'Explore' && styles.activeTabLabel]}>
+          Explore
+        </Text>
       </TouchableOpacity>
 
       {/* Center Action (+) */}
@@ -44,7 +60,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           onPress={onPressAction || (() => onSelectTab('Add'))}
           activeOpacity={0.85}
         >
-          <PlusIcon size={24} color="#FFFFFF" />
+          <PlusIcon size={20} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
 
@@ -54,8 +70,13 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         onPress={() => onSelectTab('Plans')}
         activeOpacity={0.7}
       >
-        <Text style={[styles.tabIcon, activeTab === 'Plans' && styles.activeTabIcon]}>📋</Text>
-        <Text style={[styles.tabLabel, activeTab === 'Plans' && styles.activeTabLabel]}>Plans</Text>
+        <PlanIcon
+          size={20}
+          color={activeTab === 'Plans' ? '#3D5C3E' : '#8D9188'}
+        />
+        <Text style={[styles.tabLabel, activeTab === 'Plans' && styles.activeTabLabel]}>
+          Plans
+        </Text>
       </TouchableOpacity>
 
       {/* You */}
@@ -64,8 +85,13 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         onPress={() => onSelectTab('You')}
         activeOpacity={0.7}
       >
-        <Text style={[styles.tabIcon, activeTab === 'You' && styles.activeTabIcon]}>👤</Text>
-        <Text style={[styles.tabLabel, activeTab === 'You' && styles.activeTabLabel]}>You</Text>
+        <UserIcon
+          size={20}
+          color={activeTab === 'You' ? '#3D5C3E' : '#8D9188'}
+        />
+        <Text style={[styles.tabLabel, activeTab === 'You' && styles.activeTabLabel]}>
+          You
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -78,8 +104,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: Colors.borderLight,
-    paddingTop: 8,
+    borderTopColor: '#ECE7DD',
+    paddingTop: 10,
     paddingBottom: Platform.OS === 'ios' ? 24 : 12,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: -2 },
@@ -91,15 +117,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-    paddingVertical: 4,
-  },
-  tabIcon: {
-    fontSize: 20,
-    color: '#8D9188',
-    marginBottom: 2,
-  },
-  activeTabIcon: {
-    color: Colors.primary,
+    paddingVertical: 2,
+    gap: 4,
   },
   tabLabel: {
     fontSize: 11,
@@ -107,7 +126,7 @@ const styles = StyleSheet.create({
     color: '#8D9188',
   },
   activeTabLabel: {
-    color: Colors.primary,
+    color: '#3D5C3E',
     fontWeight: '700',
   },
   centerButtonContainer: {
@@ -119,14 +138,13 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.primary,
+    backgroundColor: '#3D5C3E',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.primary,
+    shadowColor: '#3D5C3E',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.28,
     shadowRadius: 6,
     elevation: 4,
   },
 });
-

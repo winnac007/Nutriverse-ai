@@ -23,6 +23,17 @@ import {
   TargetIcon,
   CalendarIcon,
   ShareIcon,
+  LeafIcon,
+  ScaleIcon,
+  FlameIcon,
+  SparkleIcon,
+  SproutIcon,
+  UtensilsCrossed,
+  BowlIcon,
+  MealIcon,
+  UserIcon,
+  BellIcon,
+  ActivityIcon,
 } from '../components/Icons';
 
 interface GoalSettingFlowScreenProps {
@@ -187,37 +198,37 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
                   id: 'Manage PCOS symptoms',
                   title: 'Manage PCOS symptoms',
                   desc: 'Balance hormones and cycles',
-                  icon: '🌿',
+                  icon: '',
                 },
                 {
                   id: 'Weight management',
                   title: 'Weight management',
                   desc: 'Lose, maintain or gain weight',
-                  icon: '⚖️',
+                  icon: '',
                 },
                 {
                   id: 'Improve energy levels',
                   title: 'Improve energy levels',
                   desc: 'Feel active and less fatigued',
-                  icon: '⚡',
+                  icon: '',
                 },
                 {
                   id: 'Better digestion',
                   title: 'Better digestion',
                   desc: 'Reduce bloating and discomfort',
-                  icon: '🍵',
+                  icon: '',
                 },
                 {
                   id: 'Build healthier habits',
                   title: 'Build healthier habits',
                   desc: 'Create sustainable routines',
-                  icon: '🌱',
+                  icon: '',
                 },
                 {
                   id: 'Improve fitness & strength',
                   title: 'Improve fitness & strength',
                   desc: 'Support overall wellness',
-                  icon: '💪',
+                  icon: '',
                 },
               ].map((opt) => {
                 const isSelected = state.primaryGoal === opt.id;
@@ -434,7 +445,7 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
 
             {/* Bottom Callout */}
             <View style={styles.calloutCard}>
-              <Text style={{ fontSize: 18, marginRight: 10 }}>🌿</Text>
+              <LeafIcon size={18} color="#3D5C3E" style={{ marginRight: 10 }} />
               <Text style={styles.calloutText}>
                 Your plan will focus on nutrition, lifestyle and habits that support hormonal balance and long-term wellbeing.
               </Text>
@@ -453,7 +464,7 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
             {/* Target 1: Weight */}
             <View style={styles.targetCard}>
               <View style={styles.targetIconCircle}>
-                <Text style={{ fontSize: 16 }}>🛍️</Text>
+                <LeafIcon size={16} color="#3D5C3E" />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.targetItemLabel}>Weight</Text>
@@ -504,7 +515,7 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
             {/* Target 3: Reduce symptoms */}
             <View style={styles.targetCard}>
               <View style={styles.targetIconCircle}>
-                <Text style={{ fontSize: 16 }}>✨</Text>
+                <SparkleIcon size={16} color="#3D5C3E" />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.targetItemLabel}>Reduce symptoms</Text>
@@ -555,7 +566,7 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
 
             {/* Realistic timeline info box */}
             <View style={styles.calloutCard}>
-              <Text style={{ fontSize: 18, marginRight: 10 }}>📅</Text>
+              <CalendarIcon size={18} color="#3D5C3E" style={{ marginRight: 10 }} />
               <Text style={styles.calloutText}>
                 A realistic timeline helps us create a sustainable plan for your goals.
               </Text>
@@ -685,10 +696,10 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
             <Text style={[styles.inputLabel, { marginTop: 8 }]}>Cuisine preference</Text>
             <View style={styles.cuisineGrid}>
               {[
-                { name: 'Indian', emoji: '🍛' },
-                { name: 'Continental', emoji: '🥗' },
-                { name: 'Mixed', emoji: '🍲' },
-                { name: '+ Others', emoji: '➕' },
+                { name: 'Indian', emoji: '' },
+                { name: 'Continental', emoji: '' },
+                { name: 'Mixed', emoji: '' },
+                { name: '+ Others', emoji: '' },
               ].map((c) => {
                 const isSelected = state.cuisine === c.name;
                 return (
@@ -812,7 +823,7 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
             <View style={styles.summaryCard}>
               {/* Primary goal */}
               <View style={styles.summaryItemRow}>
-                <Text style={{ fontSize: 18, marginRight: 10 }}>🎯</Text>
+                <TargetIcon size={18} color="#3D5C3E" style={{ marginRight: 10 }} />
                 <View style={{ flex: 1 }}>
                   <Text style={styles.summaryItemLabel}>Primary goal</Text>
                   <Text style={styles.summaryItemValue}>{state.primaryGoal}</Text>
@@ -826,7 +837,7 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
 
               {/* Weight */}
               <View style={styles.summaryItemRow}>
-                <Text style={{ fontSize: 18, marginRight: 10 }}>⚖️</Text>
+                <ScaleIcon size={18} color="#3D5C3E" style={{ marginRight: 10 }} />
                 <View style={{ flex: 1 }}>
                   <Text style={styles.summaryItemLabel}>Current → Target weight</Text>
                   <Text style={styles.summaryItemValue}>
@@ -839,7 +850,7 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
 
               {/* Timeline */}
               <View style={styles.summaryItemRow}>
-                <Text style={{ fontSize: 18, marginRight: 10 }}>📅</Text>
+                <CalendarIcon size={18} color="#3D5C3E" style={{ marginRight: 10 }} />
                 <View style={{ flex: 1 }}>
                   <Text style={styles.summaryItemLabel}>Timeline</Text>
                   <Text style={styles.summaryItemValue}>{state.timeline}</Text>
@@ -861,7 +872,7 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
 
               {/* Focus areas */}
               <View style={styles.summaryItemRow}>
-                <Text style={{ fontSize: 18, marginRight: 10 }}>✨</Text>
+                <SparkleIcon size={18} color="#3D5C3E" style={{ marginRight: 10 }} />
                 <View style={{ flex: 1 }}>
                   <Text style={styles.summaryItemLabel}>Focus areas</Text>
                   <Text style={styles.summaryItemValue}>
@@ -874,7 +885,7 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
 
               {/* Diet & Cuisine */}
               <View style={styles.summaryItemRow}>
-                <Text style={{ fontSize: 18, marginRight: 10 }}>🌱</Text>
+                <SproutIcon size={18} color="#3D5C3E" style={{ marginRight: 10 }} />
                 <View style={{ flex: 1 }}>
                   <Text style={styles.summaryItemLabel}>Diet type</Text>
                   <Text style={styles.summaryItemValue}>
@@ -887,7 +898,7 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
 
               {/* Activity Level */}
               <View style={styles.summaryItemRow}>
-                <Text style={{ fontSize: 18, marginRight: 10 }}>🏃</Text>
+                <DumbbellIcon size={18} color="#3D5C3E" style={{ marginRight: 10 }} />
                 <View style={{ flex: 1 }}>
                   <Text style={styles.summaryItemLabel}>Activity level</Text>
                   <Text style={styles.summaryItemValue}>{state.activityLevel}</Text>
@@ -898,7 +909,7 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
 
               {/* Key Preferences */}
               <View style={styles.summaryItemRow}>
-                <Text style={{ fontSize: 18, marginRight: 10 }}>❤️</Text>
+                <LeafIcon size={18} color="#3D5C3E" style={{ marginRight: 10 }} />
                 <View style={{ flex: 1 }}>
                   <Text style={styles.summaryItemLabel}>Key preferences</Text>
                   <Text style={styles.summaryItemValue}>
@@ -911,7 +922,7 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
 
               {/* Foods to avoid */}
               <View style={styles.summaryItemRow}>
-                <Text style={{ fontSize: 18, marginRight: 10 }}>🚫</Text>
+                <TargetIcon size={18} color="#3D5C3E" style={{ marginRight: 10 }} />
                 <View style={{ flex: 1 }}>
                   <Text style={styles.summaryItemLabel}>Foods to avoid</Text>
                   <Text style={styles.summaryItemValue}>
@@ -928,7 +939,7 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
           <View style={styles.readyStepContainer}>
             {/* Serene Character Illustration */}
             <View style={styles.readyIllustrationWrapper}>
-              <Text style={{ fontSize: 64, textAlign: 'center' }}>🧘‍♀️🌿✨</Text>
+              <View style={{ alignItems: "center", marginVertical: 12 }}><LeafIcon size={48} color="#3D5C3E" /></View>
             </View>
 
             <Text style={styles.readyTitle}>Your Plan is Ready!</Text>
@@ -959,13 +970,13 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
               style={styles.shareNutritionistButton}
               onPress={() =>
                 Alert.alert(
-                  'Shared with Dr. Ananya! 🌿',
+                  'Shared with Dr. Ananya',
                   'Your blueprint has been sent for professional clinical review.'
                 )
               }
               activeOpacity={0.8}
             >
-              <Text style={{ fontSize: 16, marginRight: 8 }}>👥</Text>
+              <UserIcon size={16} color="#3D5C3E" style={{ marginRight: 8 }} />
               <Text style={styles.shareNutritionistText}>Share with Nutritionist</Text>
             </TouchableOpacity>
           </View>
@@ -985,7 +996,7 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
                 activeOpacity={0.8}
               >
                 <View style={[styles.connectedIconWrapper, { backgroundColor: '#F9F1E7' }]}>
-                  <Text style={{ fontSize: 22 }}>🥗</Text>
+                  <UtensilsCrossed size={22} color="#3D5C3E" />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.connectedCardTitle}>View / Edit Meal Plan</Text>
@@ -1003,7 +1014,7 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
                 activeOpacity={0.8}
               >
                 <View style={[styles.connectedIconWrapper, { backgroundColor: '#EAF5EC' }]}>
-                  <Text style={{ fontSize: 22 }}>📊</Text>
+                  <ActivityIcon size={22} color="#3D5C3E" />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.connectedCardTitle}>Nutrition Targets</Text>
@@ -1023,7 +1034,7 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
                 activeOpacity={0.8}
               >
                 <View style={[styles.connectedIconWrapper, { backgroundColor: '#EBF4F6' }]}>
-                  <Text style={{ fontSize: 22 }}>📈</Text>
+                  <ScaleIcon size={22} color="#3D5C3E" />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.connectedCardTitle}>Progress Tracker</Text>
@@ -1069,7 +1080,7 @@ export const GoalSettingFlowScreen: React.FC<GoalSettingFlowScreenProps> = ({
                 activeOpacity={0.8}
               >
                 <View style={[styles.connectedIconWrapper, { backgroundColor: '#FDF0ED' }]}>
-                  <Text style={{ fontSize: 22 }}>🔔</Text>
+                  <BellIcon size={22} color="#3D5C3E" />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.connectedCardTitle}>Reminders</Text>

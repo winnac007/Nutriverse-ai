@@ -9,90 +9,102 @@ import {
 } from 'react-native';
 import { Colors } from '../theme/colors';
 import {
-  SproutIcon,
+  LeafIcon,
   BellIcon,
+  ChevronRightIcon,
+  UtensilsCrossed,
+  ScaleIcon,
   TargetIcon,
-  BmiIcon,
-  ChefHatIcon,
-  MealIcon,
+  PlanIcon,
+  ActivityIcon,
+  FileTextIcon,
+  StethoscopeIcon,
   WaterIcon,
-  CalendarIcon,
+  SparkleIcon,
 } from '../components/Icons';
 
 interface ToolItem {
   id: string;
   title: string;
   subtitle: string;
-  icon: string;
+  iconComponent: React.ReactNode;
   iconBg: string;
   badge?: string;
 }
 
 const TOOLS: ToolItem[] = [
   {
+    id: 'health-restore',
+    title: 'Health & Restore',
+    subtitle: 'Conditions, gut & care',
+    iconComponent: <LeafIcon size={18} color="#29482F" />,
+    iconBg: '#E9ECDF',
+    badge: 'Clinical',
+  },
+  {
     id: 'log-meal',
     title: 'Log Your Meal',
-    subtitle: 'Track what you eat',
-    icon: '🍽️',
-    iconBg: '#FCEFE9',
+    subtitle: 'Track daily plate intake',
+    iconComponent: <UtensilsCrossed size={18} color="#29482F" />,
+    iconBg: '#E9ECDF',
   },
   {
     id: 'nutrition-calc',
     title: 'Nutrition Calculations',
     subtitle: 'BMI, BMR, TDEE, IBW',
-    icon: '📊',
-    iconBg: '#EAF5EC',
+    iconComponent: <ScaleIcon size={18} color="#29482F" />,
+    iconBg: '#E9ECDF',
   },
   {
     id: 'goal-setting',
     title: 'Goal Setting',
-    subtitle: 'Set your goals',
-    icon: '🎯',
-    iconBg: '#FAF5E8',
+    subtitle: 'Clinical onboarding target',
+    iconComponent: <TargetIcon size={18} color="#855B1E" />,
+    iconBg: '#F3E8D3',
     badge: 'Step 1-6',
   },
   {
     id: 'meal-builder',
     title: 'Meal Plan Builder',
-    subtitle: 'Personalized plans',
-    icon: '🥗',
-    iconBg: '#F3EFE7',
+    subtitle: 'Personalized recipes & plates',
+    iconComponent: <PlanIcon size={18} color="#524C42" />,
+    iconBg: '#ECE7DD',
   },
   {
     id: 'progress-tracker',
     title: 'Progress Tracker',
-    subtitle: 'Monitor your journey',
-    icon: '📈',
-    iconBg: '#E9F5F8',
+    subtitle: 'Monitor clinical metrics',
+    iconComponent: <ActivityIcon size={18} color="#29482F" />,
+    iconBg: '#E9ECDF',
   },
   {
     id: 'recipe-library',
     title: 'Recipe Library',
-    subtitle: 'Explore healthy recipes',
-    icon: '📖',
-    iconBg: '#F6EFEB',
+    subtitle: 'Therapeutic meal library',
+    iconComponent: <FileTextIcon size={18} color="#524C42" />,
+    iconBg: '#ECE7DD',
   },
   {
     id: 'symptom-tracker',
-    title: 'Symptom & Cycle Tracker',
-    subtitle: 'Track your cycle, symptoms',
-    icon: '🌸',
-    iconBg: '#FBECEE',
+    title: 'Symptom & Cycle',
+    subtitle: 'Track cycle & biomarkers',
+    iconComponent: <SparkleIcon size={18} color="#855B1E" />,
+    iconBg: '#F3E8D3',
   },
   {
     id: 'nutritionist-editor',
-    title: 'Nutritionist Plan Editor',
-    subtitle: 'Client meals & portions',
-    icon: '🧑‍⚕️',
-    iconBg: '#EAF0E6',
+    title: 'Nutritionist Editor',
+    subtitle: 'Review & approve plans',
+    iconComponent: <StethoscopeIcon size={18} color="#29482F" />,
+    iconBg: '#E9ECDF',
     badge: 'Pro',
   },
   {
     id: 'water-lifestyle',
     title: 'Water & Lifestyle',
-    subtitle: 'Build healthy habits',
-    icon: '💧',
-    iconBg: '#EDF5FD',
+    subtitle: 'Circadian hydration & habits',
+    iconComponent: <WaterIcon size={18} color="#2B70C9" />,
+    iconBg: '#E3EDF8',
   },
 ];
 
@@ -112,7 +124,7 @@ export const ExploreToolsScreen: React.FC<ExploreToolsScreenProps> = ({
       {/* ── Top Bar Header ── */}
       <View style={styles.topHeader}>
         <View style={styles.brandRow}>
-          <Text style={{ fontSize: 22, marginRight: 6 }}>🌱</Text>
+          <LeafIcon size={20} color="#3D5C3E" />
           <Text style={styles.brandTitle}>Zenplato</Text>
         </View>
 
@@ -121,8 +133,9 @@ export const ExploreToolsScreen: React.FC<ExploreToolsScreenProps> = ({
             style={styles.bellButton}
             onPress={onOpenNotifications}
             activeOpacity={0.7}
+            accessibilityLabel="Notifications"
           >
-            <BellIcon size={20} color="#1C1D1A" />
+            <BellIcon size={19} color="#2E2A26" />
             <View style={styles.notificationDot} />
           </TouchableOpacity>
 
@@ -130,6 +143,7 @@ export const ExploreToolsScreen: React.FC<ExploreToolsScreenProps> = ({
             style={styles.avatarButton}
             onPress={onOpenProfile}
             activeOpacity={0.8}
+            accessibilityLabel="Profile"
           >
             <Image
               source={require('../../assets/images/nutritionist-ananya.webp')}
@@ -147,9 +161,36 @@ export const ExploreToolsScreen: React.FC<ExploreToolsScreenProps> = ({
         <View style={styles.headingSection}>
           <Text style={styles.pageTitle}>Explore Tools</Text>
           <Text style={styles.pageSubtitle}>
-            Practical tools to understand your body, set goals and take charge of your health.
+            Practical clinical tools to understand your body, set targets and take charge of your metabolic health.
           </Text>
         </View>
+
+        {/* Featured Health & Restore Card (Clean Mobbin Style) */}
+        <TouchableOpacity
+          style={styles.featuredHealthCard}
+          onPress={() => onSelectTool('health-restore')}
+          activeOpacity={0.88}
+        >
+          <Image
+            source={require('../../assets/images/healthcare-bowl.jpg')}
+            style={styles.featuredHealthImg}
+            resizeMode="cover"
+          />
+          <View style={styles.featuredHealthOverlay} />
+          <View style={styles.featuredHealthContent}>
+            <View style={styles.featuredBadge}>
+              <Text style={styles.featuredBadgeText}>CLINICAL CARE</Text>
+            </View>
+            <Text style={styles.featuredTitle}>Health &amp; Restore</Text>
+            <Text style={styles.featuredSub}>
+              Conditions, gut health, hormonal balance &amp; nutrient guidance
+            </Text>
+            <View style={styles.featuredActionRow}>
+              <Text style={styles.featuredActionText}>Explore Condition Care</Text>
+              <ChevronRightIcon size={13} color="#3D5C3E" />
+            </View>
+          </View>
+        </TouchableOpacity>
 
         {/* 2-Column Tools Grid */}
         <View style={styles.toolsGrid}>
@@ -166,7 +207,7 @@ export const ExploreToolsScreen: React.FC<ExploreToolsScreenProps> = ({
                 </View>
               )}
               <View style={[styles.toolIconSquare, { backgroundColor: tool.iconBg }]}>
-                <Text style={styles.toolIconEmoji}>{tool.icon}</Text>
+                {tool.iconComponent}
               </View>
               <Text style={styles.toolTitle}>{tool.title}</Text>
               <Text style={styles.toolSubtitle}>{tool.subtitle}</Text>
@@ -188,24 +229,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 18,
-    paddingTop: 12,
+    paddingTop: 10,
     paddingBottom: 8,
   },
   brandRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 7,
   },
   brandTitle: {
     fontFamily: 'serif',
     fontSize: 20,
     fontWeight: '700',
-    color: '#1C1D1A',
+    color: '#2E2A26',
     letterSpacing: -0.3,
   },
   topActionsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 10,
   },
   bellButton: {
     width: 36,
@@ -217,11 +259,11 @@ const styles = StyleSheet.create({
   },
   notificationDot: {
     position: 'absolute',
-    top: 6,
-    right: 6,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    top: 7,
+    right: 7,
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
     backgroundColor: '#EF4444',
   },
   avatarButton: {
@@ -238,80 +280,140 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 16,
-    paddingBottom: 28,
+    paddingBottom: 36,
   },
   headingSection: {
     marginTop: 6,
-    marginBottom: 20,
+    marginBottom: 16,
   },
   pageTitle: {
     fontFamily: 'serif',
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '700',
-    color: '#1C1D1A',
+    color: '#2E2A26',
     letterSpacing: -0.4,
   },
   pageSubtitle: {
-    fontSize: 13,
+    fontSize: 12.5,
+    color: '#706860',
     lineHeight: 18,
-    color: '#686B63',
     marginTop: 4,
+  },
+  featuredHealthCard: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    position: 'relative',
+    marginBottom: 18,
+    borderWidth: 1,
+    borderColor: '#E2DBD0',
+    backgroundColor: '#FFFFFF',
+    minHeight: 136,
+  },
+  featuredHealthImg: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    width: '50%',
+    height: '100%',
+  },
+  featuredHealthOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.88)',
+  },
+  featuredHealthContent: {
+    position: 'relative',
+    zIndex: 1,
+    padding: 16,
+    width: '75%',
+  },
+  featuredBadge: {
+    backgroundColor: '#3D5C3E',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 6,
+    marginBottom: 6,
+  },
+  featuredBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+  },
+  featuredTitle: {
+    fontFamily: 'serif',
+    fontSize: 19,
+    fontWeight: '700',
+    color: '#2E2A26',
+    marginBottom: 3,
+  },
+  featuredSub: {
+    fontSize: 11,
+    color: '#5D5952',
+    lineHeight: 15,
+    marginBottom: 10,
+  },
+  featuredActionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  featuredActionText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#3D5C3E',
   },
   toolsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: 10,
   },
   toolCard: {
-    width: '48%',
+    width: '48.3%',
     backgroundColor: '#FFFFFF',
     borderRadius: 18,
-    padding: 16,
+    padding: 14,
     borderWidth: 1,
-    borderColor: '#ECE8DF',
-    minHeight: 140,
+    borderColor: '#E8E2D6',
+    minHeight: 132,
     position: 'relative',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.03,
-    shadowRadius: 4,
-    elevation: 1,
   },
   toolBadge: {
     position: 'absolute',
     top: 10,
     right: 10,
-    backgroundColor: '#EAF0E6',
+    backgroundColor: '#E9ECDF',
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 8,
+    borderRadius: 6,
   },
   toolBadgeText: {
     fontSize: 9,
     fontWeight: '700',
-    color: '#3D5C3E',
+    color: '#29482F',
   },
   toolIconSquare: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
-  },
-  toolIconEmoji: {
-    fontSize: 22,
+    marginBottom: 10,
   },
   toolTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '700',
-    color: '#1C1D1A',
-    marginBottom: 4,
+    color: '#2E2A26',
+    marginBottom: 3,
   },
   toolSubtitle: {
-    fontSize: 11,
-    color: '#737970',
-    lineHeight: 15,
+    fontSize: 10.5,
+    color: '#706860',
+    lineHeight: 14,
   },
 });
-

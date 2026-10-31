@@ -17,6 +17,15 @@ import {
   HeightIcon,
   WeightIcon,
   ActivityIcon,
+  TargetIcon,
+  SproutIcon,
+  LeafIcon,
+  ClockIcon,
+  WaterIcon,
+  CompassIcon,
+  CalendarIcon,
+  CheckIcon,
+  ShieldIcon,
 } from '../components/Icons';
 
 interface GoalSettingProfileScreenProps {
@@ -139,7 +148,7 @@ export const GoalSettingProfileScreen: React.FC<GoalSettingProfileScreenProps> =
         </TouchableOpacity>
 
         <View style={styles.brandCenter}>
-          <Text style={{ fontSize: 16, marginRight: 4 }}>🌱</Text>
+          <SproutIcon size={18} color="#3D5C3E" style={{ marginRight: 6 }} />
           <Text style={styles.brandTitle}>Zenplato</Text>
         </View>
 
@@ -168,7 +177,9 @@ export const GoalSettingProfileScreen: React.FC<GoalSettingProfileScreenProps> =
             <Text style={styles.subDesc}>Help us understand where you are now.</Text>
           </View>
           <View style={styles.characterArtBox}>
-            <Text style={{ fontSize: 48 }}>👩‍🦰🌿</Text>
+            <View style={styles.clinicalHeaderBadge}>
+              <UserIcon size={26} color="#3D5C3E" />
+            </View>
           </View>
         </View>
 
@@ -178,7 +189,7 @@ export const GoalSettingProfileScreen: React.FC<GoalSettingProfileScreenProps> =
           {/* Age */}
           <View style={styles.fieldCol}>
             <View style={styles.inputBoxWithIcon}>
-              <Text style={{ fontSize: 16, marginRight: 6 }}>🎂</Text>
+              <CalendarIcon size={16} color="#4A4E46" style={{ marginRight: 6 }} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.smallInputLabel}>Age</Text>
                 <TextInput
@@ -195,7 +206,7 @@ export const GoalSettingProfileScreen: React.FC<GoalSettingProfileScreenProps> =
           {/* Height */}
           <View style={styles.fieldCol}>
             <View style={styles.inputBoxWithIcon}>
-              <Text style={{ fontSize: 16, marginRight: 6 }}>🧍</Text>
+              <HeightIcon size={16} color="#4A4E46" style={{ marginRight: 6 }} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.smallInputLabel}>Height</Text>
                 <TextInput
@@ -212,7 +223,7 @@ export const GoalSettingProfileScreen: React.FC<GoalSettingProfileScreenProps> =
           {/* Current weight */}
           <View style={styles.fieldCol}>
             <View style={styles.inputBoxWithIcon}>
-              <Text style={{ fontSize: 16, marginRight: 6 }}>⚖️</Text>
+              <WeightIcon size={16} color="#4A4E46" style={{ marginRight: 6 }} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.smallInputLabel}>Current weight</Text>
                 <TextInput
@@ -229,7 +240,7 @@ export const GoalSettingProfileScreen: React.FC<GoalSettingProfileScreenProps> =
           {/* Target weight (optional) */}
           <View style={styles.fieldCol}>
             <View style={styles.inputBoxWithIcon}>
-              <Text style={{ fontSize: 16, marginRight: 6 }}>🎯</Text>
+              <TargetIcon size={16} color="#4A4E46" style={{ marginRight: 6 }} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.smallInputLabel}>Target weight <Text style={styles.optLbl}>(optional)</Text></Text>
                 <TextInput
@@ -263,7 +274,7 @@ export const GoalSettingProfileScreen: React.FC<GoalSettingProfileScreenProps> =
               }
               activeOpacity={0.8}
             >
-              <Text style={{ fontSize: 16, marginRight: 8 }}>🏃</Text>
+              <ActivityIcon size={16} color="#4A4E46" style={{ marginRight: 8 }} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.smallInputLabel}>Activity level</Text>
                 <Text style={styles.dropdownSelectedText}>{activityLevel}</Text>
@@ -287,7 +298,11 @@ export const GoalSettingProfileScreen: React.FC<GoalSettingProfileScreenProps> =
                 onPress={() => toggleCondition(cond)}
                 activeOpacity={0.8}
               >
-                {isSelected && <Text style={styles.checkMarkWhite}>✓ </Text>}
+                {isSelected && (
+                  <View style={{ marginRight: 4 }}>
+                    <CheckIcon size={10} color="#FFFFFF" />
+                  </View>
+                )}
                 <Text
                   style={[styles.condPillText, isSelected && styles.condPillTextActive]}
                 >
@@ -315,7 +330,7 @@ export const GoalSettingProfileScreen: React.FC<GoalSettingProfileScreenProps> =
               }
               activeOpacity={0.8}
             >
-              <Text style={{ fontSize: 18, marginRight: 8 }}>🌙</Text>
+              <ClockIcon size={16} color="#4A4E46" style={{ marginRight: 8 }} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.lifestyleLabel}>Sleep duration</Text>
                 <Text style={styles.lifestyleValue}>{sleepDuration}</Text>
@@ -338,7 +353,7 @@ export const GoalSettingProfileScreen: React.FC<GoalSettingProfileScreenProps> =
               }
               activeOpacity={0.8}
             >
-              <Text style={{ fontSize: 18, marginRight: 8 }}>💧</Text>
+              <WaterIcon size={16} color="#4A4E46" style={{ marginRight: 8 }} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.lifestyleLabel}>Water intake</Text>
                 <Text style={styles.lifestyleValue}>{waterIntake}</Text>
@@ -367,7 +382,7 @@ export const GoalSettingProfileScreen: React.FC<GoalSettingProfileScreenProps> =
               }
               activeOpacity={0.8}
             >
-              <Text style={{ fontSize: 18, marginRight: 8 }}>💻</Text>
+              <CompassIcon size={16} color="#4A4E46" style={{ marginRight: 8 }} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.lifestyleLabel}>Work routine</Text>
                 <Text style={styles.lifestyleValue}>{workRoutine}</Text>
@@ -390,7 +405,7 @@ export const GoalSettingProfileScreen: React.FC<GoalSettingProfileScreenProps> =
               }
               activeOpacity={0.8}
             >
-              <Text style={{ fontSize: 18, marginRight: 8 }}>🪷</Text>
+              <LeafIcon size={16} color="#4A4E46" style={{ marginRight: 8 }} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.lifestyleLabel}>Stress level</Text>
                 <Text style={styles.lifestyleValue}>{stressLevel}</Text>
@@ -403,7 +418,7 @@ export const GoalSettingProfileScreen: React.FC<GoalSettingProfileScreenProps> =
         {/* ── Section 4: Menstrual Cycle (for PCOS support) ── */}
         <View style={styles.cycleCard}>
           <View style={styles.cycleHeaderRow}>
-            <Text style={{ fontSize: 16, marginRight: 6 }}>📅</Text>
+            <CalendarIcon size={16} color="#4A4E46" style={{ marginRight: 6 }} />
             <Text style={styles.cycleTitle}>
               Menstrual Cycle <Text style={styles.optLbl}>(for PCOS support)</Text>
             </Text>
@@ -422,7 +437,7 @@ export const GoalSettingProfileScreen: React.FC<GoalSettingProfileScreenProps> =
                   <Text
                     style={[styles.cycleTypeText, isSelected && styles.cycleTypeTextActive]}
                   >
-                    {t} {isSelected && '✓'}
+                    {t}
                   </Text>
                 </TouchableOpacity>
               );
@@ -462,7 +477,7 @@ export const GoalSettingProfileScreen: React.FC<GoalSettingProfileScreenProps> =
         {/* ── Section 5: Current Medications or Supplements ── */}
         <View style={styles.medsCard}>
           <View style={styles.medsHeader}>
-            <Text style={{ fontSize: 14, marginRight: 6 }}>💊</Text>
+            <ShieldIcon size={14} color="#4A4E46" style={{ marginRight: 6 }} />
             <Text style={styles.medsTitle}>
               Current Medications or Supplements <Text style={styles.optLbl}>(optional)</Text>
             </Text>
@@ -623,12 +638,22 @@ const styles = StyleSheet.create({
     color: '#686B63',
   },
   characterArtBox: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#FDEEE9',
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: '#F3E8D3',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  clinicalHeaderBadge: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E8E4DC',
   },
   sectionHeading: {
     fontFamily: 'serif',

@@ -16,6 +16,11 @@ import {
   MealIcon,
   ChefHatIcon,
   SproutIcon,
+  LeafIcon,
+  BowlIcon,
+  UtensilsCrossed,
+  DumbbellIcon,
+  RefreshIcon,
 } from '../components/Icons';
 
 interface GoalSettingPlanStructureScreenProps {
@@ -30,6 +35,23 @@ interface GoalSettingPlanStructureScreenProps {
   onBack: () => void;
   onContinue: (planData: any) => void;
 }
+
+const renderMealIcon = (mealId: string, isChecked: boolean) => {
+  const color = isChecked ? '#3D5C3E' : '#737970';
+  switch (mealId) {
+    case 'Breakfast':
+      return <BowlIcon size={20} color={color} />;
+    case 'Lunch':
+      return <UtensilsCrossed size={20} color={color} />;
+    case 'Dinner':
+      return <MealIcon size={20} color={color} />;
+    case 'Snacks':
+      return <LeafIcon size={20} color={color} />;
+    case 'Pre / Post workout':
+    default:
+      return <DumbbellIcon size={20} color={color} />;
+  }
+};
 
 export const GoalSettingPlanStructureScreen: React.FC<GoalSettingPlanStructureScreenProps> = ({
   initialPlan,
@@ -96,7 +118,7 @@ export const GoalSettingPlanStructureScreen: React.FC<GoalSettingPlanStructureSc
         </TouchableOpacity>
 
         <View style={styles.brandCenter}>
-          <Text style={{ fontSize: 16, marginRight: 4 }}>🌱</Text>
+          <SproutIcon size={18} color="#3D5C3E" style={{ marginRight: 6 }} />
           <Text style={styles.brandTitle}>Zenplato</Text>
         </View>
 
@@ -127,7 +149,9 @@ export const GoalSettingPlanStructureScreen: React.FC<GoalSettingPlanStructureSc
             </Text>
           </View>
           <View style={styles.characterArtBox}>
-            <Text style={{ fontSize: 44 }}>👩‍🍳🥗</Text>
+            <View style={styles.clinicalHeaderBadge}>
+              <ChefHatIcon size={26} color="#3D5C3E" />
+            </View>
           </View>
         </View>
 
@@ -261,35 +285,30 @@ export const GoalSettingPlanStructureScreen: React.FC<GoalSettingPlanStructureSc
           {[
             {
               id: 'Breakfast',
-              emoji: '🥞',
               time: '8:00 AM - 9:30 AM',
               title: 'Breakfast',
               desc: 'High-protein, steady energy start to prevent glucose spikes',
             },
             {
               id: 'Lunch',
-              emoji: '🥗',
               time: '1:00 PM - 2:00 PM',
               title: 'Lunch',
               desc: 'Balanced plate with fiber, complex carbs and healthy fats',
             },
             {
               id: 'Dinner',
-              emoji: '🍲',
               time: '7:30 PM - 8:30 PM',
               title: 'Dinner',
               desc: 'Light, anti-inflammatory nourishing recipes for sound sleep',
             },
             {
               id: 'Snacks',
-              emoji: '🥜',
               time: '11:00 AM & 4:30 PM',
               title: 'Snacks',
               desc: 'Smart bites: seeds, roasted makhana, herbal infusions',
             },
             {
               id: 'Pre / Post workout',
-              emoji: '⚡',
               time: 'Workout fuel',
               title: 'Pre / Post workout',
               desc: 'Electrolytes, rapid amino acids and recovery support',
@@ -303,8 +322,8 @@ export const GoalSettingPlanStructureScreen: React.FC<GoalSettingPlanStructureSc
                 onPress={() => toggleMeal(meal.id)}
                 activeOpacity={0.8}
               >
-                <View style={styles.mealEmojiBox}>
-                  <Text style={{ fontSize: 24 }}>{meal.emoji}</Text>
+                <View style={[styles.mealIconCircle, isChecked && { backgroundColor: '#E9ECDF' }]}>
+                  {renderMealIcon(meal.id, isChecked)}
                 </View>
 
                 <View style={{ flex: 1, marginLeft: 12 }}>
@@ -331,7 +350,7 @@ export const GoalSettingPlanStructureScreen: React.FC<GoalSettingPlanStructureSc
           {/* Toggle 1 */}
           <View style={styles.toggleRow}>
             <View style={styles.toggleIconCol}>
-              <Text style={{ fontSize: 20 }}>🔄</Text>
+              <RefreshIcon size={18} color="#3D5C3E" />
             </View>
             <View style={{ flex: 1, paddingRight: 8 }}>
               <Text style={styles.toggleTitle}>Include alternatives</Text>
@@ -350,7 +369,7 @@ export const GoalSettingPlanStructureScreen: React.FC<GoalSettingPlanStructureSc
           {/* Toggle 2 */}
           <View style={styles.toggleRow}>
             <View style={styles.toggleIconCol}>
-              <Text style={{ fontSize: 20 }}>🍽️</Text>
+              <UtensilsCrossed size={18} color="#3D5C3E" />
             </View>
             <View style={{ flex: 1, paddingRight: 8 }}>
               <Text style={styles.toggleTitle}>Eating out flexibility</Text>
@@ -369,7 +388,7 @@ export const GoalSettingPlanStructureScreen: React.FC<GoalSettingPlanStructureSc
           {/* Toggle 3 */}
           <View style={styles.toggleRow}>
             <View style={styles.toggleIconCol}>
-              <Text style={{ fontSize: 20 }}>🌿</Text>
+              <LeafIcon size={18} color="#3D5C3E" />
             </View>
             <View style={{ flex: 1, paddingRight: 8 }}>
               <Text style={styles.toggleTitle}>Seasonal & local suitability</Text>
@@ -498,14 +517,22 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   characterArtBox: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: '#EAF0E6',
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: '#F3E8D3',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  clinicalHeaderBadge: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#D8E2D2',
+    borderColor: '#E8E4DC',
   },
   sectionHeading: {
     fontSize: 16,
@@ -644,10 +671,10 @@ const styles = StyleSheet.create({
     borderColor: '#3D5C3E',
     backgroundColor: '#F9FBF8',
   },
-  mealEmojiBox: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
+  mealIconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: '#F3EFE6',
     alignItems: 'center',
     justifyContent: 'center',

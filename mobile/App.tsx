@@ -13,6 +13,7 @@ import { BottomNav } from './src/components/BottomNav';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { ExploreToolsScreen } from './src/screens/ExploreToolsScreen';
 import { NutritionCalculationsScreen } from './src/screens/NutritionCalculationsScreen';
+import { HealthRestoreScreen } from './src/screens/HealthRestoreScreen';
 
 // 6-Step Goal Setting Sequential Journey
 import { GoalSettingFocusScreen } from './src/screens/GoalSettingFocusScreen';
@@ -37,6 +38,7 @@ import { SignInScreen } from './src/screens/SignInScreen';
 import { AuthService, AuthUser } from './src/services/api';
 
 type Subscreen =
+  | 'health-restore'
   | 'nutrition-calculations'
   | 'goal-setting-focus' // Step 1 of 6
   | 'goal-setting-symptoms' // Step 2 of 6
@@ -45,6 +47,7 @@ type Subscreen =
   | 'goal-setting-planstructure' // Step 5 of 6
   | 'goal-plan-summary' // Step 6 of 6 (Modern Botanical Plan Summary)
   | 'goal-setting-flow' // Legacy fallback
+  | 'meal-plans'
   | 'meal-plan-detail'
   | 'edit-my-plan'
   | 'plan-review-approval'
@@ -58,12 +61,34 @@ export default function App() {
     name: 'Riya Sharma',
     email: 'riya.sharma@zenplato.com',
   });
-  const [activeTab, setActiveTab] = useState<RootTab>('Explore');
-  const [activeSubscreen, setActiveSubscreen] = useState<Subscreen>(null);
+  const [activeTab, setActiveTab] = useState<RootTab>('Home');
+  const [navigationStack, setNavigationStack] = useState<Subscreen[]>([]);
   const [selectedMealId, setSelectedMealId] = useState('moong-dal-chilla');
-  const [editorReturnScreen, setEditorReturnScreen] = useState<Subscreen>(null);
-  const [detailReturnScreen, setDetailReturnScreen] = useState<Subscreen>(null);
-  const [returnToSummary, setReturnToSummary] = useState(false);
+
+  // Active subscreen is the top of the navigation history stack
+  const activeSubscreen = navigationStack.length > 0 ? navigationStack[navigationStack.length - 1] : null;
+
+  // Push new screen to history stack
+  const pushScreen = (screen: Subscreen) => {
+    if (!screen) return;
+    setNavigationStack((prev) => [...prev, screen]);
+  };
+
+  // Pop screen from history stack to return to the exact previous screen
+  const popScreen = () => {
+    setNavigationStack((prev) => {
+      if (prev.length <= 1) {
+        return [];
+      }
+      return prev.slice(0, prev.length - 1);
+    });
+  };
+
+  // Reset navigation stack to a root tab
+  const resetToTab = (tab: RootTab) => {
+    setNavigationStack([]);
+    setActiveTab(tab);
+  };
 
   // Centralized Onboarding & Goal Plan Data State
   const [onboardingData, setOnboardingData] = useState<PlanSummaryData>({
@@ -123,28 +148,36 @@ export default function App() {
 
   // Tool selection handler from ExploreToolsScreen
   const handleSelectTool = (toolId: string) => {
-    if (toolId === 'nutrition-calc') {
-      setActiveSubscreen('nutrition-calculations');
+    if (toolId === 'health-restore') {
+      pushScreen('health-restore');
+    } else if (toolId === 'nutrition-calc') {
+      pushScreen('nutrition-calculations');
     } else if (toolId === 'goal-setting') {
-      setActiveSubscreen('goal-setting-focus');
+      pushScreen('goal-setting-focus');
+    } else if (toolId === 'symptom-tracker') {
+      pushScreen('goal-setting-symptoms');
+    } else if (toolId === 'water-lifestyle') {
+      pushScreen('goal-setting-profile');
+    } else if (toolId === 'log-meal') {
+      pushScreen('edit-my-plan');
+    } else if (toolId === 'progress-tracker') {
+      pushScreen('nutrition-calculations');
     } else if (toolId === 'meal-builder') {
-      setActiveTab('Plans');
+      pushScreen('meal-plans');
     } else if (toolId === 'recipe-library') {
       setSelectedMealId('moong-dal-chilla');
-      setDetailReturnScreen(null);
-      setActiveSubscreen('meal-plan-detail');
+      pushScreen('meal-plan-detail');
     } else if (toolId === 'nutritionist-editor') {
-      setEditorReturnScreen(null);
-      setActiveSubscreen('nutritionist-meal-plan-editor');
+      pushScreen('nutritionist-meal-plan-editor');
     } else {
-      setActiveSubscreen('nutrition-calculations');
+      pushScreen('health-restore');
     }
   };
 
   const handleTabSelect = (tab: RootTab) => {
-    setActiveSubscreen(null);
+    setNavigationStack([]);
     if (tab === 'Add') {
-      setActiveSubscreen('goal-setting-focus');
+      pushScreen('goal-setting-focus');
     } else {
       setActiveTab(tab);
     }
@@ -159,17 +192,15 @@ export default function App() {
             setCurrentUser(user);
             setIsAuthenticated(true);
             if (isNewUser) {
-              setActiveSubscreen('goal-setting-focus');
+              pushScreen('goal-setting-focus');
             } else {
-              setActiveTab('Home');
-              setActiveSubscreen(null);
+              resetToTab('Home');
             }
           }}
           onExploreGuest={() => {
             setCurrentUser({ name: 'Guest Explorer', email: 'guest@zenplato.com' });
             setIsAuthenticated(true);
-            setActiveTab('Explore');
-            setActiveSubscreen(null);
+            resetToTab('Explore');
           }}
         />
       </SafeAreaView>
@@ -182,14 +213,42 @@ export default function App() {
       <View style={styles.container}>
         {/* ── Subscreens ── */}
 
+        {/* Health & Restore Screen (Mirroring Web Healthcare Landing & Tools) */}
+        {activeSubscreen === 'health-restore' && (
+          <HealthRestoreScreen
+            onBack={popScreen}
+            onNavigateToCalculations={() => pushScreen('nutrition-calculations')}
+            onNavigateToGoalSetting={(initialCond) => {
+              if (initialCond) {
+                setOnboardingData((prev) => ({
+                  ...prev,
+                  goal: `Manage ${initialCond} symptoms`,
+                  profile: {
+                    ...prev.profile,
+                    selectedConditions: [initialCond],
+                  },
+                }));
+              }
+              pushScreen('goal-setting-focus');
+            }}
+            onNavigateToSymptoms={() => pushScreen('goal-setting-symptoms')}
+            onNavigateToLifestyle={() => pushScreen('goal-setting-profile')}
+            onNavigateToMealPlans={() => pushScreen('meal-plans')}
+            onNavigateToMealDetail={(mealId) => {
+              if (mealId) setSelectedMealId(mealId);
+              pushScreen('meal-plan-detail');
+            }}
+            onNavigateToEditPlan={() => pushScreen('edit-my-plan')}
+            onNavigateToCareTeam={() => pushScreen('care-team')}
+            onNavigateToProgress={() => pushScreen('nutrition-calculations')}
+          />
+        )}
+
         {/* Nutrition Calculations Screen */}
         {activeSubscreen === 'nutrition-calculations' && (
           <NutritionCalculationsScreen
-            onBack={() => setActiveSubscreen(null)}
-            onNavigateToMealPlan={() => {
-              setActiveSubscreen(null);
-              setActiveTab('Plans');
-            }}
+            onBack={popScreen}
+            onNavigateToMealPlan={() => pushScreen('meal-plans')}
           />
         )}
 
@@ -199,22 +258,10 @@ export default function App() {
         {activeSubscreen === 'goal-setting-focus' && (
           <GoalSettingFocusScreen
             initialGoal={onboardingData.goal}
-            onBack={() => {
-              if (returnToSummary) {
-                setReturnToSummary(false);
-                setActiveSubscreen('goal-plan-summary');
-              } else {
-                setActiveSubscreen(null);
-              }
-            }}
+            onBack={popScreen}
             onContinue={(goal) => {
               setOnboardingData((prev) => ({ ...prev, goal }));
-              if (returnToSummary) {
-                setReturnToSummary(false);
-                setActiveSubscreen('goal-plan-summary');
-              } else {
-                setActiveSubscreen('goal-setting-symptoms');
-              }
+              pushScreen('goal-setting-symptoms');
             }}
           />
         )}
@@ -225,27 +272,15 @@ export default function App() {
             selectedGoal={onboardingData.goal}
             initialSymptoms={onboardingData.symptoms}
             initialPriorities={onboardingData.priorities}
-            onBack={() => {
-              if (returnToSummary) {
-                setReturnToSummary(false);
-                setActiveSubscreen('goal-plan-summary');
-              } else {
-                setActiveSubscreen('goal-setting-focus');
-              }
-            }}
-            onChangeGoal={() => setActiveSubscreen('goal-setting-focus')}
+            onBack={popScreen}
+            onChangeGoal={() => pushScreen('goal-setting-focus')}
             onContinue={(symptomData) => {
               setOnboardingData((prev) => ({
                 ...prev,
                 symptoms: symptomData.selectedSymptoms,
                 priorities: symptomData.topPriorities,
               }));
-              if (returnToSummary) {
-                setReturnToSummary(false);
-                setActiveSubscreen('goal-plan-summary');
-              } else {
-                setActiveSubscreen('goal-setting-profile');
-              }
+              pushScreen('goal-setting-profile');
             }}
           />
         )}
@@ -254,22 +289,10 @@ export default function App() {
         {activeSubscreen === 'goal-setting-profile' && (
           <GoalSettingProfileScreen
             initialProfile={onboardingData.profile}
-            onBack={() => {
-              if (returnToSummary) {
-                setReturnToSummary(false);
-                setActiveSubscreen('goal-plan-summary');
-              } else {
-                setActiveSubscreen('goal-setting-symptoms');
-              }
-            }}
+            onBack={popScreen}
             onContinue={(profileData) => {
               setOnboardingData((prev) => ({ ...prev, profile: profileData }));
-              if (returnToSummary) {
-                setReturnToSummary(false);
-                setActiveSubscreen('goal-plan-summary');
-              } else {
-                setActiveSubscreen('goal-setting-foodprefs');
-              }
+              pushScreen('goal-setting-foodprefs');
             }}
           />
         )}
@@ -278,22 +301,10 @@ export default function App() {
         {activeSubscreen === 'goal-setting-foodprefs' && (
           <GoalSettingFoodPrefsScreen
             initialPrefs={onboardingData.foodPrefs}
-            onBack={() => {
-              if (returnToSummary) {
-                setReturnToSummary(false);
-                setActiveSubscreen('goal-plan-summary');
-              } else {
-                setActiveSubscreen('goal-setting-profile');
-              }
-            }}
+            onBack={popScreen}
             onContinue={(prefsData) => {
               setOnboardingData((prev) => ({ ...prev, foodPrefs: prefsData }));
-              if (returnToSummary) {
-                setReturnToSummary(false);
-                setActiveSubscreen('goal-plan-summary');
-              } else {
-                setActiveSubscreen('goal-setting-planstructure');
-              }
+              pushScreen('goal-setting-planstructure');
             }}
           />
         )}
@@ -302,18 +313,10 @@ export default function App() {
         {activeSubscreen === 'goal-setting-planstructure' && (
           <GoalSettingPlanStructureScreen
             initialPlan={onboardingData.planStructure}
-            onBack={() => {
-              if (returnToSummary) {
-                setReturnToSummary(false);
-                setActiveSubscreen('goal-plan-summary');
-              } else {
-                setActiveSubscreen('goal-setting-foodprefs');
-              }
-            }}
+            onBack={popScreen}
             onContinue={(planData) => {
               setOnboardingData((prev) => ({ ...prev, planStructure: planData }));
-              setReturnToSummary(false);
-              setActiveSubscreen('goal-plan-summary');
+              pushScreen('goal-plan-summary');
             }}
           />
         )}
@@ -322,57 +325,47 @@ export default function App() {
         {activeSubscreen === 'goal-plan-summary' && (
           <GoalPlanSummaryScreen
             data={onboardingData}
-            onBack={() => setActiveSubscreen('goal-setting-planstructure')}
-            onChangeGoal={() => {
-              setReturnToSummary(true);
-              setActiveSubscreen('goal-setting-focus');
-            }}
-            onChangeSymptoms={() => {
-              setReturnToSummary(true);
-              setActiveSubscreen('goal-setting-symptoms');
-            }}
-            onChangeProfile={() => {
-              setReturnToSummary(true);
-              setActiveSubscreen('goal-setting-profile');
-            }}
-            onChangeFoodPrefs={() => {
-              setReturnToSummary(true);
-              setActiveSubscreen('goal-setting-foodprefs');
-            }}
-            onChangePlanStructure={() => {
-              setReturnToSummary(true);
-              setActiveSubscreen('goal-setting-planstructure');
-            }}
-            onGeneratePlan={() => {
-              setActiveSubscreen(null);
-              setActiveTab('Plans');
-            }}
-            onNavigateToCalculations={() => {
-              setActiveSubscreen('nutrition-calculations');
-            }}
+            onBack={popScreen}
+            onChangeGoal={() => pushScreen('goal-setting-focus')}
+            onChangeSymptoms={() => pushScreen('goal-setting-symptoms')}
+            onChangeProfile={() => pushScreen('goal-setting-profile')}
+            onChangeFoodPrefs={() => pushScreen('goal-setting-foodprefs')}
+            onChangePlanStructure={() => pushScreen('goal-setting-planstructure')}
+            onGeneratePlan={() => pushScreen('meal-plans')}
+            onNavigateToCalculations={() => pushScreen('nutrition-calculations')}
           />
         )}
 
         {/* ── Meal Planning & Recipes ── */}
 
+        {/* Meal Plans Screen (Bespoke 7-Day Protocol via Stack Navigation) */}
+        {activeSubscreen === 'meal-plans' && (
+          <MealPlansScreen
+            onBack={popScreen}
+            onViewRecipe={(id) => {
+              setSelectedMealId(id);
+              pushScreen('meal-plan-detail');
+            }}
+            onCustomizePlan={() => pushScreen('edit-my-plan')}
+            onViewBreakdown={() => pushScreen('nutrition-calculations')}
+          />
+        )}
+
         {/* Meal Plan Detail Screen (Recipe Breakdown, Ingredients, Directions) */}
         {activeSubscreen === 'meal-plan-detail' && (
           <MealPlanDetailScreen
             mealId={selectedMealId}
-            onBack={() => setActiveSubscreen(detailReturnScreen)}
-            onAddToPlan={() => {
-              setActiveSubscreen(null);
-              setActiveTab('Plans');
-            }}
+            onBack={popScreen}
+            onAddToPlan={() => pushScreen('meal-plans')}
           />
         )}
 
         {/* Edit My Plan Screen (Customize Meals & Portions) */}
         {activeSubscreen === 'edit-my-plan' && (
           <EditMyPlanScreen
-            onBack={() => setActiveSubscreen(null)}
-            onViewAsClient={() => setActiveSubscreen(null)}
-            onSetTargets={() => setActiveSubscreen('nutrition-calculations')}
+            onBack={popScreen}
+            onViewAsClient={() => pushScreen('meal-plans')}
+            onSetTargets={() => pushScreen('nutrition-calculations')}
           />
         )}
 
@@ -381,78 +374,79 @@ export default function App() {
         {/* Plan Review & Approvals */}
         {activeSubscreen === 'plan-review-approval' && (
           <PlanReviewApprovalScreen
-            onBack={() => setActiveSubscreen(null)}
+            onBack={popScreen}
             onPreviewForClient={() => {
               setSelectedMealId('moong-dal-chilla');
-              setDetailReturnScreen('plan-review-approval');
-              setActiveSubscreen('meal-plan-detail');
+              pushScreen('meal-plan-detail');
             }}
-            onEditTargets={() => setActiveSubscreen('nutrition-calculations')}
-            onOpenEditor={() => {
-              setEditorReturnScreen('plan-review-approval');
-              setActiveSubscreen('nutritionist-meal-plan-editor');
-            }}
+            onEditTargets={() => pushScreen('nutrition-calculations')}
+            onOpenEditor={() => pushScreen('nutritionist-meal-plan-editor')}
           />
         )}
 
         {/* Extended Nutritionist Meal Plan Editor */}
         {activeSubscreen === 'nutritionist-meal-plan-editor' && (
           <NutritionistMealPlanEditorScreen
-            onBack={() => setActiveSubscreen(editorReturnScreen)}
+            onBack={popScreen}
             onPreviewForClient={() => {
               setSelectedMealId('moong-dal-chilla');
-              setDetailReturnScreen('nutritionist-meal-plan-editor');
-              setActiveSubscreen('meal-plan-detail');
+              pushScreen('meal-plan-detail');
             }}
           />
         )}
 
         {/* Care Team Screen */}
         {activeSubscreen === 'care-team' && (
-          <CareTeamScreen onBack={() => setActiveSubscreen(null)} />
+          <CareTeamScreen onBack={popScreen} />
         )}
 
         {/* ── Root Tabs ── */}
         {!activeSubscreen && activeTab === 'Home' && (
           <HomeScreen
-            onNavigateToExplore={() => setActiveTab('Explore')}
-            onNavigateToMealPlan={() => setActiveTab('Plans')}
-            onNavigateToCalculations={() => setActiveSubscreen('nutrition-calculations')}
-            onNavigateToCareTeam={() => setActiveSubscreen('care-team')}
+            userName={currentUser?.name || 'Riya Sharma'}
+            conditionName={onboardingData.goal.includes('PCOS') ? 'PCOS' : 'Wellness'}
+            onNavigateToExplore={() => resetToTab('Explore')}
+            onNavigateToMealPlan={() => pushScreen('meal-plans')}
+            onNavigateToCalculations={() => pushScreen('nutrition-calculations')}
+            onNavigateToCareTeam={() => pushScreen('care-team')}
+            onNavigateToHealthRestore={() => pushScreen('health-restore')}
+            onNavigateToEditPlan={() => pushScreen('edit-my-plan')}
+            onNavigateToProfile={() => resetToTab('You')}
+            onNavigateToMealDetail={(mealId) => {
+              if (mealId) setSelectedMealId(mealId);
+              pushScreen('meal-plan-detail');
+            }}
           />
         )}
 
         {!activeSubscreen && activeTab === 'Explore' && (
           <ExploreToolsScreen
             onSelectTool={handleSelectTool}
-            onOpenNotifications={() => setActiveSubscreen('care-team')}
-            onOpenProfile={() => setActiveTab('You')}
+            onOpenNotifications={() => pushScreen('care-team')}
+            onOpenProfile={() => resetToTab('You')}
           />
         )}
 
         {!activeSubscreen && activeTab === 'Plans' && (
           <MealPlansScreen
-            onBack={() => setActiveTab('Explore')}
+            onBack={() => setActiveTab('Home')}
             onViewRecipe={(id) => {
               setSelectedMealId(id);
-              setDetailReturnScreen(null);
-              setActiveSubscreen('meal-plan-detail');
+              pushScreen('meal-plan-detail');
             }}
-            onCustomizePlan={() => setActiveSubscreen('edit-my-plan')}
-            onViewBreakdown={() => setActiveSubscreen('nutrition-calculations')}
+            onCustomizePlan={() => pushScreen('edit-my-plan')}
+            onViewBreakdown={() => pushScreen('nutrition-calculations')}
           />
         )}
 
         {!activeSubscreen && activeTab === 'You' && (
           <ProfileScreen
-            onNavigateToCalculations={() => setActiveSubscreen('nutrition-calculations')}
-            onNavigateToGoalSetting={() => setActiveSubscreen('goal-setting-focus')}
-            onNavigateToCareTeam={() => setActiveSubscreen('care-team')}
-            onNavigateToNutritionistPortal={() => setActiveSubscreen('plan-review-approval')}
-            onNavigateToNutritionistEditor={() => {
-              setEditorReturnScreen(null);
-              setActiveSubscreen('nutritionist-meal-plan-editor');
-            }}
+            onNavigateToCalculations={() => pushScreen('nutrition-calculations')}
+            onNavigateToGoalSetting={() => pushScreen('goal-setting-focus')}
+            onNavigateToCareTeam={() => pushScreen('care-team')}
+            onNavigateToHealthRestore={() => pushScreen('health-restore')}
+            onNavigateToNutritionistPortal={() => pushScreen('plan-review-approval')}
+            onNavigateToNutritionistEditor={() => pushScreen('nutritionist-meal-plan-editor')}
             onSignOut={() => {
               AuthService.logout();
               setIsAuthenticated(false);
@@ -465,7 +459,7 @@ export default function App() {
           <BottomNav
             activeTab={activeTab}
             onSelectTab={handleTabSelect}
-            onPressAction={() => setActiveSubscreen('goal-setting-focus')}
+            onPressAction={() => pushScreen('goal-setting-focus')}
           />
         )}
       </View>

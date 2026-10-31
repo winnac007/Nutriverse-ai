@@ -9,7 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { Colors } from '../theme/colors';
-import { ChevronLeftIcon, CloseIcon } from '../components/Icons';
+import { ChevronLeftIcon, CloseIcon, CheckIcon, SparkleIcon } from '../components/Icons';
 
 interface CareTeamScreenProps {
   onBack?: () => void;
@@ -80,7 +80,7 @@ export const CareTeamScreen: React.FC<CareTeamScreenProps> = ({ onBack }) => {
   const handleBook = (name: string, slot: string) => {
     setBookedSpecialist(name);
     Alert.alert(
-      'Consultation Scheduled! 🌿',
+      'Consultation Scheduled',
       `Your video consultation with ${name} is reserved for ${slot}. You will receive a calendar invitation and pre-consultation assessment checklist.`
     );
   };
@@ -121,7 +121,10 @@ export const CareTeamScreen: React.FC<CareTeamScreenProps> = ({ onBack }) => {
                     <Text style={styles.specName}>{spec.name}</Text>
                     <Text style={styles.specRole}>{spec.role}</Text>
                     <View style={styles.badgeRow}>
-                      <Text style={styles.ratingText}>★ {spec.rating}</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <SparkleIcon size={11} color="#D97706" style={{ marginRight: 3 }} />
+                        <Text style={styles.ratingText}>{spec.rating}</Text>
+                      </View>
                       <Text style={styles.reviewsText}>({spec.reviews})</Text>
                       <Text style={styles.dotSep}>•</Text>
                       <Text style={styles.expText}>{spec.exp} experience</Text>
@@ -146,8 +149,9 @@ export const CareTeamScreen: React.FC<CareTeamScreenProps> = ({ onBack }) => {
                     onPress={() => handleBook(spec.name, spec.availableSlot)}
                     activeOpacity={0.8}
                   >
+                    {isBooked && <CheckIcon size={11} color="#FFFFFF" style={{ marginRight: 4 }} />}
                     <Text style={[styles.bookBtnText, isBooked && styles.bookBtnTextDone]}>
-                      {isBooked ? '✓ Booked' : 'Book Session'}
+                      {isBooked ? 'Booked' : 'Book Session'}
                     </Text>
                   </TouchableOpacity>
                 </View>

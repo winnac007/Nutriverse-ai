@@ -16,6 +16,11 @@ import {
   UserIcon,
   LeafIcon,
   SproutIcon,
+  ScaleIcon,
+  PlanIcon,
+  UtensilsCrossed,
+  SparkleIcon,
+  ActivityIcon,
 } from '../components/Icons';
 import { checkBackendHealth, getApiHost } from '../services/api';
 
@@ -24,6 +29,7 @@ interface ProfileScreenProps {
   onNavigateToCalculations: () => void;
   onNavigateToGoalSetting: () => void;
   onNavigateToCareTeam: () => void;
+  onNavigateToHealthRestore?: () => void;
   onNavigateToNutritionistPortal?: () => void;
   onNavigateToNutritionistEditor?: () => void;
   onSignOut?: () => void;
@@ -34,6 +40,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onNavigateToCalculations,
   onNavigateToGoalSetting,
   onNavigateToCareTeam,
+  onNavigateToHealthRestore,
   onNavigateToNutritionistPortal,
   onNavigateToNutritionistEditor,
   onSignOut,
@@ -89,15 +96,34 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         <View style={styles.groupCard}>
           <TouchableOpacity
             style={styles.settingRow}
+            onPress={onNavigateToHealthRestore}
+            activeOpacity={0.7}
+          >
+            <View style={styles.rowIconWrap}>
+              <LeafIcon size={16} color="#3D5C3E" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.settingTitle}>Health &amp; Restore</Text>
+              <Text style={styles.settingDesc}>Manage condition care, symptoms &amp; clinical habits</Text>
+            </View>
+            <ChevronRightIcon size={14} color="#8D9188" />
+          </TouchableOpacity>
+
+          <View style={styles.settingDivider} />
+
+          <TouchableOpacity
+            style={styles.settingRow}
             onPress={onNavigateToCalculations}
             activeOpacity={0.7}
           >
-            <Text style={{ fontSize: 20, marginRight: 12 }}>📊</Text>
+            <View style={styles.rowIconWrap}>
+              <ScaleIcon size={16} color="#3D5C3E" />
+            </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.settingTitle}>Nutrition Calculations</Text>
               <Text style={styles.settingDesc}>BMI, BMR, TDEE, Ideal Body Weight</Text>
             </View>
-            <ChevronRightIcon size={16} color="#8D9188" />
+            <ChevronRightIcon size={14} color="#8D9188" />
           </TouchableOpacity>
 
           <View style={styles.settingDivider} />
@@ -107,12 +133,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             onPress={onNavigateToGoalSetting}
             activeOpacity={0.7}
           >
-            <Text style={{ fontSize: 20, marginRight: 12 }}>🎯</Text>
+            <View style={styles.rowIconWrap}>
+              <TargetIcon size={16} color="#855B1E" />
+            </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.settingTitle}>My Goals & Timeline</Text>
               <Text style={styles.settingDesc}>Manage PCOS symptoms, 6 months target</Text>
             </View>
-            <ChevronRightIcon size={16} color="#8D9188" />
+            <ChevronRightIcon size={14} color="#8D9188" />
           </TouchableOpacity>
 
           <View style={styles.settingDivider} />
@@ -122,12 +150,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             onPress={onNavigateToCareTeam}
             activeOpacity={0.7}
           >
-            <Text style={{ fontSize: 20, marginRight: 12 }}>👩‍⚕️</Text>
+            <View style={styles.rowIconWrap}>
+              <UserIcon size={16} color="#3D5C3E" />
+            </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.settingTitle}>My Care Team</Text>
               <Text style={styles.settingDesc}>Dr. Ananya Sharma (Clinical Nutritionist)</Text>
             </View>
-            <ChevronRightIcon size={16} color="#8D9188" />
+            <ChevronRightIcon size={14} color="#8D9188" />
           </TouchableOpacity>
 
           <View style={styles.settingDivider} />
@@ -137,12 +167,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             onPress={onNavigateToNutritionistPortal}
             activeOpacity={0.7}
           >
-            <Text style={{ fontSize: 20, marginRight: 12 }}>📋</Text>
+            <View style={styles.rowIconWrap}>
+              <PlanIcon size={16} color="#524C42" />
+            </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.settingTitle}>Nutritionist Portal</Text>
               <Text style={styles.settingDesc}>Plan Review & Approvals for client plans</Text>
             </View>
-            <ChevronRightIcon size={16} color="#8D9188" />
+            <ChevronRightIcon size={14} color="#8D9188" />
           </TouchableOpacity>
 
           <View style={styles.settingDivider} />
@@ -152,12 +184,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             onPress={onNavigateToNutritionistEditor}
             activeOpacity={0.7}
           >
-            <Text style={{ fontSize: 20, marginRight: 12 }}>🍳</Text>
+            <View style={styles.rowIconWrap}>
+              <UtensilsCrossed size={16} color="#524C42" />
+            </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.settingTitle}>Edit Meal Plan (Nutritionist)</Text>
               <Text style={styles.settingDesc}>Customize meals, portions & timings for Riya</Text>
             </View>
-            <ChevronRightIcon size={16} color="#8D9188" />
+            <ChevronRightIcon size={14} color="#8D9188" />
           </TouchableOpacity>
         </View>
 
@@ -165,7 +199,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         <Text style={styles.groupHeading}>PREFERENCES</Text>
         <View style={styles.groupCard}>
           <View style={styles.settingRow}>
-            <Text style={{ fontSize: 20, marginRight: 12 }}>🥗</Text>
+            <View style={styles.rowIconWrap}>
+              <UtensilsCrossed size={16} color="#3D5C3E" />
+            </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.settingTitle}>Dietary Preferences</Text>
               <Text style={styles.settingDesc}>Vegetarian (Indian cuisine, Paneer, Dal)</Text>
@@ -175,7 +211,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           <View style={styles.settingDivider} />
 
           <View style={styles.settingRow}>
-            <Text style={{ fontSize: 20, marginRight: 12 }}>🌸</Text>
+            <View style={styles.rowIconWrap}>
+              <SparkleIcon size={16} color="#855B1E" />
+            </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.settingTitle}>Health Focus</Text>
               <Text style={styles.settingDesc}>Hormonal balance, PCOS symptom relief</Text>
@@ -190,23 +228,25 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               const res = await checkBackendHealth();
               if (res.connected) {
                 Alert.alert(
-                  'Backend Connected! 🟢',
+                  'Backend Connected',
                   `Connected to Nutriverse API v${res.version || '2.1'}\nHost: ${res.host}\nData mode: Live backend with database.`
                 );
               } else {
                 Alert.alert(
-                  'Offline / Standalone Mode 🟠',
+                  'Offline / Standalone Mode',
                   `Could not connect to ${res.host}.\n\nThe mobile app is operating in local mock mode with full UI and biometric calculation functionality.\n\nTo connect to live backend:\ncd backend && uvicorn app.main:app --reload`
                 );
               }
             }}
           >
-            <Text style={{ fontSize: 20, marginRight: 12 }}>⚡</Text>
+            <View style={styles.rowIconWrap}>
+              <ActivityIcon size={16} color="#29482F" />
+            </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.settingTitle}>Backend API Status</Text>
               <Text style={styles.settingDesc}>Check FastAPI connection ({getApiHost()})</Text>
             </View>
-            <ChevronRightIcon size={16} color="#8D9188" />
+            <ChevronRightIcon size={14} color="#8D9188" />
           </TouchableOpacity>
         </View>
 
@@ -344,6 +384,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 14,
+  },
+  rowIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F5F1E6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
   },
   settingTitle: {
     fontSize: 13.5,

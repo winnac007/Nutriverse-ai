@@ -147,7 +147,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             {/* Gender Field */}
             <View style={styles.fieldRow}>
               <View style={styles.iconSquare}>
-                <Text style={{ fontSize: 16 }}>⚧</Text>
+                <UserIcon size={16} color="#4A4E46" />
               </View>
               <View style={styles.fieldContent}>
                 <Text style={styles.fieldLabel}>Gender</Text>
@@ -283,7 +283,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             {/* Body composition (optional) */}
             <View style={styles.fieldRow}>
               <View style={styles.iconSquare}>
-                <Text style={{ fontSize: 16 }}>📊</Text>
+                <ActivityIcon size={16} color="#4A4E46" />
               </View>
               <View style={styles.fieldContent}>
                 <Text style={styles.fieldLabel}>Body composition (optional)</Text>

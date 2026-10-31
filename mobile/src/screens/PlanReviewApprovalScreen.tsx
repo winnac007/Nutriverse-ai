@@ -14,6 +14,14 @@ import {
   ChevronLeftIcon,
   ClockIcon,
   ChevronDownIcon,
+  UserIcon,
+  CalendarIcon,
+  SparkleIcon,
+  PencilIcon,
+  FlameIcon,
+  TargetIcon,
+  EyeIcon,
+  CheckIcon,
 } from '../components/Icons';
 
 interface PlanReviewApprovalScreenProps {
@@ -49,13 +57,13 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
     Alert.alert(
       'AI Clinical Engine',
       'Regenerating meal options optimized for Riya’s PCOS insulin sensitivity and anti-inflammatory markers...',
-      [{ text: 'Confirm', onPress: () => Alert.alert('Plan Regenerated! ✨') }, { text: 'Cancel', style: 'cancel' }]
+      [{ text: 'Confirm', onPress: () => Alert.alert('Plan Regenerated') }, { text: 'Cancel', style: 'cancel' }]
     );
   };
 
   const handleSendApproval = () => {
     Alert.alert(
-      'Sent to Client! 🚀',
+      'Sent to Client',
       'The personalized 7-day blueprint has been dispatched to Riya Sharma for approval.'
     );
   };
@@ -75,7 +83,7 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
           }
           activeOpacity={0.8}
         >
-          <Text style={{ fontSize: 13, marginRight: 4 }}>👤</Text>
+          <UserIcon size={13} color="#4A4E46" style={{ marginRight: 4 }} />
           <Text style={styles.roleDropdownText}>Viewing as Nutritionist</Text>
           <ChevronDownIcon size={12} color="#4A4E46" />
         </TouchableOpacity>
@@ -139,7 +147,7 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
         {/* ── Current Plan Week Bar ── */}
         <View style={styles.currentPlanBar}>
           <View style={styles.planBarLeft}>
-            <Text style={{ fontSize: 16, marginRight: 6 }}>📅</Text>
+            <CalendarIcon size={16} color="#4A4E46" style={{ marginRight: 6 }} />
             <View>
               <Text style={styles.planBarTitle}>Current Plan</Text>
               <Text style={styles.planBarDates}>Week 1 (12 – 18 Oct)</Text>
@@ -152,7 +160,7 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
               onPress={handleRegenerateAI}
               activeOpacity={0.8}
             >
-              <Text style={{ fontSize: 11, marginRight: 4 }}>✨</Text>
+              <SparkleIcon size={11} color="#3D5C3E" style={{ marginRight: 4 }} />
               <Text style={styles.regenerateText}>Regenerate with AI</Text>
             </TouchableOpacity>
 
@@ -161,7 +169,7 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
               onPress={onOpenEditor}
               activeOpacity={0.8}
             >
-              <Text style={{ fontSize: 11, marginRight: 4, color: '#FFFFFF' }}>✎</Text>
+              <PencilIcon size={11} color="#FFFFFF" style={{ marginRight: 4 }} />
               <Text style={styles.editWeekText}>Edit plan</Text>
               <ChevronDownIcon size={10} color="#FFFFFF" />
             </TouchableOpacity>
@@ -197,7 +205,7 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
           <View style={styles.mealReviewCard}>
             <View style={styles.mealReviewHeader}>
               <View style={styles.slotRow}>
-                <Text style={{ fontSize: 13, marginRight: 4 }}>☀️</Text>
+                <ClockIcon size={12} color="#4A4E46" style={{ marginRight: 4 }} />
                 <Text style={styles.slotTitle}>Breakfast</Text>
                 <Text style={styles.slotTime}>8:00 AM</Text>
               </View>
@@ -233,7 +241,7 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
                     <Text style={styles.chipText}>15 mins</Text>
                   </View>
                   <View style={styles.chipItem}>
-                    <Text style={{ fontSize: 8 }}>📊</Text>
+                    <FlameIcon size={9} color="#D97706" />
                     <Text style={styles.chipText}>350 kcal</Text>
                   </View>
                   <View style={styles.chipBadge}>
@@ -253,7 +261,7 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
               style={styles.editMealBtn}
               onPress={() => Alert.alert('Edit Meal', 'Modifying portion and clinical substitutions.')}
             >
-              <Text style={{ fontSize: 11, marginRight: 4 }}>✎</Text>
+              <PencilIcon size={11} color="#3D5C3E" style={{ marginRight: 4 }} />
               <Text style={styles.editMealText}>Edit meal</Text>
             </TouchableOpacity>
           </View>
@@ -262,7 +270,7 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
           <View style={styles.mealReviewCard}>
             <View style={styles.mealReviewHeader}>
               <View style={styles.slotRow}>
-                <Text style={{ fontSize: 13, marginRight: 4 }}>🍵</Text>
+                <ClockIcon size={12} color="#4A4E46" style={{ marginRight: 4 }} />
                 <Text style={styles.slotTitle}>Mid-morning</Text>
                 <Text style={styles.slotTime}>11:00 AM</Text>
               </View>
@@ -295,7 +303,7 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
                     <Text style={styles.chipText}>5 mins</Text>
                   </View>
                   <View style={styles.chipItem}>
-                    <Text style={{ fontSize: 8 }}>📊</Text>
+                    <FlameIcon size={9} color="#D97706" />
                     <Text style={styles.chipText}>200 kcal</Text>
                   </View>
                   <View style={styles.chipBadge}>
@@ -312,7 +320,7 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
             </View>
 
             <TouchableOpacity style={styles.editMealBtn}>
-              <Text style={{ fontSize: 11, marginRight: 4 }}>✎</Text>
+              <PencilIcon size={11} color="#3D5C3E" style={{ marginRight: 4 }} />
               <Text style={styles.editMealText}>Edit meal</Text>
             </TouchableOpacity>
           </View>
@@ -321,7 +329,7 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
           <View style={styles.mealReviewCard}>
             <View style={styles.mealReviewHeader}>
               <View style={styles.slotRow}>
-                <Text style={{ fontSize: 13, marginRight: 4 }}>🥗</Text>
+                <ClockIcon size={12} color="#4A4E46" style={{ marginRight: 4 }} />
                 <Text style={styles.slotTitle}>Lunch</Text>
                 <Text style={styles.slotTime}>1:30 PM</Text>
               </View>
@@ -354,7 +362,7 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
                     <Text style={styles.chipText}>20 mins</Text>
                   </View>
                   <View style={styles.chipItem}>
-                    <Text style={{ fontSize: 8 }}>📊</Text>
+                    <FlameIcon size={9} color="#D97706" />
                     <Text style={styles.chipText}>420 kcal</Text>
                   </View>
                   <View style={styles.chipBadge}>
@@ -371,7 +379,7 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
             </View>
 
             <TouchableOpacity style={styles.editMealBtn}>
-              <Text style={{ fontSize: 11, marginRight: 4 }}>✎</Text>
+              <PencilIcon size={11} color="#3D5C3E" style={{ marginRight: 4 }} />
               <Text style={styles.editMealText}>Edit meal</Text>
             </TouchableOpacity>
           </View>
@@ -406,7 +414,7 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
           </View>
 
           <View style={styles.adjustTargetsCol}>
-            <Text style={{ fontSize: 20 }}>⚙️</Text>
+            <TargetIcon size={20} color="#3D5C3E" />
             <Text style={styles.adjustTargetsTitle}>Adjust daily targets</Text>
             <Text style={styles.adjustTargetsDesc}>
               Modify calories and macros for this client.
@@ -424,7 +432,7 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
         {/* ── Notes for Your Client ── */}
         <View style={styles.clientNotesBox}>
           <View style={styles.notesHeader}>
-            <Text style={{ fontSize: 13, marginRight: 6 }}>📝</Text>
+            <PencilIcon size={13} color="#3D5C3E" style={{ marginRight: 6 }} />
             <Text style={styles.notesTitle}>Notes for your client (optional)</Text>
           </View>
           <TextInput
@@ -445,7 +453,7 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
               onPress={onPreviewForClient}
               activeOpacity={0.8}
             >
-              <Text style={{ fontSize: 13, marginRight: 4 }}>👁️</Text>
+              <EyeIcon size={13} color="#3D5C3E" style={{ marginRight: 4 }} />
               <Text style={styles.previewBtnText}>Preview for client</Text>
             </TouchableOpacity>
 
@@ -454,7 +462,7 @@ export const PlanReviewApprovalScreen: React.FC<PlanReviewApprovalScreenProps> =
               onPress={() => Alert.alert('Saved', 'Plan changes preserved.')}
               activeOpacity={0.8}
             >
-              <Text style={{ fontSize: 13, marginRight: 4 }}>🔖</Text>
+              <CheckIcon size={13} color="#3D5C3E" style={{ marginRight: 4 }} />
               <Text style={styles.saveBtnText}>Save changes</Text>
             </TouchableOpacity>
           </View>

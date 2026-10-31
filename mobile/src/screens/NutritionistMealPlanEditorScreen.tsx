@@ -20,6 +20,10 @@ import {
   PencilIcon,
   CalendarIcon,
   MealIcon,
+  EyeIcon,
+  SparkleIcon,
+  PlusIcon,
+  PlanIcon,
 } from '../components/Icons';
 
 interface NutritionistMealPlanEditorScreenProps {
@@ -144,16 +148,16 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
   };
 
   const handleUpdateMeal = () => {
-    Alert.alert('Meal Updated', 'Breakfast recipe, portions, and macros saved successfully! ✨');
+    Alert.alert('Meal Updated', 'Breakfast recipe, portions, and macros saved successfully!');
   };
 
   const handleSaveChanges = () => {
-    Alert.alert('Saved 💾', 'All meal plan modifications have been saved as draft.');
+    Alert.alert('Saved', 'All meal plan modifications have been saved as draft.');
   };
 
   const handleSendToClient = () => {
     Alert.alert(
-      'Sent for Client Approval! 🚀',
+      'Sent for Client Approval',
       'The personalized nutrition blueprint has been dispatched to Riya Sharma with your clinical recommendations.'
     );
   };
@@ -171,7 +175,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
           onPress={onPreviewForClient || onBack}
           activeOpacity={0.8}
         >
-          <Text style={{ fontSize: 13, marginRight: 5 }}>👁️</Text>
+          <EyeIcon size={14} color="#3D5C3E" style={{ marginRight: 5 }} />
           <Text style={styles.viewAsClientText}>View as Client</Text>
         </TouchableOpacity>
       </View>
@@ -294,7 +298,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
                 activeSectionView === 'meals' && styles.sectionSwitchTextActive,
               ]}
             >
-              🥗 Daily Meals ({DAYS[activeDayIndex]})
+              Daily Meals ({DAYS[activeDayIndex]})
             </Text>
           </TouchableOpacity>
 
@@ -311,7 +315,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
                 activeSectionView === 'settings_notes' && styles.sectionSwitchTextActive,
               ]}
             >
-              ⚙️ Targets & Notes
+              Targets & Notes
             </Text>
           </TouchableOpacity>
         </View>
@@ -323,7 +327,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
               {/* Header row */}
               <View style={styles.mealCardTopHeader}>
                 <View style={styles.mealTimeGroup}>
-                  <Text style={{ fontSize: 16, marginRight: 6 }}>🌅</Text>
+                  <ClockIcon size={14} color="#4A4E46" style={{ marginRight: 6 }} />
                   <Text style={styles.mealNameLabel}>Breakfast</Text>
                   <Text style={styles.mealTimeLabel}>8:00 AM</Text>
                 </View>
@@ -333,19 +337,19 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
                     style={styles.actionIconBtn}
                     onPress={() => Alert.alert('Replace Breakfast', 'Opening recipe library for healthy breakfast swaps.')}
                   >
-                    <Text style={styles.actionIconText}>✎ Replace</Text>
+                    <Text style={styles.actionIconText}>Replace</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.actionIconBtn}
                     onPress={() => Alert.alert('Copy Breakfast', 'Copied recipe to clipboard to paste into other days.')}
                   >
-                    <Text style={styles.actionIconText}>📋 Copy</Text>
+                    <Text style={styles.actionIconText}>Copy</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.actionIconBtn}
                     onPress={() => Alert.alert('Remove Breakfast', 'Clear this meal slot?')}
                   >
-                    <Text style={[styles.actionIconText, { color: '#DC2626' }]}>🗑</Text>
+                    <Text style={[styles.actionIconText, { color: '#DC2626' }]}>Remove</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -412,7 +416,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
                 </View>
 
                 <View style={styles.dropdownPickerBox}>
-                  <Text style={styles.dropdownPickerLabel}>📊 Calories</Text>
+                  <Text style={styles.dropdownPickerLabel}>Calories</Text>
                   <TouchableOpacity
                     style={styles.pickerSelector}
                     onPress={() =>
@@ -465,19 +469,19 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
             <View style={styles.standardMealCard}>
               <View style={styles.mealCardTopHeader}>
                 <View style={styles.mealTimeGroup}>
-                  <Text style={{ fontSize: 16, marginRight: 6 }}>☕</Text>
+                  <ClockIcon size={14} color="#4A4E46" style={{ marginRight: 6 }} />
                   <Text style={styles.mealNameLabel}>Mid-morning</Text>
                   <Text style={styles.mealTimeLabel}>11:00 AM</Text>
                 </View>
                 <View style={styles.mealActionIconsRow}>
                   <TouchableOpacity style={styles.actionIconBtn}>
-                    <Text style={styles.actionIconText}>✎ Replace</Text>
+                    <Text style={styles.actionIconText}>Replace</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.actionIconBtn}>
-                    <Text style={styles.actionIconText}>📋 Copy</Text>
+                    <Text style={styles.actionIconText}>Copy</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.actionIconBtn}>
-                    <Text style={[styles.actionIconText, { color: '#DC2626' }]}>🗑</Text>
+                    <Text style={[styles.actionIconText, { color: '#DC2626' }]}>Remove</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -493,7 +497,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
 
                   <View style={styles.quickStatsRow}>
                     <Text style={styles.quickStatText}>⏱️ 5 mins</Text>
-                    <Text style={styles.quickStatText}>📊 200 kcal</Text>
+                    <Text style={styles.quickStatText}>200 kcal</Text>
                     <Text style={styles.quickStatText}>P: 12g • C: 18g • F: 8g</Text>
                   </View>
                 </View>
@@ -511,19 +515,19 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
             <View style={styles.standardMealCard}>
               <View style={styles.mealCardTopHeader}>
                 <View style={styles.mealTimeGroup}>
-                  <Text style={{ fontSize: 16, marginRight: 6 }}>🍴</Text>
+                  <ClockIcon size={14} color="#4A4E46" style={{ marginRight: 6 }} />
                   <Text style={styles.mealNameLabel}>Lunch</Text>
                   <Text style={styles.mealTimeLabel}>1:30 PM</Text>
                 </View>
                 <View style={styles.mealActionIconsRow}>
                   <TouchableOpacity style={styles.actionIconBtn}>
-                    <Text style={styles.actionIconText}>✎ Replace</Text>
+                    <Text style={styles.actionIconText}>Replace</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.actionIconBtn}>
-                    <Text style={styles.actionIconText}>📋 Copy</Text>
+                    <Text style={styles.actionIconText}>Copy</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.actionIconBtn}>
-                    <Text style={[styles.actionIconText, { color: '#DC2626' }]}>🗑</Text>
+                    <Text style={[styles.actionIconText, { color: '#DC2626' }]}>Remove</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -539,7 +543,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
 
                   <View style={styles.quickStatsRow}>
                     <Text style={styles.quickStatText}>⏱️ 20 mins</Text>
-                    <Text style={styles.quickStatText}>📊 420 kcal</Text>
+                    <Text style={styles.quickStatText}>420 kcal</Text>
                     <Text style={styles.quickStatText}>P: 18g • C: 52g • F: 14g</Text>
                   </View>
                 </View>
@@ -557,19 +561,19 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
             <View style={styles.standardMealCard}>
               <View style={styles.mealCardTopHeader}>
                 <View style={styles.mealTimeGroup}>
-                  <Text style={{ fontSize: 16, marginRight: 6 }}>🧃</Text>
+                  <ClockIcon size={14} color="#4A4E46" style={{ marginRight: 6 }} />
                   <Text style={styles.mealNameLabel}>Evening Snack</Text>
                   <Text style={styles.mealTimeLabel}>4:30 PM</Text>
                 </View>
                 <View style={styles.mealActionIconsRow}>
                   <TouchableOpacity style={styles.actionIconBtn}>
-                    <Text style={styles.actionIconText}>✎ Replace</Text>
+                    <Text style={styles.actionIconText}>Replace</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.actionIconBtn}>
-                    <Text style={styles.actionIconText}>📋 Copy</Text>
+                    <Text style={styles.actionIconText}>Copy</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.actionIconBtn}>
-                    <Text style={[styles.actionIconText, { color: '#DC2626' }]}>🗑</Text>
+                    <Text style={[styles.actionIconText, { color: '#DC2626' }]}>Remove</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -585,7 +589,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
 
                   <View style={styles.quickStatsRow}>
                     <Text style={styles.quickStatText}>⏱️ 5 mins</Text>
-                    <Text style={styles.quickStatText}>📊 120 kcal</Text>
+                    <Text style={styles.quickStatText}>120 kcal</Text>
                     <Text style={styles.quickStatText}>P: 6g • C: 14g • F: 4g</Text>
                   </View>
                 </View>
@@ -603,19 +607,19 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
             <View style={styles.standardMealCard}>
               <View style={styles.mealCardTopHeader}>
                 <View style={styles.mealTimeGroup}>
-                  <Text style={{ fontSize: 16, marginRight: 6 }}>🍽️</Text>
+                  <ClockIcon size={14} color="#4A4E46" style={{ marginRight: 6 }} />
                   <Text style={styles.mealNameLabel}>Dinner</Text>
                   <Text style={styles.mealTimeLabel}>7:30 PM</Text>
                 </View>
                 <View style={styles.mealActionIconsRow}>
                   <TouchableOpacity style={styles.actionIconBtn}>
-                    <Text style={styles.actionIconText}>✎ Replace</Text>
+                    <Text style={styles.actionIconText}>Replace</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.actionIconBtn}>
-                    <Text style={styles.actionIconText}>📋 Copy</Text>
+                    <Text style={styles.actionIconText}>Copy</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.actionIconBtn}>
-                    <Text style={[styles.actionIconText, { color: '#DC2626' }]}>🗑</Text>
+                    <Text style={[styles.actionIconText, { color: '#DC2626' }]}>Remove</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -631,7 +635,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
 
                   <View style={styles.quickStatsRow}>
                     <Text style={styles.quickStatText}>⏱️ 20 mins</Text>
-                    <Text style={styles.quickStatText}>📊 400 kcal</Text>
+                    <Text style={styles.quickStatText}>400 kcal</Text>
                     <Text style={styles.quickStatText}>P: 22g • C: 48g • F: 16g</Text>
                   </View>
                 </View>
@@ -651,7 +655,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
                 style={styles.extraActionCard}
                 onPress={() => Alert.alert('Add Meal', 'Adding custom meal or hydration slot.')}
               >
-                <Text style={{ fontSize: 20, marginRight: 10 }}>➕</Text>
+                <PlusIcon size={16} color="#3D5C3E" style={{ marginRight: 10 }} />
                 <View>
                   <Text style={styles.extraActionTitle}>Add new meal</Text>
                   <Text style={styles.extraActionSub}>Add a meal, snack or drink</Text>
@@ -662,7 +666,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
                 style={styles.extraActionCard}
                 onPress={() => Alert.alert('Recipe Library', 'Exploring condition-specific therapeutic recipes.')}
               >
-                <Text style={{ fontSize: 20, marginRight: 10 }}>📖</Text>
+                <PlanIcon size={16} color="#3D5C3E" style={{ marginRight: 10 }} />
                 <View>
                   <Text style={styles.extraActionTitle}>Browse recipes</Text>
                   <Text style={styles.extraActionSub}>Explore condition-specific recipes</Text>
@@ -738,7 +742,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
                 <TouchableOpacity
                   onPress={() => Alert.alert('Edit Targets', 'Adjust calorie and macro distribution for Riya.')}
                 >
-                  <Text style={{ fontSize: 14 }}>✎</Text>
+                  <PencilIcon size={12} color="#3D5C3E" />
                 </TouchableOpacity>
               </View>
 
@@ -788,7 +792,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
             {/* AI Suggestions Card */}
             <View style={styles.sidebarCard}>
               <View style={styles.aiHeaderRow}>
-                <Text style={{ fontSize: 16, marginRight: 6 }}>❇️</Text>
+                <SparkleIcon size={14} color="#3D5C3E" style={{ marginRight: 6 }} />
                 <Text style={styles.sidebarSectionTitle}>AI suggestions</Text>
               </View>
 
@@ -801,7 +805,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
                   onPress={() => handleApplyAiSuggestion('iron', 'Iron-rich foods')}
                 >
                   <Text style={[styles.aiAddBtnText, aiApplied['iron'] && styles.aiAddBtnTextDone]}>
-                    {aiApplied['iron'] ? '✓ Added' : 'Add'}
+                    {aiApplied['iron'] ? 'Added' : 'Add'}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -815,7 +819,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
                   onPress={() => handleApplyAiSuggestion('fibre', 'Fiber boost')}
                 >
                   <Text style={[styles.aiAddBtnText, aiApplied['fibre'] && styles.aiAddBtnTextDone]}>
-                    {aiApplied['fibre'] ? '✓ Added' : 'Add'}
+                    {aiApplied['fibre'] ? 'Added' : 'Add'}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -829,7 +833,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
                   onPress={() => handleApplyAiSuggestion('seasonal', 'Seasonal swap')}
                 >
                   <Text style={[styles.aiAddBtnText, aiApplied['seasonal'] && styles.aiAddBtnTextDone]}>
-                    {aiApplied['seasonal'] ? '✓ Added' : 'Add'}
+                    {aiApplied['seasonal'] ? 'Added' : 'Add'}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -901,7 +905,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
             onPress={onPreviewForClient || onBack}
             activeOpacity={0.8}
           >
-            <Text style={{ fontSize: 13, marginRight: 4 }}>👁️</Text>
+            <EyeIcon size={13} color="#3D5C3E" style={{ marginRight: 4 }} />
             <Text style={styles.previewBtnText}>Preview</Text>
           </TouchableOpacity>
 
@@ -910,7 +914,7 @@ export const NutritionistMealPlanEditorScreen: React.FC<NutritionistMealPlanEdit
             onPress={handleSaveChanges}
             activeOpacity={0.8}
           >
-            <Text style={{ fontSize: 13, marginRight: 4 }}>🔖</Text>
+            <CheckIcon size={13} color="#3D5C3E" style={{ marginRight: 4 }} />
             <Text style={styles.saveDraftBtnText}>Save</Text>
           </TouchableOpacity>
 

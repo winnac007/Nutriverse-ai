@@ -16,6 +16,12 @@ import {
   LeafIcon,
   WheatIcon,
   DropIcon,
+  FlameIcon,
+  UserIcon,
+  UtensilsCrossed,
+  DumbbellIcon,
+  HeartIcon,
+  PlusIcon,
 } from '../components/Icons';
 
 interface MealPlanDetailScreenProps {
@@ -39,7 +45,7 @@ export const MealPlanDetailScreen: React.FC<MealPlanDetailScreenProps> = ({
   const handleToggleFavorite = () => {
     setIsFavorite(!isFavorite);
     Alert.alert(
-      isFavorite ? 'Removed from favorites' : 'Saved to favorites! 🔖',
+      isFavorite ? 'Removed from favorites' : 'Saved to favorites',
       'You can easily access this recipe in your Recipe Library.'
     );
   };
@@ -49,7 +55,7 @@ export const MealPlanDetailScreen: React.FC<MealPlanDetailScreenProps> = ({
       onAddToPlan();
     } else {
       Alert.alert(
-        'Added to Plan! 🍽️',
+        'Added to Plan',
         'Moong Dal Chilla has been scheduled for your Breakfast on Monday.'
       );
     }
@@ -102,7 +108,7 @@ export const MealPlanDetailScreen: React.FC<MealPlanDetailScreenProps> = ({
               </View>
 
               <View style={styles.metricItem}>
-                <Text style={{ fontSize: 12 }}>📊</Text>
+                <FlameIcon size={12} color="#D97706" />
                 <View>
                   <Text style={styles.metricItemVal}>{350 * servings} kcal</Text>
                   <Text style={styles.metricItemLbl}>Calories</Text>
@@ -179,7 +185,7 @@ export const MealPlanDetailScreen: React.FC<MealPlanDetailScreenProps> = ({
           {/* Fiber */}
           <View style={styles.nutritionCard}>
             <View style={[styles.nutritionIconCircle, { backgroundColor: '#EBF4F6' }]}>
-              <Text style={{ fontSize: 13 }}>🍃</Text>
+              <LeafIcon size={13} color="#3D5C3E" />
             </View>
             <View style={{ marginLeft: 8 }}>
               <Text style={styles.nutrValue}>{8 * servings} g</Text>
@@ -198,7 +204,7 @@ export const MealPlanDetailScreen: React.FC<MealPlanDetailScreenProps> = ({
             onPress={handleAdjustServings}
             activeOpacity={0.8}
           >
-            <Text style={{ fontSize: 11, marginRight: 4 }}>👤</Text>
+            <UserIcon size={11} color="#4A4E46" style={{ marginRight: 4 }} />
             <Text style={styles.adjustServingsText}>Adjust servings</Text>
           </TouchableOpacity>
         </View>
@@ -342,7 +348,7 @@ export const MealPlanDetailScreen: React.FC<MealPlanDetailScreenProps> = ({
           contentContainerStyle={styles.optionsRow}
         >
           <View style={styles.optionMiniCard}>
-            <Text style={{ fontSize: 16 }}>🥗</Text>
+            <UtensilsCrossed size={16} color="#3D5C3E" />
             <Text style={styles.optionMiniTitle}>Swap veggies</Text>
             <Text style={styles.optionMiniDesc}>Use seasonal vegetables</Text>
           </View>
@@ -354,7 +360,7 @@ export const MealPlanDetailScreen: React.FC<MealPlanDetailScreenProps> = ({
           </View>
 
           <View style={styles.optionMiniCard}>
-            <Text style={{ fontSize: 16 }}>💪</Text>
+            <DumbbellIcon size={16} color="#3D5C3E" />
             <Text style={styles.optionMiniTitle}>Higher protein</Text>
             <Text style={styles.optionMiniDesc}>Add paneer or tofu on side</Text>
           </View>
@@ -373,9 +379,7 @@ export const MealPlanDetailScreen: React.FC<MealPlanDetailScreenProps> = ({
             onPress={handleToggleFavorite}
             activeOpacity={0.8}
           >
-            <Text style={{ fontSize: 13, marginRight: 6 }}>
-              {isFavorite ? '❤️' : '🔖'}
-            </Text>
+            <HeartIcon size={14} color={isFavorite ? '#C53030' : '#4A4E46'} style={{ marginRight: 6 }} />
             <Text style={styles.saveFavoritesText}>
               {isFavorite ? 'Favorited' : 'Save to favorites'}
             </Text>
@@ -386,7 +390,7 @@ export const MealPlanDetailScreen: React.FC<MealPlanDetailScreenProps> = ({
             onPress={handleAddPlan}
             activeOpacity={0.85}
           >
-            <Text style={{ fontSize: 16, color: '#FFFFFF', marginRight: 6 }}>⊕</Text>
+            <PlusIcon size={14} color="#FFFFFF" style={{ marginRight: 6 }} />
             <Text style={styles.addPlanText}>Add to my plan</Text>
           </TouchableOpacity>
         </View>

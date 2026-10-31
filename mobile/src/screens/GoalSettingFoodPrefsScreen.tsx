@@ -19,6 +19,12 @@ import {
   ChevronDownIcon,
   CheckIcon,
   ClockIcon,
+  SproutIcon,
+  LeafIcon,
+  UtensilsCrossed,
+  BowlIcon,
+  MealIcon,
+  PlusIcon,
 } from '../components/Icons';
 
 interface GoalSettingFoodPrefsScreenProps {
@@ -34,6 +40,34 @@ interface GoalSettingFoodPrefsScreenProps {
   onBack: () => void;
   onContinue: (prefsData: any) => void;
 }
+
+const renderCuisineIcon = (id: string, isSelected: boolean) => {
+  const color = isSelected ? '#3D5C3E' : '#555850';
+  switch (id) {
+    case 'Indian':
+      return <UtensilsCrossed size={20} color={color} />;
+    case 'Continental':
+      return <BowlIcon size={20} color={color} />;
+    case 'Mixed':
+      return <MealIcon size={20} color={color} />;
+    case 'Others':
+    default:
+      return <PlusIcon size={20} color={color} />;
+  }
+};
+
+const renderEatingOutIcon = (id: string, isSelected: boolean) => {
+  const color = isSelected ? '#3D5C3E' : '#555850';
+  switch (id) {
+    case 'Homemade meals':
+      return <BowlIcon size={20} color={color} />;
+    case 'Occasional eating out':
+      return <UtensilsCrossed size={20} color={color} />;
+    case 'Frequent eating out':
+    default:
+      return <MealIcon size={20} color={color} />;
+  }
+};
 
 export const GoalSettingFoodPrefsScreen: React.FC<GoalSettingFoodPrefsScreenProps> = ({
   initialPrefs,
@@ -164,7 +198,7 @@ export const GoalSettingFoodPrefsScreen: React.FC<GoalSettingFoodPrefsScreenProp
         </TouchableOpacity>
 
         <View style={styles.brandCenter}>
-          <Text style={{ fontSize: 16, marginRight: 4 }}>🌱</Text>
+          <SproutIcon size={18} color="#3D5C3E" style={{ marginRight: 6 }} />
           <Text style={styles.brandTitle}>Zenplato</Text>
         </View>
 
@@ -195,7 +229,9 @@ export const GoalSettingFoodPrefsScreen: React.FC<GoalSettingFoodPrefsScreenProp
             </Text>
           </View>
           <View style={styles.characterArtBox}>
-            <Text style={{ fontSize: 46 }}>🥗🥑</Text>
+            <View style={styles.clinicalHeaderBadge}>
+              <UtensilsCrossed size={26} color="#3D5C3E" />
+            </View>
           </View>
         </View>
 
@@ -205,10 +241,10 @@ export const GoalSettingFoodPrefsScreen: React.FC<GoalSettingFoodPrefsScreenProp
         </Text>
         <View style={styles.cuisineCardsGrid}>
           {[
-            { id: 'Indian', name: 'Indian', emoji: '🍛' },
-            { id: 'Continental', name: 'Continental', emoji: '🥗' },
-            { id: 'Mixed', name: 'Mixed', emoji: '🍲' },
-            { id: 'Others', name: '+ Others', emoji: '➕' },
+            { id: 'Indian', name: 'Indian' },
+            { id: 'Continental', name: 'Continental' },
+            { id: 'Mixed', name: 'Mixed' },
+            { id: 'Others', name: '+ Others' },
           ].map((c) => {
             const isSelected = selectedCuisines.includes(c.id);
             return (
@@ -218,8 +254,8 @@ export const GoalSettingFoodPrefsScreen: React.FC<GoalSettingFoodPrefsScreenProp
                 onPress={() => toggleCuisine(c.id)}
                 activeOpacity={0.8}
               >
-                <View style={styles.cuisineIconCircle}>
-                  <Text style={{ fontSize: 24 }}>{c.emoji}</Text>
+                <View style={[styles.cuisineIconCircle, isSelected && { backgroundColor: '#E9ECDF' }]}>
+                  {renderCuisineIcon(c.id, isSelected)}
                 </View>
                 <Text style={styles.cuisineTileName}>{c.name}</Text>
                 {isSelected && (
@@ -245,7 +281,11 @@ export const GoalSettingFoodPrefsScreen: React.FC<GoalSettingFoodPrefsScreenProp
                 style={[styles.dietPill, isSelected && styles.dietPillActive]}
                 onPress={() => setDietType(d)}
               >
-                {isSelected && <Text style={styles.checkMarkWhite}>✓ </Text>}
+                {isSelected && (
+                  <View style={{ marginRight: 4 }}>
+                    <CheckIcon size={10} color="#FFFFFF" />
+                  </View>
+                )}
                 <Text
                   style={[styles.dietPillText, isSelected && styles.dietPillTextActive]}
                 >
@@ -301,7 +341,7 @@ export const GoalSettingFoodPrefsScreen: React.FC<GoalSettingFoodPrefsScreenProp
         {/* ── Section 5: Eating out options ── */}
         <View style={styles.eatingOutCard}>
           <View style={styles.eatingOutHeaderRow}>
-            <Text style={{ fontSize: 18, marginRight: 8 }}>🍽️</Text>
+            <UtensilsCrossed size={18} color="#4A4E46" style={{ marginRight: 8 }} />
             <View style={{ flex: 1 }}>
               <Text style={styles.eatingOutTitle}>Eating out options</Text>
               <Text style={styles.eatingOutSub}>Helps us include realistic choices for your lifestyle.</Text>
@@ -317,9 +357,9 @@ export const GoalSettingFoodPrefsScreen: React.FC<GoalSettingFoodPrefsScreenProp
           {eatingOutEnabled && (
             <View style={styles.eatingOutTilesRow}>
               {[
-                { id: 'Homemade meals', emoji: '🍲', label: 'Homemade meals' },
-                { id: 'Occasional eating out', emoji: '🥗', label: 'Occasional eating out' },
-                { id: 'Frequent eating out', emoji: '🍔', label: 'Frequent eating out' },
+                { id: 'Homemade meals', label: 'Homemade meals' },
+                { id: 'Occasional eating out', label: 'Occasional eating out' },
+                { id: 'Frequent eating out', label: 'Frequent eating out' },
               ].map((opt) => {
                 const isSelected = eatingOutOption === opt.id;
                 return (
@@ -329,7 +369,9 @@ export const GoalSettingFoodPrefsScreen: React.FC<GoalSettingFoodPrefsScreenProp
                     onPress={() => setEatingOutOption(opt.id)}
                     activeOpacity={0.8}
                   >
-                    <Text style={{ fontSize: 24, marginBottom: 4 }}>{opt.emoji}</Text>
+                    <View style={[styles.eatingOutIconCircle, isSelected && { backgroundColor: '#E9ECDF' }]}>
+                      {renderEatingOutIcon(opt.id, isSelected)}
+                    </View>
                     <Text style={styles.eatingOutTileLabel}>{opt.label}</Text>
                     {isSelected && (
                       <View style={styles.cuisineCheckCorner}>
@@ -364,7 +406,7 @@ export const GoalSettingFoodPrefsScreen: React.FC<GoalSettingFoodPrefsScreenProp
 
         {/* Callout */}
         <View style={styles.calloutCard}>
-          <Text style={{ fontSize: 18, marginRight: 8 }}>🌱</Text>
+          <SproutIcon size={18} color="#3D5C3E" style={{ marginRight: 8 }} />
           <Text style={styles.calloutText}>
             We'll include multiple meal options and healthier alternatives based on your preferences and goal.
           </Text>
@@ -574,12 +616,31 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
   characterArtBox: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#FAF0E6',
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: '#F3E8D3',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  clinicalHeaderBadge: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E8E4DC',
+  },
+  eatingOutIconCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#F7F4EC',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
   },
   sectionHeading: {
     fontFamily: 'serif',

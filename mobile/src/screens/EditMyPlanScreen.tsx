@@ -14,6 +14,13 @@ import {
   ChevronLeftIcon,
   ClockIcon,
   PencilIcon,
+  EyeIcon,
+  UserIcon,
+  TrashIcon,
+  FlameIcon,
+  PlanIcon,
+  TargetIcon,
+  SparkleIcon,
 } from '../components/Icons';
 
 interface EditMyPlanScreenProps {
@@ -152,12 +159,12 @@ export const EditMyPlanScreen: React.FC<EditMyPlanScreenProps> = ({
   };
 
   const handleSaveChanges = () => {
-    Alert.alert('Changes Saved! 💾', 'Your custom meal plan schedule has been saved locally.');
+    Alert.alert('Changes Saved', 'Your custom meal plan schedule has been saved locally.');
   };
 
   const handleSubmitForReview = () => {
     Alert.alert(
-      'Submitted for Clinical Review! 🌿',
+      'Submitted for Clinical Review',
       'Dr. Ananya Sharma has received your customization notes and will approve or adjust portions within 24 hours.'
     );
   };
@@ -175,7 +182,7 @@ export const EditMyPlanScreen: React.FC<EditMyPlanScreenProps> = ({
           onPress={onViewAsClient || onBack}
           activeOpacity={0.8}
         >
-          <Text style={{ fontSize: 13, marginRight: 4 }}>👁️</Text>
+          <EyeIcon size={14} color="#3D5C3E" style={{ marginRight: 4 }} />
           <Text style={styles.viewAsClientText}>View as client</Text>
         </TouchableOpacity>
       </View>
@@ -208,12 +215,12 @@ export const EditMyPlanScreen: React.FC<EditMyPlanScreenProps> = ({
           {/* Shared Access Avatars */}
           <View style={styles.sharedAccessCol}>
             <View style={styles.sharedAccessBadge}>
-              <Text style={{ fontSize: 10, marginRight: 3 }}>👥</Text>
+              <UserIcon size={11} color="#555850" style={{ marginRight: 3 }} />
               <Text style={styles.sharedAccessText}>Shared access</Text>
             </View>
             <View style={styles.avatarMiniStack}>
               <View style={styles.miniAvatarItem}>
-                <Text style={{ fontSize: 9 }}>👤</Text>
+                <UserIcon size={10} color="#555850" />
                 <Text style={styles.miniAvatarLabel}>You</Text>
               </View>
               <View style={styles.miniAvatarItem}>
@@ -264,7 +271,7 @@ export const EditMyPlanScreen: React.FC<EditMyPlanScreenProps> = ({
               {/* Header with Slot, Time and Actions */}
               <View style={styles.mealEditHeader}>
                 <View style={styles.slotTimeRow}>
-                  <Text style={{ fontSize: 13, marginRight: 4 }}>☀️</Text>
+                  <ClockIcon size={12} color="#4A4E46" style={{ marginRight: 4 }} />
                   <Text style={styles.slotName}>{meal.slot}</Text>
                   <Text style={styles.slotTime}>{meal.time}</Text>
                 </View>
@@ -275,7 +282,7 @@ export const EditMyPlanScreen: React.FC<EditMyPlanScreenProps> = ({
                     style={styles.actionIconBtn}
                     onPress={() => Alert.alert('Edit', `Edit timing or portion for ${meal.title}`)}
                   >
-                    <Text style={styles.actionIconText}>✎ Edit</Text>
+                    <Text style={styles.actionIconText}>Edit</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -289,7 +296,10 @@ export const EditMyPlanScreen: React.FC<EditMyPlanScreenProps> = ({
                     style={styles.actionIconBtn}
                     onPress={() => handleRemove(meal.id)}
                   >
-                    <Text style={[styles.actionIconText, { color: '#B91C1C' }]}>🗑 Remove</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <TrashIcon size={11} color="#B91C1C" style={{ marginRight: 3 }} />
+                      <Text style={[styles.actionIconText, { color: '#B91C1C' }]}>Remove</Text>
+                    </View>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -310,7 +320,7 @@ export const EditMyPlanScreen: React.FC<EditMyPlanScreenProps> = ({
                       <Text style={styles.tagText}>{meal.prepTime}</Text>
                     </View>
                     <View style={styles.timeTag}>
-                      <Text style={{ fontSize: 9 }}>📊</Text>
+                      <FlameIcon size={10} color="#D97706" />
                       <Text style={styles.tagText}>{meal.calories}</Text>
                     </View>
                     <View style={styles.categoryBadge}>
@@ -341,7 +351,7 @@ export const EditMyPlanScreen: React.FC<EditMyPlanScreenProps> = ({
                 }
                 activeOpacity={0.8}
               >
-                <Text style={{ fontSize: 11, marginRight: 4 }}>✎</Text>
+                <PencilIcon size={11} color="#3D5C3E" style={{ marginRight: 4 }} />
                 <Text style={styles.editDetailsText}>Edit details</Text>
               </TouchableOpacity>
             </View>
@@ -382,7 +392,7 @@ export const EditMyPlanScreen: React.FC<EditMyPlanScreenProps> = ({
 
           {/* Right: Adjust Daily Targets Card */}
           <View style={styles.adjustTargetsCol}>
-            <Text style={{ fontSize: 20 }}>⚙️</Text>
+            <TargetIcon size={20} color="#3D5C3E" />
             <Text style={styles.adjustTargetsTitle}>Adjust daily targets</Text>
             <Text style={styles.adjustTargetsDesc}>
               Modify calories and macros to personalize this plan.
@@ -426,7 +436,7 @@ export const EditMyPlanScreen: React.FC<EditMyPlanScreenProps> = ({
               Alert.alert('Copy from Another Day', 'Duplicate Tuesday schedule to Friday.')
             }
           >
-            <Text style={{ fontSize: 12, marginRight: 4 }}>📋</Text>
+            <PlanIcon size={12} color="#3D5C3E" style={{ marginRight: 4 }} />
             <Text style={styles.outlineActionText}>Copy from another day</Text>
           </TouchableOpacity>
 
@@ -434,7 +444,7 @@ export const EditMyPlanScreen: React.FC<EditMyPlanScreenProps> = ({
             style={styles.outlineActionBtn}
             onPress={() => Alert.alert('Browse Recipes', 'Open recipe database.')}
           >
-            <Text style={{ fontSize: 12, marginRight: 4 }}>📖</Text>
+            <PlanIcon size={12} color="#3D5C3E" style={{ marginRight: 4 }} />
             <Text style={styles.outlineActionText}>Browse recipes</Text>
           </TouchableOpacity>
         </ScrollView>
@@ -442,7 +452,7 @@ export const EditMyPlanScreen: React.FC<EditMyPlanScreenProps> = ({
         {/* ── Notes for Your Nutritionist / Consultant ── */}
         <View style={styles.notesBox}>
           <View style={styles.notesHeader}>
-            <Text style={{ fontSize: 14, marginRight: 6 }}>📝</Text>
+            <PencilIcon size={13} color="#3D5C3E" style={{ marginRight: 6 }} />
             <Text style={styles.notesTitle}>Notes for your nutritionist / consultant</Text>
           </View>
           <TextInput
@@ -470,7 +480,7 @@ export const EditMyPlanScreen: React.FC<EditMyPlanScreenProps> = ({
             onPress={handleSubmitForReview}
             activeOpacity={0.85}
           >
-            <Text style={{ fontSize: 13, marginRight: 6, color: '#FFFFFF' }}>✈️</Text>
+            <SparkleIcon size={13} color="#FFFFFF" style={{ marginRight: 6 }} />
             <Text style={styles.submitReviewText}>Submit for review</Text>
           </TouchableOpacity>
         </View>

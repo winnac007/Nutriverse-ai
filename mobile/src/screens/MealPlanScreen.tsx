@@ -18,6 +18,7 @@ import {
   InfoIcon,
   CloseIcon,
   CheckIcon,
+  ActivityIcon,
 } from '../components/Icons';
 
 interface MealPlanScreenProps {
@@ -193,7 +194,7 @@ export const MealPlanScreen: React.FC<MealPlanScreenProps> = ({
 
   const handleActivatePlan = () => {
     Alert.alert(
-      'Plan Activated! 🌿',
+      'Plan Activated',
       'This personalized meal plan has been synced with your grocery shopping list and daily health tracker.'
     );
   };
@@ -211,7 +212,7 @@ export const MealPlanScreen: React.FC<MealPlanScreenProps> = ({
           onPress={onNavigateToCalculations}
           activeOpacity={0.8}
         >
-          <Text style={{ fontSize: 13, marginRight: 4 }}>📊</Text>
+          <ActivityIcon size={13} color="#3D5C3E" style={{ marginRight: 4 }} />
           <Text style={styles.calcPillText}>Targets & Macros</Text>
         </TouchableOpacity>
       </View>
@@ -328,7 +329,7 @@ export const MealPlanScreen: React.FC<MealPlanScreenProps> = ({
           onPress={handleActivatePlan}
           activeOpacity={0.85}
         >
-          <Text style={styles.activateButtonText}>Activate Today's Plan  🌿</Text>
+          <Text style={styles.activateButtonText}>Activate Today's Plan  →</Text>
         </TouchableOpacity>
       </ScrollView>
 

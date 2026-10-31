@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import { Colors } from '../theme/colors';
-import { CloseIcon, InfoIcon, LeafIcon, FlameIcon } from './Icons';
+import { CloseIcon, InfoIcon, LeafIcon, FlameIcon, TargetIcon } from './Icons';
 
 interface AboutBmrModalProps {
   visible: boolean;
@@ -115,7 +115,7 @@ export const AboutBmrModal: React.FC<AboutBmrModalProps> = ({ visible, onClose }
               {/* Card 3 */}
               <View style={styles.meaningCard}>
                 <View style={styles.meaningIconWrapper}>
-                  <Text style={{ fontSize: 14 }}>🥞</Text>
+                  <TargetIcon size={16} color="#3D5C3E" />
                 </View>
                 <Text style={styles.meaningText}>
                   Used to estimate your total daily energy needs (TDEE).

@@ -12,7 +12,7 @@ import {
   Alert,
 } from 'react-native';
 import { Colors } from '../theme/colors';
-import { SproutIcon } from '../components/Icons';
+import { SproutIcon, LockIcon, ShieldIcon, SparkleIcon } from '../components/Icons';
 import { AuthService, AuthUser } from '../services/api';
 
 interface SignInScreenProps {
@@ -168,7 +168,10 @@ export const SignInScreen: React.FC<SignInScreenProps> = ({
             onPress={handleQuickFill}
             activeOpacity={0.7}
           >
-            <Text style={styles.quickFillText}>⚡ Fill demo credentials (Riya Sharma)</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <SparkleIcon size={13} color="#3D5C3E" style={{ marginRight: 6 }} />
+              <Text style={styles.quickFillText}>Fill demo credentials (Riya Sharma)</Text>
+            </View>
           </TouchableOpacity>
 
           {/* Submit Button */}
@@ -196,14 +199,15 @@ export const SignInScreen: React.FC<SignInScreenProps> = ({
             onPress={onExploreGuest}
             activeOpacity={0.8}
           >
-            <Text style={styles.guestBtnText}>Explore as Guest (No sign-in) 🌿</Text>
+            <Text style={styles.guestBtnText}>Explore as Guest (No sign-in)</Text>
           </TouchableOpacity>
         </View>
 
         {/* Clinical Privacy Note */}
         <View style={styles.privacyNote}>
+          <ShieldIcon size={13} color="#555850" style={{ marginRight: 6 }} />
           <Text style={styles.privacyNoteText}>
-            🔒 Clinical-grade privacy. Your metabolic and hormonal data is protected and confidential.
+            Clinical-grade privacy. Your metabolic and hormonal data is protected and confidential.
           </Text>
         </View>
       </ScrollView>
@@ -371,6 +375,9 @@ const styles = StyleSheet.create({
   privacyNote: {
     marginTop: 24,
     paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   privacyNoteText: {
     fontSize: 11,

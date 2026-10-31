@@ -8,7 +8,19 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Colors } from '../theme/colors';
-import { ChevronLeftIcon, CheckIcon } from '../components/Icons';
+import {
+  ChevronLeftIcon,
+  CheckIcon,
+  SproutIcon,
+  LeafIcon,
+  TargetIcon,
+  SparkleIcon,
+  UtensilsCrossed,
+  PlanIcon,
+  ActivityIcon,
+  PencilIcon,
+  ScaleIcon,
+} from '../components/Icons';
 
 export interface PlanSummaryData {
   goal: string;
@@ -91,7 +103,7 @@ export const GoalPlanSummaryScreen: React.FC<GoalPlanSummaryScreenProps> = ({
         </TouchableOpacity>
 
         <View style={styles.brandCenter}>
-          <Text style={{ fontSize: 16, marginRight: 4 }}>🌱</Text>
+          <SproutIcon size={18} color="#3D5C3E" style={{ marginRight: 6 }} />
           <Text style={styles.brandTitle}>Zenplato</Text>
         </View>
 
@@ -122,7 +134,9 @@ export const GoalPlanSummaryScreen: React.FC<GoalPlanSummaryScreenProps> = ({
             </Text>
           </View>
           <View style={styles.characterArtBox}>
-            <Text style={{ fontSize: 44 }}>✨📋</Text>
+            <View style={styles.clinicalHeaderBadge}>
+              <PlanIcon size={26} color="#3D5C3E" />
+            </View>
           </View>
         </View>
 
@@ -130,7 +144,7 @@ export const GoalPlanSummaryScreen: React.FC<GoalPlanSummaryScreenProps> = ({
         <View style={styles.summaryCard}>
           <View style={styles.cardHeaderRow}>
             <View style={styles.cardTitleWithIcon}>
-              <Text style={{ fontSize: 18, marginRight: 8 }}>🎯</Text>
+              <TargetIcon size={18} color="#3D5C3E" style={{ marginRight: 8 }} />
               <Text style={styles.cardHeaderTitle}>Primary Goal</Text>
             </View>
             <TouchableOpacity
@@ -138,7 +152,8 @@ export const GoalPlanSummaryScreen: React.FC<GoalPlanSummaryScreenProps> = ({
               onPress={onChangeGoal}
               activeOpacity={0.75}
             >
-              <Text style={styles.changeBtnText}>✎ Change</Text>
+              <PencilIcon size={11} color="#3D5C3E" />
+              <Text style={[styles.changeBtnText, { marginLeft: 3 }]}>Change</Text>
             </TouchableOpacity>
           </View>
 
@@ -151,7 +166,7 @@ export const GoalPlanSummaryScreen: React.FC<GoalPlanSummaryScreenProps> = ({
         <View style={styles.summaryCard}>
           <View style={styles.cardHeaderRow}>
             <View style={styles.cardTitleWithIcon}>
-              <Text style={{ fontSize: 18, marginRight: 8 }}>✨</Text>
+              <SparkleIcon size={18} color="#3D5C3E" style={{ marginRight: 8 }} />
               <Text style={styles.cardHeaderTitle}>Focus & Priorities</Text>
             </View>
             <TouchableOpacity
@@ -159,7 +174,8 @@ export const GoalPlanSummaryScreen: React.FC<GoalPlanSummaryScreenProps> = ({
               onPress={onChangeSymptoms}
               activeOpacity={0.75}
             >
-              <Text style={styles.changeBtnText}>✎ Change</Text>
+              <PencilIcon size={11} color="#3D5C3E" />
+              <Text style={[styles.changeBtnText, { marginLeft: 3 }]}>Change</Text>
             </TouchableOpacity>
           </View>
 
@@ -193,7 +209,7 @@ export const GoalPlanSummaryScreen: React.FC<GoalPlanSummaryScreenProps> = ({
         <View style={styles.summaryCard}>
           <View style={styles.cardHeaderRow}>
             <View style={styles.cardTitleWithIcon}>
-              <Text style={{ fontSize: 18, marginRight: 8 }}>⚖️</Text>
+              <ScaleIcon size={18} color="#3D5C3E" style={{ marginRight: 8 }} />
               <Text style={styles.cardHeaderTitle}>Body Profile & Lifestyle</Text>
             </View>
             <TouchableOpacity
@@ -201,7 +217,8 @@ export const GoalPlanSummaryScreen: React.FC<GoalPlanSummaryScreenProps> = ({
               onPress={onChangeProfile}
               activeOpacity={0.75}
             >
-              <Text style={styles.changeBtnText}>✎ Change</Text>
+              <PencilIcon size={11} color="#3D5C3E" />
+              <Text style={[styles.changeBtnText, { marginLeft: 3 }]}>Change</Text>
             </TouchableOpacity>
           </View>
 
@@ -260,7 +277,7 @@ export const GoalPlanSummaryScreen: React.FC<GoalPlanSummaryScreenProps> = ({
         <View style={styles.summaryCard}>
           <View style={styles.cardHeaderRow}>
             <View style={styles.cardTitleWithIcon}>
-              <Text style={{ fontSize: 18, marginRight: 8 }}>🥗</Text>
+              <UtensilsCrossed size={18} color="#3D5C3E" style={{ marginRight: 8 }} />
               <Text style={styles.cardHeaderTitle}>Food & Diet Preferences</Text>
             </View>
             <TouchableOpacity
@@ -268,7 +285,8 @@ export const GoalPlanSummaryScreen: React.FC<GoalPlanSummaryScreenProps> = ({
               onPress={onChangeFoodPrefs}
               activeOpacity={0.75}
             >
-              <Text style={styles.changeBtnText}>✎ Change</Text>
+              <PencilIcon size={11} color="#3D5C3E" />
+              <Text style={[styles.changeBtnText, { marginLeft: 3 }]}>Change</Text>
             </TouchableOpacity>
           </View>
 
@@ -320,7 +338,7 @@ export const GoalPlanSummaryScreen: React.FC<GoalPlanSummaryScreenProps> = ({
         <View style={styles.summaryCard}>
           <View style={styles.cardHeaderRow}>
             <View style={styles.cardTitleWithIcon}>
-              <Text style={{ fontSize: 18, marginRight: 8 }}>📋</Text>
+              <PlanIcon size={18} color="#3D5C3E" style={{ marginRight: 8 }} />
               <Text style={styles.cardHeaderTitle}>Plan Structure</Text>
             </View>
             <TouchableOpacity
@@ -328,7 +346,8 @@ export const GoalPlanSummaryScreen: React.FC<GoalPlanSummaryScreenProps> = ({
               onPress={onChangePlanStructure}
               activeOpacity={0.75}
             >
-              <Text style={styles.changeBtnText}>✎ Change</Text>
+              <PencilIcon size={11} color="#3D5C3E" />
+              <Text style={[styles.changeBtnText, { marginLeft: 3 }]}>Change</Text>
             </TouchableOpacity>
           </View>
 
@@ -356,14 +375,14 @@ export const GoalPlanSummaryScreen: React.FC<GoalPlanSummaryScreenProps> = ({
           <View style={styles.detailRow}>
             <Text style={styles.detailKey}>Clinical Alternatives:</Text>
             <Text style={styles.detailVal}>
-              {data.planStructure.includeAlternatives ? 'Enabled ✓' : 'Disabled'}
+              {data.planStructure.includeAlternatives ? 'Enabled' : 'Disabled'}
             </Text>
           </View>
         </View>
 
         {/* Clinical Note Callout */}
         <View style={styles.calloutCard}>
-          <Text style={{ fontSize: 20, marginRight: 10 }}>🌱</Text>
+          <SproutIcon size={20} color="#3D5C3E" style={{ marginRight: 10 }} />
           <Text style={styles.calloutText}>
             Our clinical AI has cross-referenced your biometric targets, cuisine favorites, and health focus to formulate an optimal metabolic blueprint.
           </Text>
@@ -375,7 +394,8 @@ export const GoalPlanSummaryScreen: React.FC<GoalPlanSummaryScreenProps> = ({
           onPress={onNavigateToCalculations}
           activeOpacity={0.8}
         >
-          <Text style={styles.calcButtonText}>📊 View Body Calculations (BMI, BMR, TDEE)</Text>
+          <ActivityIcon size={16} color="#3D5C3E" style={{ marginRight: 6 }} />
+          <Text style={styles.calcButtonText}>View Body Calculations (BMI, BMR, TDEE)</Text>
         </TouchableOpacity>
 
         {/* Primary Action Button */}
@@ -391,7 +411,7 @@ export const GoalPlanSummaryScreen: React.FC<GoalPlanSummaryScreenProps> = ({
               <Text style={styles.primaryButtonText}>Formulating Plan...</Text>
             </View>
           ) : (
-            <Text style={styles.primaryButtonText}>Generate My Personalized Plan ✨</Text>
+            <Text style={styles.primaryButtonText}>Generate My Personalized Plan  →</Text>
           )}
         </TouchableOpacity>
       </ScrollView>
@@ -481,12 +501,22 @@ const styles = StyleSheet.create({
     lineHeight: 17,
   },
   characterArtBox: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    backgroundColor: '#EAF0E6',
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: '#F3E8D3',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  clinicalHeaderBadge: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E8E4DC',
   },
   summaryCard: {
     backgroundColor: '#FFFFFF',
